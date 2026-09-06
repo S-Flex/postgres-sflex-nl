@@ -62,8 +62,8 @@
         ]
       },
       {
-        "path": "/impose-resource-plan",
-        "code": "impose-resource-plan",
+        "path": "/resource-plan",
+        "code": "resource-plan",
         "environments": [
           "development"
         ]
@@ -119,7 +119,7 @@
       "/production-board",
       "/print-schedule",
       "/impose-plan",
-      "/impose-resource-plan",
+      "/resource-plan",
       "/production-planning",
       "/batch-nests"
     ],

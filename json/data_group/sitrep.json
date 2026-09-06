@@ -770,7 +770,7 @@
               }
             ],
             "color_index_field": "sqm_color_index ",
-            "gauge_title_field": "sqm_total"
+            "title_field": "sqm_total"
           },
           {
             "i18n": {
@@ -820,7 +820,7 @@
               }
             ],
             "color_index_field": "order_color_index",
-            "gauge_title_field": "order_count"
+            "title_field": "order_count"
           }
         ],
         "tooltip": {

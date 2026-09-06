@@ -48,11 +48,11 @@
     }
   },
   {
-    "code": "production-board-detail",
+    "code": "orderinfo",
     "main": {
       "sections": [
         {
-          "data_group": "production_board_detail"
+          "data_group": "orderinfo"
         }
       ]
     }
@@ -114,7 +114,7 @@
     }
   },
   {
-    "code": "tco",
+    "code": "capacity",
     "main": {
       "sections": [
         {
@@ -343,7 +343,7 @@
     }
   },
   {
-    "code": "impose-resource-plan",
+    "code": "resource-plan",
     "header": {
       "grid": {
         "columns": "auto 1fr",
@@ -369,10 +369,10 @@
       },
       "sections": [
         {
-          "data_group": "impose_plan_filter"
+          "data_group": "resource_plan_filter"
         },
         {
-          "data_group": "impose_resource_plan"
+          "data_group": "resource_plan"
         }
       ]
     },
@@ -430,6 +430,19 @@
       "sections": [
         {
           "data_group": "status_bar"
+        }
+      ]
+    }
+  },
+  {
+    "code": "material-forecast",
+    "main": {
+      "sections": [
+        {
+          "data_group": "material_forecast_chart"
+        },
+        {
+          "data_group": "material_forecast"
         }
       ]
     }

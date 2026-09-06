@@ -296,8 +296,8 @@
             }
           ]
         },
-        "key_field": "r_week_start",
-        "label_field": "r_week",
+        "x_field": "r_week_start",
+        "title_field": "r_week",
         "label_format": "w{value}",
         "header_metric": {
           "trend_field": "r_trend_block",

@@ -34,7 +34,7 @@ SELECT m.material_id, li.lane_item_id, li.lane_id, pl.sort_order,
        igli.imposition_group_id
 FROM the_plan tp
 JOIN action.plan_lane pl USING (plan_id)
-JOIN action.lane_item li ON li.lane_id = pl.lane_id AND li.level = 0
+JOIN action.lane_item li ON li.lane_id = pl.lane_id AND li.type = 'plan'
 LEFT JOIN action.imposition_group_lane_item igli ON igli.lane_item_id = li.lane_item_id
 LEFT JOIN mock.material_impose_plan m
        ON m.material_impose_plan_id = nullif(split_part(li.source_ref, ':', 1), '')::bigint
@@ -42,19 +42,19 @@ WHERE li.source = 'material-plan' AND m.material_id IN (480, 481)
 ORDER BY m.material_id;
 
 -- 4. does the label read serve it, and does the interval filter drop it?
-SELECT 'starting_today=true' AS mode, material_id, delivery_hours, is_fixed_group,
+SELECT 'starting_today=true' AS mode, material_id, delivery_hours, fixed_group,
        start_offset_in_seconds, lane_item_id
 FROM action.get_plan_lanes(now(), 'print', 'sheet', NULL, true)
 WHERE material_id IN (480, 481)
 UNION ALL
-SELECT 'starting_today=false', material_id, delivery_hours, is_fixed_group,
+SELECT 'starting_today=false', material_id, delivery_hours, fixed_group,
        start_offset_in_seconds, lane_item_id
 FROM action.get_plan_lanes(now(), 'print', 'sheet', NULL, false)
 WHERE material_id IN (480, 481)
 ORDER BY 1, 2;
 
 -- 5. the board read. orderline_count 0 means the row is there but has no work.
-SELECT material_id, material_name, delivery_hours, is_fixed_group,
+SELECT material_id, material_name, delivery_hours, fixed_group,
        start_offset_in_seconds, duration_in_seconds,
        orderline_count, sqm, nest_count, nest_ids
 FROM mock.get_impose_plan(now(), 'print', 'sheet')

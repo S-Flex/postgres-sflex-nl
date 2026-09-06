@@ -1,0 +1,396 @@
+{
+  "data_group_id": 82,
+  "data_group": "resource_plan_filter",
+  "data_group_json": [
+    {
+      "layout": "filter",
+      "params": [
+        {
+          "key": "look_back",
+          "default_value": -1,
+          "is_query_param": true
+        },
+        {
+          "key": "look_ahead",
+          "default_value": -1,
+          "is_query_param": true
+        },
+        {
+          "key": "tenant_ids",
+          "is_optional": true,
+          "default_value": [
+            1,
+            2
+          ],
+          "is_query_param": true
+        },
+        {
+          "key": "steps",
+          "is_optional": true,
+          "is_query_param": true
+        },
+        {
+          "key": "types",
+          "default_value": [
+            "plan",
+            "progress",
+            "actual"
+          ],
+          "is_query_param": true
+        }
+      ],
+      "children": [],
+      "widget_id": "production_schedule_filter",
+      "field_config": {
+        "look_back": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Zeit davor"
+              },
+              "en": {
+                "title": "Time before"
+              },
+              "es": {
+                "title": "Tiempo antes"
+              },
+              "fr": {
+                "title": "Temps avant"
+              },
+              "nl": {
+                "title": "Tijd ervoor"
+              },
+              "uk": {
+                "title": "Час до"
+              }
+            },
+            "order": 0,
+            "control": "select",
+            "input_data": {
+              "data": [
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "Alle Zeitblöcke"
+                    },
+                    "en": {
+                      "title": "All time blocks"
+                    },
+                    "es": {
+                      "title": "Todos los bloques de tiempo"
+                    },
+                    "fr": {
+                      "title": "Tous les blocs de temps"
+                    },
+                    "nl": {
+                      "title": "Alle tijdblokken"
+                    },
+                    "uk": {
+                      "title": "Усі часові блоки"
+                    }
+                  },
+                  "value": -1
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "1 Zeitblock"
+                    },
+                    "en": {
+                      "title": "1 time block"
+                    },
+                    "es": {
+                      "title": "1 bloque de tiempo"
+                    },
+                    "fr": {
+                      "title": "1 bloc de temps"
+                    },
+                    "nl": {
+                      "title": "1 tijdblok"
+                    },
+                    "uk": {
+                      "title": "1 часовий блок"
+                    }
+                  },
+                  "value": 1
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "2 Zeitblöcke"
+                    },
+                    "en": {
+                      "title": "2 time blocks"
+                    },
+                    "es": {
+                      "title": "2 bloques de tiempo"
+                    },
+                    "fr": {
+                      "title": "2 blocs de temps"
+                    },
+                    "nl": {
+                      "title": "2 tijdblokken"
+                    },
+                    "uk": {
+                      "title": "2 часові блоки"
+                    }
+                  },
+                  "value": 2
+                }
+              ],
+              "title_field": "i18n",
+              "value_field": "value"
+            }
+          }
+        },
+        "look_ahead": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Zeit danach"
+              },
+              "en": {
+                "title": "Time after"
+              },
+              "es": {
+                "title": "Tiempo después"
+              },
+              "fr": {
+                "title": "Temps après"
+              },
+              "nl": {
+                "title": "Tijd erna"
+              },
+              "uk": {
+                "title": "Час після"
+              }
+            },
+            "order": 1,
+            "control": "select",
+            "input_data": {
+              "data": [
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "Alle Zeitblöcke"
+                    },
+                    "en": {
+                      "title": "All time blocks"
+                    },
+                    "es": {
+                      "title": "Todos los bloques de tiempo"
+                    },
+                    "fr": {
+                      "title": "Tous les blocs de temps"
+                    },
+                    "nl": {
+                      "title": "Alle tijdblokken"
+                    },
+                    "uk": {
+                      "title": "Усі часові блоки"
+                    }
+                  },
+                  "value": -1
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "1 Zeitblock"
+                    },
+                    "en": {
+                      "title": "1 time block"
+                    },
+                    "es": {
+                      "title": "1 bloque de tiempo"
+                    },
+                    "fr": {
+                      "title": "1 bloc de temps"
+                    },
+                    "nl": {
+                      "title": "1 tijdblok"
+                    },
+                    "uk": {
+                      "title": "1 часовий блок"
+                    }
+                  },
+                  "value": 1
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "2 Zeitblöcke"
+                    },
+                    "en": {
+                      "title": "2 time blocks"
+                    },
+                    "es": {
+                      "title": "2 bloques de tiempo"
+                    },
+                    "fr": {
+                      "title": "2 blocs de temps"
+                    },
+                    "nl": {
+                      "title": "2 tijdblokken"
+                    },
+                    "uk": {
+                      "title": "2 часові блоки"
+                    }
+                  },
+                  "value": 2
+                }
+              ],
+              "title_field": "title",
+              "value_field": "value"
+            }
+          }
+        },
+        "tenant_ids": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Standorte"
+              },
+              "en": {
+                "title": "Sites"
+              },
+              "es": {
+                "title": "Ubicaciones"
+              },
+              "fr": {
+                "title": "Sites"
+              },
+              "nl": {
+                "title": "Locaties"
+              },
+              "uk": {
+                "title": "Локації"
+              }
+            },
+            "order": 3,
+            "control": "multi-select",
+            "input_data": {
+              "data": [
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "Dokkum"
+                    },
+                    "en": {
+                      "title": "Dokkum"
+                    },
+                    "es": {
+                      "title": "Dokkum"
+                    },
+                    "fr": {
+                      "title": "Dokkum"
+                    },
+                    "nl": {
+                      "title": "Dokkum"
+                    },
+                    "uk": {
+                      "title": "Доккюм"
+                    }
+                  },
+                  "value": 1
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "Bad Hersfeld"
+                    },
+                    "en": {
+                      "title": "Bad Hersfeld"
+                    },
+                    "es": {
+                      "title": "Bad Hersfeld"
+                    },
+                    "fr": {
+                      "title": "Bad Hersfeld"
+                    },
+                    "nl": {
+                      "title": "Bad Hersfeld"
+                    },
+                    "uk": {
+                      "title": "Бад-Герсфельд"
+                    }
+                  },
+                  "value": 2
+                }
+              ],
+              "title_field": "title",
+              "value_field": "value"
+            }
+          }
+        },
+        "steps": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Schritte"
+              },
+              "en": {
+                "title": "Steps"
+              },
+              "es": {
+                "title": "Pasos"
+              },
+              "fr": {
+                "title": "Étapes"
+              },
+              "nl": {
+                "title": "Stappen"
+              },
+              "uk": {
+                "title": "Кроки"
+              }
+            },
+            "order": 4,
+            "control": "multi-select",
+            "input_data": {
+              "src": [
+                "get_step_categories"
+              ],
+              "params": [],
+              "title_field": "step",
+              "value_field": "step"
+            }
+          }
+        },
+        "types": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Art"
+              },
+              "en": {
+                "title": "Type"
+              },
+              "es": {
+                "title": "Tipo"
+              },
+              "fr": {
+                "title": "Type"
+              },
+              "nl": {
+                "title": "Soort"
+              },
+              "uk": {
+                "title": "Тип"
+              }
+            },
+            "order": 5,
+            "control": "multi-select",
+            "input_data": {
+              "src": [
+                "get_lane_item_types"
+              ],
+              "params": [],
+              "title_field": "type",
+              "value_field": "type"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

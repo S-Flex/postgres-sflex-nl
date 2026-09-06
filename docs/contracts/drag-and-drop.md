@@ -146,9 +146,9 @@ Columns the source must accept on update when `commit: "mutation"`:
 | `drag_commit: true` | `drop.commit: "mutation"` |
 | `occurence_field` | dropped — a copy is a new lane item |
 | `instance_field` | dropped — same |
-| `is_fixed_field` | `is_fixed_group_field` (legacy alias, drop it) |
+| `is_fixed_field` | `fixed_group_field` (was `is_fixed_group_field` until 2026-09-05; `is_` marks a boolean, this is the delivery class) (legacy alias, drop it) |
 | `is_pinned_field` | unchanged, stays on `timeline_config` |
-| `plan_config.is_atomic_field` | `no_split_field` on `timeline_config` |
+| `plan_config.is_atomic_field` | `no_split_field` on `timeline_config` (56 renamed 6 sep) |
 
 **`drag_group_fields` inverts.** It currently names the levels a drag **may cross**;
 `within_fields` names the levels it **may not**. On `print_schedule` the old key happens to
@@ -200,11 +200,11 @@ On `nest_resource_schedule`, `within_fields` already pins a card to its lane, so
 
 ## Related contracts
 
-- `timeline_config.next_start_offset_in_seconds_field` — the axis step for the free chain.
+- `timeline_config.next_start_offset_field` (was `next_start_offset_in_seconds_field`, 6 sep) — the axis step for the free chain.
   Its single home is `timeline_config`: the chain is a board property, not a label one
   (corrected 27 aug, it sat a level too deep on `label_options`). It does **not** space a
   fixed group: those items run back-to-back by `duration_in_seconds` in `order_field` order.
-- `timeline_config.is_fixed_group_field` — a nullable group **number**, not a boolean. Every
+- `timeline_config.fixed_group_field` — a nullable group **number**, not a boolean. Every
   row of group `"18"` shares the value. Same home and same correction as the key above. The
   layout only treats a board as scheduled when a lane actually carries the column, not merely
   because the key is named.

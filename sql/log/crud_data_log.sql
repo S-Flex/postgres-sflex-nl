@@ -78,6 +78,24 @@ begin
 
   end loop;
 
+  -- keep the shift aggregate current: rebuild the machine-days this batch
+  -- touched. The date is the Amsterdam day of start_at, and the day before
+  -- as well, because a night window of yesterday runs into today
+  perform log.upsert_state_shift_agg(d.shift_date, d.resource_uids)
+  from (
+      select dd.shift_date,
+             array_agg(distinct (e.value -> 'data' ->> 'resource_uid')) as resource_uids
+      from jsonb_array_elements(p_param_json) as e(value)
+      cross join lateral (
+          values (((e.value -> 'data' ->> 'start_at')::timestamptz at time zone 'Europe/Amsterdam')::date),
+                 (((e.value -> 'data' ->> 'start_at')::timestamptz at time zone 'Europe/Amsterdam')::date - 1)
+      ) as dd(shift_date)
+      where e.value ->> 'crud' is distinct from 'delete'
+        and e.value -> 'data' ->> 'resource_uid' is not null
+        and e.value -> 'data' ->> 'start_at' is not null
+      group by dd.shift_date
+  ) d;
+
   if p_no_results then return; end if;
 
 end;

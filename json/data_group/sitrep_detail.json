@@ -6,7 +6,7 @@
       "src": [
         "get_sitrep_detail"
       ],
-      "layout": "cards",
+      "layout": "flow-board",
       "params": [
         {
           "key": "day_offset",
@@ -24,20 +24,6 @@
         }
       ],
       "widget_id": "sitrep_detail",
-      "row_options": {
-        "nav": {
-          "on_select": {
-            "path": "(detail:uploader-data)",
-            "params": [
-              {
-                "key": "orderline_id",
-                "is_query_param": true
-              }
-            ]
-          }
-        },
-        "selectable": true
-      },
       "field_config": {
         "sqm": {
           "ui": {
@@ -60,9 +46,7 @@
               "uk": {
                 "title": "м²"
               }
-            },
-            "order": 9,
-            "class_name": "col-span-1"
+            }
           },
           "scale": 2
         },
@@ -92,9 +76,7 @@
               "uk": {
                 "title": "Замовлення"
               }
-            },
-            "order": 1,
-            "class_name": "col-span-2"
+            }
           },
           "nav": {
             "path": "https://v2.proboview.nl/orders/edit/{order_id}"
@@ -156,9 +138,7 @@
               "uk": {
                 "title": "Рядок виробничого замовлення"
               }
-            },
-            "order": 0,
-            "class_name": "col-span-2"
+            }
           },
           "nav": {
             "path": "https://v2.proboview.nl/orders/edit/{order_id}/sales-orderlines/{sales_orderline_id}/production-orderlines"
@@ -185,9 +165,7 @@
               "uk": {
                 "title": "Матеріал"
               }
-            },
-            "order": 5,
-            "class_name": "col-span-6"
+            }
           }
         },
         "product_width": {
@@ -211,9 +189,7 @@
               "uk": {
                 "title": "Ширина"
               }
-            },
-            "order": 7,
-            "class_name": "col-span-2"
+            }
           }
         },
         "order_location": {
@@ -242,9 +218,7 @@
               "uk": {
                 "title": "Кількість"
               }
-            },
-            "order": 6,
-            "class_name": "col-span-1"
+            }
           }
         },
         "product_height": {
@@ -268,9 +242,7 @@
               "uk": {
                 "title": "Висота"
               }
-            },
-            "order": 8,
-            "class_name": "col-span-2"
+            }
           }
         },
         "production_date": {
@@ -295,8 +267,6 @@
                 "title": "Дата виробництва"
               }
             },
-            "order": 3,
-            "class_name": "col-span-4",
             "type": "datetime"
           },
           "type": "date"
@@ -323,9 +293,7 @@
                 "title": "Виробнича лінія"
               }
             },
-            "order": 10,
-            "control": "i18n-text",
-            "class_name": "col-span-3"
+            "control": "i18n-text"
           }
         },
         "status_sequence": {
@@ -359,9 +327,7 @@
               "uk": {
                 "title": "Рядок продажу"
               }
-            },
-            "order": 2,
-            "class_name": "col-span-2"
+            }
           }
         },
         "production_location": {
@@ -386,9 +352,7 @@
                 "title": "Місце виробництва"
               }
             },
-            "order": 11,
-            "control": "badge",
-            "class_name": "col-span-3"
+            "control": "badge"
           }
         },
         "production_order_id": {
@@ -418,10 +382,8 @@
                 "title": "Статус"
               }
             },
-            "order": 4,
             "control": "badge",
-            "no_label": true,
-            "class_name": "col-span-2"
+            "no_label": true
           }
         },
         "product_unit_quantity": {
@@ -440,7 +402,141 @@
           }
         }
       },
-      "fields_class_name": "grid grid-cols-6 gap-1"
+      "flow_board_config": {
+        "layout": "flow-container",
+        "group_by": [
+          "internal_status_code"
+        ],
+        "row_options": {
+          "colexp": true,
+          "checkable": false,
+          "selectable": false
+        },
+        "field_config": {
+          "internal_status_code": {
+            "ui": {
+              "order": 0,
+              "control": "badge",
+              "no_label": true,
+              "class_name": "col-span-4"
+            }
+          },
+          "orderline_id": {
+            "ui": {
+              "order": 1,
+              "class_name": "col-span-1"
+            },
+            "aggregate_fn": "count"
+          },
+          "sqm": {
+            "ui": {
+              "order": 2,
+              "class_name": "col-span-1"
+            },
+            "aggregate_fn": "sum"
+          }
+        },
+        "fields_class_name": "grid grid-cols-6 gap-1",
+        "children": [
+          {
+            "layout": "flow-cards",
+            "row_options": {
+              "nav": {
+                "on_select": {
+                  "path": "(detail:uploader-data)",
+                  "params": [
+                    {
+                      "key": "orderline_id",
+                      "is_query_param": true
+                    }
+                  ]
+                }
+              },
+              "colexp": false,
+              "checkable": false,
+              "selectable": true
+            },
+            "field_config": {
+              "orderline_id": {
+                "ui": {
+                  "order": 0,
+                  "class_name": "col-span-2 @xl:col-span-1"
+                }
+              },
+              "number": {
+                "ui": {
+                  "order": 1,
+                  "class_name": "col-span-2 @xl:col-span-2"
+                }
+              },
+              "sales_orderline_id": {
+                "ui": {
+                  "order": 2,
+                  "class_name": "col-span-2 @xl:col-span-1"
+                }
+              },
+              "production_date": {
+                "ui": {
+                  "order": 3,
+                  "class_name": "col-span-6 @xl:col-span-2"
+                }
+              },
+              "material_name": {
+                "ui": {
+                  "order": 4,
+                  "class_name": "col-span-6 @xl:col-span-6"
+                }
+              },
+              "product_amount": {
+                "ui": {
+                  "order": 5,
+                  "class_name": "col-span-1 @xl:col-span-1"
+                }
+              },
+              "product_width": {
+                "ui": {
+                  "order": 6,
+                  "class_name": "col-span-2 @xl:col-span-1"
+                }
+              },
+              "product_height": {
+                "ui": {
+                  "order": 7,
+                  "class_name": "col-span-2 @xl:col-span-1"
+                }
+              },
+              "sqm": {
+                "ui": {
+                  "order": 8,
+                  "class_name": "col-span-1 @xl:col-span-1"
+                }
+              },
+              "production_line": {
+                "ui": {
+                  "order": 9,
+                  "class_name": "col-span-3 @xl:col-span-4"
+                }
+              },
+              "production_location": {
+                "ui": {
+                  "order": 10,
+                  "class_name": "col-span-3 @xl:col-span-4"
+                }
+              }
+            },
+            "fields_class_name": "@container grid grid-cols-6 @xl:grid-cols-12 gap-1"
+          }
+        ],
+        "search": [
+          "number",
+          "orderline_id",
+          "sales_orderline_id",
+          "material_name",
+          "production_line",
+          "production_location"
+        ]
+      },
+      "window_class_name": "p-8"
     }
   ]
 }

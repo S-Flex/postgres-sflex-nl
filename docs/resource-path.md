@@ -52,7 +52,7 @@ geen uitzondering maar hetzelfde principe — het pad loopt door tot het niveau
 waarop het imposeren echt verschilt. Zulke resources zijn niet af te leiden en
 worden bewust aangemaakt. `mock.material_impose_plan.resource_path` wijst naar
 het niveau dat van toepassing is; deze resources zijn de lanes van
-`impose_resource_plan`.
+`resource_plan` (voorheen `impose_resource_plan`).
 
 ### positie 5 is de sleutel voor cutters
 

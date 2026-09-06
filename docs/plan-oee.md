@@ -351,7 +351,10 @@ De stapel (besloten 2026-09-04): onderin producing (incl. setup, via
 verliezen die als eigen vlak getekend worden (`shown_loss_in_seconds`: de
 aangevinkte states zonder `counts_as` — starved, blocked, idle); aangevinkte
 breakdown/offline gaan uit de `unavailable`-rest. Zo sluit de stapel bij elke
-selectie op het venster. `running` wordt in de functie overgeslagen — het is
+selectie op het venster. Een sub-state van een bucket (setup, missingdata) is
+alleen een eigen rij als hij zelf is aangevinkt; anders vouwt hij in de
+bucket-rij, zodat de tooltip-regel producing gelijk is aan
+`producing_in_seconds` (besloten 4 sep: setup hoort bij producing). `running` wordt in de functie overgeslagen — het is
 de envelope van `producing + starved.running` en zou dubbeltellen — en staat
 daarom ook niet meer in het filter (64), net als `missingdata`.
 

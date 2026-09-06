@@ -273,9 +273,9 @@
         "group_by": [
           "cutoff_window_end_at"
         ],
-        "label_field": "delivery_hours",
+        "title_field": "delivery_hours",
         "set_order_field": "threshold",
-        "label_suffix_field": "threshold_json"
+        "title_suffix_field": "threshold_json"
       },
       "fields_class_name": "grid grid-cols-6 gap-1"
     }

@@ -97,7 +97,7 @@ Rows, one set:
 Columns (superset of 78, so the client renders it with the same config):
 
 `tenant_id, tenant_name, production_company_id, resource_uid, resource_name,
-step, level, lane_item_id, sort_order, is_pinned, is_fixed_group,
+step, level, lane_item_id, sort_order, is_pinned, fixed_group,
 start_offset_in_seconds, next_start_offset_in_seconds, duration_in_seconds,
 start_at, nest_ids, nest_count, material_id, material_name,
 impact_json, sqm, gross_sqm, forecast_sqm, part_status_json,

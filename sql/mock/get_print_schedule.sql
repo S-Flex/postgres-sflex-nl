@@ -1,4 +1,16 @@
--- the return type gains nest_moment_code, so create or replace cannot do it
+-- The return type gained nest_moment_code, so create or replace cannot do it.
+--
+-- Performance (measured 2026-09-04, line sheet, 1362 rows): 465-545 ms -> ~250 ms
+-- with the same output. Three changes, none to the semantics:
+--   * the evaluator is handed only the variables the formulas read
+--     (needed_key): its cost grows with the number of keys, 19 keys cost four
+--     times 7
+--   * the constants of a material (line_json, specs) are cleaned once per
+--     material (material_vars), not once per row and panel size
+--   * one evaluation per distinct variable set instead of per row (calc)
+-- get_interval_dates now gets p_tenant_ids, like the axis and the anchor:
+-- without it one tenant's day off shifted every interval (same fix as in
+-- get_plan_lanes).
 drop function if exists mock.get_print_schedule(timestamp with time zone, text, integer[], boolean);
 
 create function mock.get_print_schedule(p_until timestamp with time zone DEFAULT now(), p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_only_starting_today boolean DEFAULT false) returns TABLE(material_id integer, material_name text, production_line_id integer, tenant_id integer, tenant_name text, date date, nest_moment_code text, day_offset integer, start_offset_in_seconds integer, duration_in_seconds integer, class_names text[], actual_sqm numeric, forecast_sqm numeric, param_json jsonb)
@@ -88,6 +100,14 @@ BEGIN
                      CROSS JOIN LATERAL jsonb_array_elements(l.lookup_json) AS v(value)
             WHERE l.lookup = 'lookup_nest_moments'
         ),
+        -- the variables the formulas read: every identifier on a right-hand
+        -- side. The evaluator's cost grows with the number of variables it is
+        -- handed (19 keys cost four times 7), so nothing else goes in
+        needed_key AS (
+            SELECT DISTINCT m[1] AS key
+            FROM jsonb_array_elements_text(v_formula) AS f(line)
+                     CROSS JOIN LATERAL regexp_matches(split_part(f.line, '=', 2), '[A-Za-z_][A-Za-z0-9_]*', 'g') AS m
+        ),
         forecast AS (
             SELECT f.production_company_id,
                    f.material_id,
@@ -119,6 +139,52 @@ BEGIN
             WHERE mps.line = p_line_type
               AND (p_tenant_ids IS NULL OR mps.tenant_id = ANY (p_tenant_ids))
         ),
+        -- the constants of a material, once per material instead of once per
+        -- row: the numeric keys of line_json the formulas read (a key here
+        -- overrides the board default), and per panel size the raw spec plus
+        -- its numeric keys. The evaluator takes numbers only, so numeric texts
+        -- are cast and the rest is dropped.
+        -- MATERIALIZED: referenced once, so the planner inlined it into
+        -- row_base and rebuilt it for every card row (66 materials x 1.178
+        -- rows, 5 s with only_starting_today); now it is built once
+        material_vars AS MATERIALIZED (
+            SELECT m.material_id, m.production_line_id,
+                   coalesce((SELECT jsonb_object_agg(e.key, to_jsonb(n.num))
+                             FROM jsonb_each(mpl.line_json - 'specs') AS e
+                                      JOIN needed_key k ON k.key = e.key
+                                      CROSS JOIN LATERAL (
+                                 SELECT CASE
+                                            WHEN jsonb_typeof(e.value) = 'number'
+                                                THEN (e.value #>> '{}')::numeric
+                                            WHEN jsonb_typeof(e.value) = 'string'
+                                                AND (e.value #>> '{}') ~ '^\s*-?\d+(\.\d+)?\s*$'
+                                                THEN (e.value #>> '{}')::numeric
+                                            END AS num
+                                 ) n
+                             WHERE n.num IS NOT NULL), '{}'::jsonb) AS line_vars,
+                   coalesce((SELECT jsonb_agg(jsonb_build_object(
+                                                  'spec', spec.value,
+                                                  'vars', coalesce((SELECT jsonb_object_agg(e.key, to_jsonb(n.num))
+                                                                    FROM jsonb_each(spec.value) AS e
+                                                                             JOIN needed_key k ON k.key = e.key
+                                                                             CROSS JOIN LATERAL (
+                                                                        SELECT CASE
+                                                                                   WHEN jsonb_typeof(e.value) = 'number'
+                                                                                       THEN (e.value #>> '{}')::numeric
+                                                                                   WHEN jsonb_typeof(e.value) = 'string'
+                                                                                       AND (e.value #>> '{}') ~ '^\s*-?\d+(\.\d+)?\s*$'
+                                                                                       THEN (e.value #>> '{}')::numeric
+                                                                                   END AS num
+                                                                        ) n
+                                                                    WHERE n.num IS NOT NULL), '{}'::jsonb))
+                                              ORDER BY spec.ord)
+                             FROM jsonb_array_elements(coalesce(mpl.line_json -> 'specs', '[]'::jsonb))
+                                      WITH ORDINALITY AS spec(value, ord)), '[]'::jsonb) AS spec_vars
+            FROM (SELECT DISTINCT material_id, production_line_id FROM material) m
+                     LEFT JOIN mapping.material_production_line mpl
+                               ON mpl.material_id = m.material_id
+                                   AND mpl.production_line_id = m.production_line_id
+        ),
         production_day AS (
             -- step one: the production days of every material, from its own
             -- start date and interval, and the column each one occupies
@@ -141,7 +207,10 @@ BEGIN
                          v_days,
                          false, -- weekends are not part of the axis
                          false, -- mandatory days off are not part of the axis
-                         0) AS i(interval_date)
+                         0,
+                         -- the same tenants as the axis and the anchor: without
+                         -- them one tenant's day off shifts every interval
+                         p_tenant_ids) AS i(interval_date)
                      JOIN workday w ON w.date = i.interval_date
         ),
         card AS (
@@ -174,59 +243,52 @@ BEGIN
                    t.tenant_name,
                    f.actual_sqm,
                    f.forecast_sqm,
-                   coalesce(mpl.line_json -> 'specs', '[]'::jsonb) AS specs,
+                   mv.spec_vars,
                    -- everything the formulas need except the panel size itself
-                   v_params
-                       || coalesce(mpl.line_json - 'specs', '{}'::jsonb)
+                   (SELECT coalesce(jsonb_object_agg(e.key, e.value), '{}'::jsonb)
+                    FROM jsonb_each(v_params) e
+                             JOIN needed_key k ON k.key = e.key)
+                       || mv.line_vars
                        || jsonb_build_object(
                               'forecast_sqm', coalesce(f.forecast_sqm, 0),
-                              'actual_sqm', coalesce(f.actual_sqm, 0)) AS vars
+                              'actual_sqm', coalesce(f.actual_sqm, 0)) AS vars,
+                   -- the key calc is joined back on: one text per distinct
+                   -- variable set, so the join can hash instead of comparing
+                   -- jsonb row by row
+                   md5(coalesce(mv.line_vars::text, '') || '|' || coalesce(mv.spec_vars::text, '')
+                       || '|' || coalesce(f.forecast_sqm, 0)::text || '|' || coalesce(f.actual_sqm, 0)::text) AS calc_key
             FROM card c
                      LEFT JOIN tenant t ON t.tenant_id = c.tenant_id
-                     LEFT JOIN mapping.material_production_line mpl
-                               ON mpl.material_id = c.material_id
-                                   AND mpl.production_line_id = c.production_line_id
+                     LEFT JOIN material_vars mv
+                               ON mv.material_id = c.material_id
+                                   AND mv.production_line_id = c.production_line_id
                      LEFT JOIN forecast f
                                ON f.production_company_id = t.production_company_id
                                    AND f.material_id = c.material_id
                                    AND f.date = c.date
         ),
-        calc AS (
-            -- one evaluation per panel size, only the keys the board reads are
-            -- kept because every row carries this payload
-            SELECT r.row_id,
+        -- one evaluation per distinct variable set, not per row: the moments
+        -- that share a date and the days without a forecast share their
+        -- numbers. Only the keys the board reads are kept, every row carries
+        -- this payload
+        calc AS MATERIALIZED (
+            SELECT v.calc_key,
                    jsonb_agg(jsonb_build_object(
-                           'width', spec.value -> 'width',
-                           'height', spec.value -> 'height',
+                           'width', s.value -> 'spec' -> 'width',
+                           'height', s.value -> 'spec' -> 'height',
                            'forecast_panels', round((c.result ->> 'forecast_panels')::numeric),
                            'actual_panels', round((c.result ->> 'actual_panels')::numeric)
-                             ) ORDER BY spec.ord)                                             AS specs,
+                             ) ORDER BY s.ord)                                             AS specs,
                    -- the impacts follow the area, so every size returns the same
                    min(round((c.result ->> 'standard_production_impact_in_seconds')::numeric)) AS standard_impact,
                    min(round((c.result ->> 'fast_production_impact_in_seconds')::numeric))     AS fast_impact
-            FROM row_base r
-                     CROSS JOIN LATERAL jsonb_array_elements(r.specs)
-                         WITH ORDINALITY AS spec(value, ord)
-                     -- the evaluator takes numbers only, so objects, arrays and
-                     -- booleans are dropped and numeric texts are cast
+            FROM (SELECT DISTINCT r.calc_key, r.vars, r.spec_vars FROM row_base r) v
+                     CROSS JOIN LATERAL jsonb_array_elements(v.spec_vars)
+                         WITH ORDINALITY AS s(value, ord)
                      CROSS JOIN LATERAL (
-                         SELECT coalesce(jsonb_object_agg(e.key, to_jsonb(n.num)), '{}'::jsonb) AS vars
-                         FROM jsonb_each(r.vars || spec.value) AS e
-                                  CROSS JOIN LATERAL (
-                             SELECT CASE
-                                        WHEN jsonb_typeof(e.value) = 'number'
-                                            THEN (e.value #>> '{}')::numeric
-                                        WHEN jsonb_typeof(e.value) = 'string'
-                                            AND (e.value #>> '{}') ~ '^\s*-?\d+(\.\d+)?\s*$'
-                                            THEN (e.value #>> '{}')::numeric
-                                        END AS num
-                             ) n
-                         WHERE n.num IS NOT NULL
-                         ) v
-                     CROSS JOIN LATERAL (
-                         SELECT evaluate_many_nas(v_formula, v.vars) AS result
+                         SELECT evaluate_many_nas(v_formula, v.vars || (s.value -> 'vars')) AS result
                          ) c
-            GROUP BY r.row_id
+            GROUP BY v.calc_key
         )
         SELECT r.material_id,
                r.material_name,
@@ -257,9 +319,18 @@ BEGIN
                        'standard_production_impact_in_seconds', c.standard_impact,
                        'fast_production_impact_in_seconds', c.fast_impact)
         FROM row_base r
-                 LEFT JOIN calc c ON c.row_id = r.row_id
+                 LEFT JOIN calc c ON c.calc_key = r.calc_key
         ORDER BY r.tenant_name, r.material_name, r.production_day_index, r.date, r.nest_moment_code;
 END;
 $$;
 
 alter function mock.get_print_schedule(timestamp with time zone, text, integer[], boolean) owner to xfw3;
+
+-- p_only_starting_today changes the shape of the query (the filter on
+-- first_date folds away when it is false). After five calls in one session
+-- plpgsql switches to a generic plan for both values, and that plan was
+-- 4-9 s for the unfiltered call (pg_stat_statements: min 54 ms, max 9.351
+-- ms for the same statement). A custom plan per call costs ~5 ms of
+-- planning and keeps both shapes fast; same setting as
+-- mapping.get_production_orderline_detail.
+alter function mock.get_print_schedule(timestamp with time zone, text, integer[], boolean) set plan_cache_mode = force_custom_plan;

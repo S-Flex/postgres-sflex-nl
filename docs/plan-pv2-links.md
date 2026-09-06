@@ -27,8 +27,8 @@ een aparte stap (lookup of env), nu hardcoded zoals de bestaande vier.
 | `batch` | `nest_name` | nests | `order_id` + `production_orderline_id` aanwezig |
 | `nest_schedule_queue` | `number` | order | `get_production_orderline_manifest` levert alle drie |
 | `nest_schedule_queue` | `production_orderline_id` | orderregel | |
-| `production_board_detail` | `number` | order | `get_production_orderline_detail` levert alle drie |
-| `production_board_detail` | `production_orderline_id` | orderregel | |
+| `orderinfo` (was `production_board_detail`) | `number` | order | `get_production_orderline_detail` levert alle drie |
+| `orderinfo` | `production_orderline_id` | orderregel | |
 | `uploader_data_list` | `order_id` | order | orderregel-link bestaat er al |
 | `time_on_status` | `production_orderline_id` | **nests** | `sales_orderline_id` ontbreekt in `get_time_on_status`, maar `order_id` + `production_orderline_id` zijn er — de nests-variant kan dus zónder functiewijziging; wil je daar de orderregel-link, dan hoort hij in fase 2 |
 
@@ -59,7 +59,7 @@ drop + create, dus per functie één script samen met de data_group-update.
   geen eenduidige `{production_orderline_id}` voor de nests-url. Alleen
   zinvol als PV2 een eigen nest- of batch-pagina heeft. **Vraag: bestaat er
   een PV2-url voor een nest of batch los van de orderregel?**
-- **Batch-borden** — `plan_timeline`, `production_resource_plan`,
+- **Batch-borden** — `plan_timeline`, `resource_plan`,
   `resource_oee_timeline`, `planning_info` hebben alleen `batch_id`/`batch_name`;
   zelfde vraag als hierboven.
 - `sitrep_detail` en `orderline_list` zijn al compleet (order + orderregel).

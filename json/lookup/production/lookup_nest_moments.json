@@ -14,7 +14,7 @@
         }
       }
     ],
-    "is_fixed_group": "30"
+    "fixed_group": "30"
   },
   {
     "code": "24",
@@ -31,7 +31,7 @@
         }
       }
     ],
-    "is_fixed_group": "24"
+    "fixed_group": "24"
   },
   {
     "code": "18",
@@ -48,7 +48,7 @@
         }
       }
     ],
-    "is_fixed_group": "18"
+    "fixed_group": "18"
   },
   {
     "code": "48",

@@ -1,14 +1,10 @@
 # planned — ontworpen, nog niet uitgerold
 
-Deze bestanden beschrijven het **volgende** impositiemodel: lidmaatschap van
-imposities in lane items als append-only reeks (`moved_at`), met verwijzingen
-naar `production.imposition` in plaats van `legacy.nest`. Geen van deze
-objecten staat in de database.
+Wat hier stond (de append-only `imposition_lane_item`, `get_lane_item_impositions`,
+`crud_imposition_lane_item`) is op 5 sep 2026 uitgerold als stap 2 van
+`docs/plan-lane-model.md`; de bestanden staan nu in `sql/action/`.
 
-Wat er nu wél live is: `action.imposition_lane_item` als **platte** linktabel
-(`imposition_id`, `lane_item_id`, `sort_order`), waarbij `imposition_id`
-voorlopig een alias van `legacy.nest.nest_id` is. Zie
-`sql/action/imposition_lane_item.sql`.
-
-De stap hiernaartoe is de verhuizing van `legacy.nest` naar
-`production.imposition`.
+Wat nog open staat: `imposition_id` is een alias van `legacy.nest.nest_id`
+zonder foreign key. Zodra de verhuizing van `legacy.nest` naar
+`production.imposition` rond is, krijgt de kolom een foreign key naar
+`production.imposition` en verhuizen de bestaande id's mee.

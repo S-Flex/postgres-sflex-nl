@@ -30,7 +30,9 @@ as $$
                 WHERE pl.line_type = p_line_type)
         RETURNING plan_id
     ),
-    -- material lanes: one fresh lane per pattern row, no resource paths
+    -- group lanes: one fresh lane per pattern row, with the imposition group
+    -- of the row on it (imposition_group_lane); the group ids were seeded 1:1
+    -- from the material ids
     new_lane AS (
         INSERT INTO action.lane (lane_date)
         SELECT p_date FROM pattern
@@ -38,6 +40,14 @@ as $$
     ),
     numbered_lane AS (
         SELECT nl.lane_id, row_number() OVER (ORDER BY nl.lane_id) AS rn FROM new_lane nl
+    ),
+    new_group_lane AS (
+        INSERT INTO action.imposition_group_lane (lane_id, imposition_group_id)
+        SELECT nl.lane_id, p.material_id
+        FROM numbered_lane nl
+        JOIN numbered_pattern p USING (rn)
+        WHERE p.material_id IS NOT NULL
+        RETURNING lane_id
     ),
     new_plan_lane AS (
         INSERT INTO action.plan_lane (plan_id, lane_id, sort_order)
@@ -52,9 +62,9 @@ as $$
     new_lane_item AS (
         INSERT INTO action.lane_item
             (lane_id, sort_order, start_offset_in_seconds, is_pinned,
-             no_split, level, source, source_ref)
+             no_split, type, source, source_ref)
         SELECT nl.lane_id, p.sort_order, p.start_offset_in_seconds,
-               coalesce(p.is_pinned, false), true, 0,
+               coalesce(p.is_pinned, false), true, 'plan',
                'material-plan', p.material_impose_plan_id || ':' || p_date
         FROM numbered_lane nl
         JOIN numbered_pattern p USING (rn)

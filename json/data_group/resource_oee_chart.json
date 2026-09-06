@@ -4,7 +4,7 @@
   "data_group_json": [
     {
       "src": [
-        "get_resource_oee_aggregate"
+        "get_resource_state_shift_totals"
       ],
       "layout": "donut-chart",
       "params": [
@@ -14,55 +14,193 @@
           "is_query_param": true
         },
         {
-          "key": "line_type",
-          "default_value": null
-        },
-        {
-          "key": "from",
-          "is_optional": true,
-          "is_query_param": false
-        },
-        {
           "key": "until",
           "is_optional": true,
           "is_query_param": true
+        },
+        {
+          "key": "days",
+          "default_value": 1
+        },
+        {
+          "key": "line_type",
+          "is_optional": true,
+          "is_query_param": true
+        },
+        {
+          "key": "states",
+          "is_optional": true,
+          "default_value": [
+            "producing"
+          ],
+          "is_query_param": true
+        },
+        {
+          "key": "include_shifts",
+          "default_value": false
+        },
+        {
+          "key": "group_by",
+          "default_value": "resource"
         }
       ],
       "widget_id": "resource_oee",
       "field_config": {
-        "state.producing": {
+        "state": {
           "ui": {
-            "i18n": {
-              "en": {
-                "title": "Production"
-              },
-              "nl": {
-                "title": "Productie"
-              }
-            }
+            "hidden": true
           }
         },
-        "state.i18n": {
+        "state_json": {
           "ui": {
-            "control": "i18n-text"
+            "hidden": true
+          }
+        },
+        "counts_as": {
+          "ui": {
+            "hidden": true
+          }
+        },
+        "duration_seconds": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Dauer"
+              },
+              "en": {
+                "title": "Duration"
+              },
+              "es": {
+                "title": "Duración"
+              },
+              "fr": {
+                "title": "Durée"
+              },
+              "nl": {
+                "title": "Duur"
+              },
+              "uk": {
+                "title": "Тривалість"
+              }
+            },
+            "type": "duration"
+          }
+        },
+        "oee_json.producing_oee": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "OEE"
+              },
+              "en": {
+                "title": "OEE"
+              },
+              "es": {
+                "title": "OEE"
+              },
+              "fr": {
+                "title": "OEE"
+              },
+              "nl": {
+                "title": "OEE"
+              },
+              "uk": {
+                "title": "OEE"
+              }
+            },
+            "type": "percent"
+          }
+        },
+        "oee_json.planned_percentage": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Geplant"
+              },
+              "en": {
+                "title": "Planned"
+              },
+              "es": {
+                "title": "Planificado"
+              },
+              "fr": {
+                "title": "Planifié"
+              },
+              "nl": {
+                "title": "Gepland"
+              },
+              "uk": {
+                "title": "Заплановано"
+              }
+            },
+            "type": "percent"
+          }
+        },
+        "param_json.total_shift_in_seconds": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Schichtzeit"
+              },
+              "en": {
+                "title": "Shift time"
+              },
+              "es": {
+                "title": "Tiempo de turno"
+              },
+              "fr": {
+                "title": "Temps de poste"
+              },
+              "nl": {
+                "title": "Shifttijd"
+              },
+              "uk": {
+                "title": "Час зміни"
+              }
+            },
+            "type": "duration"
           }
         }
       },
       "donut_chart_config": {
         "mode": "duration",
-        "code_field": "state.code",
-        "show_legend": true,
-        "aggregate_fn": "sum",
-        "center_field": "state.producing",
-        "filter_field": "type",
-        "content_field": "state.i18n",
+        "set_field": "counts_as",
+        "set_order_field": "sort_order",
         "aggregate_field": "duration_seconds",
-        "group_by": [
-          "state.code"
-        ],
-        "class_names_field": "state.class_name",
-        "fill_field": "state.fill",
-        "color_field": "state.color"
+        "aggregate_fn": "sum",
+        "title_field": "state_json.i18n",
+        "fill_field": "state_json.fill",
+        "color_field": "state_json.color",
+        "class_names_field": "state_json.class_name",
+        "center": {
+          "field": "oee_json.producing_oee",
+          "type": "percent"
+        },
+        "set_overrides": {
+          "planned": {
+            "ring": "inner",
+            "max_field": "param_json.total_shift_in_seconds"
+          },
+          "available": {
+            "no_legend": true,
+            "no_tooltip": true
+          },
+          "unavailable": {
+            "no_legend": true
+          }
+        },
+        "legend": {
+          "filter_param": "states",
+          "items": [
+            "producing",
+            "setup",
+            "idle",
+            "starved",
+            "blocked",
+            "breakdown",
+            "offline"
+          ]
+        }
       }
     }
   ]

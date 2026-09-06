@@ -144,13 +144,15 @@ BEGIN
                (n.nest_json ->> 'production_line_id')::integer AS production_line_id,
                (COALESCE(pt.nest_date, n.nested_at) AT TIME ZONE 'Europe/Amsterdam')::date AS plan_date,
                extract(epoch FROM (COALESCE(pt.nest_date, n.nested_at) AT TIME ZONE 'Europe/Amsterdam')::time)::integer AS nest_seconds,
-               lower(COALESCE(n.nest_json ->> 'status', '')) LIKE 'cancel%' AS is_cancelled
+               lower(COALESCE(n.nest_json ->> 'status', '')) LIKE 'cancel%' AS is_cancelled,
+               -- one batch per lane item; a nest without a batch is its own group
+               coalesce(n.batch_id, 0) AS batch_key
         FROM param_table pt
         JOIN legacy.nest n ON n.nest_id = pt.nest_id
         WHERE pt.crud IN ('create', 'merge', 'update')
     )
-    SELECT p.nest_id, p.sort_order, p.nest_seconds, p.is_cancelled,
-           lane.lane_id, item.lane_item_id
+    SELECT p.nest_id, p.sort_order, p.nest_seconds, p.is_cancelled, p.batch_key,
+           lane.lane_id
     FROM payload p
     LEFT JOIN relation.production_line prl ON prl.line_id = p.production_line_id
     LEFT JOIN LATERAL (
@@ -163,61 +165,155 @@ BEGIN
         LIMIT 1
     ) tp ON true
     LEFT JOIN LATERAL (
-        -- the lane of the nest material on that plan, through the group
-        -- link of its lane items. imposition_group_id acts as an alias of
-        -- material_id for now (the groups were seeded 1:1 from the material
-        -- ids); later the nests resolve their real imposition group here.
-        SELECT l.lane_id
+        -- the lane of the nest material on that plan: the group lane.
+        -- imposition_group_id acts as an alias of material_id for now (the
+        -- groups were seeded 1:1 from the material ids); later the nests
+        -- resolve their real imposition group here.
+        -- The plan carries both tenants, so a material has one lane per
+        -- production line; the line of the nest decides which one. The line
+        -- of a lane sits on the pattern row its item was stamped from
+        -- (source_ref = <material_impose_plan_id>:<date>). Before this, the
+        -- first lane won and 1.338 nests of the other line landed on the
+        -- wrong tenant's item (24 aug - 4 sep).
+        SELECT igl.lane_id
         FROM action.plan_lane apl
-        JOIN action.lane l ON l.lane_id = apl.lane_id
-        JOIN action.lane_item li2 ON li2.lane_id = l.lane_id
-        JOIN action.imposition_group_lane_item igli ON igli.lane_item_id = li2.lane_item_id
+        JOIN action.imposition_group_lane igl ON igl.lane_id = apl.lane_id
+        JOIN action.lane_item li2 ON li2.lane_id = igl.lane_id AND li2.source = 'material-plan'
+        JOIN mock.material_impose_plan mip
+          ON mip.material_impose_plan_id = nullif(split_part(li2.source_ref, ':', 1), '')::bigint
         WHERE apl.plan_id = tp.plan_id
-          AND igli.imposition_group_id = p.material_id
+          AND igl.imposition_group_id = p.material_id
+          AND mip.production_line_id = p.production_line_id
+        ORDER BY apl.sort_order
         LIMIT 1
-    ) lane ON true
-    LEFT JOIN LATERAL (
-        SELECT li.lane_item_id
-        FROM action.lane_item li
-        WHERE li.lane_id = lane.lane_id
-          AND li.level = 0
-        ORDER BY (COALESCE(li.start_offset_in_seconds, 0) <= p.nest_seconds) DESC,
-                 CASE WHEN COALESCE(li.start_offset_in_seconds, 0) <= p.nest_seconds
-                      THEN -COALESCE(li.start_offset_in_seconds, 0)
-                      ELSE COALESCE(li.start_offset_in_seconds, 0) END
-        LIMIT 1
-    ) item ON true;
+    ) lane ON true;
 
-    -- lane found but no lane item at all: create one for this nest
+    -- ── one batch per lane item (docs/plan-lane-model.md stap 3b) ────────
+    -- Per (lane, batch) one item: the item whose current set carries the
+    -- batch; else an item without nests (the pattern item first, then by
+    -- sort_order), handed out one per batch; else a new item, source 'nest',
+    -- source_ref <lane_id>:<batch>, no time of its own (a filler the client
+    -- chains), no_split. A nest that gets its batch later moves from the
+    -- null-batch item to the batch item through the set write below.
+    CREATE TEMP TABLE batch_item ON COMMIT DROP AS
+    WITH need AS (
+        SELECT DISTINCT ns.lane_id, ns.batch_key
+        FROM nest_link ns
+        WHERE ns.lane_id IS NOT NULL AND NOT ns.is_cancelled
+    ),
+    item_batch AS (
+        -- the batch each plan item on those lanes carries today; null = no nests
+        SELECT li.lane_item_id, li.lane_id, li.sort_order, li.source,
+               (SELECT coalesce(n.batch_id, 0)
+                FROM action.get_lane_item_impositions(li.lane_item_id) x
+                JOIN legacy.nest n ON n.nest_id = x.imposition_id
+                LIMIT 1) AS batch_key
+        FROM action.lane_item li
+        WHERE li.type = 'plan'
+          AND li.lane_id IN (SELECT nd.lane_id FROM need nd)
+    ),
+    by_batch AS (
+        SELECT nd.lane_id, nd.batch_key, min(ib.lane_item_id) AS lane_item_id
+        FROM need nd
+        JOIN item_batch ib ON ib.lane_id = nd.lane_id AND ib.batch_key = nd.batch_key
+        GROUP BY nd.lane_id, nd.batch_key
+    ),
+    free_item AS (
+        SELECT ib.lane_id, ib.lane_item_id,
+               row_number() OVER (PARTITION BY ib.lane_id
+                                  ORDER BY (ib.source = 'material-plan') DESC, ib.sort_order, ib.lane_item_id) AS rn
+        FROM item_batch ib
+        WHERE ib.batch_key IS NULL
+    ),
+    needs_item AS (
+        SELECT nd.lane_id, nd.batch_key,
+               row_number() OVER (PARTITION BY nd.lane_id ORDER BY nd.batch_key) AS rn
+        FROM need nd
+        WHERE NOT EXISTS (SELECT 1 FROM by_batch bb
+                          WHERE bb.lane_id = nd.lane_id AND bb.batch_key = nd.batch_key)
+    )
+    SELECT bb.lane_id, bb.batch_key, bb.lane_item_id
+    FROM by_batch bb
+    UNION ALL
+    SELECT ni.lane_id, ni.batch_key, fi.lane_item_id
+    FROM needs_item ni
+    LEFT JOIN free_item fi ON fi.lane_id = ni.lane_id AND fi.rn = ni.rn;
+
+    -- the batches without an item get one, behind the existing items of the lane
     INSERT INTO action.lane_item
-        (lane_id, sort_order, start_offset_in_seconds, no_split, level, source, source_ref)
-    SELECT ns.lane_id, -1 * ns.nest_id, ns.nest_seconds, true, 0, 'nest', ns.nest_id::text
-    FROM nest_link ns
-    WHERE ns.lane_item_id IS NULL
-      AND ns.lane_id IS NOT NULL
-      AND NOT ns.is_cancelled
+        (lane_id, sort_order, start_offset_in_seconds, no_split, type, source, source_ref)
+    SELECT bi.lane_id,
+           (SELECT coalesce(max(li.sort_order), 0) FROM action.lane_item li WHERE li.lane_id = bi.lane_id)
+             + 1000 * row_number() OVER (PARTITION BY bi.lane_id ORDER BY bi.batch_key),
+           NULL, true, 'plan', 'nest', bi.lane_id || ':' || bi.batch_key
+    FROM batch_item bi
+    WHERE bi.lane_item_id IS NULL
     ON CONFLICT ON CONSTRAINT lane_item_source_ref_uq DO NOTHING;
 
-    -- replace the material-lane links of the payload nests as a set; the
-    -- pv2 machine links belong to action.crud_object and stay untouched.
-    -- Cancelled nests only lose their link. No plan or lane for the day:
-    -- no link, never an invented lane — the backfill catches it later.
-    DELETE FROM action.imposition_lane_item nli
-    USING action.lane_item li
-    WHERE nli.lane_item_id = li.lane_item_id
-      AND li.source IN ('material-plan', 'nest')
-      AND nli.imposition_id IN (SELECT ns.nest_id FROM nest_link ns);
+    UPDATE batch_item bi
+    SET lane_item_id = li.lane_item_id
+    FROM action.lane_item li
+    WHERE bi.lane_item_id IS NULL
+      AND li.source = 'nest' AND li.source_ref = bi.lane_id || ':' || bi.batch_key;
 
-    INSERT INTO action.imposition_lane_item (imposition_id, lane_item_id, sort_order)
-    SELECT ns.nest_id,
-           COALESCE(ns.lane_item_id, own.lane_item_id),
-           ns.sort_order
-    FROM nest_link ns
-    LEFT JOIN action.lane_item own
-           ON own.source = 'nest' AND own.source_ref = ns.nest_id::text
-    WHERE NOT ns.is_cancelled
-      AND COALESCE(ns.lane_item_id, own.lane_item_id) IS NOT NULL
+    -- a new item carries the group of its lane, like a pattern item does
+    INSERT INTO action.imposition_group_lane_item (imposition_group_id, lane_item_id)
+    SELECT igl.imposition_group_id, bi.lane_item_id
+    FROM batch_item bi
+    JOIN action.imposition_group_lane igl ON igl.lane_id = bi.lane_id
+    WHERE NOT EXISTS (SELECT 1 FROM action.imposition_group_lane_item g WHERE g.lane_item_id = bi.lane_item_id)
     ON CONFLICT DO NOTHING;
+
+    -- The material-lane sets are append-only (docs/plan-lane-model.md stap
+    -- 2): every item a payload nest leaves or joins gets its set written
+    -- anew — the current set minus the payload nests, plus the payload nests
+    -- that land on it. An item left without impositions gets the explicit
+    -- empty set (one row, imposition_id null), so it does not fall back to
+    -- inheriting. The pv2 machine links belong to action.crud_object and
+    -- stay untouched. Cancelled nests only leave. No plan or lane for the
+    -- day: no link, never an invented lane — the backfill catches it later.
+    WITH target AS (
+        SELECT ns.nest_id, ns.sort_order, bi.lane_item_id
+        FROM nest_link ns
+        JOIN batch_item bi ON bi.lane_id = ns.lane_id AND bi.batch_key = ns.batch_key
+        WHERE NOT ns.is_cancelled
+          AND bi.lane_item_id IS NOT NULL
+    ),
+    -- the material-lane items that hold a payload nest today, plus the
+    -- items the payload lands on
+    touched AS (
+        SELECT DISTINCT i.lane_item_id
+        FROM action.imposition_lane_item i
+        JOIN action.lane_item li ON li.lane_item_id = i.lane_item_id
+        WHERE li.source IN ('material-plan', 'nest')
+          AND i.imposition_id IN (SELECT ns.nest_id FROM nest_link ns)
+          AND i.moved_at = (SELECT max(x.moved_at) FROM action.imposition_lane_item x
+                            WHERE x.lane_item_id = i.lane_item_id)
+        UNION
+        SELECT t.lane_item_id FROM target t
+    ),
+    -- the current set of those items, without the payload nests
+    kept AS (
+        SELECT i.lane_item_id, i.imposition_id, i.sort_order
+        FROM action.imposition_lane_item i
+        JOIN touched t ON t.lane_item_id = i.lane_item_id
+        WHERE i.imposition_id IS NOT NULL
+          AND i.imposition_id NOT IN (SELECT ns.nest_id FROM nest_link ns)
+          AND i.moved_at = (SELECT max(x.moved_at) FROM action.imposition_lane_item x
+                            WHERE x.lane_item_id = i.lane_item_id)
+    ),
+    new_set AS (
+        SELECT lane_item_id, imposition_id, sort_order FROM kept
+        UNION ALL
+        SELECT t.lane_item_id, t.nest_id, t.sort_order FROM target t
+    )
+    INSERT INTO action.imposition_lane_item (lane_item_id, imposition_id, sort_order)
+    SELECT n.lane_item_id, n.imposition_id, n.sort_order
+    FROM new_set n
+    UNION ALL
+    SELECT t.lane_item_id, NULL, NULL
+    FROM touched t
+    WHERE NOT EXISTS (SELECT 1 FROM new_set n WHERE n.lane_item_id = t.lane_item_id);
 
     -- ── imposition → unit manifest ────────────────────────────────────
     -- What the imposition is made of, snapshotted from the orderline

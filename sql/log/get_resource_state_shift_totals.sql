@@ -30,6 +30,7 @@ declare
       -- available, unavailable always on top; a selected loss moves
       -- out of available, a selected breakdown/offline out of unavailable
       'available_in_seconds = max(production_in_seconds - producing_in_seconds - shown_loss_in_seconds, 0)',
+      -- percentages are 0-100, like every *_percentage in the database
       'producing_oee = production_in_seconds > 0 ? producing_in_seconds / production_in_seconds * 100 : 0',
       'breakdown_percentage = total_shift_in_seconds > 0 ? breakdown_in_seconds / total_shift_in_seconds * 100 : 0',
       'offline_percentage = total_shift_in_seconds > 0 ? offline_in_seconds / total_shift_in_seconds * 100 : 0',
@@ -242,32 +243,51 @@ begin
              ) as param_json
     ) ev
   ),
-  final_rows as (
-    -- the state rows the caller selected (planned always passes: the
-    -- plan line needs its values)
-    select b.shift_date,
-           coalesce(b.shift_index, 1) as shift_index,
-           b.shift_start, b.shift_end,
-           b.resource_uid, b.resource_name,
-           b.line, b.step, b.state,
-           sm.state_json,
-           -- flat column so the chart can group its series on the OEE
-           -- bucket; a state without a bucket is its own set
-           coalesce(sm.counts_as, b.state) as counts_as,
-           b.seconds as duration_seconds,
-           round(b.seconds / nullif(o.total_seconds, 0) * 100, 2) as duration_percentage,
-           o.param_json, o.oee_json, o.count_resources,
-           sm.state_order
+  -- what a state row shows as. A sub-state of a bucket (setup in producing,
+  -- missingdata in offline) is its own row only when selected by name;
+  -- selected through its bucket it folds into the bucket's row, so the
+  -- tooltip's producing line is the very number the OEE divides with, and
+  -- with setup selected the producing row is producing minus setup. Nothing
+  -- selected means everything by name; planned always passes for the plan
+  -- line; a state not selected either way shows nowhere
+  shown as (
+    select b.shift_date, b.shift_index, b.shift_start, b.shift_end,
+           b.resource_uid, b.resource_name, b.line, b.step,
+           case when p_states is null or b.state = any(p_states) or b.state = 'planned' then b.state
+                when sm.counts_as = any(p_states) then sm.counts_as
+           end as state,
+           sum(b.seconds) as seconds
     from base b
     left join state_map sm on sm.state_code = b.state
+    group by b.shift_date, b.shift_index, b.shift_start, b.shift_end,
+             b.resource_uid, b.resource_name, b.line, b.step,
+             case when p_states is null or b.state = any(p_states) or b.state = 'planned' then b.state
+                  when sm.counts_as = any(p_states) then sm.counts_as
+             end
+  ),
+  final_rows as (
+    select s.shift_date,
+           coalesce(s.shift_index, 1) as shift_index,
+           s.shift_start, s.shift_end,
+           s.resource_uid, s.resource_name,
+           s.line, s.step, s.state,
+           sm.state_json,
+           -- the series of the chart: a folded bucket row is the bucket, a
+           -- sub-state selected by name is its own set
+           s.state as counts_as,
+           s.seconds as duration_seconds,
+           round(s.seconds / nullif(o.total_seconds, 0) * 100, 2) as duration_percentage,
+           o.param_json, o.oee_json, o.count_resources,
+           sm.state_order
+    from shown s
+    left join state_map sm on sm.state_code = s.state
     join oee o
-      on o.shift_date = b.shift_date
-     and o.shift_index is not distinct from b.shift_index
-     and o.resource_uid is not distinct from b.resource_uid
-     and o.step is not distinct from b.step
-     and o.line is not distinct from b.line
-    where p_states is null or b.state = any(p_states)
-       or sm.counts_as = any(p_states) or b.state = 'planned'
+      on o.shift_date = s.shift_date
+     and o.shift_index is not distinct from s.shift_index
+     and o.resource_uid is not distinct from s.resource_uid
+     and o.step is not distinct from s.step
+     and o.line is not distinct from s.line
+    where s.state is not null
 
     union all
 

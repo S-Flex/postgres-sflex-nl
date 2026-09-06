@@ -8,7 +8,7 @@ select t.data_group_id, t.data_group,
        -- the three boards of this round
        t.data_group_json #>> '{0,timeline_config,is_pinned_field}'                                                       as is_pinned_field,
        t.data_group_json #> '{0,field_config,part_status_json,ui,control}'                                               as bar_control,
-       t.data_group_json #> '{0,timeline_config,label_options,field_config,is_fixed_group}'                              as label_is_fixed_group
+       t.data_group_json #> '{0,timeline_config,label_options,field_config,fixed_group}'                              as label_fixed_group
 from site.data_group t
 where t.data_group in ('nest_schedule', 'nest_resource_schedule', 'print_schedule')
    or exists (select 1 from jsonb_path_query(t.data_group_json, 'strict $.** ? (exists(@.field_config) && exists(@.class_name))'))

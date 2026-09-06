@@ -14,15 +14,29 @@ begin
     values (p_date, array[p_step], 'production-plan', p_line_type)
     returning plan_id into v_plan_id;
 
-    -- ensure the machine-day lane of every active resource of the step
-    insert into action.lane (lane_date, resource_path)
-    select p_date, r.resource_path
-    from relation.resource r
-    join relation.production_line pl on pl.line_id = r.line_id
-    where r.active and r.resource_path is not null
-      and r.step = p_step and pl.line_type = p_line_type
-      and not exists (select 1 from action.lane l
-                      where l.lane_date = p_date and l.resource_path = r.resource_path);
+    -- ensure the machine-day lane of every active resource of the step: the
+    -- lane and its resource_lane row, ids drawn up front so the two inserts
+    -- pair without a temp table
+    with missing as (
+        select r.resource_path,
+               nextval(pg_get_serial_sequence('action.lane', 'lane_id')) as lane_id
+        from relation.resource r
+        join relation.production_line pl on pl.line_id = r.line_id
+        where r.active and r.resource_path is not null
+          and r.step = p_step and pl.line_type = p_line_type
+          and not exists (select 1
+                          from action.lane l
+                          join action.resource_lane rl on rl.lane_id = l.lane_id
+                          where l.lane_date = p_date and rl.resource_path = r.resource_path)
+    ),
+    new_lane as (
+        insert into action.lane (lane_id, lane_date)
+        overriding system value
+        select m.lane_id, p_date from missing m
+        returning lane_id
+    )
+    insert into action.resource_lane (lane_id, resource_path)
+    select m.lane_id, m.resource_path from missing m;
 
     -- hang them under the plan, in the order the resources carry
     return query
@@ -31,7 +45,8 @@ begin
            row_number() over (order by (r.resource_json ->> 'pv2_order')::numeric nulls last, r.resource_name)::numeric
     from relation.resource r
     join relation.production_line pl on pl.line_id = r.line_id
-    join action.lane l on l.lane_date = p_date and l.resource_path = r.resource_path
+    join action.resource_lane rl on rl.resource_path = r.resource_path
+    join action.lane l on l.lane_id = rl.lane_id and l.lane_date = p_date
     where r.active and r.resource_path is not null
       and r.step = p_step and pl.line_type = p_line_type
     returning plan_id, lane_id, sort_order;

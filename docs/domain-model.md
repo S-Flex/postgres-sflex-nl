@@ -676,7 +676,7 @@ One block of work in a lane.
 | `sort_order` | numeric |
 | `start_offset_in_seconds` | integer — offset from the plan's axis origin |
 | `duration_in_seconds` | integer |
-| `is_fixed_group` | |
+| `fixed_group` | |
 | `is_pinned` | |
 
 **Times are offsets, not timestamps.** The axis origin comes from the plan type.

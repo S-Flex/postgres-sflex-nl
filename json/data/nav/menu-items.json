@@ -2,7 +2,9 @@
   {
     "code": "resource.info",
     "path": "(sidebar:info)",
-    "environments": ["development"],
+    "environments": [
+      "development"
+    ],
     "block": {
       "title": "{resource_name}"
     }
@@ -132,7 +134,7 @@
   {
     "code": "resource.planning-info",
     "path": "(sidebar:planning-info)",
-    "block": {  
+    "block": {
       "title": "Planning info",
       "i18n": {
         "en": {
@@ -198,29 +200,31 @@
     }
   },
   {
-    "code": "resource.tco",
-    "environments": ["development"],
-    "path": "(sidebar:tco)",
+    "code": "resource.capacity",
+    "environments": [
+      "development"
+    ],
+    "path": "(sidebar:capacity)",
     "block": {
-      "title": "TCO & capacity",
+      "title": "Capacity",
       "i18n": {
-        "en": {
-          "title": "TCO & capacity"
-        },
-        "nl": {
-          "title": "TCO & capaciteit"
-        },
         "de": {
-          "title": "TCO & Kapazität"
+          "title": "Kapazität"
         },
-        "uk": {
-          "title": "TCO та потужність"
+        "en": {
+          "title": "Capacity"
         },
         "es": {
-          "title": "TCO y capacidad"
+          "title": "Capacidad"
         },
         "fr": {
-          "title": "TCO et capacité"
+          "title": "Capacité"
+        },
+        "nl": {
+          "title": "Capaciteit"
+        },
+        "uk": {
+          "title": "Потужність"
         }
       }
     },
@@ -288,7 +292,9 @@
   },
   {
     "code": "resource.ink-heads",
-    "environments": ["development"],
+    "environments": [
+      "development"
+    ],
     "path": "(sidebar:ink-heads)",
     "block": {
       "title": "Ink & heads",
@@ -323,7 +329,9 @@
   },
   {
     "code": "resource.quality-management",
-    "environments": ["development"],
+    "environments": [
+      "development"
+    ],
     "path": "(sidebar:quality-management)",
     "block": {
       "title": "Quality management",
@@ -364,7 +372,9 @@
   },
   {
     "code": "resource.maintenance-tickets",
-    "environments": ["development"],
+    "environments": [
+      "development"
+    ],
     "path": "(sidebar:maintenance-tickets)",
     "block": {
       "title": "Maintenance & tickets",
@@ -409,7 +419,9 @@
   },
   {
     "code": "resource.tooling-wear",
-    "environments": ["development"],
+    "environments": [
+      "development"
+    ],
     "path": "(sidebar:tooling-wear)",
     "block": {
       "title": "Tooling & wear",
@@ -479,7 +491,9 @@
   },
   {
     "code": "resource.consumption-waste",
-    "environments": ["development"],
+    "environments": [
+      "development"
+    ],
     "path": "(sidebar:consumption-waste)",
     "block": {
       "title": "Consumption & waste",
@@ -514,7 +528,9 @@
   },
   {
     "code": "resource.material-specs",
-    "environments": ["development"],
+    "environments": [
+      "development"
+    ],
     "path": "(sidebar:material-specs)",
     "block": {
       "title": "Material specifications",

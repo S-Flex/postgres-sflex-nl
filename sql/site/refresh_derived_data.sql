@@ -3,7 +3,10 @@ create function site.refresh_derived_data() returns void
 as $$
 #variable_conflict use_column
 begin
-    -- state shift aggregation
+    -- state shift aggregation: the writers (log.crud_state_log,
+    -- log.crud_data_log) keep the table current per batch; this is the
+    -- daily full rebuild that finalizes yesterday and catches anything
+    -- that arrived outside those two
     perform log.upsert_state_shift_agg(current_date - 1);  -- finalize yesterday
     perform log.upsert_state_shift_agg(current_date);      -- refresh today
 

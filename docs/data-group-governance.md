@@ -112,4 +112,4 @@ is camelCase.
 | `input_data` as array | Three cases of `["data", "label_options"]` against 18 objects. Left as is by decision. |
 | Boolean polarity | `show_grid` / `show_legend` against `no_label` / `no_popup` / `no_timeline` (~95). Parked: `no_*` defaults to false. |
 | i18n completeness | 413 blocks have all six languages, 113 have de/en/nl, 22 are nl only, 6 are en/nl. One block title (`production_line_overview`) has no i18n at all. |
-| `donut_chart_config.filter_field` | Kept. It sits among `code_field`, `color_field`, `center_field`, `content_field` and `aggregate_field`, so it follows the `_field` convention and is not a condition. |
+| `donut_chart_config.filter_field` | Kept. It sits among `code_field`, `color_field`, `center_field`, `title_field` (was `content_field`) and `aggregate_field`, so it follows the `_field` convention and is not a condition. |

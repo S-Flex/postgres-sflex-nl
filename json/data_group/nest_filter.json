@@ -72,7 +72,7 @@
                   "default_value": true
                 }
               ],
-              "text_field": "nest_name",
+              "title_field": "nest_name",
               "value_field": "nest_id"
             }
           }

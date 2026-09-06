@@ -129,7 +129,7 @@
                   "value": 2
                 }
               ],
-              "text_field": "i18n",
+              "title_field": "i18n",
               "value_field": "value"
             }
           }
@@ -322,7 +322,7 @@
                   "value": 15
                 }
               ],
-              "text_field": "title",
+              "title_field": "title",
               "value_field": "value"
             }
           }
@@ -423,7 +423,7 @@
                   "value": 2
                 }
               ],
-              "text_field": "title",
+              "title_field": "title",
               "value_field": "value"
             }
           }
@@ -501,7 +501,7 @@
                   "value": 2
                 }
               ],
-              "text_field": "title",
+              "title_field": "title",
               "value_field": "value"
             }
           }

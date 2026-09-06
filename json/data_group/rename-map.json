@@ -41,6 +41,51 @@
       "change": "group_by array",
       "count": 18,
       "detail": "group_field / group_fields / group_by_field are now group_by, always an array"
+    },
+    {
+      "change": "is_fixed_group -> fixed_group (field, timeline_config key is_fixed_group_field -> fixed_group_field, lookup_nest_moments key, lane_item column)",
+      "count": 24,
+      "detail": "is_ marks a boolean; fixed_group is the delivery class (text) the item is fixed to. 2026-09-05"
+    },
+    {
+      "change": "lane_item.level (0/1) -> lane_item.type (plan | progress | actual; action.lookup lookup_lane_item_type)",
+      "count": 1,
+      "detail": "level said planned/realized as a number; type names the kind of row in words and can grow. progress is derived at read time, never stored. Output column level -> type (+ type_json), timeline_config.type_field + type_sort_order_field (type_json.sort_order; the kind class_names are merged into class_names). 2026-09-05"
+    },
+    {
+      "change": "data_group production_resource_plan (81) -> resource_plan, production_resource_plan_filter (82) -> resource_plan_filter; impose_resource_plan (78) archived; page impose-resource-plan -> resource-plan",
+      "count": 3,
+      "detail": "one resource board for every step, steps and types as filters (action.get_resource_plan replaces mock.get_production_plan and the resource mode of get_impose_plan). 2026-09-05"
+    },
+    {
+      "change": "kinds of rows on a timeline: set_field, set_order_field, placement_field, evaluate {formula_field, params_field}, set_overrides {<set>: {field_config}}, items {data_field, offset_field, duration_field, class_names_field}",
+      "count": 1,
+      "detail": "resource_plan (81) reuses the vocabulary of 19/29/56/76: a kind of row is a set, per-set differences are set_overrides keyed by the set value, the formula mechanism is evaluate, the sub level of a row is items with a data_field. No type_field, lane_item_config or segment_config. 2026-09-06"
+    },
+    {
+      "change": "text_field, label_field, i18n_field, content_field, set_title_field, gauge_title_field -> title_field; label_suffix_field -> title_suffix_field",
+      "count": 36,
+      "detail": "one text slot for every config, whatever the value (a plain text or an i18n node); title is the standard text slot. 2026-09-06"
+    },
+    {
+      "change": "start_offset_in_seconds_field -> offset_field, end_offset_in_seconds_field -> end_offset_field, duration_in_seconds_field -> duration_field, segment_size_in_seconds_field -> segment_size_field, next_start_offset_in_seconds_field -> next_start_offset_field; scale_field removed (time_scale_config.input_data, 75/76/81)",
+      "count": 17,
+      "detail": "the unit belongs to the field name, not to the key that points at it; scale_field pointed at the same field as duration_field. 2026-09-06"
+    },
+    {
+      "change": "is_atomic_field -> no_split_field, is_fixed_offset_field -> is_pinned_field, rank_field -> order_field, set_group_field -> set_group_fields (list), params_field next to evaluate -> evaluate.params_field (19, 56)",
+      "count": 7,
+      "detail": "the old pv2 board and the state timeline use the words of 75/76/81. 2026-09-06"
+    },
+    {
+      "change": "key_field -> x_field (combo_chart_config, 53/54)",
+      "count": 2,
+      "detail": "every chart names its x axis x_field. 2026-09-06"
+    },
+    {
+      "change": "ui.field with ${...} -> ui.template (51, 68, 69, 71)",
+      "count": 4,
+      "detail": "a string with placeholders is a template, not a field. 2026-09-06"
     }
   ],
   "keys": [

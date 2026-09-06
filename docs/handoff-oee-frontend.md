@@ -74,16 +74,21 @@ Betekenis van de tooltipwaarden:
   offline_in_seconds`: de tijd dat de machine er niet kón zijn. Dit is wat
   vóór de OEE-deling van het venster afgaat.
 - `producing_oee` — `producing_in_seconds / (total_shift_in_seconds −
-  unavailable_in_seconds) × 100`.
+  unavailable_in_seconds) × 100`. Percentages zijn 0-100, zoals elke
+  `*_percentage` in de database (besloten 4 sep; `type: percent` in de
+  frontend rekent met 0-100).
 - de `available`-band (geen tooltipwaarde) is een formule:
   `production_in_seconds − producing_in_seconds − shown_loss_in_seconds`. Een
   aangevinkt verlies (starved, blocked, idle) wordt een eigen vlak en gaat uit
   de band; aangevinkte breakdown/offline gaan uit de `unavailable`-rest
   bovenop. `running` komt nooit als rij terug (het is de envelope van
   producing + starved.running).
-- het filter (`states`) selecteert series: een state komt mee op zijn eigen
-  code óf op zijn `counts_as`, dus `producing` tekent ook setup en `offline`
-  ook missingdata.
+- het filter (`states`) selecteert series. Een sub-state (setup in producing,
+  missingdata in offline) is alleen een eigen rij als hij zelf is aangevinkt;
+  via zijn bucket aangevinkt vouwt hij in de bucket-rij. Alleen `producing`
+  aangevinkt: één rij producing = `producing_in_seconds`, het getal waarmee
+  `producing_oee` deelt. Setup erbij: producing wordt producing − setup en
+  setup een eigen vlak; samen weer de bucket.
 
 ## 3. donut (data_group 29)
 
@@ -100,6 +105,11 @@ Betekenis van de tooltipwaarden:
   plan-lane hoort boven de state-lane te sorteren, welke kant van de set de
   widget ook pakt.
 - `group_by: ["resource_uid"]` op `timeline_config`.
+- `fill_field: "state.fill"`, `color_field: "state.color"`, `show_legend: true`
+  (5 sep): dezelfde `var(...)`-strings als op de area-chart, voor blok én
+  legenda. De legenda-items zijn de state-codes die in de rijen voorkomen,
+  met label uit `state.i18n`; `group_state` heeft dezelfde `fill`/`color` voor
+  de groepslane.
 - tooltip-paden zijn `state.i18n` / `group_state.i18n` (geen `block` meer).
 
 ## 5. css

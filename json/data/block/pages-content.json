@@ -182,27 +182,27 @@
     }
   },
   {
-    "code": "production-board-detail",
+    "code": "orderinfo",
     "block": {
-      "title": "Production board detail",
+      "title": "Order info",
       "i18n": {
         "de": {
-          "title": "Produktionstafel detail"
+          "title": "Auftragsinfo"
         },
         "en": {
-          "title": "Production board detail"
+          "title": "Order info"
         },
         "es": {
-          "title": "Detalle del tablero de producción"
+          "title": "Información del pedido"
         },
         "fr": {
-          "title": "Détail du tableau de production"
+          "title": "Infos commande"
         },
         "nl": {
-          "title": "Productiebord detail"
+          "title": "Orderinfo"
         },
         "uk": {
-          "title": "Деталі виробничої дошки"
+          "title": "Інформація про замовлення"
         }
       }
     }
@@ -585,24 +585,27 @@
     }
   },
   {
-    "code": "tco",
+    "code": "capacity",
     "block": {
-      "title": "TCO",
+      "title": "Capacity",
       "i18n": {
-        "en": {
-          "title": "TCO"
-        },
-        "nl": {
-          "title": "TCO"
-        },
         "de": {
-          "title": "TCO"
+          "title": "Kapazität"
         },
-        "uk": {
-          "title": "TCO"
+        "en": {
+          "title": "Capacity"
         },
         "es": {
-          "title": "TCO"
+          "title": "Capacidad"
+        },
+        "fr": {
+          "title": "Capacité"
+        },
+        "nl": {
+          "title": "Capaciteit"
+        },
+        "uk": {
+          "title": "Потужність"
         }
       }
     }
@@ -723,24 +726,24 @@
     }
   },
   {
-    "code": "impose-resource-plan",
+    "code": "resource-plan",
     "block": {
-      "title": "Nest resource schedule",
+      "title": "Resource plan",
       "i18n": {
         "en": {
-          "title": "Nest resource schedule"
+          "title": "Resource plan"
         },
         "nl": {
-          "title": "Nest resource agenda"
+          "title": "Resource planning"
         },
         "de": {
-          "title": "Nest Ressourcen Zeitplan"
+          "title": "Ressourcenplanung"
         },
         "uk": {
-          "title": "Графік ресурсів гнізд"
+          "title": "План ресурсів"
         },
         "es": {
-          "title": "Agenda de nidos"
+          "title": "Plan de recursos"
         }
       }
     }
@@ -891,6 +894,32 @@
         },
         "uk": {
           "title": "Планування виробництва"
+        }
+      }
+    }
+  },
+  {
+    "code": "material-forecast",
+    "block": {
+      "title": "Material forecast",
+      "i18n": {
+        "de": {
+          "title": "Materialprognose"
+        },
+        "en": {
+          "title": "Material forecast"
+        },
+        "es": {
+          "title": "Previsión de material"
+        },
+        "fr": {
+          "title": "Prévision matériau"
+        },
+        "nl": {
+          "title": "Materiaalforecast"
+        },
+        "uk": {
+          "title": "Прогноз матеріалу"
         }
       }
     }

@@ -1,4 +1,16 @@
-create function log.upsert_state_shift_agg(p_date date DEFAULT (CURRENT_DATE - 1))
+-- Rebuilds log.state_shift_agg for one date: delete-then-insert, so a state
+-- that no longer applies disappears instead of lingering next to its
+-- replacement.
+--
+-- p_resource_uids null rebuilds every resource of the date (the daily run in
+-- site.refresh_derived_data). With a list only those resources are rebuilt:
+-- that is how log.crud_state_log and log.crud_data_log keep the table
+-- current after every batch, one machine-day at a time. One advisory lock
+-- per date serialises the two: a batch from Zünd and one from Durst, or a
+-- batch next to the daily run, never race on the same rows.
+drop function if exists log.upsert_state_shift_agg(date);
+
+create function log.upsert_state_shift_agg(p_date date DEFAULT (CURRENT_DATE - 1), p_resource_uids text[] DEFAULT NULL::text[])
  RETURNS integer
  LANGUAGE plpgsql
 AS $function$
@@ -25,9 +37,14 @@ begin
   where d.date = p_date
     and d.shift_json is not null;
 
-  -- the whole date is rebuilt, so a state that no longer applies
-  -- disappears instead of lingering next to its replacement
-  delete from log.state_shift_agg where shift_date = p_date;
+  -- one writer per date at a time (released at commit)
+  perform pg_advisory_xact_lock(hashtext('log.state_shift_agg'), p_date - date '2000-01-01');
+
+  -- the date is rebuilt for the resources in scope, so a state that no
+  -- longer applies disappears instead of lingering next to its replacement
+  delete from log.state_shift_agg
+  where shift_date = p_date
+    and (p_resource_uids is null or resource_uid = any (p_resource_uids));
 
   with
   -- ---------------------------------------------------------------
@@ -58,6 +75,7 @@ begin
       from log.state s
       where s.start_at >= v_from
         and s.start_at <  v_until
+        and (p_resource_uids is null or s.resource_uid = any (p_resource_uids))
 
       union all
 
@@ -74,6 +92,7 @@ begin
           order by s.start_at desc
           limit 1
       ) c
+      where p_resource_uids is null or res.resource_uid = any (p_resource_uids)
   ),
   timeline as (
       select e.resource_uid,
@@ -118,6 +137,7 @@ begin
         on dl.start_at < w.shift_end
        and dl.start_at + dl.production_time_seconds * interval '1 second' > w.shift_start
       where dl.production_time_seconds > 0
+        and (p_resource_uids is null or dl.resource_uid = any (p_resource_uids))
       group by w.shift_index, dl.resource_uid
   ),
   -- planning: estimated production time. Printers only, matched on
@@ -134,6 +154,7 @@ begin
         and ao.start_at <  v_until
         and ao.action_json ->> 'machine_type' = 'printer'
         and (ao.action_json ->> 'type') <> 'interruption'
+        and (p_resource_uids is null or r.resource_uid = any (p_resource_uids))
   ),
   plan_windowed as (
       select w.shift_index,
@@ -207,4 +228,4 @@ end;
 $function$
 
 
-alter function log.upsert_state_shift_agg(date) owner to xfw3;
+alter function log.upsert_state_shift_agg(date, text[]) owner to xfw3;

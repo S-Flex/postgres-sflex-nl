@@ -357,7 +357,7 @@
                       "title": "Afmeting"
                     }
                   },
-                  "field": "${amount}x ${width} x ${height}",
+                  "template": "${amount}x ${width} x ${height}",
                   "order": 1,
                   "class_name": "col-span-4"
                 }

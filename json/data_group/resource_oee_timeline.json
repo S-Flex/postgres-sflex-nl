@@ -420,10 +420,15 @@
         "start_time": "04:00",
         "offset_field": "offset_seconds",
         "duration_field": "duration_seconds",
-        "set_group_field": "resource_uid",
+        "set_group_fields": [
+          "resource_uid"
+        ],
         "set_order_field": "state.order",
-        "set_title_field": "name",
-        "class_names_field": "state.class_name"
+        "title_field": "name",
+        "class_names_field": "state.class_name",
+        "fill_field": "state.fill",
+        "color_field": "state.color",
+        "show_legend": true
       }
     }
   ]

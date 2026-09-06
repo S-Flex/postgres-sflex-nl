@@ -1,0 +1,33 @@
+[
+  {
+    "type": "plan",
+    "sort_order": 0,
+    "class_names": [],
+    "formula": [
+      "start_offset_in_seconds=planned_start_offset_in_seconds",
+      "duration_in_seconds=production_impact_in_seconds"
+    ],
+    "placement": "chain"
+  },
+  {
+    "type": "progress",
+    "sort_order": 1,
+    "class_names": [],
+    "formula": [
+      "start_offset_in_seconds=planned_start_offset_in_seconds",
+      "duration_in_seconds=remaining_impact_in_seconds"
+    ],
+    "placement": "offset"
+  },
+  {
+    "type": "actual",
+    "sort_order": 2,
+    "class_names": [],
+    "gap_split_in_seconds": 900,
+    "formula": [
+      "start_offset_in_seconds=actual_start_offset_in_seconds",
+      "duration_in_seconds=actual_duration_in_seconds"
+    ],
+    "placement": "offset"
+  }
+]

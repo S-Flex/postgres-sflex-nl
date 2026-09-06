@@ -1,5 +1,5 @@
 -- One read for the lanes (labels) of every plan board: print_schedule,
--- impose_plan, impose_resource_plan, production_resource_plan and whatever
+-- impose_plan, resource_plan and whatever
 -- follows. Moved from mock to action: the lane model lives here.
 --
 -- Two modes, switched by p_steps:
@@ -9,12 +9,15 @@
 --     tenant noop windows. Feeds print_schedule and impose_plan
 --     (imposition_group_id is the material_id alias until the xbom groups
 --     arrive).
---   * p_steps set — resource lanes: one row per resource whose step is in
---     the list, line via path position 1, tenant via path position 0 (the
---     site abb). For a 'production-plan' the day's plan is the source: only
---     resources with a lane in that plan, lane_id and plan_lane.sort_order
---     ride along. For other plan types (impose: the material plan has no
---     resource lanes) every resource of the steps is a lane, lane_id null.
+--   * p_steps set, or p_plan_type 'production-plan' — resource lanes: one row
+--     per resource whose step is in the list, line via path position 1,
+--     tenant via path position 0 (the site abb). For a 'production-plan' the
+--     day's plans are the source: per step the newest plan that covers it,
+--     only resources with a lane in those plans, lane_id and
+--     plan_lane.sort_order ride along; p_steps null = every step planned that
+--     day (the resource board, get_resource_plan, reads the same). For other
+--     plan types (impose: the material plan has no resource lanes) every
+--     resource of the steps is a lane, lane_id null.
 --
 -- The offset rule: only a fixed group (coalesce(item, class moment from
 -- lookup_nest_moments)) or a pinned item (its own offset) carries
@@ -32,7 +35,7 @@ drop function if exists mock.get_plan_lanes(timestamp with time zone, text, text
 drop function if exists action.get_plan_lanes(timestamp with time zone, text, text, integer[], boolean, text);
 drop function if exists action.get_plan_lanes(timestamp with time zone, text, text, integer[], boolean, text, text[]);
 
-create function action.get_plan_lanes(p_until timestamp with time zone DEFAULT now(), p_step text DEFAULT 'print'::text, p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_only_starting_today boolean DEFAULT false, p_plan_type text DEFAULT 'material-resource-plan'::text, p_steps text[] DEFAULT NULL::text[]) returns TABLE(imposition_group_id integer, material_id integer, material_name text, production_line_id integer, tenant_id integer, tenant_name text, resource_path ltree, resource_uid text, resource_name text, delivery_hours integer, min_delivery_hours integer, sort_order numeric, param_json jsonb, formula jsonb, data jsonb, is_fixed_group text, is_pinned boolean, start_offset_in_seconds integer, next_start_offset_in_seconds integer, lane_item_id bigint, lane_id bigint)
+create function action.get_plan_lanes(p_until timestamp with time zone DEFAULT now(), p_step text DEFAULT 'print'::text, p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_only_starting_today boolean DEFAULT false, p_plan_type text DEFAULT 'material-resource-plan'::text, p_steps text[] DEFAULT NULL::text[]) returns TABLE(imposition_group_id integer, material_id integer, material_name text, production_line_id integer, tenant_id integer, tenant_name text, resource_path ltree, resource_uid text, resource_name text, delivery_hours integer, min_delivery_hours integer, sort_order numeric, param_json jsonb, formula jsonb, data jsonb, fixed_group text, is_pinned boolean, start_offset_in_seconds integer, next_start_offset_in_seconds integer, lane_item_id bigint, lane_id bigint)
 	stable
 	language plpgsql
 as $$
@@ -44,7 +47,7 @@ BEGIN
     v_date := (p_until AT TIME ZONE current_setting('TimeZone'))::date;
 
     -- resource mode: one lane per resource of the steps
-    IF p_steps IS NOT NULL THEN
+    IF p_steps IS NOT NULL OR p_plan_type = 'production-plan' THEN
         RETURN QUERY
         WITH tenant AS (
             SELECT (v.value ->> 'tenant_id')::integer AS tenant_id,
@@ -54,22 +57,31 @@ BEGIN
             CROSS JOIN LATERAL jsonb_array_elements(lk.lookup_json) AS v(value)
             WHERE lk.lookup = 'lookup_tenants'
         ),
+        wanted_step AS (
+            -- the steps asked, else every step a plan of the day carries
+            SELECT DISTINCT s.step
+            FROM action.plan p
+            CROSS JOIN LATERAL unnest(p.steps) AS s(step)
+            WHERE p.plan_date = v_date AND p.type = p_plan_type
+              AND (p_line_type IS NULL OR p.line_type = p_line_type)
+              AND (p_steps IS NULL OR s.step = ANY (p_steps))
+        ),
         the_plan AS (
-            -- the newest plan of this date, step, type and line type wins
-            SELECT plan_id
-            FROM action.plan
-            WHERE plan_date = v_date AND p_step = ANY (steps)
-              AND type = p_plan_type
-              AND (p_line_type IS NULL OR line_type = p_line_type)
-            ORDER BY plan_id DESC
-            LIMIT 1
+            -- per step the newest plan of this date, type and line type
+            SELECT DISTINCT ON (ws.step) ws.step, p.plan_id
+            FROM wanted_step ws
+            JOIN action.plan p ON ws.step = ANY (p.steps)
+            WHERE p.plan_date = v_date AND p.type = p_plan_type
+              AND (p_line_type IS NULL OR p.line_type = p_line_type)
+            ORDER BY ws.step, p.plan_id DESC
         ),
         plan_lane AS (
-            SELECT l.lane_id, pl.sort_order, l.resource_path
+            -- the machine-day lanes of those plans; a group lane has no row here
+            SELECT DISTINCT ON (rl.lane_id) rl.lane_id, pl.sort_order, rl.resource_path
             FROM the_plan tp
             JOIN action.plan_lane pl USING (plan_id)
-            JOIN action.lane l ON l.lane_id = pl.lane_id
-            WHERE l.resource_path IS NOT NULL
+            JOIN action.resource_lane rl ON rl.lane_id = pl.lane_id
+            ORDER BY rl.lane_id, tp.plan_id DESC
         )
         SELECT NULL::integer, NULL::integer, NULL::text, NULL::integer,
                t.tenant_id, t.tenant_name,
@@ -96,7 +108,7 @@ BEGIN
             ORDER BY nlevel(s.resource_path) DESC, s.moved_at DESC LIMIT 1
         ) rs ON true
         LEFT JOIN tenant t ON t.abb = ltree2text(subpath(r.resource_path, 0, 1))
-        WHERE r.step = ANY (p_steps)
+        WHERE r.step = ANY (coalesce(p_steps, (SELECT array_agg(ws.step) FROM wanted_step ws)))
           AND (p_line_type IS NULL OR ltree2text(subpath(r.resource_path, 1, 1)) = p_line_type)
           -- a production plan names its lanes; other plan types have no
           -- resource lanes, so every resource of the steps is a lane
@@ -113,14 +125,14 @@ BEGIN
     SELECT coalesce(jsonb_object_agg(
                v.value ->> 'code',
                jsonb_build_object(
-                   'group',  v.value ->> 'is_fixed_group',
+                   'group',  v.value ->> 'fixed_group',
                    'offset', v.value #> '{nest_moments,0,nest_time,start_offset_in_seconds}')),
            '{}'::jsonb)
     INTO v_fixed
     FROM production.lookup l
     CROSS JOIN LATERAL jsonb_array_elements(l.lookup_json) AS v(value)
     WHERE l.lookup = 'lookup_nest_moments'
-      AND (v.value ->> 'is_fixed_group' IS NOT NULL
+      AND (v.value ->> 'fixed_group' IS NOT NULL
            OR v.value #>> '{nest_moments,0,nest_time,start_offset_in_seconds}' IS NOT NULL);
 
     RETURN QUERY
@@ -147,14 +159,22 @@ BEGIN
                li.start_offset_in_seconds,
                igli.imposition_group_id,
                -- the pattern row the item was stamped from: source_ref is
-               -- <material_impose_plan_id>:<date>, which replaces the old
-               -- material_impose_plan_lane detour
-               nullif(split_part(li.source_ref, ':', 1), '')::bigint AS material_impose_plan_id
+               -- <material_impose_plan_id>:<date>. A batch item (source
+               -- 'nest', one per extra batch on the lane) has no pattern row
+               -- of its own and borrows the one of the lane's pattern item,
+               -- so material, line, tenant and resource come out the same
+               CASE WHEN li.source = 'material-plan'
+                    THEN nullif(split_part(li.source_ref, ':', 1), '')::bigint
+                    ELSE (SELECT nullif(split_part(sib.source_ref, ':', 1), '')::bigint
+                          FROM action.lane_item sib
+                          WHERE sib.lane_id = li.lane_id AND sib.source = 'material-plan'
+                          ORDER BY sib.sort_order LIMIT 1)
+               END AS material_impose_plan_id
         FROM the_plan tp
         JOIN action.plan_lane l USING (plan_id)
-        JOIN action.lane_item li ON li.lane_id = l.lane_id AND li.level = 0
+        JOIN action.lane_item li ON li.lane_id = l.lane_id AND li.type = 'plan'
         LEFT JOIN action.imposition_group_lane_item igli ON igli.lane_item_id = li.lane_item_id
-        WHERE li.source = 'material-plan'
+        WHERE li.source IN ('material-plan', 'nest')
     ),
     -- one interval check per distinct (start, days) pair of the plan's own
     -- materials instead of one per row: a check costs ~7 ms in
@@ -230,7 +250,7 @@ BEGIN
                    WHERE vr.resource_path ~ '*.impose.*'
                      AND subpath(vr.resource_path, 0, 2) = subpath(m.resource_path, 0, 2)
                ), '[]'::jsonb))                        AS data,
-               v_fixed -> mps.delivery_hours::text ->> 'group' AS is_fixed_group,
+               v_fixed -> mps.delivery_hours::text ->> 'group' AS fixed_group,
                -- the mutable truth lives on the lane item
                i.is_pinned,
                -- only a fixed group (class moment as default) or a pinned

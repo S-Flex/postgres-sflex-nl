@@ -61,33 +61,39 @@
             {
               "i18n": {
                 "de": {
-                  "title": "Nesting-queue öffnen"
+                  "title": "Auftragspositionen öffnen"
                 },
                 "en": {
-                  "title": "Open nesting-queue"
+                  "title": "Open orderlines"
                 },
                 "es": {
-                  "title": "Abrir nesting-queue"
+                  "title": "Abrir líneas de pedido"
                 },
                 "fr": {
-                  "title": "Ouvrir le nesting"
+                  "title": "Ouvrir les lignes de commande"
                 },
                 "nl": {
-                  "title": "Nesting-wachtrij openen"
+                  "title": "Orderlijnen openen"
                 },
                 "uk": {
-                  "title": "Відкрити нестинг"
+                  "title": "Відкрити рядки замовлення"
                 }
               },
-              "icon": "Grid01",
-              "path": "(sidebar:nesting-queue)",
+              "icon": "List",
+              "path": "(sidebar:orderinfo)",
               "params": [
                 {
-                  "key": "material_id",
+                  "key": "date",
                   "is_query_param": true
                 },
                 {
-                  "key": "date",
+                  "key": "production_line_ids",
+                  "value_from": "production_line_id",
+                  "is_query_param": true
+                },
+                {
+                  "key": "material_ids",
+                  "value_from": "material_id",
                   "is_query_param": true
                 }
               ],
@@ -128,11 +134,8 @@
                   "is_query_param": true
                 },
                 {
-                  "key": "production_company_id",
-                  "is_query_param": true
-                },
-                {
-                  "key": "date",
+                  "key": "from",
+                  "value_from": "date",
                   "is_query_param": true
                 }
               ],
@@ -1025,7 +1028,7 @@
                 "class_name": "text-xs col-span-2"
               }
             },
-            "is_fixed_group": {
+            "fixed_group": {
               "ui": {
                 "hidden": true
               }
@@ -1170,8 +1173,8 @@
             }
           },
           "column_min_width": 200,
-          "is_fixed_group_field": "is_fixed_group",
-          "next_start_offset_in_seconds_field": "next_start_offset_in_seconds",
+          "fixed_group_field": "fixed_group",
+          "next_start_offset_field": "next_start_offset_in_seconds",
           "fields_class_name": "grid grid-cols-4 gap-1",
           "group_by": [
             "tenant_id"
@@ -1220,16 +1223,15 @@
               }
             ],
             "x_axis": {
-              "label_field": "date"
+              "title_field": "date"
             },
-            "i18n_field": "i18n",
+            "title_field": "i18n",
             "time_field": "time",
-            "scale_field": "duration_in_seconds",
             "class_names_field": "class_names",
-            "duration_in_seconds_field": "duration_in_seconds",
-            "end_offset_in_seconds_field": "end_offset_in_seconds",
-            "segment_size_in_seconds_field": "segment_size_in_seconds",
-            "start_offset_in_seconds_field": "start_offset_in_seconds"
+            "duration_field": "duration_in_seconds",
+            "end_offset_field": "end_offset_in_seconds",
+            "segment_size_field": "segment_size_in_seconds",
+            "offset_field": "start_offset_in_seconds"
           }
         },
         "group_by": [

@@ -6,7 +6,7 @@ drop function if exists mock.get_imposition_plan(timestamp with time zone, text,
 drop function if exists mock.get_impose_plan(timestamp with time zone, text, text, integer[], boolean, integer, integer, integer);
 drop function if exists mock.get_impose_plan(timestamp with time zone, text, text, integer[], integer, integer, integer);
 
-create function mock.get_impose_plan(p_until timestamp with time zone DEFAULT now(), p_step text DEFAULT 'print'::text, p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_look_back_days integer DEFAULT 0, p_look_ahead_days integer DEFAULT 0, p_domain_id integer DEFAULT 1) returns TABLE(material_id integer, material_name text, production_line_id integer, tenant_id integer, tenant_name text, production_company_id integer, resource_uid text, resource_name text, resource_path ltree, delivery_hours integer, min_delivery_hours integer, sort_order numeric, param_json jsonb, formula jsonb, data jsonb, is_fixed_group text, is_pinned boolean, start_offset_in_seconds integer, next_start_offset_in_seconds integer, duration_in_seconds integer, nest_date date, orderline_count integer, product_amount numeric, part_amount integer, amount numeric, sqm numeric, forecast_sqm numeric, rework_count integer, rework_sqm numeric, impact_json jsonb, gross_sqm numeric, part_status_json jsonb, nest_ids bigint[], nest_count integer, seconds_to_logistics_date integer, class_names text[], unit_class_names text[], lane_item_id bigint, lane_id bigint)
+create function mock.get_impose_plan(p_until timestamp with time zone DEFAULT now(), p_step text DEFAULT 'print'::text, p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_look_back_days integer DEFAULT 0, p_look_ahead_days integer DEFAULT 0, p_domain_id integer DEFAULT 1) returns TABLE(material_id integer, material_name text, production_line_id integer, tenant_id integer, tenant_name text, production_company_id integer, resource_uid text, resource_name text, resource_path ltree, delivery_hours integer, min_delivery_hours integer, sort_order numeric, param_json jsonb, formula jsonb, data jsonb, fixed_group text, is_pinned boolean, start_offset_in_seconds integer, next_start_offset_in_seconds integer, duration_in_seconds integer, nest_date date, orderline_count integer, product_amount numeric, part_amount integer, amount numeric, sqm numeric, forecast_sqm numeric, rework_count integer, rework_sqm numeric, impact_json jsonb, gross_sqm numeric, part_status_json jsonb, nest_ids bigint[], nest_count integer, seconds_to_logistics_date integer, class_names text[], unit_class_names text[], lane_item_id bigint, lane_id bigint)
 	stable
 	language plpgsql
 as $$
@@ -32,7 +32,7 @@ begin
                -- the row's own resource: valid_resources.resource_field reads it
                b.resource_path,
                b.delivery_hours, b.min_delivery_hours, b.sort_order,
-               b.param_json, b.formula, b.data, b.is_fixed_group, b.is_pinned,
+               b.param_json, b.formula, b.data, b.fixed_group, b.is_pinned,
                b.start_offset_in_seconds, b.next_start_offset_in_seconds,
                b.lane_item_id, b.lane_id
         -- only the materials whose interval (action.get_interval_dates on
@@ -60,12 +60,12 @@ begin
     ),
     lane_nest as (
         -- the nests hung on this planned moment, if any: per lane item,
-        -- not per lane — every extra moment carries its own nests
-        select nli.lane_item_id, array_agg(distinct nli.imposition_id) as nest_ids
-        from action.imposition_lane_item nli
-        where nli.lane_item_id in (select b2.lane_item_id from base b2
-                                   where b2.lane_item_id is not null)
-        group by nli.lane_item_id
+        -- not per lane — every extra moment carries its own nests. The
+        -- reader gives the current set, inherited or own
+        select b2.lane_item_id, array_agg(distinct x.imposition_id) as nest_ids
+        from (select distinct lane_item_id from base where lane_item_id is not null) b2
+        cross join lateral action.get_lane_item_impositions(b2.lane_item_id) x
+        group by b2.lane_item_id
     ),
     -- One aggregate call for all rows without lane nests, and one per distinct
     -- nest set for the rest, instead of one call per row: the detail behind
@@ -203,7 +203,7 @@ begin
            -- get_plan_lanes, so the board can evaluate the duration itself
            || jsonb_build_object('net_sqm', coalesce(r.sqm, 0)) as param_json,
            r.formula, r.data,
-           r.is_fixed_group, r.is_pinned,
+           r.fixed_group, r.is_pinned,
            r.start_offset_in_seconds, r.next_start_offset_in_seconds,
            -- noop rows keep their window duration; a material row lasts the
            -- standard production impact of its orderlines (from the

@@ -298,7 +298,7 @@
             "order": 9,
             "control": "distribution-bar",
             "distribution_bar_config": {
-              "i18n_field": "i18n",
+              "title_field": "i18n",
               "value_field": "amount",
               "class_names_field": "class_names",
               "sort": {
@@ -491,7 +491,7 @@
             "order": 19,
             "control": "distribution-bar",
             "distribution_bar_config": {
-              "i18n_field": "i18n",
+              "title_field": "i18n",
               "value_field": "amount",
               "class_names_field": "class_names",
               "sort": {
@@ -536,7 +536,7 @@
                                 "title": "Замовлення"
                               }
                             },
-                            "path": "(sidebar:production-board-detail)",
+                            "path": "(sidebar:orderinfo)",
                             "params": [
                               {
                                 "key": "date",
@@ -816,7 +816,7 @@
                           "control": "distribution-bar",
                           "class_name": "col-span-8",
                           "distribution_bar_config": {
-                            "i18n_field": "i18n",
+                            "title_field": "i18n",
                             "value_field": "amount",
                             "class_names_field": "class_names",
                             "sort": {
@@ -880,7 +880,7 @@
                       "control": "distribution-bar",
                       "class_name": "col-span-8",
                       "distribution_bar_config": {
-                        "i18n_field": "i18n",
+                        "title_field": "i18n",
                         "value_field": "amount",
                         "class_names_field": "class_names",
                         "sort": {
@@ -1180,7 +1180,7 @@
                   "control": "distribution-bar",
                   "class_name": "col-span-4",
                   "distribution_bar_config": {
-                    "i18n_field": "i18n",
+                    "title_field": "i18n",
                     "value_field": "amount",
                     "class_names_field": "class_names",
                     "sort": {

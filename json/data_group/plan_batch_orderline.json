@@ -27,7 +27,7 @@
                 "title": "Afmeting"
               }
             },
-            "field": "${product_amount}x ${product_width} x ${product_height}",
+            "template": "${product_amount}x ${product_width} x ${product_height}",
             "order": 4
           }
         },
@@ -197,7 +197,8 @@
           }
         },
         "fields_class_name": "grid grid-cols-6 gap-1"
-      }
+      },
+      "window_class_name": "p-8"
     }
   ]
 }

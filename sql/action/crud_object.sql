@@ -158,7 +158,7 @@ BEGIN
 
     -- ============================================================
     -- the new plan model: the same items as action.plan -> lane ->
-    -- lane_item (level 0), with their nests and dependencies. One
+    -- lane_item (type plan), with their nests and dependencies. One
     -- production plan per day and line type covering every step in the
     -- payload; one lane per resource (its resource_path); one lane_item
     -- per plannable item, found again on the next payload through
@@ -259,11 +259,27 @@ BEGIN
     -- the machine-day lane of every item, created once, then hung under
     -- the order's plan AND the physical department's plan, so both boards
     -- see the machine's full occupation
-    INSERT INTO action.lane (lane_date, resource_path)
-    SELECT DISTINCT ip.plan_date, ip.resource_path
-    FROM item_plan ip
-    WHERE NOT EXISTS (SELECT 1 FROM action.lane l
-                      WHERE l.lane_date = ip.plan_date AND l.resource_path = ip.resource_path);
+    WITH missing AS (
+        SELECT DISTINCT ip.plan_date, ip.resource_path
+        FROM item_plan ip
+        WHERE NOT EXISTS (SELECT 1
+                          FROM action.lane l
+                          JOIN action.resource_lane rl ON rl.lane_id = l.lane_id
+                          WHERE l.lane_date = ip.plan_date AND rl.resource_path = ip.resource_path)
+    ),
+    with_id AS (
+        SELECT m.plan_date, m.resource_path,
+               nextval(pg_get_serial_sequence('action.lane', 'lane_id')) AS lane_id
+        FROM missing m
+    ),
+    new_lane AS (
+        INSERT INTO action.lane (lane_id, lane_date)
+        OVERRIDING SYSTEM VALUE
+        SELECT w.lane_id, w.plan_date FROM with_id w
+        RETURNING lane_id
+    )
+    INSERT INTO action.resource_lane (lane_id, resource_path)
+    SELECT w.lane_id, w.resource_path FROM with_id w;
 
     INSERT INTO action.plan_lane (plan_id, lane_id, sort_order)
     SELECT x.plan_id, x.lane_id,
@@ -274,7 +290,8 @@ BEGIN
                 UNION
                 SELECT ip.physical_plan_id, ip.plan_date, ip.resource_path FROM item_plan ip
                 WHERE ip.physical_plan_id IS NOT NULL) pp
-          JOIN action.lane l ON l.lane_date = pp.plan_date AND l.resource_path = pp.resource_path) x
+          JOIN action.resource_lane rl ON rl.resource_path = pp.resource_path
+          JOIN action.lane l ON l.lane_id = rl.lane_id AND l.lane_date = pp.plan_date) x
     WHERE NOT EXISTS (SELECT 1 FROM action.plan_lane pl3
                       WHERE pl3.plan_id = x.plan_id AND pl3.lane_id = x.lane_id);
 
@@ -284,14 +301,15 @@ BEGIN
     -- below (it is unique per lane).
     INSERT INTO action.lane_item AS li
         (lane_id, sort_order, start_offset_in_seconds, duration_in_seconds,
-         is_pinned, no_split, level, source, source_ref)
+         is_pinned, no_split, type, source, source_ref)
     SELECT l.lane_id,
            -1 * ip.plannable_item_id,
            EXTRACT(EPOCH FROM (ip.start_local - ip.plan_date::timestamp))::integer,
            GREATEST(COALESCE(EXTRACT(EPOCH FROM (ip.end_local - ip.start_local))::integer, 0), 0),
-           ip.is_fixed_offset, true, 0, 'pv2', ip.source_ref
+           ip.is_fixed_offset, true, 'plan', 'pv2', ip.source_ref
     FROM item_plan ip
-    JOIN action.lane l ON l.lane_date = ip.plan_date AND l.resource_path = ip.resource_path
+    JOIN action.resource_lane rl ON rl.resource_path = ip.resource_path
+    JOIN action.lane l ON l.lane_id = rl.lane_id AND l.lane_date = ip.plan_date
     ON CONFLICT (source, source_ref) DO UPDATE SET
         lane_id                 = EXCLUDED.lane_id,
         sort_order              = EXCLUDED.sort_order,
@@ -303,9 +321,10 @@ BEGIN
     -- (lane_id, sort_order) never collides on the way
     UPDATE action.lane_item li
     SET sort_order = -1 * li.lane_item_id
-    WHERE li.level = 0
+    WHERE li.type = 'plan'
       AND li.lane_id IN (SELECT DISTINCT l.lane_id FROM item_plan ip
-                         JOIN action.lane l ON l.lane_date = ip.plan_date AND l.resource_path = ip.resource_path);
+                         JOIN action.resource_lane rl ON rl.resource_path = ip.resource_path
+    JOIN action.lane l ON l.lane_id = rl.lane_id AND l.lane_date = ip.plan_date);
 
     UPDATE action.lane_item li
     SET sort_order = x.rank * 1000
@@ -313,52 +332,18 @@ BEGIN
                  row_number() OVER (PARTITION BY li2.lane_id
                                     ORDER BY li2.start_offset_in_seconds, li2.lane_item_id) AS rank
           FROM action.lane_item li2
-          WHERE li2.level = 0
+          WHERE li2.type = 'plan'
             AND li2.lane_id IN (SELECT DISTINCT l.lane_id FROM item_plan ip
-                                JOIN action.lane l ON l.lane_date = ip.plan_date AND l.resource_path = ip.resource_path)) x
+                                JOIN action.resource_lane rl ON rl.resource_path = ip.resource_path
+    JOIN action.lane l ON l.lane_id = rl.lane_id AND l.lane_date = ip.plan_date)) x
     WHERE li.lane_item_id = x.lane_item_id;
 
-    -- the nests of the items: replaced as a set
-    DELETE FROM action.imposition_lane_item nli
-    USING action.lane_item li, item_plan ip
-    WHERE nli.lane_item_id = li.lane_item_id
-      AND li.source = 'pv2' AND li.source_ref = ip.source_ref;
-
-    INSERT INTO action.imposition_lane_item (imposition_id, lane_item_id, sort_order)
-    SELECT DISTINCT ON ((ba.value ->> 'nest_id')::bigint, li.lane_item_id)
-           (ba.value ->> 'nest_id')::bigint, li.lane_item_id, (ba.value ->> 'sequence')::numeric
-    FROM item_plan ip
-    JOIN action.lane_item li ON li.source = 'pv2' AND li.source_ref = ip.source_ref
-    CROSS JOIN LATERAL jsonb_array_elements(COALESCE(ip.batched_amounts, '[]'::jsonb)) AS ba(value)
-    WHERE (ba.value ->> 'nest_id') IS NOT NULL
-    ORDER BY (ba.value ->> 'nest_id')::bigint, li.lane_item_id, (ba.value ->> 'sequence')::numeric;
-
-    -- the chain: coater/laminator after the printer of the batch, cutter
-    -- after the coater/laminator of the batch, else after the printer.
-    -- Edges of the items are replaced as a set.
-    DELETE FROM action.lane_item_dependency d
-    USING action.lane_item li, item_plan ip
-    WHERE d.to_lane_item_id = li.lane_item_id
-      AND li.source = 'pv2' AND li.source_ref = ip.source_ref;
-
-    INSERT INTO action.lane_item_dependency (from_lane_item_id, to_lane_item_id)
-    SELECT parent.lane_item_id, child.lane_item_id
-    FROM item_plan ip
-    JOIN action.lane_item child ON child.source = 'pv2' AND child.source_ref = ip.source_ref
-    CROSS JOIN LATERAL (
-        SELECT p.lane_item_id
-        FROM action.object o
-        JOIN action.lane_item p ON p.source = 'pv2' AND p.source_ref = (o.action_json ->> 'plannable_item_id')
-        WHERE o.batch_id = ip.batch_id
-          AND (   (ip.machine_type IN ('coater', 'laminator') AND o.action_json ->> 'machine_type' = 'printer')
-               OR (ip.machine_type = 'cutter' AND o.action_json ->> 'machine_type' IN ('coater', 'laminator', 'printer')))
-        ORDER BY CASE WHEN o.action_json ->> 'machine_type' IN ('coater', 'laminator') THEN 0 ELSE 1 END,
-                 o.action_id DESC
-        LIMIT 1
-    ) parent
-    WHERE ip.batch_id IS NOT NULL
-      AND ip.machine_type IN ('coater', 'laminator', 'cutter')
-    ON CONFLICT DO NOTHING;
+    -- the nests and the chain of the items, one batch per lane item: the
+    -- main item holds the nests of the item's batch, a nest that legacy.nest
+    -- meanwhile books on another batch gets an extra item next to it, and the
+    -- edges run per batch. One place for that rule, shared with the backfill
+    -- (docs/plan-lane-model.md stap 3b)
+    PERFORM action.sync_pv2_batch_items(array(SELECT ip.plannable_item_id FROM item_plan ip));
 
     -- ============================================================
     -- fill print_production_unit_id in legacy.batch if it is still null

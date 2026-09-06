@@ -37,6 +37,18 @@ Stack: PostgreSQL (owner `xfw3`), React 19.2, Tailwind 4.2, UntitledUI/react, Fi
 - `i18n` (niet `ml`) voor meertalige blokken
 - `template` (niet `text_formula`) voor template strings
 - bij "code" als hoofd-key: property `content` voor alle tekst, plus een property voor wat je maakt
+- property-namen zijn eenduidig, helder en generiek: geen overlappende of dubbele
+  namen voor hetzelfde begrip, zodat elke key overal hetzelfde betekent en herbruikbaar is.
+  Voor je een key bedenkt: zoek hoe de andere data_groups het noemen en gebruik dat
+  (`node`-inventaris van alle `_field`/`_config`-keys in `xfw3_site_data_group.json`)
+- vast vocabulaire in een `<layout>_config`: de soort van een rij is een **set**
+  (`set_field`, `set_order_field`); wat per soort verschilt staat in `set_overrides`
+  met de set-waarde als key; een formule rekent via `evaluate {formula_field, params_field}`;
+  het subniveau van een rij heet `items` met `data_field` voor de array
+- een key die een veld aanwijst eindigt op `_field` en draagt geen eenheid
+  (`duration_field: "duration_in_seconds"`, niet `duration_in_seconds_field`);
+  het tekst-slot heet overal `title_field` (ook als de waarde `i18n` is), de x-as van
+  een chart `x_field`, een string met `${...}` heet `template`, geen `field`
 
 ## lookup json
 - de inhoud van een lookup staat in `json/lookup/<schema>/<lookup>.json`
@@ -75,3 +87,12 @@ zie `docs/data-group-governance.md` voor de volledige analyse
 ## overig
 - titels: alleen eerste woord met hoofdletter
 - geen technisch jargon, korte uitleg
+
+## frontend
+- de frontend is een meta-data-driven ui-renderer: er is data en een data_group,
+  de data_group heeft per layout een `<layout>_config` (`timeline_config`, ...)
+  die zegt welk veld wat is (`offset_field`, `type_field`, ...)
+- een handoff voor de frontend beschrijft alleen wat er in die config en in de
+  velden veranderd is (nieuwe/hernoemde `_field`-keys, nieuwe velden), compact
+  en to-the-point — geen uitleg van het domein, geen voorbeelden die al in de
+  data_group staan

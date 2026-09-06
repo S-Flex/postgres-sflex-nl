@@ -53,7 +53,7 @@
         "items": {
           "data_field": "data",
           "color_field": "color",
-          "label_field": "i18n",
+          "title_field": "i18n",
           "value_field": "value"
         },
         "group_nav": "nav",

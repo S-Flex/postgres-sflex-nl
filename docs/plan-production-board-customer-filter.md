@@ -69,7 +69,7 @@ toevoeging (geen klant-specifiek geval in code).
 |---|---|
 | production_board_filter (72) | **gedaan in de repo**: velden `production_line_ids` (multi-select, src `get_production_lines`; niets geselecteerd = lege array = alle lijnen), `customer_id` (select, src `get_customers`), `look_back_days` en `look_ahead_days` (selects via src `get_numbers` met de keuzes als `numbers`-param — geen harde data) — allemaal query-params |
 | production_board (48) | param `production_line_id` → `production_line_ids`; `customer_id` optioneel erbij; de cel-nav naar de detail geeft `production_line_ids` door |
-| production_board_detail (49) | zelfde rename + `customer_id`; het nav-blok met `value_from` volgt mee (één lijn blijft een lijst met één element) |
+| orderinfo (49, was production_board_detail) | zelfde rename + `customer_id`; het nav-blok met `value_from` volgt mee (één lijn blijft een lijst met één element) |
 | production_board_graph (70) | zelfde rename + `customer_id` |
 
 Voor de lijnen-select is een data_table `get_production_lines` nodig

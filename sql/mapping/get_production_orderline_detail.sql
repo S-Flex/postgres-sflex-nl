@@ -41,7 +41,21 @@ begin
     -- Everything the filters can decide on their own, so all the enrichment
     -- below runs over the rows in scope only, once per set instead of once
     -- per row.
-    with orderline_base as (
+    -- The orderlines a batch or nest scope names, resolved once. Written
+    -- inline as IN (subquery) on component_specs, the estimate for a 232-nest
+    -- set was 28.446 rows against 566 real ones, and every join below chose a
+    -- hash join over a full scan of single_product,
+    -- production_orderline_progress and spec_unit_manifest (half a million
+    -- rows each, 1,3 s per set call). Window scope leaves this empty and the
+    -- predicate on orderline_base folds away.
+    with scope_orderline as materialized (
+        select distinct sp.production_orderline_id
+        from legacy.single_product sp
+        left join legacy.nest n on v_scope = 'batch' and n.nest_id = sp.nest_id
+        where (v_scope = 'nest'  and sp.nest_id  = any (p_nest_ids))
+           or (v_scope = 'batch' and n.batch_id  = any (p_batch_ids))
+    ),
+    orderline_base as materialized (
         select cs.number, cs.order_sequence, cs.order_id, cs.production_order_id,
                cs.production_orderline_id, cs.sales_orderline_id,
                cs.customer_id, cs.company_name, cs.customer_reference, cs.team_name,
@@ -97,16 +111,14 @@ begin
           -- this each call paid for every open orderline (~100 ms a call,
           -- seconds a board). The in_scope filter at the end still applies
           -- the cancel markers.
+          -- = ANY of an array built by an InitPlan, not IN (subquery): the
+          -- planner cannot see through a hashed subplan and kept the
+          -- estimate of the material filter (28.446 rows for 566); an array
+          -- of unknown length is estimated small, so the joins below stay
+          -- on the indexes
           and (v_scope = 'window'
-               or (v_scope = 'nest' and cs.production_orderline_id in (
-                       select sp.production_orderline_id
-                       from legacy.single_product sp
-                       where sp.nest_id = any (p_nest_ids)))
-               or (v_scope = 'batch' and cs.production_orderline_id in (
-                       select sp.production_orderline_id
-                       from legacy.single_product sp
-                       join legacy.nest n on n.nest_id = sp.nest_id
-                       where n.batch_id = any (p_batch_ids))))
+               or cs.production_orderline_id = any (coalesce((select array_agg(so.production_orderline_id)
+                                                              from scope_orderline so), '{}'::integer[])))
     ),
     -- The nests of these orderlines, resolved once. Serves three purposes:
     -- the batch and nest scope, nest_json, and the nest rework.

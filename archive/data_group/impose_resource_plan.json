@@ -126,7 +126,7 @@
                   "title": "Рядки замовлення"
                 }
               },
-              "path": "(sidebar:production-board-detail)",
+              "path": "(sidebar:orderinfo)",
               "params": [
                 {
                   "key": "date",
@@ -231,11 +231,8 @@
                   "is_query_param": true
                 },
                 {
-                  "key": "production_company_id",
-                  "is_query_param": true
-                },
-                {
-                  "key": "date",
+                  "key": "from",
+                  "value_from": "nest_date",
                   "is_query_param": true
                 }
               ],
@@ -445,7 +442,7 @@
             "suffix": "h"
           }
         },
-        "is_fixed_group": {
+        "fixed_group": {
           "ui": {
             "hidden": true
           }
@@ -1346,7 +1343,7 @@
                 "hidden": true
               }
             },
-            "is_fixed_group": {
+            "fixed_group": {
               "ui": {
                 "hidden": true
               }
@@ -1447,13 +1444,12 @@
           ],
           "deselectable": true
         },
-        "is_fixed_group_field": "is_fixed_group",
+        "fixed_group_field": "fixed_group",
         "next_start_offset_in_seconds_field": "next_start_offset_in_seconds",
         "duration_field": "param_json.duration_in_seconds",
         "is_pinned_field": "is_pinned",
         "no_timeline_now": false,
         "column_min_width": 0,
-        "column_max_width": 600,
         "set_group_fields": [
           "tenant_id",
           "resource_uid"

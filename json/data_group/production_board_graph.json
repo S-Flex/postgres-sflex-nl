@@ -291,7 +291,7 @@
           }
         ],
         "x_axis": {
-          "label_field": "status_title"
+          "title_field": "status_title"
         },
         "y_axis": {
           "no_label": true
@@ -392,7 +392,7 @@
         "group_by": [
           "internal_status_code"
         ],
-        "column_min_width": 250
+        "column_min_width": 200
       }
     }
   ]

@@ -914,15 +914,15 @@
             "foreign_field": "action_id"
           },
           "evaluate": {
-            "formula_field": "formula"
+            "formula_field": "formula",
+            "params_field": "param_json"
           },
           "draggable": true,
-          "rank_field": "resource_plan_rank",
+          "order_field": "resource_plan_rank",
           "offset_field": "offset_in_seconds",
-          "params_field": "param_json",
           "resource_field": "resource_uids",
           "start_at_field": "start_at",
-          "is_atomic_field": "is_atomic",
+          "no_split_field": "is_atomic",
           "is_locked_field": "param_json.is_locked",
           "valid_resources": {
             "field": "data.valid_resources",
@@ -930,7 +930,7 @@
             "speed_factor_field": "speed_factor"
           },
           "break_times_field": "data.break_times",
-          "is_fixed_offset_field": "is_fixed_offset"
+          "is_pinned_field": "is_fixed_offset"
         },
         "offset_field": "offset_in_seconds",
         "label_options": {
@@ -978,9 +978,11 @@
         },
         "duration_field": "param_json.duration_in_seconds",
         "set_date_field": "start_at",
-        "set_group_field": "resource_uids",
+        "set_group_fields": [
+          "resource_uids"
+        ],
         "set_order_field": "state.order",
-        "set_title_field": "name",
+        "title_field": "name",
         "timeline_seconds": 64800,
         "class_names_field": "state.class_names",
         "just_in_time_field": "just_in_time",

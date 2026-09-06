@@ -69,26 +69,26 @@
             {
               "i18n": {
                 "de": {
-                  "title": "TCO & Kapazität"
+                  "title": "Kapazität"
                 },
                 "en": {
-                  "title": "TCO & capacity"
+                  "title": "Capacity"
                 },
                 "es": {
-                  "title": "TCO y capacidad"
+                  "title": "Capacidad"
                 },
                 "fr": {
-                  "title": "TCO & capacité"
+                  "title": "Capacité"
                 },
                 "nl": {
-                  "title": "TCO & capaciteit"
+                  "title": "Capaciteit"
                 },
                 "uk": {
-                  "title": "TCO та потужність"
+                  "title": "Потужність"
                 }
               },
               "icon": "CoinsStacked01",
-              "path": "(sidebar:tco)",
+              "path": "(sidebar:capacity)",
               "hidden_when": [
                 {
                   "op": "not in",

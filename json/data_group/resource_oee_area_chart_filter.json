@@ -17,7 +17,10 @@
         {
           "key": "states",
           "is_optional": true,
-          "is_query_param": true
+          "is_query_param": true,
+          "default_value": [
+            "producing"
+          ]
         },
         {
           "key": "group_by",
@@ -239,7 +242,7 @@
                   }
                 }
               ],
-              "text_field": "title",
+              "title_field": "title",
               "value_field": "code"
             }
           }
@@ -342,7 +345,7 @@
                   }
                 }
               ],
-              "text_field": "title",
+              "title_field": "title",
               "value_field": "code"
             }
           }
@@ -382,7 +385,7 @@
                   "is_query_param": true
                 }
               ],
-              "text_field": "resource_name",
+              "title_field": "resource_name",
               "value_field": "resource_uid"
             }
           }

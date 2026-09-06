@@ -175,7 +175,7 @@
                   "title": "Рядки замовлення"
                 }
               },
-              "path": "(sidebar:production-board-detail)",
+              "path": "(sidebar:orderinfo)",
               "params": [
                 {
                   "key": "date",
@@ -280,11 +280,8 @@
                   "is_query_param": true
                 },
                 {
-                  "key": "production_company_id",
-                  "is_query_param": true
-                },
-                {
-                  "key": "date",
+                  "key": "from",
+                  "value_from": "nest_date",
                   "is_query_param": true
                 }
               ],
@@ -517,7 +514,7 @@
             "suffix": "h"
           }
         },
-        "is_fixed_group": {
+        "fixed_group": {
           "ui": {
             "hidden": true
           }
@@ -988,7 +985,7 @@
             },
             "control": "distribution-bar",
             "distribution_bar_config": {
-              "i18n_field": "i18n",
+              "title_field": "i18n",
               "value_field": "amount",
               "class_names_field": "class_names",
               "sort": {
@@ -1439,7 +1436,7 @@
                 "class_name": "text-xs col-span-2"
               }
             },
-            "is_fixed_group": {
+            "fixed_group": {
               "ui": {
                 "hidden": true
               }
@@ -1593,8 +1590,8 @@
           ],
           "deselectable": true
         },
-        "is_fixed_group_field": "is_fixed_group",
-        "next_start_offset_in_seconds_field": "next_start_offset_in_seconds",
+        "fixed_group_field": "fixed_group",
+        "next_start_offset_field": "next_start_offset_in_seconds",
         "duration_field": "duration_in_seconds",
         "set_date_field": "date",
         "is_pinned_field": "is_pinned",
@@ -1635,16 +1632,15 @@
               }
             ],
             "x_axis": {
-              "label_field": "date"
+              "title_field": "date"
             },
-            "i18n_field": "i18n",
+            "title_field": "i18n",
             "time_field": "time",
-            "scale_field": "duration_in_seconds",
             "class_names_field": "class_names",
-            "duration_in_seconds_field": "duration_in_seconds",
-            "end_offset_in_seconds_field": "end_offset_in_seconds",
-            "segment_size_in_seconds_field": "segment_size_in_seconds",
-            "start_offset_in_seconds_field": "start_offset_in_seconds"
+            "duration_field": "duration_in_seconds",
+            "end_offset_field": "end_offset_in_seconds",
+            "segment_size_field": "segment_size_in_seconds",
+            "offset_field": "start_offset_in_seconds"
           },
           "zoom": 2.2
         },

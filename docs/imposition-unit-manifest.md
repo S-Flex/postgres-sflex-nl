@@ -204,6 +204,43 @@ Die regel draagt geen formule en kost dus niets, maar hij staat er wel. Zodra de
 set-bewuste default van `create_spec_unit_manifest` draait verdwijnt een deel
 daarvan vanzelf; wat overblijft is een kwestie van de optiemapping aanvullen.
 
+## herschreven 4 sep: de regels komen uit de orderregelmanifests
+
+Gemeten: de tabel was **leeg**. Twee oorzaken. De `PERFORM` in `crud_nest` was
+nooit gedraaid (live versie zonder), en de functie zelf faalde op elke
+print-regel: `Unknown variable: standard_print_speed_cm2_sec`. De live formule
+`standard-print-impact` (v1) leest `standard_print_speed_cm2_sec`,
+`neon_speed_cm2_sec`, `print_impact` en `neon_impact`; die constanten staan
+in `catalog.item` bij de print-method-items (`item_json.params`), niet in de
+xbom-`param_json` (leeg), en de accumulatoren moeten van regel naar regel
+meelopen. De functie evalueerde elke regel los, met alleen de xbom-constanten.
+
+Daarnaast matchte de functie de grouping key **per losse code** op
+`xbom.option_code`, terwijl 80 van de 314 impositie-regels een samengestelde
+code hebben (`laminate.x;material.y`): die matchten nooit, en een enkele code
+matchte ook als er een specifiekere samengestelde regel was.
+
+De functie doet nu wat `mapping.create_spec_unit_manifest` al doet, en leent
+het resultaat daarvan:
+
+1. de regels van het vel zijn de `scope = 'imposition'`-regels van de
+   orderregelmanifests op het vel (`mapping.spec_unit_manifest`), distinct per
+   (impositie, option_code) — één resolutie in plaats van twee verschillende
+2. per regel de xbom-rij erachter (formule, constanten, `xbom_id`)
+3. evaluatie als in het orderregelmanifest: op `formula_level`-volgorde, de
+   variabelen reizen mee (recursieve fold), start: `width`/`height` van het
+   nest in cm, `amount`, en 0 voor elke linkerkant van elke formule; constanten
+   van het item (`item_json` en `params`) en van de xbom-rij
+
+Read-only nagerekend op 300 recente nesten: 676 regels, 214 met impact,
+nest 2431178 (152 × 643,6 cm) → `print-method.full-color` 440 s
+(= 152 × 643,6 / 222,2). Dekking laatste 30 dagen: 44.145 van 44.989 nesten
+krijgen regels, 19.249 een formule-regel; de rest heeft geen print-method op
+de orderregels.
+
+`catalog.get_xbom_grouping_keys` speelt hier geen rol meer; de sectie "waar de
+optiecodes vandaan komen" hierboven beschrijft de oude weg.
+
 ## veroudering
 
 `mapping.create_spec_unit_manifest` herbouwt het manifest van een orderregel.
@@ -211,19 +248,19 @@ Dat raakt dit manifest niet meer: de bron is de xbom en het nest, niet de
 orderregel. Verandert een **formule**, dan is `xbom_id` op de rij de weg terug om
 gericht te herbouwen.
 
-## draaivolgorde
+## draaivolgorde (4 sep)
 
-1. `sql/mapping/create_spec_unit_manifest.sql` — de set-bewuste default
-2. `sql/legacy/imposition_unit_manifest.sql` — de tabel
-3. `sql/legacy/create_imposition_unit_manifest.sql` — de herbouwfunctie
-4. `sql/legacy/crud_nest.sql` — de `PERFORM`-aanroep erbij
-5. `sql/migration_imposition_unit_manifest.sql` — backfill 30 dagen
-   (~40 500 imposities, per dag gechunkt) plus de verificaties
+De tabel en de set-bewuste default staan er al. Nog te draaien:
 
-Stap 1 kan nu. Wacht met stap 2-5 tot de aftrekregels en de `formula_level` per
-print-method-code in de xbom staan (`docs/formula-impact-per-step.md`), of
-accepteer dat imposities met twee printgangen tot dan te hoog uitvallen —
-vandaag 82 van de ~10 000 nesten per week.
+1. `sql/legacy/create_imposition_unit_manifest.sql` — de herschreven functie
+2. `sql/legacy/crud_nest.sql` — de `PERFORM`-aanroep (repo-versie, live ontbreekt hij)
+3. `sql/backfill_imposition_unit_manifest.sql` — backfill 60 dagen als DO-blok,
+   batches van 500 nesten, met de verificatie eronder
+
+De aftrekregels per print-method-code (`docs/formula-impact-per-step.md`) zijn
+een formule-kwestie in `catalog.formula`; de fold in de functie draagt
+`print_impact`/`neon_impact` al mee, dus zodra de formules kloppen tellen
+meerdere gangen goed.
 
 Daarna verder met `get_impose_plan` en `get_plan_lanes`: `param_json` opruimen en
 de duur uit het manifest halen in plaats van uit de machineformule.

@@ -1,6 +1,6 @@
 {
   "data_group_id": 49,
-  "data_group": "production_board_detail",
+  "data_group": "orderinfo",
   "data_group_json": [
     {
       "src": [
@@ -51,7 +51,7 @@
         }
       ],
       "children": [],
-      "widget_id": "production_board_detail",
+      "widget_id": "orderinfo",
       "field_config": {
         "sqm": {
           "ui": {
@@ -1007,7 +1007,7 @@
                         }
                       }
                     },
-                    "fields_class_name": "grid grid-cols-3 gap-1"
+                    "fields_class_name": "@container grid grid-cols-3 gap-1 @xl:grid-cols-6"
                   }
                 ],
                 "group_by": [
@@ -1055,7 +1055,8 @@
             ]
           }
         ]
-      }
+      },
+      "window_class_name": "p-8"
     }
   ]
 }

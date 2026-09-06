@@ -102,3 +102,10 @@ create index idx_component_specs_uploader_data_id_cov
 create index idx_component_specs_status_nest_date
 	on component_specs (internal_status_code, nest_date);
 
+
+-- the forecast readers (mock.get_production_forecast_material, behind
+-- get_print_schedule and get_impose_plan) sum sqm per production day over a
+-- date window; without a date-led index that was a bitmap over the whole
+-- material range (~50 ms), with it an index-only scan
+create index ix_component_specs_production_date
+	on component_specs (production_date) include (first_production_line_id, material_id, sqm, internal_status_code);

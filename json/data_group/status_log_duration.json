@@ -159,7 +159,8 @@
           }
         }
       },
-      "fields_class_name": "grid grid-cols-6 gap-1"
+      "fields_class_name": "@container grid grid-cols-6 gap-1 @xl:grid-cols-12",
+      "window_class_name": "p-8"
     }
   ]
 }

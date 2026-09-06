@@ -32,7 +32,10 @@ as $$
                li.lane_item_id, li.lane_id, li.sort_order, li.start_offset_in_seconds,
                li.is_pinned, li.duration_in_seconds,
                l.lane_date,
-               nullif(split_part(li.source_ref, ':', 1), '')::bigint AS material_impose_plan_id,
+               -- only a pattern item has a pattern row; a batch item (source
+               -- 'nest', source_ref <lane_id>:<batch>) writes nothing through
+               CASE WHEN li.source = 'material-plan'
+                    THEN nullif(split_part(li.source_ref, ':', 1), '')::bigint END AS material_impose_plan_id,
                igli.imposition_group_id
         FROM payload p
         JOIN action.lane_item li ON li.lane_item_id = p.lane_item_id
@@ -93,6 +96,13 @@ as $$
         FROM target t WHERE t.new_lane_id IS NOT NULL
         RETURNING lane_id
     ),
+    -- a fresh lane on a material board is a group lane
+    new_group_lane AS (
+        INSERT INTO action.imposition_group_lane (lane_id, imposition_group_id)
+        SELECT t.new_lane_id, t.imposition_group_id
+        FROM target t WHERE t.new_lane_id IS NOT NULL AND t.imposition_group_id IS NOT NULL
+        RETURNING lane_id
+    ),
     new_plan_lane AS (
         INSERT INTO action.plan_lane (plan_id, lane_id, sort_order)
         SELECT t.plan_id, t.new_lane_id,
@@ -127,7 +137,7 @@ as $$
     new_item AS (
         INSERT INTO action.lane_item
             (lane_item_id, lane_id, sort_order, start_offset_in_seconds,
-             duration_in_seconds, is_pinned, no_split, level, source, source_ref)
+             duration_in_seconds, is_pinned, no_split, type, source, source_ref)
         OVERRIDING SYSTEM VALUE
         SELECT t.new_lane_item_id, t.lane_id,
                -- no rank from the client: append behind the lane, spread so a
@@ -137,7 +147,7 @@ as $$
                          FROM action.lane_item li2 WHERE li2.lane_id = t.lane_id)
                         + 1000 * row_number() OVER (ORDER BY t.param_id)),
                coalesce(t.start_offset_in_seconds, 0), 0,
-               coalesce(t.is_pinned, false), true, 0,
+               coalesce(t.is_pinned, false), true, 'plan',
                'material-plan',
                -- same shape generate_plan stamps, so the item stays idempotent
                t.new_pattern_id || ':' || t.lane_date

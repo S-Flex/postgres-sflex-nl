@@ -65,7 +65,7 @@
                 "get_internal_status_levels"
               ],
               "params": [],
-              "text_field": "level",
+              "title_field": "level",
               "value_field": "level"
             }
           }
@@ -99,7 +99,7 @@
                 "get_production_lines"
               ],
               "params": [],
-              "text_field": "i18n",
+              "title_field": "i18n",
               "value_field": "line_id"
             }
           }
@@ -139,7 +139,7 @@
                   "is_search_term": true
                 }
               ],
-              "text_field": "company_name",
+              "title_field": "company_name",
               "value_fields": [
                 "customer_id",
                 "production_line_ids"
@@ -186,7 +186,7 @@
                   ]
                 }
               ],
-              "text_field": "number",
+              "title_field": "number",
               "value_field": "number"
             }
           }
@@ -230,7 +230,7 @@
                   ]
                 }
               ],
-              "text_field": "number",
+              "title_field": "number",
               "value_field": "number"
             }
           }

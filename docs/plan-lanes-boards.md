@@ -67,6 +67,57 @@ production_line_id, lane_item_id, resource_uid]`, `get_impose_plan` idem zonder
 | forecast-bijvangst per call | in het bovenstaande | nest-calls zonder materiaalfilter: 238 forecast-rijen per call terug, 0 gebruikt | `get_impose_plan` geeft per set de materialen van het item mee (`p_material_ids`) |
 | `get_plan_lanes` met `only_starting_today` | 519 ms (49 ms zonder) | intervalcheck (`get_interval_dates` + `min(action.dates)`) per rij, 65× | één check per distinct (start, interval)-paar — 32 paren, join terug per rij, semantiek identiek (geverifieerd) |
 
+## performance (gemeten 4 sep, servertijd via EXPLAIN ANALYZE)
+
+Aanleiding: 114 ms voor de lanes en 665 ms voor het schema in de browser. De
+tunnel/roundtrip zit daar in; op de server:
+
+| read | was | nu (getest als losse query) | wat het was |
+|---|---|---|---|
+| `get_plan_lanes` materiaal, `only_starting_today` (76 + binnen `get_impose_plan`) | 135 ms | 16-21 ms | 16× `get_interval_dates` als function scan, 5-9 ms per call (70.000 buffers) |
+| `get_plan_lanes` materiaal zonder | 38 ms | 38 ms | — |
+| `get_plan_lanes` resource (78, 81) | 12 ms | 12 ms | — |
+| `get_print_schedule` | 465-545 ms | ~250 ms | zie onder |
+| `get_interval_dates` los | 5-9 ms | 0,5 ms | nummerde de hele `action.dates` (4.000 rijen, vier keer per call) |
+
+`get_interval_dates` is herschreven: één scan, begrensd op de datums die er
+toe doen, de ankers als window-aggregaten. Output identiek over 5.224
+combinaties van anker × interval × look-ahead × offset × weekend × dagen-vrij ×
+tenants (read-only vergeleken met de oude functie). Elke caller profiteert
+(`get_plan_lanes`, `get_print_schedule`, `get_components_inflow`,
+`get_batch_orderlines`, `get_nest_planning`).
+
+`get_print_schedule`, waar de 500 ms zat en wat eraan gedaan is:
+
+| onderdeel | was | fix |
+|---|---|---|
+| `evaluate_many_nas` per rij × maat (1.721×) | ~120 ms + 175 ms voor het schoonmaken van 19 variabelen per rij | de evaluator krijgt alleen de variabelen die de formules lezen (`needed_key`, uit de rechterkant van elke formule; 19 keys kosten 4× zoveel als 7), de constanten per materiaal worden één keer schoongemaakt, en er is één evaluatie per distinct variabelenset (803 i.p.v. 1.721) |
+| `get_production_forecast_material` | 65-110 ms | de `actual`-som over `component_specs` heeft geen datum-index: bitmap over het hele materiaalbereik. Index `ix_component_specs_production_date` (include line, material, sqm, status) → index-only scan |
+| intervallen | inline al goedkoop | krijgt nu `p_tenant_ids` mee, zoals de as en het anker (dezelfde fout als in `get_plan_lanes` op 27 aug: zonder tenants verschoof een vrije dag van tenant A de intervallen van tenant B). Zonder tenantfilter identiek; mét tenantfilter verschuiven de kaarten van materialen met een anker in het verleden waar een andere tenant vrij was — dat is de bedoeling |
+
+Output van `get_print_schedule` zonder tenantfilter: 1.362 rijen, 0 verschillen
+met de oude functie. Na de eerste deploy bleek `only_starting_today` 5-6 s te
+kosten (was 640 ms): de planner inlinede `material_vars` in `row_base` en bouwde
+de constanten per kaartrij opnieuw, en joinde `calc` per rij op jsonb. Nu
+`MATERIALIZED` en een `md5`-sleutel voor de join: 280-330 ms mét filter, 150-190
+ms zonder, beide 0 verschillen met de oude functie. Wat overblijft (~250 ms) is het bouwen van 1.362
+jsonb-rijen en de forecast; de index haalt daar nog ~50 ms af.
+
+**Bord 76/78 stonden stuk.** `mock.get_impose_plan` leest
+`production_impact_in_seconds` van de aggregate, maar de live
+`mapping.get_production_orderline_aggregate` was nog de versie zonder die kolom
+(`column na.production_impact_in_seconds does not exist`). De repo-versie was
+niet gedraaid. Staat in de draailijst hieronder.
+
+### te draaien (4 sep, in deze volgorde)
+
+1. [`sql/action/get_interval_dates.sql`](../sql/action/get_interval_dates.sql) — create or replace, zelfde signatuur
+2. [`sql/mock/get_print_schedule.sql`](../sql/mock/get_print_schedule.sql) — drop + create
+3. [`sql/mapping/get_production_orderline_aggregate.sql`](../sql/mapping/get_production_orderline_aggregate.sql) — repareert 76/78
+4. [`sql/migration_component_specs_production_date_idx.sql`](../sql/migration_component_specs_production_date_idx.sql) — `CREATE INDEX CONCURRENTLY`, los draaien, niet in een transactie
+5. het manifest: zie `docs/imposition-unit-manifest.md` "draaivolgorde" (functie, crud_nest, backfill)
+6. [`sql/check_plan_reads.sql`](../sql/check_plan_reads.sql) — de read-only checks achteraf
+
 ## te draaien (in deze volgorde, één sessie voor 1-2)
 
 1. [`sql/action/get_plan_lanes.sql`](../sql/action/get_plan_lanes.sql) — dropt
@@ -123,12 +174,12 @@ krijgt breedte zodra 5-7 gedraaid zijn.
 
 Na 1-2 (read-only, Claude draait):
 
-- **offset-regel**: `select is_fixed_group, is_pinned, count(*) filter (where
+- **offset-regel**: `select fixed_group, is_pinned, count(*) filter (where
   start_offset_in_seconds is not null) from action.get_plan_lanes(now(), 'print',
   'sheet') group by 1,2` — fixed-rijen houden hun klassetijd, gepind houdt zijn eigen
   tijd, fillers 0 met tijd; noop-rijen ongewijzigd.
 - **regressie 75**: `mock.get_print_schedule(now(), 'sheet')` per datum/moment gelijk
-  aan vóór de wijziging (75 leest de labelvelden `is_fixed_group` en
+  aan vóór de wijziging (75 leest de labelvelden `fixed_group` en
   `next_start_offset_in_seconds` óók — het bord moet niets merken).
 - **regressie 76-items**: `mock.get_impose_plan` zelfde rijenaantal als ervoor;
   fixed-rijen met starttijd, fillers zonder.
@@ -162,7 +213,7 @@ Diff van 76/78 tegen de data_groups van twee dagen terug (`nest_schedule` /
 - **78**: dezelfde duration/evaluate-wijziging, plus de labelwijzigingen van 26 aug
   (steps-param, group_by op resource, `next_start_offset_in_seconds_field`).
 
-**Correctie 27 aug:** `is_fixed_group_field` en `next_start_offset_in_seconds_field`
+**Correctie 27 aug:** `fixed_group_field` en `next_start_offset_in_seconds_field`
 horen op `timeline_config`, niet op `label_options` — een niveau te diep. Cees heeft
 76 en 78 omgezet, het contract (`docs/contracts/drag-and-drop.md`) is bijgewerkt.
 75 `print_schedule` heeft ze nog op `label_options`; dat bord werkt en blijft

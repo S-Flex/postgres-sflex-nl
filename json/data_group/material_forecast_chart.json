@@ -1,0 +1,241 @@
+{
+  "data_group_id": 94,
+  "data_group": "material_forecast_chart",
+  "data_group_json": [
+    {
+      "src": [
+        "get_production_forecast_material"
+      ],
+      "i18n": {
+        "de": {
+          "title": "Prognose pro Tag"
+        },
+        "en": {
+          "title": "Forecast per day"
+        },
+        "es": {
+          "title": "Previsión por día"
+        },
+        "fr": {
+          "title": "Prévision par jour"
+        },
+        "nl": {
+          "title": "Forecast per dag"
+        },
+        "uk": {
+          "title": "Прогноз на день"
+        }
+      },
+      "layout": "line-chart",
+      "params": [
+        {
+          "key": "from",
+          "is_query_param": true
+        },
+        {
+          "key": "days",
+          "default_value": 10
+        },
+        {
+          "key": "line_type",
+          "is_optional": true,
+          "is_query_param": true
+        },
+        {
+          "key": "material_id",
+          "is_query_param": true
+        }
+      ],
+      "widget_id": "material_forecast_chart",
+      "field_config": {
+        "date": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Datum"
+              },
+              "en": {
+                "title": "Date"
+              },
+              "es": {
+                "title": "Fecha"
+              },
+              "fr": {
+                "title": "Date"
+              },
+              "nl": {
+                "title": "Datum"
+              },
+              "uk": {
+                "title": "Дата"
+              }
+            },
+            "order": 0,
+            "type": "date"
+          }
+        },
+        "budget_sqm": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Budget m²"
+              },
+              "en": {
+                "title": "Budget sqm"
+              },
+              "es": {
+                "title": "Presupuesto m²"
+              },
+              "fr": {
+                "title": "Budget m²"
+              },
+              "nl": {
+                "title": "Budget m²"
+              },
+              "uk": {
+                "title": "Бюджет м²"
+              }
+            },
+            "order": 1
+          }
+        },
+        "actual_sqm": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Linear m²"
+              },
+              "en": {
+                "title": "Linear sqm"
+              },
+              "es": {
+                "title": "Lineal m²"
+              },
+              "fr": {
+                "title": "Linéaire m²"
+              },
+              "nl": {
+                "title": "Lineair m²"
+              },
+              "uk": {
+                "title": "Лінійно м²"
+              }
+            },
+            "order": 2
+          }
+        },
+        "forecast_sqm": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Prognose m²"
+              },
+              "en": {
+                "title": "Forecast sqm"
+              },
+              "es": {
+                "title": "Previsión m²"
+              },
+              "fr": {
+                "title": "Prévision m²"
+              },
+              "nl": {
+                "title": "Forecast m²"
+              },
+              "uk": {
+                "title": "Прогноз м²"
+              }
+            },
+            "order": 3
+          }
+        },
+        "material_name": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Material"
+              },
+              "en": {
+                "title": "Material"
+              },
+              "es": {
+                "title": "Material"
+              },
+              "fr": {
+                "title": "Matériau"
+              },
+              "nl": {
+                "title": "Materiaal"
+              },
+              "uk": {
+                "title": "Матеріал"
+              }
+            },
+            "order": 4
+          }
+        }
+      },
+      "line_chart_config": {
+        "sets": {
+          "budget_sqm_total": {
+            "field": "budget_sqm",
+            "class_name": "budget",
+            "aggregate_fn": "sum"
+          },
+          "actual_sqm_total": {
+            "field": "actual_sqm",
+            "class_name": "actual",
+            "aggregate_fn": "sum"
+          },
+          "forecast_sqm_total": {
+            "field": "forecast_sqm",
+            "class_name": "forecast",
+            "aggregate_fn": "sum"
+          }
+        },
+        "tooltip": {
+          "sections": [
+            {
+              "field_config": {
+                "date": {
+                  "ui": {
+                    "order": 0
+                  }
+                }
+              }
+            },
+            {
+              "group": {
+                "fields_class_name": "grid grid-cols-3 gap-1",
+                "field_config": {
+                  "budget_sqm": {
+                    "ui": {
+                      "order": 0
+                    }
+                  },
+                  "actual_sqm": {
+                    "ui": {
+                      "order": 1
+                    }
+                  },
+                  "forecast_sqm": {
+                    "ui": {
+                      "order": 2
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "x_field": "date",
+        "group_by": [
+          "date"
+        ],
+        "y_axis": {
+          "no_label": true
+        }
+      }
+    }
+  ]
+}
