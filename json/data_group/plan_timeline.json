@@ -61,22 +61,22 @@
             {
               "i18n": {
                 "de": {
-                  "title": "Charge öffnen"
+                  "title": "Batch"
                 },
                 "en": {
-                  "title": "Open batch"
+                  "title": "Batch"
                 },
                 "es": {
-                  "title": "Abrir lote"
+                  "title": "Lote"
                 },
                 "fr": {
-                  "title": "Ouvrir le lot"
+                  "title": "Lot"
                 },
                 "nl": {
-                  "title": "Batch openen"
+                  "title": "Batch"
                 },
                 "uk": {
-                  "title": "Відкрити партію"
+                  "title": "Партія"
                 }
               },
               "icon": "Package01",
@@ -98,22 +98,22 @@
             {
               "i18n": {
                 "de": {
-                  "title": "Nesting-queue öffnen"
+                  "title": "Nesting-Queue"
                 },
                 "en": {
-                  "title": "Open nesting-queue"
+                  "title": "Nesting queue"
                 },
                 "es": {
-                  "title": "Abrir nesting-queue"
+                  "title": "Cola de nesting"
                 },
                 "fr": {
-                  "title": "Ouvrir le nesting"
+                  "title": "File de nesting"
                 },
                 "nl": {
-                  "title": "Nesting-wachtrij openen"
+                  "title": "Nesting wachtrij"
                 },
                 "uk": {
-                  "title": "Відкрити нестинг"
+                  "title": "Черга нестингу"
                 }
               },
               "icon": "Grid01",
@@ -982,7 +982,6 @@
           "resource_uids"
         ],
         "set_order_field": "state.order",
-        "title_field": "name",
         "timeline_seconds": 64800,
         "class_names_field": "state.class_names",
         "just_in_time_field": "just_in_time",
@@ -990,7 +989,8 @@
           "line",
           "step"
         ],
-        "no_label": false
+        "no_label": false,
+        "set_title_field": "name"
       },
       "fields_class_name": "grid grid-cols-6 gap-1"
     }

@@ -1,3 +1,57 @@
+-- ============================================================
+-- One batch per lane item, also when a nest gets its batch later (rule of
+-- docs/plan-lane-model.md stap 3b; checked 6 sep on item 257870: the current
+-- set carries one batch, the mixed rows are the older set writes of 5 sep,
+-- kept as history by the append-only table).
+-- Two gaps in the writer, legacy.crud_nest, closed here:
+--   1. the batch an item "carries today" counted the payload nests too. A nest
+--      that sits on an item and gets its batch in this call made that item
+--      look like the item of the new batch (the first nest decided), so the
+--      nest stayed put and the item mixed two batches. Now the payload nests
+--      are left out of that lookup: they are placed anew anyway.
+--   2. the pv2 items were only put right when action.crud_object ran. Now
+--      crud_nest calls action.sync_pv2_batch_items for the plannable items
+--      whose set holds a payload nest, so a nest that lands on another batch
+--      than its pv2 item moves to the extra item of that batch at once (a
+--      nest without a batch counts as the item's own, as before).
+-- Run the check, the script, the check again; expected 0 mixed, 0 wrong,
+-- before and after (nothing has been written to the material lanes since the
+-- repair of 6 sep 07:00).
+-- ============================================================
+
+-- check: items whose current set holds more than one batch (material lanes:
+-- null is its own batch; pv2: a nest without a batch counts as the item's
+-- own), and nests on a batch item of another batch than its source_ref says
+WITH cur AS (
+    SELECT x.lane_item_id, x.imposition_id
+    FROM action.imposition_lane_item x
+    WHERE x.imposition_id IS NOT NULL
+      AND x.moved_at = (SELECT max(y.moved_at) FROM action.imposition_lane_item y WHERE y.lane_item_id = x.lane_item_id)
+),
+per_item AS (
+    SELECT li.source, c.lane_item_id,
+           count(DISTINCT coalesce(n.batch_id, 0)) AS batches,
+           count(DISTINCT n.batch_id)              AS batches_without_null
+    FROM cur c
+    JOIN action.lane_item li ON li.lane_item_id = c.lane_item_id
+    JOIN legacy.nest n ON n.nest_id = c.imposition_id
+    GROUP BY li.source, c.lane_item_id
+)
+SELECT p.source, count(*) AS items,
+       count(*) FILTER (WHERE CASE WHEN p.source = 'pv2' THEN p.batches_without_null ELSE p.batches END > 1) AS mixed_items,
+       (SELECT count(*)
+        FROM cur c
+        JOIN action.lane_item li ON li.lane_item_id = c.lane_item_id AND li.source = p.source AND li.source = 'nest'
+        JOIN legacy.nest n ON n.nest_id = c.imposition_id
+        WHERE coalesce(n.batch_id, 0) <> split_part(li.source_ref, ':', 2)::bigint) AS nests_on_wrong_batch_item
+FROM per_item p
+GROUP BY p.source
+ORDER BY p.source;
+
+BEGIN;
+
+drop function if exists legacy.crud_nest(jsonb, boolean);
+
 create function legacy.crud_nest(p_param_json jsonb, p_no_results boolean DEFAULT false) returns TABLE(param_id integer, track_by integer, crud text, domain_id integer, batch_id bigint, nest_id bigint, nest_counter integer, reproduced_counter integer, nest_name text, amount integer, width numeric, height numeric, nest_json jsonb, sort_order integer, status jsonb, possible_states bigint, possible_multiple_states bigint)
 	language plpgsql
 as $$
@@ -378,3 +432,5 @@ $$;
 
 alter function legacy.crud_nest(jsonb, boolean) owner to xfw3;
 
+
+COMMIT;

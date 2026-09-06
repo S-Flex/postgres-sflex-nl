@@ -343,7 +343,7 @@
     }
   },
   {
-    "code": "resource-plan",
+    "code": "nest-resource-plan",
     "header": {
       "grid": {
         "columns": "auto 1fr",
@@ -369,10 +369,96 @@
       },
       "sections": [
         {
-          "data_group": "resource_plan_filter"
+          "data_group": "resource_plan_filter",
+          "params": [
+            {
+              "key": "steps",
+              "default_value": [
+                "impose"
+              ]
+            }
+          ]
         },
         {
-          "data_group": "resource_plan"
+          "data_group": "resource_plan",
+          "params": [
+            {
+              "key": "steps",
+              "default_value": [
+                "impose"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "footer": {
+      "grid": {
+        "rows": "auto",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "status_bar"
+        }
+      ]
+    }
+  },
+  {
+    "code": "production-resource-plan",
+    "header": {
+      "grid": {
+        "columns": "auto 1fr",
+        "align_items": "center",
+        "areas": [
+          "breadcrumb controls"
+        ]
+      },
+      "sections": [
+        {
+          "area": "breadcrumb"
+        },
+        {
+          "area": "controls",
+          "data_group": "header_data_groups/timeline-controls.json"
+        }
+      ]
+    },
+    "main": {
+      "grid": {
+        "rows": "auto 1fr",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "resource_plan_filter",
+          "params": [
+            {
+              "key": "steps",
+              "default_value": [
+                "print",
+                "coat",
+                "laminate",
+                "route",
+                "cut"
+              ]
+            }
+          ]
+        },
+        {
+          "data_group": "resource_plan",
+          "params": [
+            {
+              "key": "steps",
+              "default_value": [
+                "print",
+                "coat",
+                "laminate",
+                "route",
+                "cut"
+              ]
+            }
+          ]
         }
       ]
     },

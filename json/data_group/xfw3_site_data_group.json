@@ -652,22 +652,22 @@
               {
                 "i18n": {
                   "de": {
-                    "title": "Charge öffnen"
+                    "title": "Batch"
                   },
                   "en": {
-                    "title": "Open batch"
+                    "title": "Batch"
                   },
                   "es": {
-                    "title": "Abrir lote"
+                    "title": "Lote"
                   },
                   "fr": {
-                    "title": "Ouvrir le lot"
+                    "title": "Lot"
                   },
                   "nl": {
-                    "title": "Batch openen"
+                    "title": "Batch"
                   },
                   "uk": {
-                    "title": "Відкрити партію"
+                    "title": "Партія"
                   }
                 },
                 "icon": "Package01",
@@ -1041,11 +1041,11 @@
             "resource_uid"
           ],
           "set_order_field": "state.order",
-          "title_field": "name",
           "class_names_field": "state.class_name",
           "fill_field": "state.fill",
           "color_field": "state.color",
-          "show_legend": true
+          "show_legend": true,
+          "set_title_field": "name"
         }
       }
     ]
@@ -10089,22 +10089,22 @@
               {
                 "i18n": {
                   "de": {
-                    "title": "Charge öffnen"
+                    "title": "Batch"
                   },
                   "en": {
-                    "title": "Open batch"
+                    "title": "Batch"
                   },
                   "es": {
-                    "title": "Abrir lote"
+                    "title": "Lote"
                   },
                   "fr": {
-                    "title": "Ouvrir le lot"
+                    "title": "Lot"
                   },
                   "nl": {
-                    "title": "Batch openen"
+                    "title": "Batch"
                   },
                   "uk": {
-                    "title": "Відкрити партію"
+                    "title": "Партія"
                   }
                 },
                 "icon": "Package01",
@@ -10126,22 +10126,22 @@
               {
                 "i18n": {
                   "de": {
-                    "title": "Nesting-queue öffnen"
+                    "title": "Nesting-Queue"
                   },
                   "en": {
-                    "title": "Open nesting-queue"
+                    "title": "Nesting queue"
                   },
                   "es": {
-                    "title": "Abrir nesting-queue"
+                    "title": "Cola de nesting"
                   },
                   "fr": {
-                    "title": "Ouvrir le nesting"
+                    "title": "File de nesting"
                   },
                   "nl": {
-                    "title": "Nesting-wachtrij openen"
+                    "title": "Nesting wachtrij"
                   },
                   "uk": {
-                    "title": "Відкрити нестинг"
+                    "title": "Черга нестингу"
                   }
                 },
                 "icon": "Grid01",
@@ -11010,7 +11010,6 @@
             "resource_uids"
           ],
           "set_order_field": "state.order",
-          "title_field": "name",
           "timeline_seconds": 64800,
           "class_names_field": "state.class_names",
           "just_in_time_field": "just_in_time",
@@ -11018,7 +11017,8 @@
             "line",
             "step"
           ],
-          "no_label": false
+          "no_label": false,
+          "set_title_field": "name"
         },
         "fields_class_name": "grid grid-cols-6 gap-1"
       }
@@ -16422,22 +16422,22 @@
               {
                 "i18n": {
                   "de": {
-                    "title": "Auftragspositionen öffnen"
+                    "title": "Auftragspositionen"
                   },
                   "en": {
-                    "title": "Open orderlines"
+                    "title": "Orderlines"
                   },
                   "es": {
-                    "title": "Abrir líneas de pedido"
+                    "title": "Líneas de pedido"
                   },
                   "fr": {
-                    "title": "Ouvrir les lignes de commande"
+                    "title": "Lignes de commande"
                   },
                   "nl": {
-                    "title": "Orderlijnen openen"
+                    "title": "Orderlijnen"
                   },
                   "uk": {
-                    "title": "Відкрити рядки замовлення"
+                    "title": "Рядки замовлення"
                   }
                 },
                 "icon": "List",
@@ -16469,22 +16469,22 @@
               {
                 "i18n": {
                   "de": {
-                    "title": "Materialprognose öffnen"
+                    "title": "Materialprognose"
                   },
                   "en": {
-                    "title": "Open material forecast"
+                    "title": "Material forecast"
                   },
                   "es": {
-                    "title": "Abrir previsión de material"
+                    "title": "Previsión de material"
                   },
                   "fr": {
-                    "title": "Ouvrir la prévision matériau"
+                    "title": "Prévision matériau"
                   },
                   "nl": {
-                    "title": "Materiaalforecast openen"
+                    "title": "Materiaalforecast"
                   },
                   "uk": {
-                    "title": "Відкрити прогноз матеріалу"
+                    "title": "Прогноз матеріалу"
                   }
                 },
                 "icon": "TrendUp01",
@@ -17601,7 +17601,8 @@
           "group_title_fields": [
             "tenant_name"
           ],
-          "no_label": false
+          "no_label": false,
+          "chain_scope": "plan"
         },
         "fields_class_name": "grid grid-cols-8 gap-1"
       }
@@ -17677,95 +17678,6 @@
               {
                 "i18n": {
                   "de": {
-                    "title": "Nesting-queue öffnen"
-                  },
-                  "en": {
-                    "title": "Open nesting-queue"
-                  },
-                  "es": {
-                    "title": "Abrir nesting-queue"
-                  },
-                  "fr": {
-                    "title": "Ouvrir le nesting"
-                  },
-                  "nl": {
-                    "title": "Nesting-wachtrij openen"
-                  },
-                  "uk": {
-                    "title": "Відкрити нестинг"
-                  }
-                },
-                "icon": "Grid01",
-                "path": "(sidebar:nesting-queue)",
-                "params": [
-                  {
-                    "key": "material_id",
-                    "is_query_param": true
-                  },
-                  {
-                    "key": "date",
-                    "is_query_param": true
-                  }
-                ],
-                "hidden_when": [
-                  {
-                    "op": "==",
-                    "value": null,
-                    "field": "material_id"
-                  }
-                ]
-              },
-              {
-                "i18n": {
-                  "de": {
-                    "title": "Auftragspositionen"
-                  },
-                  "en": {
-                    "title": "Orderlines"
-                  },
-                  "es": {
-                    "title": "Líneas de pedido"
-                  },
-                  "fr": {
-                    "title": "Lignes de commande"
-                  },
-                  "nl": {
-                    "title": "Orderlijnen"
-                  },
-                  "uk": {
-                    "title": "Рядки замовлення"
-                  }
-                },
-                "path": "(sidebar:nest-schedule-queue)",
-                "params": [
-                  {
-                    "key": "material_id",
-                    "is_query_param": true
-                  },
-                  {
-                    "key": "date",
-                    "value_from": "nest_date",
-                    "is_query_param": true
-                  }
-                ],
-                "hidden_when": {
-                  "or": [
-                    {
-                      "field": "material_id",
-                      "op": "==",
-                      "value": null
-                    },
-                    {
-                      "field": "nest_count",
-                      "op": ">",
-                      "value": 0
-                    }
-                  ]
-                }
-              },
-              {
-                "i18n": {
-                  "de": {
                     "title": "Auftragspositionen"
                   },
                   "en": {
@@ -17802,25 +17714,65 @@
                     "is_query_param": true
                   }
                 ],
-                "hidden_when": {
-                  "or": [
-                    {
-                      "field": "material_id",
-                      "op": "==",
-                      "value": null
-                    },
-                    {
-                      "field": "nest_count",
-                      "op": ">",
-                      "value": 0
-                    }
-                  ]
-                }
+                "hidden_when": [
+                  {
+                    "field": "material_id",
+                    "op": "==",
+                    "value": null
+                  }
+                ]
               },
               {
                 "i18n": {
                   "de": {
-                    "title": "Nest detail"
+                    "title": "Nesting-Queue"
+                  },
+                  "en": {
+                    "title": "Nesting queue"
+                  },
+                  "es": {
+                    "title": "Cola de nesting"
+                  },
+                  "fr": {
+                    "title": "File de nesting"
+                  },
+                  "nl": {
+                    "title": "Nesting wachtrij"
+                  },
+                  "uk": {
+                    "title": "Черга нестингу"
+                  }
+                },
+                "icon": "Grid01",
+                "path": "(sidebar:nest-schedule-queue)",
+                "params": [
+                  {
+                    "key": "material_id",
+                    "is_query_param": true
+                  },
+                  {
+                    "key": "date",
+                    "value_from": "nest_date",
+                    "is_query_param": true
+                  }
+                ],
+                "hidden_when": [
+                  {
+                    "field": "material_id",
+                    "op": "==",
+                    "value": null
+                  },
+                  {
+                    "field": "nest_count",
+                    "op": ">",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "i18n": {
+                  "de": {
+                    "title": "Nest-Detail"
                   },
                   "en": {
                     "title": "Nest detail"
@@ -17845,40 +17797,38 @@
                     "is_query_param": true
                   }
                 ],
-                "hidden_when": {
-                  "or": [
-                    {
-                      "field": "material_id",
-                      "op": "==",
-                      "value": null
-                    },
-                    {
-                      "field": "nest_count",
-                      "op": "==",
-                      "value": 0
-                    }
-                  ]
-                }
+                "hidden_when": [
+                  {
+                    "field": "material_id",
+                    "op": "==",
+                    "value": null
+                  },
+                  {
+                    "field": "nest_count",
+                    "op": "==",
+                    "value": 0
+                  }
+                ]
               },
               {
                 "i18n": {
                   "de": {
-                    "title": "Materialprognose öffnen"
+                    "title": "Materialprognose"
                   },
                   "en": {
-                    "title": "Open material forecast"
+                    "title": "Material forecast"
                   },
                   "es": {
-                    "title": "Abrir previsión de material"
+                    "title": "Previsión de material"
                   },
                   "fr": {
-                    "title": "Ouvrir la prévision matériau"
+                    "title": "Prévision matériau"
                   },
                   "nl": {
-                    "title": "Materiaalforecast openen"
+                    "title": "Materiaalforecast"
                   },
                   "uk": {
-                    "title": "Відкрити прогноз матеріалу"
+                    "title": "Прогноз матеріалу"
                   }
                 },
                 "icon": "TrendUp01",
@@ -17896,9 +17846,9 @@
                 ],
                 "hidden_when": [
                   {
+                    "field": "forecast_sqm",
                     "op": "==",
-                    "value": null,
-                    "field": "forecast_sqm"
+                    "value": null
                   }
                 ]
               }
@@ -18639,6 +18589,47 @@
               "type": "date",
               "hidden": true
             }
+          },
+          "type": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "type_json": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "param_json.planned_start_offset_in_seconds": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "param_json.production_impact_in_seconds": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Geplante Zeit"
+                },
+                "en": {
+                  "title": "Planned time"
+                },
+                "es": {
+                  "title": "Tiempo planificado"
+                },
+                "fr": {
+                  "title": "Temps planifié"
+                },
+                "nl": {
+                  "title": "Geplande tijd"
+                },
+                "uk": {
+                  "title": "Запланований час"
+                }
+              },
+              "type": "duration",
+              "hidden": true
+            }
           }
         },
         "filter_match": "all",
@@ -19261,13 +19252,16 @@
           ],
           "no_label": false,
           "evaluate": {
-            "formula_field": "formula",
+            "formula_field": "type_json.formula",
             "params_field": "param_json"
           },
           "valid_resources": {
             "field": "data.valid_resources",
             "resource_field": "resource_path"
-          }
+          },
+          "set_field": "type",
+          "set_order_field": "type_json.sort_order",
+          "placement_field": "type_json.placement"
         },
         "fields_class_name": "@container grid grid-cols-6 gap-1"
       }
@@ -20975,22 +20969,22 @@
               {
                 "i18n": {
                   "de": {
-                    "title": "Batch öffnen"
+                    "title": "Batch"
                   },
                   "en": {
-                    "title": "Open batch"
+                    "title": "Batch"
                   },
                   "es": {
-                    "title": "Abrir lote"
+                    "title": "Lote"
                   },
                   "fr": {
-                    "title": "Ouvrir le lot"
+                    "title": "Lot"
                   },
                   "nl": {
-                    "title": "Batch openen"
+                    "title": "Batch"
                   },
                   "uk": {
-                    "title": "Відкрити партію"
+                    "title": "Партія"
                   }
                 },
                 "icon": "Package01",
@@ -22019,6 +22013,32 @@
             "ui": {
               "hidden": true
             }
+          },
+          "forecast_sqm": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Prognose"
+                },
+                "en": {
+                  "title": "Forecast"
+                },
+                "es": {
+                  "title": "Previsión"
+                },
+                "fr": {
+                  "title": "Prévision"
+                },
+                "nl": {
+                  "title": "Forecast"
+                },
+                "uk": {
+                  "title": "Прогноз"
+                }
+              },
+              "hidden": true
+            },
+            "scale": 0
           }
         },
         "filter_match": "all",
@@ -22068,30 +22088,37 @@
                       "class_name": "text-right"
                     }
                   },
-                  "gross_sqm": {
+                  "forecast_sqm": {
                     "ui": {
                       "order": 1,
                       "hidden": false,
                       "class_name": "text-right"
                     }
                   },
-                  "impact_json.count": {
+                  "gross_sqm": {
                     "ui": {
                       "order": 2,
                       "hidden": false,
                       "class_name": "text-right"
                     }
                   },
-                  "impact_json.amount": {
+                  "impact_json.count": {
                     "ui": {
                       "order": 3,
                       "hidden": false,
                       "class_name": "text-right"
                     }
                   },
-                  "impact_json.rework_count": {
+                  "impact_json.amount": {
                     "ui": {
                       "order": 4,
+                      "hidden": false,
+                      "class_name": "text-right"
+                    }
+                  },
+                  "impact_json.rework_count": {
+                    "ui": {
+                      "order": 5,
                       "hidden": false,
                       "class_name": "col-start-1 text-right",
                       "hidden_when": [
@@ -22105,7 +22132,7 @@
                   },
                   "impact_json.rework_sqm": {
                     "ui": {
-                      "order": 5,
+                      "order": 6,
                       "hidden": false,
                       "class_name": "text-right",
                       "hidden_when": [
@@ -22119,56 +22146,56 @@
                   },
                   "nest_count": {
                     "ui": {
-                      "order": 6,
+                      "order": 7,
                       "hidden": false,
                       "class_name": "col-start-1 text-right"
                     }
                   },
                   "param_json.standard_production_impact_in_seconds": {
                     "ui": {
-                      "order": 7,
+                      "order": 8,
                       "hidden": false,
                       "class_name": "col-span-2"
                     }
                   },
                   "part_status_json": {
                     "ui": {
-                      "order": 8,
+                      "order": 9,
                       "hidden": false,
                       "class_name": "col-span-2"
                     }
                   },
                   "progress_json.done_amount": {
                     "ui": {
-                      "order": 9,
+                      "order": 10,
                       "hidden": false,
                       "class_name": "col-start-1 text-right"
                     }
                   },
                   "progress_json.remaining_amount": {
                     "ui": {
-                      "order": 10,
+                      "order": 11,
                       "hidden": false,
                       "class_name": "text-right"
                     }
                   },
                   "progress_json.remaining_percentage": {
                     "ui": {
-                      "order": 11,
+                      "order": 12,
                       "hidden": false,
                       "class_name": "col-start-1 text-right"
                     }
                   },
                   "param_json.production_impact_in_seconds": {
                     "ui": {
-                      "order": 12,
+                      "order": 13,
                       "hidden": false,
                       "class_name": "text-right"
                     }
                   },
                   "param_json.remaining_impact_in_seconds": {
                     "ui": {
-                      "order": 13,
+                      "order": 14,
                       "hidden": false,
                       "class_name": "text-right"
                     }
@@ -22437,37 +22464,51 @@
               "field_config": {
                 "material_name": {
                   "ui": {
-                    "order": 0
+                    "order": 0,
+                    "hidden": false
                   }
                 },
                 "batch_name": {
                   "ui": {
-                    "order": 1
+                    "order": 1,
+                    "hidden": false
                   }
                 }
+              },
+              "row_options": {
+                "draggable": true
               }
             },
             "progress": {
               "field_config": {
                 "progress_json.remaining_percentage": {
                   "ui": {
-                    "order": 0
+                    "order": 0,
+                    "hidden": false
                   }
                 }
+              },
+              "row_options": {
+                "draggable": false
               }
             },
             "actual": {
               "field_config": {
                 "batch_name": {
                   "ui": {
-                    "order": 0
+                    "order": 0,
+                    "hidden": false
                   }
                 },
                 "param_json.produced_count": {
                   "ui": {
-                    "order": 1
+                    "order": 1,
+                    "hidden": false
                   }
                 }
+              },
+              "row_options": {
+                "draggable": false
               }
             }
           },
@@ -22476,7 +22517,8 @@
             "offset_field": "start_offset_in_seconds",
             "duration_field": "duration_in_seconds",
             "class_names_field": "class_names"
-          }
+          },
+          "set_title_field": "type_json.i18n"
         },
         "fields_class_name": "@container grid grid-cols-6 gap-1"
       }

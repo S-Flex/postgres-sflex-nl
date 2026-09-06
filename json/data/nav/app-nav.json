@@ -62,8 +62,15 @@
         ]
       },
       {
-        "path": "/resource-plan",
-        "code": "resource-plan",
+        "path": "/nest-resource-plan",
+        "code": "nest-resource-plan",
+        "environments": [
+          "development"
+        ]
+      },
+      {
+        "path": "/production-resource-plan",
+        "code": "production-resource-plan",
         "environments": [
           "development"
         ]
@@ -119,7 +126,8 @@
       "/production-board",
       "/print-schedule",
       "/impose-plan",
-      "/resource-plan",
+      "/nest-resource-plan",
+      "/production-resource-plan",
       "/production-planning",
       "/batch-nests"
     ],

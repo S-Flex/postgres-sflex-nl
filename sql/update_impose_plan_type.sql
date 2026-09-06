@@ -1,3 +1,18 @@
+-- ============================================================
+-- get_impose_plan (76) krijgt type en type_json (6 sep): elke item-rij is een
+-- plan-rij met de node uit lookup_lane_item_type (sort_order, placement,
+-- formula), zoals get_resource_plan. De noop-vensters hebben geen soort. Bord 76
+-- krijgt set_field, set_order_field en placement_field, als 81.
+-- Daarna sql/update_data_group_partial.sql (76) draaien.
+-- ============================================================
+
+BEGIN;
+
+-- renamed from mock.get_nest_schedule (via get_imposition_plan); impose is
+-- the step, imposition the object it produces
+drop function if exists mock.get_nest_schedule(timestamp with time zone, text, text, integer[], boolean, integer, integer, integer);
+drop function if exists mock.get_nest_schedule(timestamp with time zone, text, text, integer[], integer, integer, integer);
+drop function if exists mock.get_imposition_plan(timestamp with time zone, text, text, integer[], integer, integer, integer);
 -- renamed from mock.get_nest_schedule (via get_imposition_plan); impose is
 -- the step, imposition the object it produces
 drop function if exists mock.get_nest_schedule(timestamp with time zone, text, text, integer[], boolean, integer, integer, integer);
@@ -24,17 +39,12 @@ declare
     -- a lane item is never shorter than this, whatever the sqm say
     v_min_duration_in_seconds  constant integer := 900;
     v_plan_type_json jsonb;
-    v_plan_class_names text[];
 begin
     -- the lookup node of the plan kind
     select t.value into v_plan_type_json
     from action.lookup lk
     cross join lateral jsonb_array_elements(lk.lookup_json) as t(value)
     where lk.lookup = 'lookup_lane_item_type' and t.value ->> 'type' = 'plan';
-    -- its class names (timeline-plan) ride along in class_names, as on get_resource_plan
-    v_plan_class_names := coalesce(
-        (select array_agg(c) from jsonb_array_elements_text(coalesce(v_plan_type_json -> 'class_names', '[]'::jsonb)) c),
-        '{}'::text[]);
 
     -- the statuses live in mapping.internal_status, not in code
     select array_agg(distinct s.sequence) into v_status_sequences
@@ -246,11 +256,7 @@ begin
            coalesce(r.nest_ids, '{}'::bigint[]),
            coalesce(cardinality(r.nest_ids), 0),
            r.seconds_to_logistics_date,
-           -- the class names of the work plus, on an item row, those of the kind
-           coalesce((select array_agg(distinct c order by c)
-                     from unnest(coalesce(r.class_names, '{}'::text[])
-                                 || case when r.lane_item_id is not null then v_plan_class_names else '{}'::text[] end) as c),
-                    '{}'::text[]),
+           coalesce(r.class_names, '{}'::text[]),
            coalesce(r.unit_class_names, '{}'::text[]),
            r.lane_item_id, r.lane_id,
            -- the kind of row: every item is a plan row, a noop window has none
@@ -267,3 +273,17 @@ alter function mock.get_impose_plan(timestamp with time zone, text, text, intege
 -- the board query is planned per call and inlines the aggregate; JIT compiling
 -- it costs seconds and never pays back
 alter function mock.get_impose_plan(timestamp with time zone, text, text, integer[], integer, integer, integer) set jit = off;
+
+COMMIT;
+
+-- check: every item row is a plan row with a node, the noop windows have none;
+-- expected on 5 sep sheet: 44 plan rows with type_json, 2 without
+SELECT type, count(*) AS rows, count(type_json) AS with_type_json
+FROM mock.get_impose_plan(p_until => '2026-09-05T00:00:00+02:00', p_step => 'print', p_line_type => 'sheet', p_tenant_ids => array[1, 2])
+GROUP BY type ORDER BY type NULLS LAST;
+
+-- check 2: the variables of the plan formula are on every item row; expected: 44 and 44
+SELECT count(*) FILTER (WHERE param_json ? 'planned_start_offset_in_seconds') AS with_planned_start,
+       count(*) FILTER (WHERE (param_json ->> 'production_impact_in_seconds')::integer = duration_in_seconds) AS impact_equals_duration
+FROM mock.get_impose_plan(p_until => '2026-09-05T00:00:00+02:00', p_step => 'print', p_line_type => 'sheet', p_tenant_ids => array[1, 2])
+WHERE lane_item_id IS NOT NULL;

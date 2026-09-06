@@ -357,7 +357,7 @@
         "title": "Заплановано"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 130,
     "class_name": "plan",
     "counts_as": "planned",
@@ -528,7 +528,7 @@
         "title": "Виробництво"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 190,
     "class_name": "state-producing",
     "counts_as": "producing",
@@ -557,7 +557,7 @@
         "title": "Налаштування"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 200,
     "class_name": "state-setup",
     "counts_as": "producing",
@@ -586,7 +586,7 @@
         "title": "В роботі"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 210,
     "class_name": "state-running",
     "fill": "var(--state-running)",
@@ -614,7 +614,7 @@
         "title": "Неактивний"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 220,
     "class_name": "state-idle",
     "fill": "var(--state-idle)",
@@ -642,7 +642,7 @@
         "title": "Голодування"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 230,
     "class_name": "state-starved",
     "fill": "var(--state-starved)",
@@ -670,7 +670,7 @@
         "title": "Голодування"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 240,
     "class_name": "state-starved",
     "alias_of": "starved",
@@ -699,7 +699,7 @@
         "title": "Заблоковано"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 250,
     "class_name": "state-blocked",
     "fill": "var(--state-blocked)",
@@ -727,7 +727,7 @@
         "title": "Заблоковано"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 260,
     "class_name": "state-blocked",
     "alias_of": "blocked",
@@ -756,7 +756,7 @@
         "title": "Голодування"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 270,
     "class_name": "state-starved",
     "alias_of": "starved",
@@ -785,7 +785,7 @@
         "title": "Доступно"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 275,
     "class_name": "state-available",
     "fill": "var(--state-available, transparent)",
@@ -813,7 +813,7 @@
         "title": "Поломка"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 280,
     "class_name": "state-breakdown",
     "counts_as": "breakdown",
@@ -842,7 +842,7 @@
         "title": "Відсутні дані"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 290,
     "class_name": "state-missingdata",
     "counts_as": "offline",
@@ -871,7 +871,7 @@
         "title": "Офлайн"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 300,
     "class_name": "state-offline",
     "counts_as": "offline",
@@ -900,7 +900,7 @@
         "title": "Інсталяція"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 310,
     "class_name": "state-installation",
     "counts_as": "offline",
@@ -929,7 +929,7 @@
         "title": "Недоступно"
       }
     },
-    "group": "state",
+    "group": "actual",
     "order": 320,
     "class_name": "state-unavailable",
     "fill": "var(--state-unavailable, var(--state-offline))",

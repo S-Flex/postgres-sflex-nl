@@ -35,22 +35,22 @@
             {
               "i18n": {
                 "de": {
-                  "title": "Charge öffnen"
+                  "title": "Batch"
                 },
                 "en": {
-                  "title": "Open batch"
+                  "title": "Batch"
                 },
                 "es": {
-                  "title": "Abrir lote"
+                  "title": "Lote"
                 },
                 "fr": {
-                  "title": "Ouvrir le lot"
+                  "title": "Lot"
                 },
                 "nl": {
-                  "title": "Batch openen"
+                  "title": "Batch"
                 },
                 "uk": {
-                  "title": "Відкрити партію"
+                  "title": "Партія"
                 }
               },
               "icon": "Package01",
@@ -424,11 +424,11 @@
           "resource_uid"
         ],
         "set_order_field": "state.order",
-        "title_field": "name",
         "class_names_field": "state.class_name",
         "fill_field": "state.fill",
         "color_field": "state.color",
-        "show_legend": true
+        "show_legend": true,
+        "set_title_field": "name"
       }
     }
   ]

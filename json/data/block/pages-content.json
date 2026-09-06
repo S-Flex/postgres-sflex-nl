@@ -726,24 +726,53 @@
     }
   },
   {
-    "code": "resource-plan",
+    "code": "nest-resource-plan",
     "block": {
-      "title": "Resource plan",
+      "title": "Nest resource plan",
       "i18n": {
         "en": {
-          "title": "Resource plan"
+          "title": "Nest resource plan"
         },
         "nl": {
-          "title": "Resource planning"
+          "title": "Nest resource planning"
         },
         "de": {
-          "title": "Ressourcenplanung"
+          "title": "Nest-Ressourcenplanung"
         },
-        "uk": {
-          "title": "План ресурсів"
+        "fr": {
+          "title": "Planning des ressources de nesting"
         },
         "es": {
-          "title": "Plan de recursos"
+          "title": "Plan de recursos de nesting"
+        },
+        "uk": {
+          "title": "План ресурсів нестингу"
+        }
+      }
+    }
+  },
+  {
+    "code": "production-resource-plan",
+    "block": {
+      "title": "Production resource plan",
+      "i18n": {
+        "en": {
+          "title": "Production resource plan"
+        },
+        "nl": {
+          "title": "Productie resource planning"
+        },
+        "de": {
+          "title": "Produktions-Ressourcenplanung"
+        },
+        "fr": {
+          "title": "Planning des ressources de production"
+        },
+        "es": {
+          "title": "Plan de recursos de producción"
+        },
+        "uk": {
+          "title": "План виробничих ресурсів"
         }
       }
     }
@@ -920,6 +949,58 @@
         },
         "uk": {
           "title": "Прогноз матеріалу"
+        }
+      }
+    }
+  },
+  {
+    "code": "nest-schedule-queue",
+    "block": {
+      "title": "Orderlines",
+      "i18n": {
+        "en": {
+          "title": "Orderlines"
+        },
+        "nl": {
+          "title": "Orderregels"
+        },
+        "de": {
+          "title": "Auftragspositionen"
+        },
+        "fr": {
+          "title": "Lignes de commande"
+        },
+        "es": {
+          "title": "Líneas de pedido"
+        },
+        "uk": {
+          "title": "Рядки замовлення"
+        }
+      }
+    }
+  },
+  {
+    "code": "batch",
+    "block": {
+      "title": "Batch",
+      "i18n": {
+        "en": {
+          "title": "Batch"
+        },
+        "nl": {
+          "title": "Batch"
+        },
+        "de": {
+          "title": "Charge"
+        },
+        "fr": {
+          "title": "Lot"
+        },
+        "es": {
+          "title": "Lote"
+        },
+        "uk": {
+          "title": "Партія"
         }
       }
     }

@@ -99,8 +99,15 @@ BEGIN
     INSERT INTO action.lane_item
         (lane_id, sort_order, start_offset_in_seconds, no_split, type, source, source_ref)
     SELECT bi.lane_id,
-           (SELECT coalesce(max(li.sort_order), 0) FROM action.lane_item li WHERE li.lane_id = bi.lane_id)
-             + 1000 * row_number() OVER (PARTITION BY bi.lane_id ORDER BY bi.batch_key),
+           -- behind the pattern item of the lane, inside the gap of 100 the pattern
+           -- rows leave: the order is unique per plan, not only per lane (the
+           -- material boards order within the tenant, across lanes)
+           coalesce((SELECT pat.sort_order FROM action.lane_item pat
+                     WHERE pat.lane_id = bi.lane_id AND pat.source = 'material-plan'
+                     ORDER BY pat.sort_order LIMIT 1),
+                    (SELECT coalesce(max(li.sort_order), 0) FROM action.lane_item li WHERE li.lane_id = bi.lane_id))
+             + (SELECT count(*) FROM action.lane_item li WHERE li.lane_id = bi.lane_id AND li.source = 'nest')
+             + row_number() OVER (PARTITION BY bi.lane_id ORDER BY bi.batch_key),
            NULL, true, 'plan', 'nest', bi.lane_id || ':' || bi.batch_key
     FROM bf_item bi
     WHERE bi.lane_item_id IS NULL

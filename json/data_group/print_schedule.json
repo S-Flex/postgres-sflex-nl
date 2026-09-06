@@ -61,22 +61,22 @@
             {
               "i18n": {
                 "de": {
-                  "title": "Auftragspositionen öffnen"
+                  "title": "Auftragspositionen"
                 },
                 "en": {
-                  "title": "Open orderlines"
+                  "title": "Orderlines"
                 },
                 "es": {
-                  "title": "Abrir líneas de pedido"
+                  "title": "Líneas de pedido"
                 },
                 "fr": {
-                  "title": "Ouvrir les lignes de commande"
+                  "title": "Lignes de commande"
                 },
                 "nl": {
-                  "title": "Orderlijnen openen"
+                  "title": "Orderlijnen"
                 },
                 "uk": {
-                  "title": "Відкрити рядки замовлення"
+                  "title": "Рядки замовлення"
                 }
               },
               "icon": "List",
@@ -108,22 +108,22 @@
             {
               "i18n": {
                 "de": {
-                  "title": "Materialprognose öffnen"
+                  "title": "Materialprognose"
                 },
                 "en": {
-                  "title": "Open material forecast"
+                  "title": "Material forecast"
                 },
                 "es": {
-                  "title": "Abrir previsión de material"
+                  "title": "Previsión de material"
                 },
                 "fr": {
-                  "title": "Ouvrir la prévision matériau"
+                  "title": "Prévision matériau"
                 },
                 "nl": {
-                  "title": "Materiaalforecast openen"
+                  "title": "Materiaalforecast"
                 },
                 "uk": {
-                  "title": "Відкрити прогноз матеріалу"
+                  "title": "Прогноз матеріалу"
                 }
               },
               "icon": "TrendUp01",
@@ -1240,7 +1240,8 @@
         "group_title_fields": [
           "tenant_name"
         ],
-        "no_label": false
+        "no_label": false,
+        "chain_scope": "plan"
       },
       "fields_class_name": "grid grid-cols-8 gap-1"
     }

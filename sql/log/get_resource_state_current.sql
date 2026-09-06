@@ -16,12 +16,12 @@ begin
     with state_map as (
         select g.value ->> 'code' as state_code, g.value as state_json
         from   jsonb_array_elements(v_lookup_json) as g(value)
-        where  g.value ->> 'group' = 'state'
+        where  g.value ->> 'group' = 'actual'
         union all
         select s.value ->> 'code', s.value
         from   jsonb_array_elements(v_lookup_json)       as g(value),
                jsonb_array_elements(g.value -> 'states') as s(value)
-        where  s.value ->> 'group' = 'state'
+        where  s.value ->> 'group' = 'actual'
     ),
     offline_state as (
         select state_json

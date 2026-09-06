@@ -68,95 +68,6 @@
             {
               "i18n": {
                 "de": {
-                  "title": "Nesting-queue öffnen"
-                },
-                "en": {
-                  "title": "Open nesting-queue"
-                },
-                "es": {
-                  "title": "Abrir nesting-queue"
-                },
-                "fr": {
-                  "title": "Ouvrir le nesting"
-                },
-                "nl": {
-                  "title": "Nesting-wachtrij openen"
-                },
-                "uk": {
-                  "title": "Відкрити нестинг"
-                }
-              },
-              "icon": "Grid01",
-              "path": "(sidebar:nesting-queue)",
-              "params": [
-                {
-                  "key": "material_id",
-                  "is_query_param": true
-                },
-                {
-                  "key": "date",
-                  "is_query_param": true
-                }
-              ],
-              "hidden_when": [
-                {
-                  "op": "==",
-                  "value": null,
-                  "field": "material_id"
-                }
-              ]
-            },
-            {
-              "i18n": {
-                "de": {
-                  "title": "Auftragspositionen"
-                },
-                "en": {
-                  "title": "Orderlines"
-                },
-                "es": {
-                  "title": "Líneas de pedido"
-                },
-                "fr": {
-                  "title": "Lignes de commande"
-                },
-                "nl": {
-                  "title": "Orderlijnen"
-                },
-                "uk": {
-                  "title": "Рядки замовлення"
-                }
-              },
-              "path": "(sidebar:nest-schedule-queue)",
-              "params": [
-                {
-                  "key": "material_id",
-                  "is_query_param": true
-                },
-                {
-                  "key": "date",
-                  "value_from": "nest_date",
-                  "is_query_param": true
-                }
-              ],
-              "hidden_when": {
-                "or": [
-                  {
-                    "field": "material_id",
-                    "op": "==",
-                    "value": null
-                  },
-                  {
-                    "field": "nest_count",
-                    "op": ">",
-                    "value": 0
-                  }
-                ]
-              }
-            },
-            {
-              "i18n": {
-                "de": {
                   "title": "Auftragspositionen"
                 },
                 "en": {
@@ -193,25 +104,65 @@
                   "is_query_param": true
                 }
               ],
-              "hidden_when": {
-                "or": [
-                  {
-                    "field": "material_id",
-                    "op": "==",
-                    "value": null
-                  },
-                  {
-                    "field": "nest_count",
-                    "op": ">",
-                    "value": 0
-                  }
-                ]
-              }
+              "hidden_when": [
+                {
+                  "field": "material_id",
+                  "op": "==",
+                  "value": null
+                }
+              ]
             },
             {
               "i18n": {
                 "de": {
-                  "title": "Nest detail"
+                  "title": "Nesting-Queue"
+                },
+                "en": {
+                  "title": "Nesting queue"
+                },
+                "es": {
+                  "title": "Cola de nesting"
+                },
+                "fr": {
+                  "title": "File de nesting"
+                },
+                "nl": {
+                  "title": "Nesting wachtrij"
+                },
+                "uk": {
+                  "title": "Черга нестингу"
+                }
+              },
+              "icon": "Grid01",
+              "path": "(sidebar:nest-schedule-queue)",
+              "params": [
+                {
+                  "key": "material_id",
+                  "is_query_param": true
+                },
+                {
+                  "key": "date",
+                  "value_from": "nest_date",
+                  "is_query_param": true
+                }
+              ],
+              "hidden_when": [
+                {
+                  "field": "material_id",
+                  "op": "==",
+                  "value": null
+                },
+                {
+                  "field": "nest_count",
+                  "op": ">",
+                  "value": 0
+                }
+              ]
+            },
+            {
+              "i18n": {
+                "de": {
+                  "title": "Nest-Detail"
                 },
                 "en": {
                   "title": "Nest detail"
@@ -236,40 +187,38 @@
                   "is_query_param": true
                 }
               ],
-              "hidden_when": {
-                "or": [
-                  {
-                    "field": "material_id",
-                    "op": "==",
-                    "value": null
-                  },
-                  {
-                    "field": "nest_count",
-                    "op": "==",
-                    "value": 0
-                  }
-                ]
-              }
+              "hidden_when": [
+                {
+                  "field": "material_id",
+                  "op": "==",
+                  "value": null
+                },
+                {
+                  "field": "nest_count",
+                  "op": "==",
+                  "value": 0
+                }
+              ]
             },
             {
               "i18n": {
                 "de": {
-                  "title": "Materialprognose öffnen"
+                  "title": "Materialprognose"
                 },
                 "en": {
-                  "title": "Open material forecast"
+                  "title": "Material forecast"
                 },
                 "es": {
-                  "title": "Abrir previsión de material"
+                  "title": "Previsión de material"
                 },
                 "fr": {
-                  "title": "Ouvrir la prévision matériau"
+                  "title": "Prévision matériau"
                 },
                 "nl": {
-                  "title": "Materiaalforecast openen"
+                  "title": "Materiaalforecast"
                 },
                 "uk": {
-                  "title": "Відкрити прогноз матеріалу"
+                  "title": "Прогноз матеріалу"
                 }
               },
               "icon": "TrendUp01",
@@ -287,9 +236,9 @@
               ],
               "hidden_when": [
                 {
+                  "field": "forecast_sqm",
                   "op": "==",
-                  "value": null,
-                  "field": "forecast_sqm"
+                  "value": null
                 }
               ]
             }
@@ -1030,6 +979,47 @@
             "type": "date",
             "hidden": true
           }
+        },
+        "type": {
+          "ui": {
+            "hidden": true
+          }
+        },
+        "type_json": {
+          "ui": {
+            "hidden": true
+          }
+        },
+        "param_json.planned_start_offset_in_seconds": {
+          "ui": {
+            "hidden": true
+          }
+        },
+        "param_json.production_impact_in_seconds": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Geplante Zeit"
+              },
+              "en": {
+                "title": "Planned time"
+              },
+              "es": {
+                "title": "Tiempo planificado"
+              },
+              "fr": {
+                "title": "Temps planifié"
+              },
+              "nl": {
+                "title": "Geplande tijd"
+              },
+              "uk": {
+                "title": "Запланований час"
+              }
+            },
+            "type": "duration",
+            "hidden": true
+          }
         }
       },
       "filter_match": "all",
@@ -1652,13 +1642,16 @@
         ],
         "no_label": false,
         "evaluate": {
-          "formula_field": "formula",
+          "formula_field": "type_json.formula",
           "params_field": "param_json"
         },
         "valid_resources": {
           "field": "data.valid_resources",
           "resource_field": "resource_path"
-        }
+        },
+        "set_field": "type",
+        "set_order_field": "type_json.sort_order",
+        "placement_field": "type_json.placement"
       },
       "fields_class_name": "@container grid grid-cols-6 gap-1"
     }

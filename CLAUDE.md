@@ -47,8 +47,9 @@ Stack: PostgreSQL (owner `xfw3`), React 19.2, Tailwind 4.2, UntitledUI/react, Fi
   het subniveau van een rij heet `items` met `data_field` voor de array
 - een key die een veld aanwijst eindigt op `_field` en draagt geen eenheid
   (`duration_field: "duration_in_seconds"`, niet `duration_in_seconds_field`);
-  het tekst-slot heet overal `title_field` (ook als de waarde `i18n` is), de x-as van
-  een chart `x_field`, een string met `${...}` heet `template`, geen `field`
+  het tekst-slot heet overal `title_field` (ook als de waarde `i18n` is); de titel van
+  een set heet `set_title_field` (naast de globale `title_field`); de x-as van een chart
+  `x_field`; een string met `${...}` heet `template`, geen `field`
 
 ## lookup json
 - de inhoud van een lookup staat in `json/lookup/<schema>/<lookup>.json`

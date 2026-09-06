@@ -74,22 +74,22 @@
             {
               "i18n": {
                 "de": {
-                  "title": "Batch öffnen"
+                  "title": "Batch"
                 },
                 "en": {
-                  "title": "Open batch"
+                  "title": "Batch"
                 },
                 "es": {
-                  "title": "Abrir lote"
+                  "title": "Lote"
                 },
                 "fr": {
-                  "title": "Ouvrir le lot"
+                  "title": "Lot"
                 },
                 "nl": {
-                  "title": "Batch openen"
+                  "title": "Batch"
                 },
                 "uk": {
-                  "title": "Відкрити партію"
+                  "title": "Партія"
                 }
               },
               "icon": "Package01",
@@ -1118,6 +1118,32 @@
           "ui": {
             "hidden": true
           }
+        },
+        "forecast_sqm": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Prognose"
+              },
+              "en": {
+                "title": "Forecast"
+              },
+              "es": {
+                "title": "Previsión"
+              },
+              "fr": {
+                "title": "Prévision"
+              },
+              "nl": {
+                "title": "Forecast"
+              },
+              "uk": {
+                "title": "Прогноз"
+              }
+            },
+            "hidden": true
+          },
+          "scale": 0
         }
       },
       "filter_match": "all",
@@ -1167,30 +1193,37 @@
                     "class_name": "text-right"
                   }
                 },
-                "gross_sqm": {
+                "forecast_sqm": {
                   "ui": {
                     "order": 1,
                     "hidden": false,
                     "class_name": "text-right"
                   }
                 },
-                "impact_json.count": {
+                "gross_sqm": {
                   "ui": {
                     "order": 2,
                     "hidden": false,
                     "class_name": "text-right"
                   }
                 },
-                "impact_json.amount": {
+                "impact_json.count": {
                   "ui": {
                     "order": 3,
                     "hidden": false,
                     "class_name": "text-right"
                   }
                 },
-                "impact_json.rework_count": {
+                "impact_json.amount": {
                   "ui": {
                     "order": 4,
+                    "hidden": false,
+                    "class_name": "text-right"
+                  }
+                },
+                "impact_json.rework_count": {
+                  "ui": {
+                    "order": 5,
                     "hidden": false,
                     "class_name": "col-start-1 text-right",
                     "hidden_when": [
@@ -1204,7 +1237,7 @@
                 },
                 "impact_json.rework_sqm": {
                   "ui": {
-                    "order": 5,
+                    "order": 6,
                     "hidden": false,
                     "class_name": "text-right",
                     "hidden_when": [
@@ -1218,56 +1251,56 @@
                 },
                 "nest_count": {
                   "ui": {
-                    "order": 6,
+                    "order": 7,
                     "hidden": false,
                     "class_name": "col-start-1 text-right"
                   }
                 },
                 "param_json.standard_production_impact_in_seconds": {
                   "ui": {
-                    "order": 7,
+                    "order": 8,
                     "hidden": false,
                     "class_name": "col-span-2"
                   }
                 },
                 "part_status_json": {
                   "ui": {
-                    "order": 8,
+                    "order": 9,
                     "hidden": false,
                     "class_name": "col-span-2"
                   }
                 },
                 "progress_json.done_amount": {
                   "ui": {
-                    "order": 9,
+                    "order": 10,
                     "hidden": false,
                     "class_name": "col-start-1 text-right"
                   }
                 },
                 "progress_json.remaining_amount": {
                   "ui": {
-                    "order": 10,
+                    "order": 11,
                     "hidden": false,
                     "class_name": "text-right"
                   }
                 },
                 "progress_json.remaining_percentage": {
                   "ui": {
-                    "order": 11,
+                    "order": 12,
                     "hidden": false,
                     "class_name": "col-start-1 text-right"
                   }
                 },
                 "param_json.production_impact_in_seconds": {
                   "ui": {
-                    "order": 12,
+                    "order": 13,
                     "hidden": false,
                     "class_name": "text-right"
                   }
                 },
                 "param_json.remaining_impact_in_seconds": {
                   "ui": {
-                    "order": 13,
+                    "order": 14,
                     "hidden": false,
                     "class_name": "text-right"
                   }
@@ -1536,37 +1569,51 @@
             "field_config": {
               "material_name": {
                 "ui": {
-                  "order": 0
+                  "order": 0,
+                  "hidden": false
                 }
               },
               "batch_name": {
                 "ui": {
-                  "order": 1
+                  "order": 1,
+                  "hidden": false
                 }
               }
+            },
+            "row_options": {
+              "draggable": true
             }
           },
           "progress": {
             "field_config": {
               "progress_json.remaining_percentage": {
                 "ui": {
-                  "order": 0
+                  "order": 0,
+                  "hidden": false
                 }
               }
+            },
+            "row_options": {
+              "draggable": false
             }
           },
           "actual": {
             "field_config": {
               "batch_name": {
                 "ui": {
-                  "order": 0
+                  "order": 0,
+                  "hidden": false
                 }
               },
               "param_json.produced_count": {
                 "ui": {
-                  "order": 1
+                  "order": 1,
+                  "hidden": false
                 }
               }
+            },
+            "row_options": {
+              "draggable": false
             }
           }
         },
@@ -1575,7 +1622,8 @@
           "offset_field": "start_offset_in_seconds",
           "duration_field": "duration_in_seconds",
           "class_names_field": "class_names"
-        }
+        },
+        "set_title_field": "type_json.i18n"
       },
       "fields_class_name": "@container grid grid-cols-6 gap-1"
     }

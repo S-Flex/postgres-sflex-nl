@@ -99,8 +99,9 @@ BEGIN
         rs.action_id,
         pl.line,
         ARRAY[res.resource_uid],
-        -- Replace the single 'class_name' key with a 'class_names' array,
-        -- combining the state's own class name with the material aggregate's.
+        -- Replace the single 'class_name' key with a 'class_names' array:
+        -- the base class of the set (timeline-plan, timeline-actual, from the
+        -- state's group), the state's own class name and the material aggregate's.
         -- plan-warning/plan-alert/plan-signal/plan-info only kept on the
         -- FIRST batch-reserved action per resource_uid + material_id.
         COALESCE(rs.state, '{}'::jsonb)
@@ -112,7 +113,7 @@ BEGIN
                         SELECT DISTINCT x
                         FROM unnest(
                             array_cat(
-                                ARRAY[rs.state ->> 'class_name'],
+                                ARRAY['timeline-' || (rs.state ->> 'group'), rs.state ->> 'class_name'],
                                 COALESCE(ma.class_name, ARRAY[]::text[])
                             )
                         ) AS x

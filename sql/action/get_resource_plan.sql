@@ -5,7 +5,8 @@
 -- lookup_lane_item_type:
 --   * plan     — the item as planned (stored); its nests via
 --                get_lane_item_impositions, the work of the set from the
---                orderline aggregate, whatever the status of the orderlines;
+--                orderline aggregate, whatever the status of the orderlines,
+--                with the forecast of its material (forecast_sqm next to sqm);
 --   * progress — what of that plan is still to do for the lane's step: the
 --                orderline amounts below the step's done status
 --                (lookup_step_category.sequence), as a share of the plan's
@@ -40,7 +41,7 @@
 drop function if exists action.get_resource_plan(timestamp with time zone, text, integer[], text[], text[], integer);
 
 create function action.get_resource_plan(p_until timestamp with time zone DEFAULT now(), p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_steps text[] DEFAULT NULL::text[], p_types text[] DEFAULT NULL::text[], p_domain_id integer DEFAULT 1)
-    returns TABLE(tenant_id integer, tenant_name text, production_company_id integer, resource_uid text, resource_name text, resource_path ltree, lane_id bigint, step text, type text, type_json jsonb, lane_item_id bigint, sort_order numeric, is_pinned boolean, no_split boolean, fixed_group text, start_offset_in_seconds integer, duration_in_seconds integer, start_at timestamp with time zone, end_at timestamp with time zone, nest_ids bigint[], nest_count integer, batch_id integer, batch_name text, material_id integer, material_name text, impact_json jsonb, sqm numeric, gross_sqm numeric, part_status_json jsonb, progress_json jsonb, state_json jsonb, group_state_json jsonb, states_json jsonb, class_names text[], param_json jsonb)
+    returns TABLE(tenant_id integer, tenant_name text, production_company_id integer, resource_uid text, resource_name text, resource_path ltree, lane_id bigint, step text, type text, type_json jsonb, lane_item_id bigint, sort_order numeric, is_pinned boolean, no_split boolean, fixed_group text, start_offset_in_seconds integer, duration_in_seconds integer, start_at timestamp with time zone, end_at timestamp with time zone, nest_ids bigint[], nest_count integer, batch_id integer, batch_name text, material_id integer, material_name text, impact_json jsonb, sqm numeric, forecast_sqm numeric, gross_sqm numeric, part_status_json jsonb, progress_json jsonb, state_json jsonb, group_state_json jsonb, states_json jsonb, class_names text[], param_json jsonb)
     stable
     language plpgsql
     set jit = off
@@ -199,6 +200,9 @@ begin
         select r.lane_nest_ids as nest_ids,
                sum(r.orderline_count)::integer as orderline_count,
                sum(r.sqm)                      as sqm,
+               -- the forecast of the set's materials on their lines for the day, the
+               -- same number on every item of that material (like board 76)
+               sum(r.forecast_sqm)             as forecast_sqm,
                sum(r.gross_sqm)                as gross_sqm,
                jsonb_build_object(
                    'count',         sum((r.impact_json ->> 'count')::integer),
@@ -246,7 +250,7 @@ begin
                coalesce(cardinality(i.nest_ids), 0)                                    as nest_count,
                nf.batch_id, nf.batch_name,
                ag.material_id, ag.material_name,
-               ag.impact_json, ag.sqm, ag.gross_sqm,
+               ag.impact_json, ag.sqm, ag.forecast_sqm, ag.gross_sqm,
                coalesce(ag.part_status_json, '[]'::jsonb)                              as part_status_json,
                -- the state of a planned item is the least advanced status of its
                -- nests, from the same lookup the actual rows use
@@ -408,7 +412,7 @@ begin
                v_day_start + make_interval(secs => p.start_offset_in_seconds) as start_at,
                null::timestamp with time zone                                 as end_at,
                p.nest_ids, p.nest_count, p.batch_id, p.batch_name,
-               p.material_id, p.material_name, p.impact_json, p.sqm, p.gross_sqm,
+               p.material_id, p.material_name, p.impact_json, p.sqm, p.forecast_sqm, p.gross_sqm,
                p.part_status_json,
                jsonb_build_object(
                    'done_amount',          p.done_amount,
@@ -433,7 +437,7 @@ begin
                v_day_start + make_interval(secs => p.start_offset_in_seconds),
                null::timestamp with time zone,
                p.nest_ids, p.nest_count, p.batch_id, p.batch_name,
-               p.material_id, p.material_name, p.impact_json, p.sqm, p.gross_sqm,
+               p.material_id, p.material_name, p.impact_json, p.sqm, p.forecast_sqm, p.gross_sqm,
                p.part_status_json,
                jsonb_build_object(
                    'done_amount',          p.done_amount,
@@ -459,7 +463,7 @@ begin
                coalesce(cardinality(a.nest_names), 0),
                a.batch_id, a.batch_name,
                null::integer, null::text,
-               null::jsonb, round(a.area_sqm, 2), null::numeric,
+               null::jsonb, round(a.area_sqm, 2), null::numeric, null::numeric,
                '[]'::jsonb,
                null::jsonb,
                a.state_json, a.group_state_json, a.states_json,
@@ -479,7 +483,7 @@ begin
            r.lane_item_id, r.sort_order, r.is_pinned, r.no_split, r.fixed_group,
            r.start_offset_in_seconds, r.duration_in_seconds, r.start_at, r.end_at,
            r.nest_ids, r.nest_count, r.batch_id, r.batch_name,
-           r.material_id, r.material_name, r.impact_json, r.sqm, r.gross_sqm,
+           r.material_id, r.material_name, r.impact_json, r.sqm, r.forecast_sqm, r.gross_sqm,
            r.part_status_json, r.progress_json, r.state_json, r.group_state_json, r.states_json,
            -- the class names of the kind ride along with the row's own
            (select array_agg(distinct c order by c)

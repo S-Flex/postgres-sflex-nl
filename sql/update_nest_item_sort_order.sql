@@ -1,3 +1,30 @@
+-- ============================================================
+-- sort_order van batch-items (6 sep). De backfill en crud_nest zetten een
+-- batch-item op max(lane) + 1000·n; de patroon-items staan 100 uit elkaar, dus
+-- die waarden botsten met patroon-items van andere lanes in hetzelfde plan
+-- (get_impose_plan 5 sep sheet: 102 rijen, 77 unieke (tenant, sort_order)).
+-- De borden ordenen binnen de tenant, over lanes heen, dus sort_order moet
+-- uniek zijn per plan. Nieuwe regel: een batch-item staat direct achter het
+-- patroon-item van zijn lane, patroon + 1, + 2, … (maximaal 13 per lane, gat
+-- van 100). Dry run: 594 items hernummerd, 0 botsingen daarna.
+-- ============================================================
+
+BEGIN;
+
+-- the existing batch items: pattern + rank within the lane
+UPDATE action.lane_item li
+SET sort_order = nv.new_sort
+FROM (SELECT li2.lane_item_id,
+             pat.sort_order + row_number() OVER (PARTITION BY li2.lane_id ORDER BY li2.sort_order, li2.lane_item_id) AS new_sort
+      FROM action.lane_item li2
+      JOIN LATERAL (SELECT p.sort_order FROM action.lane_item p
+                    WHERE p.lane_id = li2.lane_id AND p.source = 'material-plan'
+                    ORDER BY p.sort_order LIMIT 1) pat ON true
+      WHERE li2.source = 'nest') nv
+WHERE li.lane_item_id = nv.lane_item_id;
+
+-- crud_nest writes new batch items the same way
+DROP FUNCTION IF EXISTS legacy.crud_nest(jsonb, boolean);
 create function legacy.crud_nest(p_param_json jsonb, p_no_results boolean DEFAULT false) returns TABLE(param_id integer, track_by integer, crud text, domain_id integer, batch_id bigint, nest_id bigint, nest_counter integer, reproduced_counter integer, nest_name text, amount integer, width numeric, height numeric, nest_json jsonb, sort_order integer, status jsonb, possible_states bigint, possible_multiple_states bigint)
 	language plpgsql
 as $$
@@ -5,7 +32,6 @@ DECLARE
     last_updated_at timestamp;
     rec             record;
     v_batch_uid     bigint;
-    v_pv2_items     bigint[];
 BEGIN
     CREATE TEMP TABLE param_table ON COMMIT DROP AS
     SELECT
@@ -203,16 +229,11 @@ BEGIN
         WHERE ns.lane_id IS NOT NULL AND NOT ns.is_cancelled
     ),
     item_batch AS (
-        -- the batch each plan item on those lanes carries today, the payload
-        -- nests not counted: they are placed anew below. Counted, a nest that
-        -- just got its batch made its own item look like the item of that
-        -- batch, so it stayed put and the item mixed two batches (6 sep).
-        -- null = no other nests
+        -- the batch each plan item on those lanes carries today; null = no nests
         SELECT li.lane_item_id, li.lane_id, li.sort_order, li.source,
                (SELECT coalesce(n.batch_id, 0)
                 FROM action.get_lane_item_impositions(li.lane_item_id) x
                 JOIN legacy.nest n ON n.nest_id = x.imposition_id
-                WHERE x.imposition_id NOT IN (SELECT ns.nest_id FROM nest_link ns)
                 LIMIT 1) AS batch_key
         FROM action.lane_item li
         WHERE li.type = 'plan'
@@ -328,21 +349,6 @@ BEGIN
     FROM touched t
     WHERE NOT EXISTS (SELECT 1 FROM new_set n WHERE n.lane_item_id = t.lane_item_id);
 
-    -- ── pv2 items (docs/plan-lane-model.md stap 3b) ──────────────────
-    -- A nest that gets its batch here may sit on a pv2 item of another
-    -- batch; action.sync_pv2_batch_items moves it to the extra item of that
-    -- batch (a nest without a batch counts as the item's own). Called for
-    -- the plannable items whose current set holds a payload nest.
-    v_pv2_items := array(
-        SELECT DISTINCT split_part(li.source_ref, ':', 1)::bigint
-        FROM action.imposition_lane_item i
-        JOIN action.lane_item li ON li.lane_item_id = i.lane_item_id
-        WHERE li.source = 'pv2'
-          AND i.imposition_id IN (SELECT ns.nest_id FROM nest_link ns));
-    IF cardinality(v_pv2_items) > 0 THEN
-        PERFORM action.sync_pv2_batch_items(v_pv2_items);
-    END IF;
-
     -- ── imposition → unit manifest ────────────────────────────────────
     -- What the imposition is made of, snapshotted from the orderline
     -- manifests it holds (legacy.single_product is the bridge). Rebuilt for
@@ -378,3 +384,15 @@ $$;
 
 alter function legacy.crud_nest(jsonb, boolean) owner to xfw3;
 
+COMMIT;
+
+-- check 1: sort_order unique per plan on the material lanes; expected: 0
+SELECT count(*) AS duplicates
+FROM (SELECT pl.plan_id, li.sort_order
+      FROM action.plan_lane pl
+      JOIN action.lane_item li ON li.lane_id = pl.lane_id AND li.source IN ('material-plan', 'nest')
+      GROUP BY 1, 2 HAVING count(*) > 1) d;
+
+-- check 2: the board of 5 sep sheet; expected: rows = unique (tenant, sort_order)
+SELECT count(*) AS rows, count(DISTINCT (tenant_id, sort_order)) AS unique_tenant_sort
+FROM mock.get_impose_plan(p_until => '2026-09-05T00:00:00+02:00', p_step => 'print', p_line_type => 'sheet', p_tenant_ids => array[1, 2]);

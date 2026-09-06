@@ -63,9 +63,9 @@
       "detail": "resource_plan (81) reuses the vocabulary of 19/29/56/76: a kind of row is a set, per-set differences are set_overrides keyed by the set value, the formula mechanism is evaluate, the sub level of a row is items with a data_field. No type_field, lane_item_config or segment_config. 2026-09-06"
     },
     {
-      "change": "text_field, label_field, i18n_field, content_field, set_title_field, gauge_title_field -> title_field; label_suffix_field -> title_suffix_field",
+      "change": "text_field, label_field, i18n_field, content_field, gauge_title_field -> title_field; label_suffix_field -> title_suffix_field",
       "count": 36,
-      "detail": "one text slot for every config, whatever the value (a plain text or an i18n node); title is the standard text slot. 2026-09-06"
+      "detail": "one text slot for every config, whatever the value (a plain text or an i18n node); title is the standard text slot. 2026-09-06 set_title_field stays: it is the title of a set, next to the global title_field (6 sep, after the frontend's question 7)."
     },
     {
       "change": "start_offset_in_seconds_field -> offset_field, end_offset_in_seconds_field -> end_offset_field, duration_in_seconds_field -> duration_field, segment_size_in_seconds_field -> segment_size_field, next_start_offset_in_seconds_field -> next_start_offset_field; scale_field removed (time_scale_config.input_data, 75/76/81)",
@@ -86,6 +86,16 @@
       "change": "ui.field with ${...} -> ui.template (51, 68, 69, 71)",
       "count": 4,
       "detail": "a string with placeholders is a template, not a field. 2026-09-06"
+    },
+    {
+      "change": "set_overrides[set].row_options (draggable, nav) and set_overrides[set].field_config merge over the root config; set_title_field = type_json.i18n on 81",
+      "count": 1,
+      "detail": "per set what differs, data only: plan drags, progress and actual do not; a title per kind lives on the lookup node. 2026-09-06"
+    },
+    {
+      "change": "page resource-plan -> nest-resource-plan + production-resource-plan; pages.json sections carry params [{key, default_value}] merged per key over the params of the section's data_group",
+      "count": 2,
+      "detail": "two pages on the same resource_plan_filter/resource_plan; only the steps default differs (impose vs print, coat, laminate, route, cut). 2026-09-06"
     }
   ],
   "keys": [

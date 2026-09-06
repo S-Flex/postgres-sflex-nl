@@ -1,3 +1,17 @@
+-- ============================================================
+-- Besluit 6 sep: de nest-status wordt alleen via log.crud_data_log bijgewerkt
+-- (legacy.sync_nest_status_from_log), nooit uit de orderregels. De
+-- orderregel-regel van eerder vandaag (legacy.sync_nest_status_from_parts, de
+-- aanroep in crud_data_log en de dagelijkse run in refresh_derived_data) gaat
+-- eruit. De 17.526 statussen die de backfill ervan al optilde blijven staan;
+-- ze zijn herkenbaar aan legacy.nest_log-regels met resource_uids = '{}'.
+-- ============================================================
+
+BEGIN;
+
+DROP FUNCTION IF EXISTS legacy.sync_nest_status_from_parts(bigint[], date);
+
+DROP FUNCTION IF EXISTS log.crud_data_log(jsonb, boolean);
 create function log.crud_data_log(p_param_json jsonb, p_no_results boolean DEFAULT false) returns TABLE(track_by integer, crud text, data_log_id bigint, resource_uid text, filename text, nest_id integer, spec_id integer, amount numeric, sub_set text, start_at timestamp with time zone, end_at timestamp with time zone, metrics_json jsonb, source text, source_ref text, source_ts timestamp with time zone, nest_name text, production_time_seconds integer, page_number integer, data_json jsonb)
 	language plpgsql
 as $$
@@ -114,3 +128,52 @@ $$;
 
 alter function log.crud_data_log(jsonb, boolean) owner to xfw3;
 
+DROP FUNCTION IF EXISTS site.refresh_derived_data();
+create function site.refresh_derived_data() returns void
+	language plpgsql
+as $$
+#variable_conflict use_column
+begin
+    -- state shift aggregation: the writers (log.crud_state_log,
+    -- log.crud_data_log) keep the table current per batch; this is the
+    -- daily full rebuild that finalizes yesterday and catches anything
+    -- that arrived outside those two
+    perform log.upsert_state_shift_agg(current_date - 1);  -- finalize yesterday
+    perform log.upsert_state_shift_agg(current_date);      -- refresh today
+
+    -- materialized views
+    refresh materialized view mapping.v_resource_capacity;
+
+    -- the material resource plan: one per workday per line type, created
+    -- ahead of time — the plannable items are generated from this planning
+    -- later, so the plan must exist before any item does. mock.generate_plan
+    -- builds the whole set: the plan (with tenant_ids), the material lanes
+    -- from the weekly pattern, plan_lane and the material link per lane.
+    perform mock.generate_plan(d.date, 'print', lt.line_type)
+    from (select dt.date, dt.tenants_mandatory_day_off
+          from action.dates dt
+          where dt.date >= current_date
+            and dt.date < current_date + 14
+            and not dt.is_weekend) d
+    cross join (select pl.line_type,
+                       array_agg(distinct pl.tenant_id order by pl.tenant_id)
+                           filter (where pl.tenant_id is not null) as tenant_ids
+                from relation.production_line pl
+                where pl.line_type is not null
+                group by pl.line_type) lt
+    where not (coalesce(lt.tenant_ids, d.tenants_mandatory_day_off) <@ d.tenants_mandatory_day_off and d.tenants_mandatory_day_off <> '{}')
+      and not exists (select 1 from action.plan p
+                      where p.plan_date = d.date
+                        and p.type = 'material-resource-plan'
+                        and p.line_type = lt.line_type);
+end;
+$$;
+
+alter function site.refresh_derived_data() owner to xfw3;
+
+COMMIT;
+
+-- check: nothing mentions the parts rule any more; expected: 0
+SELECT count(*) AS functions_with_parts_rule
+FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+WHERE p.prokind = 'f' AND pg_get_functiondef(p.oid) ~ 'sync_nest_status_from_parts';

@@ -468,6 +468,14 @@ hier de bron, geen historie); de keten loopt per batch: coater/laminator van
 batch B volgt de printer van B, cutter van B volgt coater/laminator, anders
 printer van B. Extra items waarvan de batch weg is worden weer verwijderd.
 
+**Besloten 6 sep (Cees): één rij per materiaal op 75 en 76.** De batch-items
+blijven in het model (één batch per item, voor de resourcekant en `crud_nest`),
+maar zijn geen rij op de materiaalborden: `get_plan_lanes` geeft per lane alleen
+het patroon-item, `get_impose_plan` telt de nests van alle items van de lane op
+die rij bij elkaar (`sql/update_material_rows_aggregate.sql`; 5 sep sheet: 102 →
+46 rijen). De controle hieronder ("acht items in plaats van één blok") is daarmee
+achterhaald.
+
 **Stand 5 sep: crud_nest-deel gebouwd, wacht op draaien** —
 `sql/update_nest_batch_items.sql` (crud_nest, get_plan_lanes, crud_lane_item, plus
 de hernoeming `is_fixed_group` → `fixed_group` in kolom, lookup en de drie reads;
@@ -496,6 +504,13 @@ zet ze terug volgens dezelfde regel, zonder iets te raken wat `crud_nest` sindsd
 plaatste (dry run: 594 batch-items 4.477 rijen, 93 patroon-items 725 rijen, geen item
 met twee batches). Gedraaid 6 sep: 7.198 nests, 0 batch-items zonder set, 0 gemengd.
 Les: verschil in twee richtingen altijd met haakjes.
+**Nagemeten 6 sep (item 257870).** De huidige set draagt één batch; de gemengde
+rijen die een join zonder `moved_at`-filter toont zijn de oudere set-schrijfacties
+(historie, append-only). Twee gaten in `crud_nest` gedicht in
+`sql/update_nest_batch_move.sql`: de batch die een item "vandaag draagt" telde de
+payload-nests mee (een nest dat zijn batch kreeg bleef zo op zijn item staan en
+mengde het), en de pv2-items werden alleen bij `crud_object` rechtgezet — nu roept
+`crud_nest` `sync_pv2_batch_items` aan voor de pv2-items met een payload-nest.
 
 ### stap 4 — print-schedule op lane_items
 
@@ -662,10 +677,12 @@ samenvoeging (baseline-hashes zoals bij stap 3). Een extra step in de lookup met
   items uit `lookup_lane_item_type` (plan, progress, actual; default alle
   drie). De filter-data_group leest beide lijsten uit de lookups
   (`input_data.src`), geen kopie in de config.
-- pagina `resource-plan` (nieuw) met filter boven en bord eronder;
-  `impose-resource-plan` en `production-resource-plan` vervallen, elke
-  `(sidebar:…)`-link ernaar wijst naar `resource-plan` met `steps` als
-  query-param.
+- twee pagina's op dezelfde data_groups: `nest-resource-plan` (`steps` `[impose]`)
+  en `production-resource-plan` (`steps` `[print, coat, laminate, route, cut]`); de
+  default per pagina staat als `params` op de secties in `pages.json`, gemerged over
+  de `params` van de data_group (besloten 6 sep, was één pagina `resource-plan`).
+  De nest-pagina toont pas lanes zodra `generate_production_plan` ook voor step
+  `impose` lanes maakt (aparte stap).
 - `site.data_table`: `get_resource_plan` erbij (primary keys
   `lane_item_id`, `type`), `get_production_plan` vervalt na de omzetting.
 
@@ -721,6 +738,17 @@ samenvoeging (baseline-hashes zoals bij stap 3). Een extra step in de lookup met
   `sql/update_resource_plan_formula.sql`, dan de partial (81).
 - nog niet in deze stap: de plan/progress-splitsing van bord 76 (`get_impose_plan`,
   materiaalmodus) — volgt als 7b, met dezelfde `progress_json`.
+- **76 rekent met de soort-formule (6 sep):** `evaluate.formula_field` stond op `formula`
+  (de machineformule van de resource, over `net_sqm`), terwijl `get_impose_plan` al
+  `planned_start_offset_in_seconds` en `production_impact_in_seconds` in `param_json`
+  zet; nu `type_json.formula`, als 81, plus die twee keys in `field_config`. De
+  kolom `formula` blijft (resourcekant). Script: de partial (76).
+- **één vocabulaire voor de soorten (6 sep):** de groep `state` in `lookup_resource_state`
+  heet `actual` (log.lookup door Cees, relation.lookup in het script), want de soorten zijn
+  plan, progress en actual. Elke soort draagt een basisclass in `class_names`:
+  `timeline-plan`, `timeline-progress`, `timeline-actual` (lookup_lane_item_type voor 76
+  en 81; `get_plan_timeline` zet `timeline-<group>` vóór `state.class_names` voor 56).
+  Script: `sql/update_timeline_set_classes.sql`; de css is van de frontend.
 - lookup-spiegel `json/lookup/relation/lookup_step_category.json` stond achter op de
   database (11 stappen, oude statuscodes zoals `imposed`/`packaged`); vervangen door de
   database-inhoud (12 stappen, met `calander` en `apply`, codes `nested`/`packed`).
