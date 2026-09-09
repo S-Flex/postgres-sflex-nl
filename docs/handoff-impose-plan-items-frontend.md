@@ -41,7 +41,8 @@ Sectie 1: `material_name`, `tenant_name`. Sectie 2: een `group` op `manifest_jso
 
 ```json
 {"data_field": "items", "set_field": "set", "set_order_field": "sort_order",
- "field_config": {"nest_date", "batch_id", "step_json.print.seconds_min", "step_json.print.seconds_max",
+ "field_config": {"nest_date", "unit_class_json.i18n", "batch_id", "sqm",
+                  "step_json.print.seconds_min", "step_json.print.seconds_max",
                   "step_json.cut.seconds_min", "step_json.cut.seconds_max"},
  "set_overrides": {"nest-date": {...}, "batch": {...}}}
 ```
@@ -78,8 +79,9 @@ element per gewijzigde rij:
 
 Zelfde config als 76 (kopie), met de resource-lanes: `label_options.input_data.src =
 get_plan_lanes_resource` (params `until`, `line_type`, `tenant_ids`, `steps: ["impose"]`),
-label toont `resource_name`, `set_group_fields: ["tenant_id", "resource_uid"]`,
-`drop.value_fields: ["resource_uid"]`. De oude lane-read `get_plan_lanes` bestaat niet meer.
+label toont `resource_name`, `set_group_fields: ["tenant_id", "resource_uid"]`
+(`drop.value_fields: ["resource_uid"]` is op 76 en 78 gelijk). De oude lane-read
+`get_plan_lanes` bestaat niet meer.
 
 ## 79 impose_plan_inflow
 

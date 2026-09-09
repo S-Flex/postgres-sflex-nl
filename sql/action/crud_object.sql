@@ -200,13 +200,7 @@ BEGIN
       AND r.resource_path IS NOT NULL
       AND (pt.action_json ->> 'start_date') IS NOT NULL;
 
-    -- deletes: the item, its nests and its edges (edges cascade)
-    DELETE FROM action.imposition_lane_item nli
-    USING action.lane_item li, param_table pt
-    WHERE nli.lane_item_id = li.lane_item_id
-      AND li.source = 'pv2' AND li.source_ref = pt.plannable_item_id::text
-      AND pt.crud = 'merge' AND pt.is_delete;
-
+    -- deletes: the item; its batch row and its edges cascade
     DELETE FROM action.lane_item li
     USING param_table pt
     WHERE li.source = 'pv2' AND li.source_ref = pt.plannable_item_id::text
@@ -260,7 +254,7 @@ BEGIN
     -- the order's plan AND the physical department's plan, so both boards
     -- see the machine's full occupation
     WITH missing AS (
-        SELECT DISTINCT ip.plan_date, ip.resource_path
+        SELECT DISTINCT ip.plan_date, ip.resource_path, ip.step
         FROM item_plan ip
         WHERE NOT EXISTS (SELECT 1
                           FROM action.lane l
@@ -268,14 +262,15 @@ BEGIN
                           WHERE l.lane_date = ip.plan_date AND rl.resource_path = ip.resource_path)
     ),
     with_id AS (
-        SELECT m.plan_date, m.resource_path,
+        SELECT m.plan_date, m.resource_path, m.step,
                nextval(pg_get_serial_sequence('action.lane', 'lane_id')) AS lane_id
         FROM missing m
     ),
+    -- a lane is one resource on one day: its step and path live on the lane
     new_lane AS (
-        INSERT INTO action.lane (lane_id, lane_date)
+        INSERT INTO action.lane (lane_id, lane_date, step, resource_path)
         OVERRIDING SYSTEM VALUE
-        SELECT w.lane_id, w.plan_date FROM with_id w
+        SELECT w.lane_id, w.plan_date, w.step, w.resource_path FROM with_id w
         RETURNING lane_id
     )
     INSERT INTO action.resource_lane (lane_id, resource_path)
@@ -338,11 +333,9 @@ BEGIN
     JOIN action.lane l ON l.lane_id = rl.lane_id AND l.lane_date = ip.plan_date)) x
     WHERE li.lane_item_id = x.lane_item_id;
 
-    -- the nests and the chain of the items, one batch per lane item: the
-    -- main item holds the nests of the item's batch, a nest that legacy.nest
-    -- meanwhile books on another batch gets an extra item next to it, and the
-    -- edges run per batch. One place for that rule, shared with the backfill
-    -- (docs/plan-lane-model.md stap 3b)
+    -- the batch row and the chain of the items: one row per item with a
+    -- batch, the nests pv2 batched on it, edges per batch. One place for that
+    -- rule, shared with the backfill (docs/plan-batch-lane-item.md)
     PERFORM action.sync_pv2_batch_items(array(SELECT ip.plannable_item_id FROM item_plan ip));
 
     -- ============================================================

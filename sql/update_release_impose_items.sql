@@ -1,3 +1,14 @@
+-- Testing phase of docs/plan-batch-lane-item.md (decided 9 sep 2026): every
+-- impose item that was never released is released at the local midnight of
+-- its lane date, today for the historic and the stamped days, and from now on
+-- every day in site.refresh_derived_data for the days generate_plan adds.
+-- Midnight, so every nest of that day lands on the one item of its material
+-- (all instances are 0 today). Written straight into the event table, not
+-- through action.crud_lane_item_event: an item without a time of its own
+-- keeps flowing with the clock instead of being fixed at 00:00.
+BEGIN;
+
+-- ============ sql/site/refresh_derived_data.sql ============
 create or replace function site.refresh_derived_data() returns void
 	language plpgsql
 as $$
@@ -60,3 +71,26 @@ $$;
 
 alter function site.refresh_derived_data() owner to xfw3;
 
+
+-- the historic and the stamped items, once now
+insert into action.lane_item_event (lane_item_id, status, moved_at)
+select li.lane_item_id, 'released',
+       l.lane_date::timestamp at time zone 'Europe/Amsterdam'
+from action.lane_item li
+join action.lane l on l.lane_id = li.lane_id
+where l.step = 'impose'
+  and li.type = 'plan'
+  and li.source = 'material-plan'
+  and not exists (select 1 from action.lane_item_event e
+                  where e.lane_item_id = li.lane_item_id and e.status = 'released');
+
+COMMIT;
+
+-- check: impose items and their release; expected without_release 0
+select count(*) as impose_items,
+       count(*) filter (where not exists (select 1 from action.lane_item_event e
+                                          where e.lane_item_id = li.lane_item_id and e.status = 'released')) as without_release,
+       min(l.lane_date) as first_day, max(l.lane_date) as last_day
+from action.lane_item li
+join action.lane l on l.lane_id = li.lane_id
+where l.step = 'impose' and li.type = 'plan' and li.source = 'material-plan';

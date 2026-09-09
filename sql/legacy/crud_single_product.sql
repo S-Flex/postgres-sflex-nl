@@ -100,55 +100,18 @@ BEGIN
     WHERE legacy.single_product.single_product_json
           IS DISTINCT FROM EXCLUDED.single_product_json;
 
-    -- Recompute commercial_waste_percentage for every nest touched by this batch.
-    -- sold_area sums amount * width * height across all single_products on the nest;
-    -- this can exceed the physical nest area when the same bounding rectangle is
-    -- sold to multiple customers (e.g. two triangles sharing one rectangle), which
-    -- correctly drives commercial_waste_percentage negative. This is expected, not a bug.
-    WITH affected_nests AS (
-        SELECT DISTINCT nest_id FROM param_table WHERE nest_id IS NOT NULL
-    ),
-    sold_area AS (
-        -- width/height live in single_product_json, not as columns
-        SELECT
-            sp.nest_id,
-            SUM(
-                sp.amount
-                * (sp.single_product_json ->> 'width')::numeric
-                * (sp.single_product_json ->> 'height')::numeric
-            ) AS sold_area
-        FROM legacy.single_product sp
-        JOIN affected_nests an ON an.nest_id = sp.nest_id
-        GROUP BY sp.nest_id
-    )
-    UPDATE legacy.nest n
-    SET nest_json = jsonb_set(
-        -- COALESCE on the target: if nest_json was somehow NULL, jsonb_set would
-        -- otherwise return NULL instead of building a fresh object.
-        COALESCE(n.nest_json, '{}'::jsonb),
-        '{commercial_waste_percentage}',
-        -- COALESCE on the new_value: jsonb_set is a strict function, so if this
-        -- expression evaluated to SQL NULL (e.g. missing material_width/height),
-        -- jsonb_set would return NULL and wipe the entire nest_json column.
-        -- Coalescing to jsonb 'null' keeps that failure scoped to this one key.
-        COALESCE(
-            to_jsonb(
-                round(
-                    (
-                        (
-                            (n.nest_json->>'material_width')::numeric * (n.nest_json->>'material_height')::numeric
-                            - COALESCE(sa.sold_area, 0)
-                        )
-                        / NULLIF((n.nest_json->>'material_width')::numeric * (n.nest_json->>'material_height')::numeric, 0)
-                    ) * 100
-                , 2)
-            ),
-            'null'::jsonb
-        ),
-        true
-    )
-    FROM sold_area sa
-    WHERE n.nest_id = sa.nest_id;
+    -- The nest of a single product need not be here yet: legacy.single_product
+    -- carries no foreign key to legacy.nest (the nest sync runs behind, and a
+    -- backfill of the nests is slower). A nest that is here gets its
+    -- commercial waste and its sheet manifest refreshed; one that arrives
+    -- later does both itself (legacy.crud_nest).
+    PERFORM legacy.update_nest_commercial_waste(
+        array(SELECT DISTINCT p.nest_id::bigint FROM param_table p WHERE p.nest_id IS NOT NULL));
+
+    PERFORM legacy.create_imposition_unit_manifest(
+        array(SELECT n.nest_id
+              FROM legacy.nest n
+              WHERE n.nest_id IN (SELECT p.nest_id FROM param_table p)));
 
     SELECT MAX(updated_at) INTO last_updated_at FROM param_table;
 

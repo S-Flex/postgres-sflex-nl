@@ -24,6 +24,10 @@ create table lane_item
 	-- pv2 + plannable_item_id, or planner + its own ref
 	source text,
 	source_ref text,
+	-- the repeat of a material moment on its lane: 0 the first moment of the day
+	instance integer default 0 not null,
+	-- backs the composite foreign key of batch_lane_item
+	unique (lane_item_id, lane_id),
 	-- the order within a lane is unique, as the lane order is within a plan
 	unique (lane_id, sort_order),
 	constraint lane_item_source_ref_uq

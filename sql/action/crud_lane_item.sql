@@ -13,8 +13,11 @@ as $$
     -- mutations in the batch and comes back on the result row; data carries
     -- the properties: lane_item_id (update, delete, the source of a copy),
     -- start_offset_in_seconds, sort_order, is_pinned, and for a create lane_id,
-    -- plan_id and imposition_group_id. A property left out of data keeps its
-    -- value. Every mutation writes through to mock.material_impose_plan, so
+    -- plan_id, imposition_group_id and, for a copy that needs a fresh lane,
+    -- resource_path (the impose path of the lane, site.line.impose.width; a
+    -- copy on an existing lane takes the lane's). A property left out of
+    -- data keeps its value. A copy is the next instance of the moment on its
+    -- lane (lane_item.instance). Every mutation writes through to mock.material_impose_plan, so
     -- re-stamping a plan reproduces what the planner did:
     --   update — move/pin/sort: the item and its pattern row
     --   create — an extra moment: a new pattern row with the next instance,
@@ -29,12 +32,12 @@ as $$
                t.element ->> 'crud'                             AS crud,
                te.lane_item_id, te.lane_id, te.plan_id,
                te.start_offset_in_seconds, te.sort_order, te.is_pinned,
-               te.imposition_group_id
+               te.imposition_group_id, te.resource_path
         FROM jsonb_array_elements(p_param_json) AS t(element)
         CROSS JOIN LATERAL jsonb_to_record(coalesce(t.element -> 'data', '{}'::jsonb)) AS te(
             lane_item_id bigint, lane_id bigint, plan_id bigint,
             start_offset_in_seconds integer, sort_order numeric,
-            is_pinned boolean, imposition_group_id integer)
+            is_pinned boolean, imposition_group_id integer, resource_path ltree)
     ),
     -- what an update or a copy starts from: the item, its lane and the
     -- pattern row it was stamped from (source_ref is <mrp_id>:<date>)
@@ -42,7 +45,7 @@ as $$
         SELECT p.param_id,
                li.lane_item_id, li.lane_id, li.sort_order, li.start_offset_in_seconds,
                li.is_pinned, li.duration_in_seconds,
-               l.lane_date,
+               l.lane_date, l.resource_path,
                -- only a pattern item has a pattern row; a batch item (source
                -- 'nest', source_ref <lane_id>:<batch>) writes nothing through
                CASE WHEN li.source = 'material-plan'
@@ -82,6 +85,7 @@ as $$
         SELECT p.param_id, p.track_by, p.plan_id, p.sort_order, p.is_pinned,
                p.start_offset_in_seconds, p.lane_id AS given_lane_id,
                coalesce(p.imposition_group_id, s.imposition_group_id) AS imposition_group_id,
+               coalesce(p.resource_path, s.resource_path)             AS resource_path,
                s.material_impose_plan_id AS from_pattern_id,
                s.lane_id                 AS from_lane_id,
                nextval('mock.material_resource_plan_material_resource_plan_id_seq') AS new_pattern_id,
@@ -100,10 +104,11 @@ as $$
         LEFT JOIN action.plan pl ON pl.plan_id = n.plan_id
         LEFT JOIN action.lane l  ON l.lane_id = coalesce(n.given_lane_id, n.from_lane_id)
     ),
+    -- a fresh lane is an impose lane on the path given, else the source's
     new_lane AS (
-        INSERT INTO action.lane (lane_id, lane_date)
+        INSERT INTO action.lane (lane_id, lane_date, step, resource_path)
         OVERRIDING SYSTEM VALUE
-        SELECT t.new_lane_id, t.lane_date
+        SELECT t.new_lane_id, t.lane_date, 'impose', t.resource_path
         FROM target t WHERE t.new_lane_id IS NOT NULL
         RETURNING lane_id
     ),
@@ -148,7 +153,7 @@ as $$
     new_item AS (
         INSERT INTO action.lane_item
             (lane_item_id, lane_id, sort_order, start_offset_in_seconds,
-             duration_in_seconds, is_pinned, no_split, type, source, source_ref)
+             duration_in_seconds, is_pinned, no_split, type, source, source_ref, instance)
         OVERRIDING SYSTEM VALUE
         SELECT t.new_lane_item_id, t.lane_id,
                -- no rank from the client: append behind the lane, spread so a
@@ -161,7 +166,11 @@ as $$
                coalesce(t.is_pinned, false), true, 'plan',
                'material-plan',
                -- same shape generate_plan stamps, so the item stays idempotent
-               t.new_pattern_id || ':' || t.lane_date
+               t.new_pattern_id || ':' || t.lane_date,
+               -- the next repeat of the moment on its lane
+               (SELECT coalesce(max(li3.instance), -1)
+                FROM action.lane_item li3 WHERE li3.lane_id = t.lane_id AND li3.type = 'plan')
+               + row_number() OVER (PARTITION BY t.lane_id ORDER BY t.param_id)
         FROM target t
         WHERE t.lane_id IS NOT NULL
         RETURNING lane_item_id, lane_id

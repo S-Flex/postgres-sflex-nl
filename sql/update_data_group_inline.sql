@@ -17788,10 +17788,7 @@ WITH payload AS (
                   "title": "Надходження"
                 }
               },
-              "hidden": false,
-              "order": 1,
-              "suffix": "m²",
-              "class_name": "col-span-2"
+              "hidden": true
             },
             "scale": 0
           },
@@ -17894,9 +17891,7 @@ WITH payload AS (
                   "title": "Прогноз"
                 }
               },
-              "hidden": true,
-              "suffix": "m²",
-              "class_name": "col-span-3"
+              "hidden": true
             },
             "scale": 0
           },
@@ -17927,10 +17922,8 @@ WITH payload AS (
                   "title": "Матеріал"
                 }
               },
-              "hidden": false,
-              "no_label": true,
-              "order": 0,
-              "class_name": "col-span-6"
+              "hidden": true,
+              "no_label": true
             }
           },
           "resource_name": {
@@ -18037,17 +18030,7 @@ WITH payload AS (
                   "title": "Друкарський план"
                 }
               },
-              "hidden": false,
-              "suffix": "h",
-              "hidden_when": [
-                {
-                  "op": "==",
-                  "value": null,
-                  "field": "min_delivery_hours"
-                }
-              ],
-              "order": 3,
-              "class_name": "col-span-2"
+              "hidden": true
             }
           },
           "production_line_id": {
@@ -18374,16 +18357,7 @@ WITH payload AS (
                   "title": "Пер. м²"
                 }
               },
-              "hidden": false,
-              "order": 2,
-              "class_name": "col-span-2",
-              "hidden_when": [
-                {
-                  "field": "rework_count",
-                  "op": "==",
-                  "value": 0
-                }
-              ]
+              "hidden": true
             },
             "scale": 0
           },
@@ -18479,7 +18453,28 @@ WITH payload AS (
           },
           "seconds_to_logistics_date": {
             "ui": {
-              "hidden": true
+              "i18n": {
+                "de": {
+                  "title": "Zeit bis Produktion"
+                },
+                "en": {
+                  "title": "Time to production"
+                },
+                "es": {
+                  "title": "Tiempo hasta producción"
+                },
+                "fr": {
+                  "title": "Temps avant production"
+                },
+                "nl": {
+                  "title": "Tijd tot productie"
+                },
+                "uk": {
+                  "title": "Час до виробництва"
+                }
+              },
+              "hidden": true,
+              "type": "duration"
             }
           },
           "unit_class_names": {
@@ -18576,9 +18571,8 @@ WITH payload AS (
                   "title": "Мін. час виробництва"
                 }
               },
-              "order": 4,
-              "class_name": "col-span-3",
-              "type": "duration"
+              "type": "duration",
+              "hidden": true
             }
           },
           "production_seconds_max": {
@@ -18603,9 +18597,8 @@ WITH payload AS (
                   "title": "Макс. час виробництва"
                 }
               },
-              "order": 5,
-              "class_name": "col-span-3",
-              "type": "duration"
+              "type": "duration",
+              "hidden": true
             }
           },
           "batch_count": {
@@ -18630,15 +18623,7 @@ WITH payload AS (
                   "title": "Партії"
                 }
               },
-              "order": 6,
-              "class_name": "col-span-2",
-              "hidden_when": [
-                {
-                  "field": "nest_count",
-                  "op": "==",
-                  "value": 0
-                }
-              ]
+              "hidden": true
             }
           },
           "set_json": {
@@ -18714,144 +18699,16 @@ WITH payload AS (
             "sections": [
               {
                 "field_config": {
-                  "tenant_name": {
-                    "ui": {
-                      "order": 1,
-                      "hidden": false
-                    }
-                  },
                   "material_name": {
                     "ui": {
                       "order": 0,
-                      "hidden": false
-                    }
-                  }
-                }
-              },
-              {
-                "fields_class_name": "grid grid-cols-2 gap-1",
-                "field_config": {
-                  "sqm": {
-                    "ui": {
-                      "order": 0,
-                      "hidden": false
+                      "no_label": true
                     }
                   },
-                  "forecast_sqm": {
+                  "tenant_name": {
                     "ui": {
                       "order": 1,
-                      "hidden": false
-                    }
-                  },
-                  "orderline_count": {
-                    "ui": {
-                      "order": 2,
-                      "hidden": false
-                    }
-                  },
-                  "amount": {
-                    "ui": {
-                      "order": 3,
-                      "hidden": false
-                    }
-                  },
-                  "gross_sqm": {
-                    "ui": {
-                      "order": 4,
-                      "hidden": false
-                    }
-                  },
-                  "rework_count": {
-                    "ui": {
-                      "order": 5,
-                      "hidden": false,
-                      "class_name": "col-start-1"
-                    }
-                  },
-                  "rework_sqm": {
-                    "ui": {
-                      "order": 6,
-                      "hidden": false
-                    }
-                  },
-                  "nest_count": {
-                    "ui": {
-                      "order": 7,
-                      "hidden": false
-                    }
-                  },
-                  "delivery_hours": {
-                    "ui": {
-                      "order": 8,
-                      "hidden": false,
-                      "class_name": "col-start-1"
-                    }
-                  },
-                  "min_delivery_hours": {
-                    "ui": {
-                      "order": 9,
-                      "hidden": false
-                    }
-                  },
-                  "production_seconds_min": {
-                    "ui": {
-                      "order": 12,
-                      "class_name": "col-start-1"
-                    },
-                    "type": "duration"
-                  },
-                  "production_seconds_max": {
-                    "ui": {
-                      "order": 13
-                    },
-                    "type": "duration"
-                  },
-                  "batch_count": {
-                    "ui": {
-                      "order": 14,
-                      "class_name": "col-start-1",
-                      "hidden_when": [
-                        {
-                          "field": "nest_count",
-                          "op": "==",
-                          "value": 0
-                        }
-                      ]
-                    }
-                  }
-                }
-              },
-              {
-                "group": {
-                  "fields_class_name": "grid grid-cols-6 gap-1",
-                  "data_field": "param_json.specs",
-                  "field_config": {
-                    "param_json.specs.width": {
-                      "ui": {
-                        "order": 0,
-                        "hidden": false,
-                        "suffix": "cm",
-                        "no_label": true,
-                        "class_name": "col-span-2"
-                      }
-                    },
-                    "param_json.specs.height": {
-                      "ui": {
-                        "order": 1,
-                        "hidden": false,
-                        "suffix": "cm",
-                        "no_label": true,
-                        "class_name": "col-span-2"
-                      }
-                    },
-                    "param_json.specs.amount": {
-                      "ui": {
-                        "order": 2,
-                        "hidden": false,
-                        "no_label": true,
-                        "class_name": "col-span-2"
-                      },
-                      "scale": 0
+                      "no_label": true
                     }
                   }
                 }
@@ -18860,21 +18717,6 @@ WITH payload AS (
                 "group": {
                   "data_field": "manifest_json",
                   "title_field": "i18n",
-                  "fields_class_name": "grid grid-cols-6 gap-1",
-                  "field_config": {
-                    "sqm": {
-                      "ui": {
-                        "order": 0,
-                        "class_name": "col-span-3"
-                      }
-                    },
-                    "orderline_count": {
-                      "ui": {
-                        "order": 1,
-                        "class_name": "col-span-3"
-                      }
-                    }
-                  },
                   "items": {
                     "data_field": "items",
                     "set_field": "set",
@@ -18884,34 +18726,17 @@ WITH payload AS (
                       "nest_date": {
                         "ui": {
                           "order": 0,
-                          "class_name": "col-span-2",
+                          "no_label": true,
+                          "class_name": "col-span-2 font-semibold",
                           "type": "date"
                         }
                       },
-                      "unit_class": {
+                      "unit_class_json.i18n": {
                         "ui": {
-                          "i18n": {
-                            "de": {
-                              "title": "Gruppe"
-                            },
-                            "en": {
-                              "title": "Group"
-                            },
-                            "es": {
-                              "title": "Grupo"
-                            },
-                            "fr": {
-                              "title": "Groupe"
-                            },
-                            "nl": {
-                              "title": "Groep"
-                            },
-                            "uk": {
-                              "title": "Група"
-                            }
-                          },
                           "order": 1,
-                          "class_name": "col-span-2"
+                          "no_label": true,
+                          "control": "i18n-text",
+                          "class_name": "col-span-1 font-semibold"
                         }
                       },
                       "batch_id": {
@@ -18937,66 +18762,49 @@ WITH payload AS (
                             }
                           },
                           "order": 0,
-                          "class_name": "col-span-4"
+                          "class_name": "col-span-3 font-semibold"
                         }
                       },
                       "sqm": {
                         "ui": {
                           "order": 2,
-                          "class_name": "col-span-2"
+                          "no_label": true,
+                          "class_name": "col-span-3 font-semibold text-right",
+                          "suffix": "m²"
                         }
                       },
                       "step_json.print.seconds_min": {
                         "ui": {
                           "i18n": {
                             "de": {
-                              "title": "Druck min."
+                              "title": "Druck"
                             },
                             "en": {
-                              "title": "Print min."
+                              "title": "Print"
                             },
                             "es": {
-                              "title": "Impresión mín."
+                              "title": "Impresión"
                             },
                             "fr": {
-                              "title": "Impression min."
+                              "title": "Impression"
                             },
                             "nl": {
-                              "title": "Print min."
+                              "title": "Print"
                             },
                             "uk": {
-                              "title": "Друк мін."
+                              "title": "Друк"
                             }
                           },
                           "order": 3,
-                          "class_name": "col-span-3"
+                          "class_name": "col-span-1"
                         },
                         "type": "duration"
                       },
                       "step_json.print.seconds_max": {
                         "ui": {
-                          "i18n": {
-                            "de": {
-                              "title": "Druck max."
-                            },
-                            "en": {
-                              "title": "Print max."
-                            },
-                            "es": {
-                              "title": "Impresión máx."
-                            },
-                            "fr": {
-                              "title": "Impression max."
-                            },
-                            "nl": {
-                              "title": "Print max."
-                            },
-                            "uk": {
-                              "title": "Друк макс."
-                            }
-                          },
                           "order": 4,
-                          "class_name": "col-span-3"
+                          "no_label": true,
+                          "class_name": "col-span-1"
                         },
                         "type": "duration"
                       },
@@ -19004,53 +18812,34 @@ WITH payload AS (
                         "ui": {
                           "i18n": {
                             "de": {
-                              "title": "Schnitt min."
+                              "title": "Schnitt"
                             },
                             "en": {
-                              "title": "Cut min."
+                              "title": "Cut"
                             },
                             "es": {
-                              "title": "Corte mín."
+                              "title": "Corte"
                             },
                             "fr": {
-                              "title": "Coupe min."
+                              "title": "Coupe"
                             },
                             "nl": {
-                              "title": "Snijden min."
+                              "title": "Cut"
                             },
                             "uk": {
-                              "title": "Різання мін."
+                              "title": "Різання"
                             }
                           },
                           "order": 5,
-                          "class_name": "col-span-3"
+                          "class_name": "col-span-1"
                         },
                         "type": "duration"
                       },
                       "step_json.cut.seconds_max": {
                         "ui": {
-                          "i18n": {
-                            "de": {
-                              "title": "Schnitt max."
-                            },
-                            "en": {
-                              "title": "Cut max."
-                            },
-                            "es": {
-                              "title": "Corte máx."
-                            },
-                            "fr": {
-                              "title": "Coupe max."
-                            },
-                            "nl": {
-                              "title": "Snijden max."
-                            },
-                            "uk": {
-                              "title": "Різання макс."
-                            }
-                          },
                           "order": 6,
-                          "class_name": "col-span-3"
+                          "no_label": true,
+                          "class_name": "col-span-1"
                         },
                         "type": "duration"
                       }
@@ -19072,7 +18861,7 @@ WITH payload AS (
                               "hidden": true
                             }
                           },
-                          "unit_class": {
+                          "unit_class_json.i18n": {
                             "ui": {
                               "hidden": true
                             }
@@ -19085,8 +18874,7 @@ WITH payload AS (
               }
             ],
             "input_data": [
-              "data",
-              "label_options"
+              "data"
             ]
           },
           "no_popup": true,
@@ -19563,76 +19351,250 @@ WITH payload AS (
           "set_order_field": "type_json.sort_order",
           "placement_field": "type_json.placement",
           "set_class_names_field": "type_json.class_names",
-          "items": {
-            "data_field": "set_json",
-            "set_field": "set",
-            "set_order_field": "sort_order",
-            "title_field": "title",
-            "class_names_field": "class_names",
-            "fields_class_name": "grid grid-cols-6 gap-1",
+          "lane_item_config": {
+            "fields_class_name": "grid grid-cols-4 gap-1",
             "field_config": {
-              "orderline_count": {
+              "material_name": {
                 "ui": {
-                  "order": 1,
-                  "class_name": "col-span-2"
+                  "order": 0,
+                  "no_label": true,
+                  "class_name": "col-span-4 font-semibold"
                 }
               },
-              "rework_count": {
+              "production_seconds_min": {
                 "ui": {
-                  "order": 2,
-                  "class_name": "col-span-2",
-                  "hidden_when": [
-                    {
-                      "field": "rework_count",
-                      "op": "==",
-                      "value": 0
+                  "i18n": {
+                    "de": {
+                      "title": "Min. Zeit"
+                    },
+                    "en": {
+                      "title": "Min. time"
+                    },
+                    "es": {
+                      "title": "Tiempo mín."
+                    },
+                    "fr": {
+                      "title": "Temps min."
+                    },
+                    "nl": {
+                      "title": "Min. tijd"
+                    },
+                    "uk": {
+                      "title": "Мін. час"
                     }
-                  ]
+                  },
+                  "order": 2,
+                  "class_name": "col-span-1",
+                  "type": "duration"
+                }
+              },
+              "production_seconds_max": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Max. Zeit"
+                    },
+                    "en": {
+                      "title": "Max. time"
+                    },
+                    "es": {
+                      "title": "Tiempo máx."
+                    },
+                    "fr": {
+                      "title": "Temps max."
+                    },
+                    "nl": {
+                      "title": "Max. tijd"
+                    },
+                    "uk": {
+                      "title": "Макс. час"
+                    }
+                  },
+                  "order": 3,
+                  "class_name": "col-span-1",
+                  "type": "duration"
                 }
               },
               "sqm": {
                 "ui": {
-                  "order": 3,
-                  "class_name": "col-span-2"
+                  "i18n": {
+                    "de": {
+                      "title": "Fläche"
+                    },
+                    "en": {
+                      "title": "Area"
+                    },
+                    "es": {
+                      "title": "Superficie"
+                    },
+                    "fr": {
+                      "title": "Surface"
+                    },
+                    "nl": {
+                      "title": "Opp."
+                    },
+                    "uk": {
+                      "title": "Площа"
+                    }
+                  },
+                  "order": 5,
+                  "class_name": "col-span-1",
+                  "suffix": "m²"
                 }
               },
-              "part_status_json": {
+              "seconds_to_logistics_date": {
                 "ui": {
-                  "order": 4,
-                  "class_name": "col-span-6",
-                  "control": "distribution-bar",
-                  "distribution_bar_config": {
-                    "title_field": "i18n",
-                    "value_field": "amount",
-                    "class_names_field": "class_names",
-                    "sort": {
-                      "field": "sequence"
+                  "i18n": {
+                    "de": {
+                      "title": "Zeit bis Produktion"
+                    },
+                    "en": {
+                      "title": "Time to production"
+                    },
+                    "es": {
+                      "title": "Tiempo hasta producción"
+                    },
+                    "fr": {
+                      "title": "Temps avant production"
+                    },
+                    "nl": {
+                      "title": "Tijd tot productie"
+                    },
+                    "uk": {
+                      "title": "Час до виробництва"
                     }
-                  }
+                  },
+                  "order": 6,
+                  "control": "badge",
+                  "type": "duration",
+                  "class_name": "col-span-3"
+                }
+              },
+              "min_delivery_hours": {
+                "ui": {
+                  "order": 7,
+                  "no_label": true,
+                  "control": "badge",
+                  "class_name": "col-span-1 text-right"
                 }
               }
             },
-            "set_overrides": {
-              "orders": {
-                "title_field": "i18n",
-                "field_config": {
-                  "part_status_json": {
-                    "ui": {
-                      "hidden": true
+            "lane_table_config": {
+              "data_field": "set_json",
+              "set_field": "set",
+              "set_order_field": "sort_order",
+              "class_names_field": "class_names",
+              "fields_class_name": "grid grid-cols-4 gap-1",
+              "field_config": {
+                "orderline_count": {
+                  "ui": {
+                    "order": 0,
+                    "no_label": true,
+                    "control": "template",
+                    "class_name": "col-span-2",
+                    "i18n": {
+                      "de": {
+                        "template": "${orderline_count} Auftragszeilen"
+                      },
+                      "en": {
+                        "template": "${orderline_count} orderlines"
+                      },
+                      "es": {
+                        "template": "${orderline_count} líneas de pedido"
+                      },
+                      "fr": {
+                        "template": "${orderline_count} lignes de commande"
+                      },
+                      "nl": {
+                        "template": "${orderline_count} orderregels"
+                      },
+                      "uk": {
+                        "template": "${orderline_count} рядків замовлення"
+                      }
+                    }
+                  }
+                },
+                "rework_count": {
+                  "ui": {
+                    "order": 1,
+                    "no_label": true,
+                    "control": "template",
+                    "class_name": "col-span-1",
+                    "hidden_when": [
+                      {
+                        "field": "rework_count",
+                        "op": "==",
+                        "value": 0
+                      }
+                    ],
+                    "i18n": {
+                      "de": {
+                        "template": ", ${rework_count}x Nacharbeit"
+                      },
+                      "en": {
+                        "template": ", ${rework_count}x rework"
+                      },
+                      "es": {
+                        "template": ", ${rework_count}x retrabajo"
+                      },
+                      "fr": {
+                        "template": ", ${rework_count}x reprise"
+                      },
+                      "nl": {
+                        "template": ", ${rework_count}x herstel"
+                      },
+                      "uk": {
+                        "template": ", ${rework_count}x переробка"
+                      }
+                    }
+                  }
+                },
+                "i18n": {
+                  "ui": {
+                    "order": 2,
+                    "no_label": true,
+                    "control": "badge",
+                    "class_name": "col-span-1 text-right"
+                  }
+                },
+                "part_status_json": {
+                  "ui": {
+                    "order": 2,
+                    "no_label": true,
+                    "control": "distribution-bar",
+                    "class_name": "col-span-1",
+                    "distribution_bar_config": {
+                      "title_field": "i18n",
+                      "value_field": "amount",
+                      "class_names_field": "class_names",
+                      "sort": {
+                        "field": "sequence"
+                      }
                     }
                   }
                 }
               },
-              "batch": {
-                "field_config": {
-                  "orderline_count": {
-                    "ui": {
-                      "hidden": true
+              "set_overrides": {
+                "orders": {
+                  "field_config": {
+                    "part_status_json": {
+                      "ui": {
+                        "hidden": true
+                      }
                     }
-                  },
-                  "rework_count": {
-                    "ui": {
-                      "hidden": true
+                  }
+                },
+                "batch": {
+                  "field_config": {
+                    "i18n": {
+                      "ui": {
+                        "hidden": true
+                      }
+                    },
+                    "rework_count": {
+                      "ui": {
+                        "hidden": true
+                      }
                     }
                   }
                 }
@@ -19673,6 +19635,11 @@ WITH payload AS (
             "key": "threshold",
             "is_optional": true,
             "default_value": 1,
+            "is_query_param": true
+          },
+          {
+            "key": "line_type",
+            "is_optional": true,
             "is_query_param": true
           }
         ],
@@ -20104,6 +20071,32 @@ WITH payload AS (
             "ui": {
               "hidden": true
             }
+          },
+          "fill_percentage": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Füllung"
+                },
+                "en": {
+                  "title": "Fill"
+                },
+                "es": {
+                  "title": "Llenado"
+                },
+                "fr": {
+                  "title": "Remplissage"
+                },
+                "nl": {
+                  "title": "Vulling"
+                },
+                "uk": {
+                  "title": "Заповнення"
+                }
+              },
+              "hidden": true,
+              "type": "percent"
+            }
           }
         },
         "flow_board_config": {
@@ -20142,11 +20135,39 @@ WITH payload AS (
                 "no_label": true,
                 "class_name": "col-span-1"
               }
+            },
+            "impact_json.sqm": {
+              "ui": {
+                "i18n": {
+                  "de": {
+                    "title": "m²"
+                  },
+                  "en": {
+                    "title": "m²"
+                  },
+                  "es": {
+                    "title": "m²"
+                  },
+                  "fr": {
+                    "title": "m²"
+                  },
+                  "nl": {
+                    "title": "m²"
+                  },
+                  "uk": {
+                    "title": "м²"
+                  }
+                },
+                "order": 1,
+                "class_name": "col-span-1 text-right"
+              },
+              "scale": 0,
+              "aggregate_fn": "sum"
             }
           },
           "column_min_width": 300,
           "column_max_width": 400,
-          "fields_class_name": "grid grid-cols-1",
+          "fields_class_name": "grid grid-cols-2",
           "children": [
             {
               "layout": "flow-container",
@@ -20752,7 +20773,146 @@ WITH payload AS (
                 }
               ]
             }
-          ]
+          ],
+          "header": {
+            "fields_class_name": "grid grid-cols-3 gap-2",
+            "field_config": {
+              "fill_percentage": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Füllung"
+                    },
+                    "en": {
+                      "title": "Fill"
+                    },
+                    "es": {
+                      "title": "Llenado"
+                    },
+                    "fr": {
+                      "title": "Remplissage"
+                    },
+                    "nl": {
+                      "title": "Vulling"
+                    },
+                    "uk": {
+                      "title": "Заповнення"
+                    }
+                  },
+                  "order": 0,
+                  "control": "donut-chart",
+                  "class_name": "col-span-1 row-span-2",
+                  "donut_chart_config": {
+                    "center": {
+                      "field": "fill_percentage",
+                      "type": "percent"
+                    }
+                  }
+                }
+              },
+              "resource_uids": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Drucker"
+                    },
+                    "en": {
+                      "title": "Printer"
+                    },
+                    "es": {
+                      "title": "Impresora"
+                    },
+                    "fr": {
+                      "title": "Imprimante"
+                    },
+                    "nl": {
+                      "title": "Printer"
+                    },
+                    "uk": {
+                      "title": "Принтер"
+                    }
+                  },
+                  "order": 1,
+                  "control": "multi-select",
+                  "class_name": "col-span-2",
+                  "input_data": {
+                    "src": [
+                      "get_resources"
+                    ],
+                    "params": [
+                      {
+                        "key": "line_type",
+                        "is_query_param": true
+                      },
+                      {
+                        "key": "step",
+                        "default_value": "print",
+                        "is_query_param": true
+                      }
+                    ],
+                    "title_field": "resource_name",
+                    "value_field": "resource_uid"
+                  }
+                }
+              }
+            },
+            "navs": [
+              {
+                "menu": [
+                  {
+                    "i18n": {
+                      "de": {
+                        "title": "Weiter zur Sammelform"
+                      },
+                      "en": {
+                        "title": "Continue to gangrun"
+                      },
+                      "es": {
+                        "title": "Continuar al gangrun"
+                      },
+                      "fr": {
+                        "title": "Continuer vers le gangrun"
+                      },
+                      "nl": {
+                        "title": "Doorzetten naar gangrun"
+                      },
+                      "uk": {
+                        "title": "Далі до ганграну"
+                      }
+                    },
+                    "type": "button",
+                    "path": "(detail:impose-plan-inflow)",
+                    "params": [
+                      {
+                        "key": "material_id",
+                        "is_query_param": true
+                      },
+                      {
+                        "key": "date",
+                        "is_query_param": true
+                      },
+                      {
+                        "key": "look_ahead_days",
+                        "is_query_param": true
+                      },
+                      {
+                        "key": "threshold",
+                        "is_query_param": true
+                      },
+                      {
+                        "key": "line_type",
+                        "is_query_param": true
+                      },
+                      {
+                        "key": "resource_uids",
+                        "is_query_param": true
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
         },
         "window_class_name": "p-8"
       }
@@ -24197,6 +24357,18 @@ WITH payload AS (
             "is_query_param": true
           },
           {
+            "key": "threshold",
+            "is_optional": true,
+            "default_value": 1,
+            "is_query_param": true
+          },
+          {
+            "key": "date",
+            "is_optional": true,
+            "is_ident_only": true,
+            "is_query_param": true
+          },
+          {
             "key": "start_offset_in_seconds",
             "is_optional": true,
             "is_ident_only": true,
@@ -24215,58 +24387,11 @@ WITH payload AS (
             "is_query_param": true
           }
         ],
-        "widget_id": "get_nest_resource_schedule",
+        "widget_id": "impose_resource_plan",
         "row_options": {
+          "draggable": false,
           "nav": {
             "menu": [
-              {
-                "i18n": {
-                  "de": {
-                    "title": "Auftragspositionen"
-                  },
-                  "en": {
-                    "title": "Orderlines"
-                  },
-                  "es": {
-                    "title": "Abrir líneas de pedido"
-                  },
-                  "fr": {
-                    "title": "Ouvrir les lignes de commande"
-                  },
-                  "nl": {
-                    "title": "Orderlijnen"
-                  },
-                  "uk": {
-                    "title": "Відкрити позиції замовлення"
-                  }
-                },
-                "path": "(sidebar:nest-schedule-queue)",
-                "params": [
-                  {
-                    "key": "material_id",
-                    "is_query_param": true
-                  },
-                  {
-                    "key": "date",
-                    "value_from": "nest_date",
-                    "is_query_param": true
-                  }
-                ],
-                "hidden_when": {
-                  "or": [
-                    {
-                      "op": "==",
-                      "field": "material_id",
-                      "value": null
-                    },
-                    {
-                      "op": ">",
-                      "field": "nest_count",
-                      "value": 0
-                    }
-                  ]
-                }
-              },
               {
                 "i18n": {
                   "de": {
@@ -24288,7 +24413,7 @@ WITH payload AS (
                     "title": "Рядки замовлення"
                   }
                 },
-                "path": "(sidebar:production-board-detail)",
+                "path": "(sidebar:orderinfo)",
                 "params": [
                   {
                     "key": "date",
@@ -24305,26 +24430,47 @@ WITH payload AS (
                     "value_from": "material_id",
                     "is_query_param": true
                   }
-                ],
-                "hidden_when": {
-                  "or": [
-                    {
-                      "op": "==",
-                      "field": "material_id",
-                      "value": null
-                    },
-                    {
-                      "op": ">",
-                      "field": "nest_count",
-                      "value": 0
-                    }
-                  ]
-                }
+                ]
               },
               {
                 "i18n": {
                   "de": {
-                    "title": "Nest detail"
+                    "title": "Nesting-Queue"
+                  },
+                  "en": {
+                    "title": "Nesting queue"
+                  },
+                  "es": {
+                    "title": "Cola de nesting"
+                  },
+                  "fr": {
+                    "title": "File de nesting"
+                  },
+                  "nl": {
+                    "title": "Nesting wachtrij"
+                  },
+                  "uk": {
+                    "title": "Черга нестингу"
+                  }
+                },
+                "icon": "Grid01",
+                "path": "(sidebar:nest-schedule-queue)",
+                "params": [
+                  {
+                    "key": "material_id",
+                    "is_query_param": true
+                  },
+                  {
+                    "key": "date",
+                    "value_from": "nest_date",
+                    "is_query_param": true
+                  }
+                ]
+              },
+              {
+                "i18n": {
+                  "de": {
+                    "title": "Nest-Detail"
                   },
                   "en": {
                     "title": "Nest detail"
@@ -24349,40 +24495,33 @@ WITH payload AS (
                     "is_query_param": true
                   }
                 ],
-                "hidden_when": {
-                  "or": [
-                    {
-                      "op": "==",
-                      "field": "material_id",
-                      "value": null
-                    },
-                    {
-                      "op": "==",
-                      "field": "nest_count",
-                      "value": 0
-                    }
-                  ]
-                }
+                "hidden_when": [
+                  {
+                    "field": "nest_count",
+                    "op": "==",
+                    "value": 0
+                  }
+                ]
               },
               {
                 "i18n": {
                   "de": {
-                    "title": "Materialprognose öffnen"
+                    "title": "Materialprognose"
                   },
                   "en": {
-                    "title": "Open material forecast"
+                    "title": "Material forecast"
                   },
                   "es": {
-                    "title": "Abrir previsión de material"
+                    "title": "Previsión de material"
                   },
                   "fr": {
-                    "title": "Ouvrir la prévision matériau"
+                    "title": "Prévision matériau"
                   },
                   "nl": {
-                    "title": "Materiaalforecast openen"
+                    "title": "Materiaalforecast"
                   },
                   "uk": {
-                    "title": "Відкрити прогноз матеріалу"
+                    "title": "Прогноз матеріалу"
                   }
                 },
                 "icon": "TrendUp01",
@@ -24393,37 +24532,22 @@ WITH payload AS (
                     "is_query_param": true
                   },
                   {
-                    "key": "production_company_id",
-                    "is_query_param": true
-                  },
-                  {
-                    "key": "date",
+                    "key": "from",
+                    "value_from": "nest_date",
                     "is_query_param": true
                   }
                 ],
                 "hidden_when": [
                   {
-                    "op": "==",
                     "field": "forecast_sqm",
+                    "op": "==",
                     "value": null
                   }
                 ]
               }
             ]
           },
-          "drop": {
-            "sort": true,
-            "commit": "mutation",
-            "order_type": "rank",
-            "within_fields": [
-              "tenant_id",
-              "resource_uid"
-            ]
-          },
-          "draggable": true,
-          "selectable": true,
-          "order_field": "sort_order",
-          "deselectable": true
+          "selectable": true
         },
         "field_config": {
           "sqm": {
@@ -24448,99 +24572,38 @@ WITH payload AS (
                   "title": "Надходження"
                 }
               },
-              "order": 1,
-              "hidden": false,
-              "suffix": "m²",
-              "no_label": true,
-              "class_name": "col-span-6 text-right"
-            },
-            "scale": 0
-          },
-          "amount": {
-            "ui": {
-              "i18n": {
-                "de": {
-                  "title": "Anzahl"
-                },
-                "en": {
-                  "title": "Amount"
-                },
-                "es": {
-                  "title": "Cantidad"
-                },
-                "fr": {
-                  "title": "Nombre"
-                },
-                "nl": {
-                  "title": "Aantal"
-                },
-                "uk": {
-                  "title": "Кількість"
-                }
-              },
               "hidden": true
             },
             "scale": 0
           },
-          "nest_ids": {
-            "ui": {
-              "hidden": true
-            }
-          },
-          "gross_sqm": {
+          "date": {
             "ui": {
               "i18n": {
                 "de": {
-                  "title": "Brutto m²"
+                  "title": "Datum"
                 },
                 "en": {
-                  "title": "Gross m²"
+                  "title": "Date"
                 },
                 "es": {
-                  "title": "m² brutos"
+                  "title": "Fecha"
                 },
                 "fr": {
-                  "title": "m² bruts"
+                  "title": "Date"
                 },
                 "nl": {
-                  "title": "Bruto m²"
+                  "title": "Datum"
                 },
                 "uk": {
-                  "title": "Брутто м²"
-                }
-              },
-              "hidden": true
-            },
-            "scale": 0
-          },
-          "is_pinned": {
-            "ui": {
-              "hidden": true
-            }
-          },
-          "nest_date": {
-            "ui": {
-              "i18n": {
-                "de": {
-                  "title": "Nestdatum"
-                },
-                "en": {
-                  "title": "Nest date"
-                },
-                "es": {
-                  "title": "Fecha de anidado"
-                },
-                "fr": {
-                  "title": "Date d'imbrication"
-                },
-                "nl": {
-                  "title": "Nestdatum"
-                },
-                "uk": {
-                  "title": "Дата нестингу"
+                  "title": "Дата"
                 }
               },
               "type": "date",
+              "hidden": true
+            }
+          },
+          "is_pinned": {
+            "ui": {
               "hidden": true
             }
           },
@@ -24548,57 +24611,6 @@ WITH payload AS (
             "ui": {
               "hidden": true
             }
-          },
-          "nest_count": {
-            "ui": {
-              "i18n": {
-                "de": {
-                  "title": "Nests"
-                },
-                "en": {
-                  "title": "Nests"
-                },
-                "es": {
-                  "title": "Nests"
-                },
-                "fr": {
-                  "title": "Nests"
-                },
-                "nl": {
-                  "title": "Nests"
-                },
-                "uk": {
-                  "title": "Нести"
-                }
-              },
-              "hidden": true
-            }
-          },
-          "rework_sqm": {
-            "ui": {
-              "i18n": {
-                "de": {
-                  "title": "H. m²"
-                },
-                "en": {
-                  "title": "Rw m²"
-                },
-                "es": {
-                  "title": "Retr. m²"
-                },
-                "fr": {
-                  "title": "Repr. m²"
-                },
-                "nl": {
-                  "title": "H. m²"
-                },
-                "uk": {
-                  "title": "Пер. м²"
-                }
-              },
-              "hidden": true
-            },
-            "scale": 0
           },
           "sort_order": {
             "ui": {
@@ -24614,32 +24626,6 @@ WITH payload AS (
             "ui": {
               "hidden": true
             }
-          },
-          "part_amount": {
-            "ui": {
-              "i18n": {
-                "de": {
-                  "title": "Teile"
-                },
-                "en": {
-                  "title": "Parts"
-                },
-                "es": {
-                  "title": "Partes"
-                },
-                "fr": {
-                  "title": "Pièces"
-                },
-                "nl": {
-                  "title": "Parts"
-                },
-                "uk": {
-                  "title": "Частини"
-                }
-              },
-              "hidden": true
-            },
-            "scale": 0
           },
           "tenant_name": {
             "ui": {
@@ -24698,31 +24684,6 @@ WITH payload AS (
               "hidden": true
             }
           },
-          "rework_count": {
-            "ui": {
-              "i18n": {
-                "de": {
-                  "title": "Nacharbeit"
-                },
-                "en": {
-                  "title": "Rework"
-                },
-                "es": {
-                  "title": "Retrabajo"
-                },
-                "fr": {
-                  "title": "Reprise"
-                },
-                "nl": {
-                  "title": "Herstel"
-                },
-                "uk": {
-                  "title": "Переробка"
-                }
-              },
-              "hidden": true
-            }
-          },
           "material_name": {
             "ui": {
               "i18n": {
@@ -24745,10 +24706,8 @@ WITH payload AS (
                   "title": "Матеріал"
                 }
               },
-              "order": 0,
-              "hidden": false,
-              "no_label": true,
-              "class_name": "col-span-6"
+              "hidden": true,
+              "no_label": true
             }
           },
           "resource_name": {
@@ -24803,59 +24762,8 @@ WITH payload AS (
               "suffix": "h"
             }
           },
-          "is_fixed_group": {
+          "fixed_group": {
             "ui": {
-              "hidden": true
-            }
-          },
-          "product_amount": {
-            "ui": {
-              "i18n": {
-                "de": {
-                  "title": "Einheiten"
-                },
-                "en": {
-                  "title": "Units"
-                },
-                "es": {
-                  "title": "Unidades"
-                },
-                "fr": {
-                  "title": "Unités"
-                },
-                "nl": {
-                  "title": "Units"
-                },
-                "uk": {
-                  "title": "Одиниці"
-                }
-              },
-              "hidden": true
-            },
-            "scale": 0
-          },
-          "orderline_count": {
-            "ui": {
-              "i18n": {
-                "de": {
-                  "title": "Auftragszeilen"
-                },
-                "en": {
-                  "title": "Orderlines"
-                },
-                "es": {
-                  "title": "Líneas de pedido"
-                },
-                "fr": {
-                  "title": "Lignes de commande"
-                },
-                "nl": {
-                  "title": "Orderregels"
-                },
-                "uk": {
-                  "title": "Рядки замовлення"
-                }
-              },
               "hidden": true
             }
           },
@@ -24884,45 +24792,6 @@ WITH payload AS (
               "hidden": true
             }
           },
-          "part_status_json": {
-            "ui": {
-              "i18n": {
-                "de": {
-                  "title": "Status"
-                },
-                "en": {
-                  "title": "Status"
-                },
-                "es": {
-                  "title": "Estado"
-                },
-                "fr": {
-                  "title": "Statut"
-                },
-                "nl": {
-                  "title": "Status"
-                },
-                "uk": {
-                  "title": "Статус"
-                }
-              },
-              "hidden": true,
-              "control": "distribution-bar",
-              "distribution_bar_config": {
-                "sort": {
-                  "field": "sequence"
-                },
-                "i18n_field": "i18n",
-                "value_field": "amount",
-                "class_names_field": "class_names"
-              }
-            }
-          },
-          "unit_class_names": {
-            "ui": {
-              "hidden": true
-            }
-          },
           "min_delivery_hours": {
             "ui": {
               "i18n": {
@@ -24945,15 +24814,7 @@ WITH payload AS (
                   "title": "Друкарський план"
                 }
               },
-              "hidden": true,
-              "suffix": "h",
-              "hidden_when": [
-                {
-                  "op": "==",
-                  "field": "min_delivery_hours",
-                  "value": null
-                }
-              ]
+              "hidden": true
             }
           },
           "production_line_id": {
@@ -25017,32 +24878,6 @@ WITH payload AS (
               "suffix": "cm"
             }
           },
-          "param_json.specs.amount": {
-            "ui": {
-              "i18n": {
-                "de": {
-                  "title": "Anzahl"
-                },
-                "en": {
-                  "title": "Amount"
-                },
-                "es": {
-                  "title": "Cantidad"
-                },
-                "fr": {
-                  "title": "Nombre"
-                },
-                "nl": {
-                  "title": "Aantal"
-                },
-                "uk": {
-                  "title": "Кількість"
-                }
-              },
-              "hidden": true
-            },
-            "scale": 0
-          },
           "param_json.specs.height": {
             "ui": {
               "i18n": {
@@ -25069,12 +24904,33 @@ WITH payload AS (
               "suffix": "cm"
             }
           },
-          "start_offset_in_seconds": {
+          "param_json.specs.amount": {
             "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Anzahl"
+                },
+                "en": {
+                  "title": "Amount"
+                },
+                "es": {
+                  "title": "Cantidad"
+                },
+                "fr": {
+                  "title": "Nombre"
+                },
+                "nl": {
+                  "title": "Aantal"
+                },
+                "uk": {
+                  "title": "Кількість"
+                }
+              },
               "hidden": true
-            }
+            },
+            "scale": 0
           },
-          "seconds_to_logistics_date": {
+          "start_offset_in_seconds": {
             "ui": {
               "hidden": true
             }
@@ -25101,10 +24957,10 @@ WITH payload AS (
                   "title": "Мін. час друку"
                 }
               },
-              "type": "duration",
               "order": 6,
               "hidden": true,
-              "class_name": "col-span-3"
+              "class_name": "col-span-3",
+              "type": "duration"
             }
           },
           "param_json.standard_production_impact_in_seconds": {
@@ -25129,10 +24985,489 @@ WITH payload AS (
                   "title": "Макс. час друку"
                 }
               },
-              "type": "duration",
               "order": 4,
               "hidden": true,
-              "class_name": "col-span-3"
+              "class_name": "col-span-3",
+              "type": "duration"
+            }
+          },
+          "orderline_count": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Auftragszeilen"
+                },
+                "en": {
+                  "title": "Orderlines"
+                },
+                "es": {
+                  "title": "Líneas de pedido"
+                },
+                "fr": {
+                  "title": "Lignes de commande"
+                },
+                "nl": {
+                  "title": "Orderregels"
+                },
+                "uk": {
+                  "title": "Рядки замовлення"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "product_amount": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Einheiten"
+                },
+                "en": {
+                  "title": "Units"
+                },
+                "es": {
+                  "title": "Unidades"
+                },
+                "fr": {
+                  "title": "Unités"
+                },
+                "nl": {
+                  "title": "Units"
+                },
+                "uk": {
+                  "title": "Одиниці"
+                }
+              },
+              "hidden": true
+            },
+            "scale": 0
+          },
+          "part_amount": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Teile"
+                },
+                "en": {
+                  "title": "Parts"
+                },
+                "es": {
+                  "title": "Partes"
+                },
+                "fr": {
+                  "title": "Pièces"
+                },
+                "nl": {
+                  "title": "Parts"
+                },
+                "uk": {
+                  "title": "Частини"
+                }
+              },
+              "hidden": true
+            },
+            "scale": 0
+          },
+          "amount": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Anzahl"
+                },
+                "en": {
+                  "title": "Amount"
+                },
+                "es": {
+                  "title": "Cantidad"
+                },
+                "fr": {
+                  "title": "Nombre"
+                },
+                "nl": {
+                  "title": "Aantal"
+                },
+                "uk": {
+                  "title": "Кількість"
+                }
+              },
+              "hidden": true
+            },
+            "scale": 0
+          },
+          "rework_count": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Nacharbeit"
+                },
+                "en": {
+                  "title": "Rework"
+                },
+                "es": {
+                  "title": "Retrabajo"
+                },
+                "fr": {
+                  "title": "Reprise"
+                },
+                "nl": {
+                  "title": "Herstel"
+                },
+                "uk": {
+                  "title": "Переробка"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "rework_sqm": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "H. m²"
+                },
+                "en": {
+                  "title": "Rw m²"
+                },
+                "es": {
+                  "title": "Retr. m²"
+                },
+                "fr": {
+                  "title": "Repr. m²"
+                },
+                "nl": {
+                  "title": "H. m²"
+                },
+                "uk": {
+                  "title": "Пер. м²"
+                }
+              },
+              "hidden": true
+            },
+            "scale": 0
+          },
+          "gross_sqm": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Brutto m²"
+                },
+                "en": {
+                  "title": "Gross m²"
+                },
+                "es": {
+                  "title": "m² brutos"
+                },
+                "fr": {
+                  "title": "m² bruts"
+                },
+                "nl": {
+                  "title": "Bruto m²"
+                },
+                "uk": {
+                  "title": "Брутто м²"
+                }
+              },
+              "hidden": true
+            },
+            "scale": 0
+          },
+          "nest_ids": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "nest_count": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Nests"
+                },
+                "en": {
+                  "title": "Nests"
+                },
+                "es": {
+                  "title": "Nests"
+                },
+                "fr": {
+                  "title": "Nests"
+                },
+                "nl": {
+                  "title": "Nests"
+                },
+                "uk": {
+                  "title": "Нести"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "part_status_json": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Status"
+                },
+                "en": {
+                  "title": "Status"
+                },
+                "es": {
+                  "title": "Estado"
+                },
+                "fr": {
+                  "title": "Statut"
+                },
+                "nl": {
+                  "title": "Status"
+                },
+                "uk": {
+                  "title": "Статус"
+                }
+              },
+              "control": "distribution-bar",
+              "distribution_bar_config": {
+                "title_field": "i18n",
+                "value_field": "amount",
+                "class_names_field": "class_names",
+                "sort": {
+                  "field": "sequence"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "seconds_to_logistics_date": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Zeit bis Produktion"
+                },
+                "en": {
+                  "title": "Time to production"
+                },
+                "es": {
+                  "title": "Tiempo hasta producción"
+                },
+                "fr": {
+                  "title": "Temps avant production"
+                },
+                "nl": {
+                  "title": "Tijd tot productie"
+                },
+                "uk": {
+                  "title": "Час до виробництва"
+                }
+              },
+              "hidden": true,
+              "type": "duration"
+            }
+          },
+          "unit_class_names": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "nest_date": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Nestdatum"
+                },
+                "en": {
+                  "title": "Nest date"
+                },
+                "es": {
+                  "title": "Fecha de anidado"
+                },
+                "fr": {
+                  "title": "Date d'imbrication"
+                },
+                "nl": {
+                  "title": "Nestdatum"
+                },
+                "uk": {
+                  "title": "Дата нестингу"
+                }
+              },
+              "type": "date",
+              "hidden": true
+            }
+          },
+          "type": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "type_json": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "param_json.planned_start_offset_in_seconds": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "param_json.production_impact_in_seconds": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Geplante Zeit"
+                },
+                "en": {
+                  "title": "Planned time"
+                },
+                "es": {
+                  "title": "Tiempo planificado"
+                },
+                "fr": {
+                  "title": "Temps planifié"
+                },
+                "nl": {
+                  "title": "Geplande tijd"
+                },
+                "uk": {
+                  "title": "Запланований час"
+                }
+              },
+              "type": "duration",
+              "hidden": true
+            }
+          },
+          "production_seconds_min": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Min. Produktionszeit"
+                },
+                "en": {
+                  "title": "Min. production time"
+                },
+                "es": {
+                  "title": "Tiempo mín. de producción"
+                },
+                "fr": {
+                  "title": "Temps de production min."
+                },
+                "nl": {
+                  "title": "Min. productietijd"
+                },
+                "uk": {
+                  "title": "Мін. час виробництва"
+                }
+              },
+              "type": "duration",
+              "hidden": true
+            }
+          },
+          "production_seconds_max": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Max. Produktionszeit"
+                },
+                "en": {
+                  "title": "Max. production time"
+                },
+                "es": {
+                  "title": "Tiempo máx. de producción"
+                },
+                "fr": {
+                  "title": "Temps de production max."
+                },
+                "nl": {
+                  "title": "Max. productietijd"
+                },
+                "uk": {
+                  "title": "Макс. час виробництва"
+                }
+              },
+              "type": "duration",
+              "hidden": true
+            }
+          },
+          "batch_count": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Chargen"
+                },
+                "en": {
+                  "title": "Batches"
+                },
+                "es": {
+                  "title": "Lotes"
+                },
+                "fr": {
+                  "title": "Lots"
+                },
+                "nl": {
+                  "title": "Batches"
+                },
+                "uk": {
+                  "title": "Партії"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "set_json": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Lijst"
+                },
+                "en": {
+                  "title": "List"
+                },
+                "es": {
+                  "title": "Lista"
+                },
+                "fr": {
+                  "title": "Liste"
+                },
+                "nl": {
+                  "title": "Lijst"
+                },
+                "uk": {
+                  "title": "Список"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "manifest_json": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Manifeste"
+                },
+                "en": {
+                  "title": "Manifests"
+                },
+                "es": {
+                  "title": "Manifiestos"
+                },
+                "fr": {
+                  "title": "Manifestes"
+                },
+                "nl": {
+                  "title": "Manifesten"
+                },
+                "uk": {
+                  "title": "Маніфести"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "step_json": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "delivery_hours_json": {
+            "ui": {
+              "hidden": true
             }
           }
         },
@@ -25148,243 +25483,222 @@ WITH payload AS (
             "sections": [
               {
                 "field_config": {
-                  "tenant_name": {
-                    "ui": {
-                      "order": 1,
-                      "hidden": false
-                    }
-                  },
                   "material_name": {
                     "ui": {
                       "order": 0,
-                      "hidden": false
+                      "no_label": true
+                    }
+                  },
+                  "tenant_name": {
+                    "ui": {
+                      "order": 1,
+                      "no_label": true
                     }
                   }
                 }
               },
               {
-                "field_config": {
-                  "sqm": {
-                    "ui": {
-                      "order": 0,
-                      "hidden": false,
-                      "class_name": "text-right"
-                    }
-                  },
-                  "amount": {
-                    "ui": {
-                      "order": 3,
-                      "hidden": false,
-                      "class_name": "text-right"
-                    }
-                  },
-                  "gross_sqm": {
-                    "ui": {
-                      "order": 4,
-                      "hidden": false,
-                      "class_name": "text-right"
-                    }
-                  },
-                  "nest_count": {
-                    "ui": {
-                      "order": 7,
-                      "hidden": false,
-                      "class_name": "text-right"
-                    }
-                  },
-                  "rework_sqm": {
-                    "ui": {
-                      "order": 6,
-                      "hidden": false,
-                      "class_name": "text-right"
-                    }
-                  },
-                  "forecast_sqm": {
-                    "ui": {
-                      "order": 1,
-                      "hidden": false,
-                      "class_name": "text-right"
-                    }
-                  },
-                  "rework_count": {
-                    "ui": {
-                      "order": 5,
-                      "hidden": false,
-                      "class_name": "col-start-1 text-right"
-                    }
-                  },
-                  "delivery_hours": {
-                    "ui": {
-                      "order": 8,
-                      "hidden": false,
-                      "class_name": "col-start-1"
-                    }
-                  },
-                  "orderline_count": {
-                    "ui": {
-                      "order": 2,
-                      "hidden": false,
-                      "class_name": "text-right"
-                    }
-                  },
-                  "min_delivery_hours": {
-                    "ui": {
-                      "order": 9,
-                      "hidden": false
-                    }
-                  },
-                  "param_json.fast_production_impact_in_seconds": {
-                    "ui": {
-                      "order": 11,
-                      "hidden": false,
-                      "class_name": "col-span-2"
-                    }
-                  },
-                  "param_json.standard_production_impact_in_seconds": {
-                    "ui": {
-                      "order": 10,
-                      "hidden": false,
-                      "class_name": "col-span-2"
+                "group": {
+                  "data_field": "manifest_json",
+                  "title_field": "i18n",
+                  "items": {
+                    "data_field": "items",
+                    "set_field": "set",
+                    "set_order_field": "sort_order",
+                    "fields_class_name": "grid grid-cols-6 gap-1",
+                    "field_config": {
+                      "nest_date": {
+                        "ui": {
+                          "order": 0,
+                          "no_label": true,
+                          "class_name": "col-span-2 font-semibold",
+                          "type": "date"
+                        }
+                      },
+                      "unit_class_json.i18n": {
+                        "ui": {
+                          "order": 1,
+                          "no_label": true,
+                          "control": "i18n-text",
+                          "class_name": "col-span-1 font-semibold"
+                        }
+                      },
+                      "batch_id": {
+                        "ui": {
+                          "i18n": {
+                            "de": {
+                              "title": "Charge"
+                            },
+                            "en": {
+                              "title": "Batch"
+                            },
+                            "es": {
+                              "title": "Lote"
+                            },
+                            "fr": {
+                              "title": "Lot"
+                            },
+                            "nl": {
+                              "title": "Batch"
+                            },
+                            "uk": {
+                              "title": "Партія"
+                            }
+                          },
+                          "order": 0,
+                          "class_name": "col-span-3 font-semibold"
+                        }
+                      },
+                      "sqm": {
+                        "ui": {
+                          "order": 2,
+                          "no_label": true,
+                          "class_name": "col-span-3 font-semibold text-right",
+                          "suffix": "m²"
+                        }
+                      },
+                      "step_json.print.seconds_min": {
+                        "ui": {
+                          "i18n": {
+                            "de": {
+                              "title": "Druck"
+                            },
+                            "en": {
+                              "title": "Print"
+                            },
+                            "es": {
+                              "title": "Impresión"
+                            },
+                            "fr": {
+                              "title": "Impression"
+                            },
+                            "nl": {
+                              "title": "Print"
+                            },
+                            "uk": {
+                              "title": "Друк"
+                            }
+                          },
+                          "order": 3,
+                          "class_name": "col-span-1"
+                        },
+                        "type": "duration"
+                      },
+                      "step_json.print.seconds_max": {
+                        "ui": {
+                          "order": 4,
+                          "no_label": true,
+                          "class_name": "col-span-1"
+                        },
+                        "type": "duration"
+                      },
+                      "step_json.cut.seconds_min": {
+                        "ui": {
+                          "i18n": {
+                            "de": {
+                              "title": "Schnitt"
+                            },
+                            "en": {
+                              "title": "Cut"
+                            },
+                            "es": {
+                              "title": "Corte"
+                            },
+                            "fr": {
+                              "title": "Coupe"
+                            },
+                            "nl": {
+                              "title": "Cut"
+                            },
+                            "uk": {
+                              "title": "Різання"
+                            }
+                          },
+                          "order": 5,
+                          "class_name": "col-span-1"
+                        },
+                        "type": "duration"
+                      },
+                      "step_json.cut.seconds_max": {
+                        "ui": {
+                          "order": 6,
+                          "no_label": true,
+                          "class_name": "col-span-1"
+                        },
+                        "type": "duration"
+                      }
+                    },
+                    "set_overrides": {
+                      "nest-date": {
+                        "field_config": {
+                          "batch_id": {
+                            "ui": {
+                              "hidden": true
+                            }
+                          }
+                        }
+                      },
+                      "batch": {
+                        "field_config": {
+                          "nest_date": {
+                            "ui": {
+                              "hidden": true
+                            }
+                          },
+                          "unit_class_json.i18n": {
+                            "ui": {
+                              "hidden": true
+                            }
+                          }
+                        }
+                      }
                     }
                   }
-                },
-                "fields_class_name": "grid grid-cols-2 gap-1"
-              },
-              {
-                "group": {
-                  "data_field": "param_json.specs",
-                  "field_config": {
-                    "param_json.specs.width": {
-                      "ui": {
-                        "order": 0,
-                        "hidden": false,
-                        "suffix": "cm",
-                        "no_label": true,
-                        "class_name": "col-span-2"
-                      }
-                    },
-                    "param_json.specs.amount": {
-                      "ui": {
-                        "order": 2,
-                        "hidden": false,
-                        "no_label": true,
-                        "class_name": "col-span-2 text-right"
-                      },
-                      "scale": 0
-                    },
-                    "param_json.specs.height": {
-                      "ui": {
-                        "order": 1,
-                        "hidden": false,
-                        "suffix": "cm",
-                        "no_label": true,
-                        "class_name": "col-span-2"
-                      }
-                    }
-                  },
-                  "fields_class_name": "grid grid-cols-6 gap-1"
                 }
               }
             ],
             "input_data": [
-              "data",
-              "label_options"
+              "data"
             ]
           },
-          "evaluate": {
-            "params_field": "param_json",
-            "formula_field": "formula"
-          },
-          "group_by": [
-            "tenant_id"
-          ],
-          "no_label": false,
           "no_popup": true,
-          "chain_scope": "lane",
           "no_timeline": false,
           "offset_field": "start_offset_in_seconds",
           "label_options": {
-            "drop": {
-              "sort": true,
-              "commit": "mutation",
-              "order_type": "rank",
-              "within_fields": [
-                "tenant_id"
-              ]
-            },
             "tooltip": {
               "sections": [
                 {
                   "field_config": {
-                    "tenant_name": {
-                      "ui": {
-                        "order": 1,
-                        "hidden": false
-                      }
-                    },
-                    "material_name": {
+                    "resource_name": {
                       "ui": {
                         "order": 0
                       }
                     },
-                    "resource_name": {
+                    "tenant_name": {
                       "ui": {
-                        "order": 2,
-                        "hidden": false
+                        "order": 1
                       }
                     }
-                  }
-                },
-                {
-                  "field_config": {
-                    "delivery_hours": {
-                      "ui": {
-                        "order": 0,
-                        "class_name": "col-span-3"
-                      }
-                    },
-                    "min_delivery_hours": {
-                      "ui": {
-                        "order": 1,
-                        "class_name": "col-span-3"
-                      }
-                    }
-                  },
-                  "fields_class_name": "grid grid-cols-6 gap-1"
-                },
-                {
-                  "group": {
-                    "data_field": "param_json.specs",
-                    "field_config": {
-                      "param_json.specs.width": {
-                        "ui": {
-                          "order": 0,
-                          "hidden": false,
-                          "no_label": true,
-                          "class_name": "col-span-2"
-                        }
-                      },
-                      "param_json.specs.height": {
-                        "ui": {
-                          "order": 1,
-                          "hidden": false,
-                          "no_label": true,
-                          "class_name": "col-span-2"
-                        }
-                      }
-                    },
-                    "fields_class_name": "grid grid-cols-4 gap-1"
                   }
                 }
               ]
             },
-            "group_by": [
-              "tenant_id"
-            ],
             "draggable": true,
+            "order_field": "sort_order",
+            "drop": {
+              "sort": true,
+              "order_type": "rank",
+              "within_fields": [
+                "tenant_id"
+              ],
+              "value_fields": [
+                "resource_uid"
+              ],
+              "commit": "mutation"
+            },
             "input_data": {
               "src": [
-                "get_plan_lanes"
+                "get_plan_lanes_resource"
               ],
               "params": [
                 {
@@ -25407,23 +25721,15 @@ WITH payload AS (
                   "default_value": [
                     "impose"
                   ],
-                  "is_query_param": false
+                  "is_query_param": true
                 }
               ],
               "group_by": [
-                "tenant_id"
+                "tenant_id",
+                "resource_uid"
               ]
             },
             "selectable": true,
-            "hidden_when": [
-              {
-                "op": "==",
-                "field": "resource_uid",
-                "value": null
-              }
-            ],
-            "order_field": "sort_order",
-            "deselectable": true,
             "field_config": {
               "tenant_id": {
                 "ui": {
@@ -25493,10 +25799,9 @@ WITH payload AS (
                       "title": "Матеріал"
                     }
                   },
-                  "order": 0,
-                  "hidden": true,
                   "no_label": true,
-                  "class_name": "text-xs col-span-4"
+                  "class_name": "text-xs col-span-4",
+                  "hidden": true
                 }
               },
               "resource_name": {
@@ -25521,29 +25826,98 @@ WITH payload AS (
                       "title": "Ресурс"
                     }
                   },
-                  "order": 0,
                   "hidden": false,
                   "no_label": true,
+                  "order": 0,
                   "class_name": "text-xs col-span-4"
                 }
               },
               "delivery_hours": {
                 "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "St. lieferzeit"
+                    },
+                    "en": {
+                      "title": "Std. delivery"
+                    },
+                    "es": {
+                      "title": "Entrega est."
+                    },
+                    "fr": {
+                      "title": "Délai std."
+                    },
+                    "nl": {
+                      "title": "St. levertijd"
+                    },
+                    "uk": {
+                      "title": "Ст. доставка"
+                    }
+                  },
+                  "class_name": "text-xs col-span-2",
                   "hidden": true
                 }
               },
-              "is_fixed_group": {
+              "fixed_group": {
                 "ui": {
                   "hidden": true
                 }
               },
               "param_json.specs": {
                 "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Spezifikationen"
+                    },
+                    "en": {
+                      "title": "Specs"
+                    },
+                    "es": {
+                      "title": "Especificaciones"
+                    },
+                    "fr": {
+                      "title": "Spécifications"
+                    },
+                    "nl": {
+                      "title": "Specificaties"
+                    },
+                    "uk": {
+                      "title": "Специфікації"
+                    }
+                  },
                   "hidden": true
                 }
               },
               "min_delivery_hours": {
                 "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Druckplan"
+                    },
+                    "en": {
+                      "title": "Print agenda"
+                    },
+                    "es": {
+                      "title": "Agenda de impresión"
+                    },
+                    "fr": {
+                      "title": "Agenda d'impression"
+                    },
+                    "nl": {
+                      "title": "Print agenda"
+                    },
+                    "uk": {
+                      "title": "Друкарський план"
+                    }
+                  },
+                  "class_name": "text-xs col-span-2",
+                  "hidden_when": [
+                    {
+                      "op": "==",
+                      "value": null,
+                      "field": "min_delivery_hours"
+                    }
+                  ],
                   "hidden": true
                 }
               },
@@ -25621,22 +25995,30 @@ WITH payload AS (
                   },
                   "hidden": true
                 }
+              },
+              "next_start_offset_in_seconds": {
+                "ui": {
+                  "hidden": true
+                }
               }
             },
             "column_min_width": 200,
             "fields_class_name": "grid grid-cols-4 gap-1",
+            "group_by": [
+              "tenant_id"
+            ],
             "group_title_fields": [
               "tenant_name"
-            ]
+            ],
+            "deselectable": true
           },
-          "duration_field": "param_json.duration_in_seconds",
+          "fixed_group_field": "fixed_group",
+          "next_start_offset_field": "next_start_offset_in_seconds",
+          "duration_field": "duration_in_seconds",
+          "set_date_field": "nest_date",
+          "start_at_field": "start_at",
           "is_pinned_field": "is_pinned",
           "no_timeline_now": false,
-          "valid_resources": {
-            "field": "data.valid_resources",
-            "resource_field": "resource_path"
-          },
-          "column_max_width": 600,
           "column_min_width": 0,
           "set_group_fields": [
             "tenant_id",
@@ -25644,10 +26026,10 @@ WITH payload AS (
           ],
           "timeline_seconds": 864000,
           "class_names_field": "class_names",
+          "chain_scope": "plan",
           "time_scale_config": {
             "mode": "relative",
             "type": "time",
-            "zoom": 4.5,
             "input_data": {
               "src": [
                 "get_timeline_view_segments"
@@ -25660,32 +26042,303 @@ WITH payload AS (
                 },
                 {
                   "key": "until",
-                  "is_query_param": true
+                  "is_query_param": true,
+                  "is_optional": true
                 },
                 {
                   "key": "look_back",
-                  "is_query_param": true
+                  "is_query_param": true,
+                  "default_value": -1
                 },
                 {
                   "key": "look_ahead",
-                  "is_query_param": true
+                  "is_query_param": true,
+                  "default_value": -1
                 }
               ],
-              "i18n_field": "i18n",
+              "x_axis": {
+                "title_field": "date"
+              },
+              "title_field": "i18n",
               "time_field": "time",
-              "scale_field": "duration_in_seconds",
+              "day_offset_field": "day_offset",
               "class_names_field": "class_names",
-              "duration_in_seconds_field": "duration_in_seconds",
-              "end_offset_in_seconds_field": "end_offset_in_seconds",
-              "segment_size_in_seconds_field": "segment_size_in_seconds",
-              "start_offset_in_seconds_field": "start_offset_in_seconds"
-            }
+              "duration_field": "duration_in_seconds",
+              "end_offset_field": "end_offset_in_seconds",
+              "segment_size_field": "segment_size_in_seconds",
+              "offset_field": "start_offset_in_seconds"
+            },
+            "zoom": 2.2
           },
+          "group_by": [
+            "tenant_id"
+          ],
           "group_title_fields": [
             "tenant_name"
           ],
-          "is_fixed_group_field": "is_fixed_group",
-          "next_start_offset_in_seconds_field": "next_start_offset_in_seconds"
+          "no_label": false,
+          "evaluate": {
+            "formula_field": "type_json.formula",
+            "params_field": "param_json"
+          },
+          "valid_resources": {
+            "field": "data.valid_resources",
+            "resource_field": "resource_path"
+          },
+          "set_field": "type",
+          "set_order_field": "type_json.sort_order",
+          "placement_field": "type_json.placement",
+          "set_class_names_field": "type_json.class_names",
+          "lane_item_config": {
+            "fields_class_name": "grid grid-cols-4 gap-1",
+            "field_config": {
+              "material_name": {
+                "ui": {
+                  "order": 0,
+                  "no_label": true,
+                  "class_name": "col-span-4 font-semibold"
+                }
+              },
+              "production_seconds_min": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Min. Zeit"
+                    },
+                    "en": {
+                      "title": "Min. time"
+                    },
+                    "es": {
+                      "title": "Tiempo mín."
+                    },
+                    "fr": {
+                      "title": "Temps min."
+                    },
+                    "nl": {
+                      "title": "Min. tijd"
+                    },
+                    "uk": {
+                      "title": "Мін. час"
+                    }
+                  },
+                  "order": 2,
+                  "class_name": "col-span-1",
+                  "type": "duration"
+                }
+              },
+              "production_seconds_max": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Max. Zeit"
+                    },
+                    "en": {
+                      "title": "Max. time"
+                    },
+                    "es": {
+                      "title": "Tiempo máx."
+                    },
+                    "fr": {
+                      "title": "Temps max."
+                    },
+                    "nl": {
+                      "title": "Max. tijd"
+                    },
+                    "uk": {
+                      "title": "Макс. час"
+                    }
+                  },
+                  "order": 3,
+                  "class_name": "col-span-1",
+                  "type": "duration"
+                }
+              },
+              "sqm": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Fläche"
+                    },
+                    "en": {
+                      "title": "Area"
+                    },
+                    "es": {
+                      "title": "Superficie"
+                    },
+                    "fr": {
+                      "title": "Surface"
+                    },
+                    "nl": {
+                      "title": "Opp."
+                    },
+                    "uk": {
+                      "title": "Площа"
+                    }
+                  },
+                  "order": 5,
+                  "class_name": "col-span-1",
+                  "suffix": "m²"
+                }
+              },
+              "seconds_to_logistics_date": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Zeit bis Produktion"
+                    },
+                    "en": {
+                      "title": "Time to production"
+                    },
+                    "es": {
+                      "title": "Tiempo hasta producción"
+                    },
+                    "fr": {
+                      "title": "Temps avant production"
+                    },
+                    "nl": {
+                      "title": "Tijd tot productie"
+                    },
+                    "uk": {
+                      "title": "Час до виробництва"
+                    }
+                  },
+                  "order": 6,
+                  "control": "badge",
+                  "type": "duration",
+                  "class_name": "col-span-3"
+                }
+              },
+              "min_delivery_hours": {
+                "ui": {
+                  "order": 7,
+                  "no_label": true,
+                  "control": "badge",
+                  "class_name": "col-span-1 text-right"
+                }
+              }
+            },
+            "lane_table_config": {
+              "data_field": "set_json",
+              "set_field": "set",
+              "set_order_field": "sort_order",
+              "class_names_field": "class_names",
+              "fields_class_name": "grid grid-cols-4 gap-1",
+              "field_config": {
+                "orderline_count": {
+                  "ui": {
+                    "order": 0,
+                    "no_label": true,
+                    "control": "template",
+                    "class_name": "col-span-2",
+                    "i18n": {
+                      "de": {
+                        "template": "${orderline_count} Auftragszeilen"
+                      },
+                      "en": {
+                        "template": "${orderline_count} orderlines"
+                      },
+                      "es": {
+                        "template": "${orderline_count} líneas de pedido"
+                      },
+                      "fr": {
+                        "template": "${orderline_count} lignes de commande"
+                      },
+                      "nl": {
+                        "template": "${orderline_count} orderregels"
+                      },
+                      "uk": {
+                        "template": "${orderline_count} рядків замовлення"
+                      }
+                    }
+                  }
+                },
+                "rework_count": {
+                  "ui": {
+                    "order": 1,
+                    "no_label": true,
+                    "control": "template",
+                    "class_name": "col-span-1",
+                    "hidden_when": [
+                      {
+                        "field": "rework_count",
+                        "op": "==",
+                        "value": 0
+                      }
+                    ],
+                    "i18n": {
+                      "de": {
+                        "template": ", ${rework_count}x Nacharbeit"
+                      },
+                      "en": {
+                        "template": ", ${rework_count}x rework"
+                      },
+                      "es": {
+                        "template": ", ${rework_count}x retrabajo"
+                      },
+                      "fr": {
+                        "template": ", ${rework_count}x reprise"
+                      },
+                      "nl": {
+                        "template": ", ${rework_count}x herstel"
+                      },
+                      "uk": {
+                        "template": ", ${rework_count}x переробка"
+                      }
+                    }
+                  }
+                },
+                "i18n": {
+                  "ui": {
+                    "order": 2,
+                    "no_label": true,
+                    "control": "badge",
+                    "class_name": "col-span-1 text-right"
+                  }
+                },
+                "part_status_json": {
+                  "ui": {
+                    "order": 2,
+                    "no_label": true,
+                    "control": "distribution-bar",
+                    "class_name": "col-span-1",
+                    "distribution_bar_config": {
+                      "title_field": "i18n",
+                      "value_field": "amount",
+                      "class_names_field": "class_names",
+                      "sort": {
+                        "field": "sequence"
+                      }
+                    }
+                  }
+                }
+              },
+              "set_overrides": {
+                "orders": {
+                  "field_config": {
+                    "part_status_json": {
+                      "ui": {
+                        "hidden": true
+                      }
+                    }
+                  }
+                },
+                "batch": {
+                  "field_config": {
+                    "i18n": {
+                      "ui": {
+                        "hidden": true
+                      }
+                    },
+                    "rework_count": {
+                      "ui": {
+                        "hidden": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         },
         "fields_class_name": "@container grid grid-cols-6 gap-1"
       }

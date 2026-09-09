@@ -1,0 +1,38 @@
+[
+  {
+    "status": "plan",
+    "i18n": {
+      "de": { "title": "Plan" },
+      "en": { "title": "Plan" },
+      "es": { "title": "Plan" },
+      "fr": { "title": "Plan" },
+      "nl": { "title": "Plan" },
+      "uk": { "title": "План" }
+    },
+    "sort_order": 0
+  },
+  {
+    "status": "released",
+    "i18n": {
+      "de": { "title": "Freigegeben" },
+      "en": { "title": "Released" },
+      "es": { "title": "Liberado" },
+      "fr": { "title": "Libéré" },
+      "nl": { "title": "Vrijgegeven" },
+      "uk": { "title": "Випущено" }
+    },
+    "sort_order": 1
+  },
+  {
+    "status": "nested",
+    "i18n": {
+      "de": { "title": "Genestet" },
+      "en": { "title": "Nested" },
+      "es": { "title": "Anidado" },
+      "fr": { "title": "Imbriqué" },
+      "nl": { "title": "Genest" },
+      "uk": { "title": "Розкладено" }
+    },
+    "sort_order": 2
+  }
+]

@@ -13,7 +13,7 @@ as $$
     WITH pattern AS (
         SELECT DISTINCT ON (m.sort_order)
                m.material_impose_plan_id, m.sort_order, m.material_id,
-               m.start_offset_in_seconds, m.is_pinned, m.resource_path
+               m.start_offset_in_seconds, m.is_pinned, m.resource_path, m.instance
         FROM mock.material_impose_plan m
         WHERE m.weekday = extract(dow FROM p_date)::smallint + 1
           AND m.step = p_step
@@ -58,9 +58,12 @@ as $$
     -- group lanes: one fresh lane per pattern row, with the imposition group
     -- of the row on it (imposition_group_lane); the group ids were seeded 1:1
     -- from the material ids
+    -- the lane carries its step and its impose path (site.line.impose.width)
     new_lane AS (
-        INSERT INTO action.lane (lane_date)
-        SELECT p_date FROM pattern
+        INSERT INTO action.lane (lane_date, step, resource_path)
+        SELECT p_date, p_step, subpath(p.resource_path, 0, 4)
+        FROM numbered_pattern p
+        ORDER BY p.rn
         RETURNING lane_id
     ),
     numbered_lane AS (
@@ -86,8 +89,10 @@ as $$
     -- order they follow the material lanes (plan_lane.sort_order is unique
     -- per plan)
     new_resource_lane_row AS (
-        INSERT INTO action.lane (lane_date)
-        SELECT p_date FROM numbered_resource
+        INSERT INTO action.lane (lane_date, step, resource_path)
+        SELECT p_date, p_step, r.resource_path
+        FROM numbered_resource r
+        ORDER BY r.rn
         RETURNING lane_id
     ),
     numbered_resource_lane AS (
@@ -119,10 +124,11 @@ as $$
     new_lane_item AS (
         INSERT INTO action.lane_item
             (lane_id, sort_order, start_offset_in_seconds, is_pinned,
-             no_split, type, source, source_ref)
+             no_split, type, source, source_ref, instance)
         SELECT nl.lane_id, p.sort_order, p.start_offset_in_seconds,
                coalesce(p.is_pinned, false), true, 'plan',
-               'material-plan', p.material_impose_plan_id || ':' || p_date
+               'material-plan', p.material_impose_plan_id || ':' || p_date,
+               p.instance
         FROM numbered_lane nl
         JOIN numbered_pattern p USING (rn)
         RETURNING lane_item_id, lane_id

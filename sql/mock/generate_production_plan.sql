@@ -18,7 +18,7 @@ begin
     -- lane and its resource_lane row, ids drawn up front so the two inserts
     -- pair without a temp table
     with missing as (
-        select r.resource_path,
+        select r.resource_path, r.step,
                nextval(pg_get_serial_sequence('action.lane', 'lane_id')) as lane_id
         from relation.resource r
         join relation.production_line pl on pl.line_id = r.line_id
@@ -30,9 +30,9 @@ begin
                           where l.lane_date = p_date and rl.resource_path = r.resource_path)
     ),
     new_lane as (
-        insert into action.lane (lane_id, lane_date)
+        insert into action.lane (lane_id, lane_date, step, resource_path)
         overriding system value
-        select m.lane_id, p_date from missing m
+        select m.lane_id, p_date, m.step, m.resource_path from missing m
         returning lane_id
     )
     insert into action.resource_lane (lane_id, resource_path)

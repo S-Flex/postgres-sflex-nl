@@ -4,7 +4,13 @@ create table lane
 		primary key,
 	-- the day this strip of time belongs to; the boards that show it, and
 	-- their order per board, hang in plan_lane
-	lane_date date not null
+	lane_date date not null,
+	-- the step this lane plans: vocabulary relation.lookup lookup_step_category
+	step text not null,
+	-- the machine (docs/resource-path.md), or site.line.impose.width for a group lane
+	resource_path ltree not null,
+	-- backs the composite foreign key of batch_lane_item
+	unique (lane_id, step)
 );
 
 comment on table lane is 'One strip of time on one day. What the strip is for says exactly one of the two subtype rows: resource_lane (a machine-day) or imposition_group_lane (a material / imposition group). Which plans show the lane, and in what order, says plan_lane.';
