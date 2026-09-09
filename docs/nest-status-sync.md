@@ -1,6 +1,6 @@
 # nest-status uit de machinelog
 
-Datum: 2026-09-06. Script: `sql/update_nest_status_sync.sql`.
+Datum: 2026-09-06. Script: `archive/sql/migrations/update_nest_status_sync.sql`.
 
 ## het probleem
 

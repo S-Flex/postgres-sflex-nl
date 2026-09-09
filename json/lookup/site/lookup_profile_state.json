@@ -1,0 +1,60 @@
+{
+  "content": [
+    {
+      "code": "nominal",
+      "block": {
+        "i18n": {
+          "en": {
+            "title": "Within specification"
+          },
+          "nl": {
+            "title": "Binnen specs"
+          }
+        },
+        "title": "Within specification"
+      }
+    },
+    {
+      "code": "degraded",
+      "block": {
+        "i18n": {
+          "en": {
+            "title": "Degraded"
+          },
+          "nl": {
+            "title": "Verminderde prestatie"
+          }
+        },
+        "title": "Degraded"
+      }
+    },
+    {
+      "code": "pending",
+      "block": {
+        "i18n": {
+          "en": {
+            "title": "Awaiting profiling"
+          },
+          "nl": {
+            "title": "Wacht op profileren"
+          }
+        },
+        "title": "Awaiting profiling"
+      }
+    }
+  ],
+  "profile_state": [
+    {
+      "code": "nominal",
+      "sort-order": 1
+    },
+    {
+      "code": "degraded",
+      "sort-order": 2
+    },
+    {
+      "code": "pending",
+      "sort-order": 3
+    }
+  ]
+}

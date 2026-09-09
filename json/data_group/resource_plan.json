@@ -176,7 +176,7 @@
             "order": 1,
             "no_label": true,
             "suffix": "m²",
-            "class_name": "col-span-6 text-right"
+            "class_name": "col-span-6"
           },
           "scale": 0
         },
@@ -1189,43 +1189,38 @@
                 "sqm": {
                   "ui": {
                     "order": 0,
-                    "hidden": false,
-                    "class_name": "text-right"
+                    "hidden": false
                   }
                 },
                 "forecast_sqm": {
                   "ui": {
                     "order": 1,
-                    "hidden": false,
-                    "class_name": "text-right"
+                    "hidden": false
                   }
                 },
                 "gross_sqm": {
                   "ui": {
                     "order": 2,
-                    "hidden": false,
-                    "class_name": "text-right"
+                    "hidden": false
                   }
                 },
                 "impact_json.count": {
                   "ui": {
                     "order": 3,
-                    "hidden": false,
-                    "class_name": "text-right"
+                    "hidden": false
                   }
                 },
                 "impact_json.amount": {
                   "ui": {
                     "order": 4,
-                    "hidden": false,
-                    "class_name": "text-right"
+                    "hidden": false
                   }
                 },
                 "impact_json.rework_count": {
                   "ui": {
                     "order": 5,
                     "hidden": false,
-                    "class_name": "col-start-1 text-right",
+                    "class_name": "col-start-1",
                     "hidden_when": [
                       {
                         "field": "impact_json.rework_count",
@@ -1239,7 +1234,6 @@
                   "ui": {
                     "order": 6,
                     "hidden": false,
-                    "class_name": "text-right",
                     "hidden_when": [
                       {
                         "field": "impact_json.rework_count",
@@ -1253,7 +1247,7 @@
                   "ui": {
                     "order": 7,
                     "hidden": false,
-                    "class_name": "col-start-1 text-right"
+                    "class_name": "col-start-1"
                   }
                 },
                 "param_json.standard_production_impact_in_seconds": {
@@ -1274,35 +1268,32 @@
                   "ui": {
                     "order": 10,
                     "hidden": false,
-                    "class_name": "col-start-1 text-right"
+                    "class_name": "col-start-1"
                   }
                 },
                 "progress_json.remaining_amount": {
                   "ui": {
                     "order": 11,
-                    "hidden": false,
-                    "class_name": "text-right"
+                    "hidden": false
                   }
                 },
                 "progress_json.remaining_percentage": {
                   "ui": {
                     "order": 12,
                     "hidden": false,
-                    "class_name": "col-start-1 text-right"
+                    "class_name": "col-start-1"
                   }
                 },
                 "param_json.production_impact_in_seconds": {
                   "ui": {
                     "order": 13,
-                    "hidden": false,
-                    "class_name": "text-right"
+                    "hidden": false
                   }
                 },
                 "param_json.remaining_impact_in_seconds": {
                   "ui": {
                     "order": 14,
-                    "hidden": false,
-                    "class_name": "text-right"
+                    "hidden": false
                   }
                 }
               }
@@ -1336,7 +1327,6 @@
                   "ui": {
                     "order": 3,
                     "hidden": false,
-                    "class_name": "text-right",
                     "hidden_when": [
                       {
                         "field": "param_json.is_run",
@@ -1350,7 +1340,6 @@
                   "ui": {
                     "order": 4,
                     "hidden": false,
-                    "class_name": "text-right",
                     "hidden_when": [
                       {
                         "field": "param_json.is_run",
@@ -1404,7 +1393,7 @@
           },
           "input_data": {
             "src": [
-              "get_plan_lanes"
+              "get_plan_lanes_resource"
             ],
             "params": [
               {
@@ -1421,11 +1410,6 @@
                 "key": "tenant_ids",
                 "is_optional": true,
                 "is_query_param": true
-              },
-              {
-                "key": "plan_type",
-                "default_value": "production-plan",
-                "is_query_param": false
               },
               {
                 "key": "steps",
@@ -1501,6 +1485,7 @@
         },
         "duration_field": "duration_in_seconds",
         "is_pinned_field": "is_pinned",
+        "start_at_field": "start_at",
         "no_timeline_now": false,
         "column_min_width": 0,
         "set_group_fields": [
@@ -1525,19 +1510,23 @@
               },
               {
                 "key": "until",
-                "is_query_param": true
+                "is_query_param": true,
+                "is_optional": true
               },
               {
                 "key": "look_back",
-                "is_query_param": true
+                "is_query_param": true,
+                "default_value": -1
               },
               {
                 "key": "look_ahead",
-                "is_query_param": true
+                "is_query_param": true,
+                "default_value": -1
               }
             ],
             "title_field": "i18n",
             "time_field": "time",
+            "day_offset_field": "day_offset",
             "class_names_field": "class_names",
             "duration_field": "duration_in_seconds",
             "end_offset_field": "end_offset_in_seconds",
@@ -1560,6 +1549,7 @@
         "set_field": "type",
         "set_order_field": "type_json.sort_order",
         "placement_field": "type_json.placement",
+        "set_class_names_field": "type_json.class_names",
         "evaluate": {
           "formula_field": "type_json.formula",
           "params_field": "param_json"
@@ -1623,7 +1613,33 @@
           "duration_field": "duration_in_seconds",
           "class_names_field": "class_names"
         },
-        "set_title_field": "type_json.i18n"
+        "set_title_field": "type_json.i18n",
+        "connections": {
+          "match": [
+            "batch_id"
+          ],
+          "show_for": "filter",
+          "connectors": [
+            {
+              "code": "actual",
+              "kind": "pair",
+              "from_set": "plan",
+              "to_set": "actual",
+              "from_side": "left",
+              "to_side": "left",
+              "class_name": "connection-actual"
+            },
+            {
+              "code": "next",
+              "kind": "sequence",
+              "set": "plan",
+              "order_by": "start_offset_in_seconds",
+              "from_side": "right",
+              "to_side": "left",
+              "class_name": "connection-next"
+            }
+          ]
+        }
       },
       "fields_class_name": "@container grid grid-cols-6 gap-1"
     }

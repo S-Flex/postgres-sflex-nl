@@ -907,8 +907,8 @@
           "set": "plan",
           "links": {
             "connector": {
-              "from_anchor_offset_field": "next_trigger_type",
-              "from_anchor_offset_source": "param_json"
+              "source_field": "param_json",
+              "key_field": "next_trigger_type"
             },
             "parent_field": "parent_action_id",
             "foreign_field": "action_id"
@@ -982,6 +982,7 @@
           "resource_uids"
         ],
         "set_order_field": "state.order",
+        "set_class_names_field": "state.class_names",
         "timeline_seconds": 64800,
         "class_names_field": "state.class_names",
         "just_in_time_field": "just_in_time",
@@ -990,7 +991,33 @@
           "step"
         ],
         "no_label": false,
-        "set_title_field": "name"
+        "set_title_field": "name",
+        "connections": {
+          "match": [
+            "batch_id"
+          ],
+          "show_for": "filter",
+          "connectors": [
+            {
+              "code": "actual",
+              "kind": "pair",
+              "from_set": "plan",
+              "to_set": "actual",
+              "from_side": "left",
+              "to_side": "left",
+              "class_name": "connection-actual"
+            },
+            {
+              "code": "next",
+              "kind": "sequence",
+              "set": "plan",
+              "order_by": "offset_in_seconds",
+              "from_side": "right",
+              "to_side": "left",
+              "class_name": "connection-next"
+            }
+          ]
+        }
       },
       "fields_class_name": "grid grid-cols-6 gap-1"
     }

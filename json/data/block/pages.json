@@ -39,10 +39,21 @@
   },
   {
     "code": "nest-schedule-queue",
+    "sidebar_width": "50%",
     "main": {
       "sections": [
         {
-          "data_group": "nest_schedule_queue"
+          "data_group": "impose_plan_inflow"
+        }
+      ]
+    }
+  },
+  {
+    "code": "impose-plan-inflow",
+    "main": {
+      "sections": [
+        {
+          "data_group": "impose_plan_inflow"
         }
       ]
     }

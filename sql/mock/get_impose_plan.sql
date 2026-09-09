@@ -5,12 +5,28 @@ drop function if exists mock.get_nest_schedule(timestamp with time zone, text, t
 drop function if exists mock.get_imposition_plan(timestamp with time zone, text, text, integer[], integer, integer, integer);
 drop function if exists mock.get_impose_plan(timestamp with time zone, text, text, integer[], boolean, integer, integer, integer);
 drop function if exists mock.get_impose_plan(timestamp with time zone, text, text, integer[], integer, integer, integer);
+drop function if exists mock.get_impose_plan(timestamp with time zone, text, text, integer[], integer, integer, integer, text);
+drop function if exists mock.get_impose_plan(timestamp with time zone, text, text, integer[], integer, text, text);
+drop function if exists mock.get_impose_plan(timestamp with time zone, text, text, integer[], integer, integer, text, text);
 
--- every item row is a plan row: type and type_json (the node of
+-- The rows of the days in view. The time scale decides which days those are:
+-- the days production.get_timeline_view_segments(p_view_code) has segments
+-- for, so with nest-time-scale the evening of the day before and the day of
+-- p_until, and nothing of the day after. Each day carries the plan of its own
+-- date and its own work: the component specs whose nest date falls in the span
+-- of that day on the axis, moved to that working day -- on the day before only
+-- from the evening moment on (p_date_type says on which date the work is
+-- judged: nest or production). p_threshold splits the work into its unit
+-- classes (all together within 48 hours of production, else small and big
+-- orders apart). Offsets count from midnight of the day of p_until, so a row
+-- of the day before is negative. The order is tenant first, then day, then the
+-- sort order of that day's plan.
+--
+-- every row is a plan row: type and type_json (the node of
 -- lookup_lane_item_type, with sort_order, placement and formula) ride along as
 -- on get_resource_plan, so the board reads the kind of row the same way. The
--- noop windows have no kind.
-create function mock.get_impose_plan(p_until timestamp with time zone DEFAULT now(), p_step text DEFAULT 'print'::text, p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_look_back_days integer DEFAULT 0, p_look_ahead_days integer DEFAULT 0, p_domain_id integer DEFAULT 1) returns TABLE(material_id integer, material_name text, production_line_id integer, tenant_id integer, tenant_name text, production_company_id integer, resource_uid text, resource_name text, resource_path ltree, delivery_hours integer, min_delivery_hours integer, sort_order numeric, param_json jsonb, formula jsonb, data jsonb, fixed_group text, is_pinned boolean, start_offset_in_seconds integer, next_start_offset_in_seconds integer, duration_in_seconds integer, nest_date date, orderline_count integer, product_amount numeric, part_amount integer, amount numeric, sqm numeric, forecast_sqm numeric, rework_count integer, rework_sqm numeric, impact_json jsonb, gross_sqm numeric, part_status_json jsonb, nest_ids bigint[], nest_count integer, seconds_to_logistics_date integer, class_names text[], unit_class_names text[], lane_item_id bigint, lane_id bigint, type text, type_json jsonb)
+-- non-working time is the time scale's (get_timeline_view_segments), no rows.
+create function mock.get_impose_plan(p_until timestamp with time zone DEFAULT now(), p_step text DEFAULT 'impose'::text, p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_threshold integer DEFAULT 1, p_domain_id integer DEFAULT 1, p_date_type text DEFAULT 'nest'::text, p_view_code text DEFAULT 'nest-time-scale'::text) returns TABLE(material_id integer, material_name text, production_line_id integer, tenant_id integer, tenant_name text, production_company_id integer, resource_uid text, resource_name text, resource_path ltree, delivery_hours integer, min_delivery_hours integer, sort_order numeric, param_json jsonb, formula jsonb, data jsonb, fixed_group text, is_pinned boolean, start_offset_in_seconds integer, next_start_offset_in_seconds integer, duration_in_seconds integer, nest_date date, orderline_count integer, product_amount numeric, part_amount integer, amount numeric, sqm numeric, forecast_sqm numeric, rework_count integer, rework_sqm numeric, impact_json jsonb, gross_sqm numeric, part_status_json jsonb, nest_ids bigint[], nest_count integer, seconds_to_logistics_date integer, class_names text[], unit_class_names text[], lane_item_id bigint, lane_id bigint, day_offset integer, type text, type_json jsonb, start_at timestamp with time zone, production_seconds_min integer, production_seconds_max integer, batch_count integer, delivery_hours_json jsonb, step_json jsonb, set_json jsonb, manifest_json jsonb)
 	stable
 	language plpgsql
 as $$
@@ -23,6 +39,9 @@ declare
     v_status_sequences integer[];
     -- a lane item is never shorter than this, whatever the sqm say
     v_min_duration_in_seconds  constant integer := 900;
+    -- the width of a row counts the work of this delivery class only (hours):
+    -- the other classes ride along in the numbers, not in the time. A lookup later
+    v_width_delivery_hours     constant integer := 30;
     v_plan_type_json jsonb;
     v_plan_class_names text[];
 begin
@@ -42,8 +61,24 @@ begin
     where s.domain_id = p_domain_id and s.sequence <= v_max_status_sequence;
 
     return query
-    with base as (
-        select b.material_id, b.material_name, b.production_line_id,
+    with segment as materialized (
+        -- The axis, per day from what moment to what moment. With
+        -- nest-time-scale that is the evening of the day before (the 18 hours
+        -- moment) and the day of p_until. The lanes read takes its days from
+        -- the same view. The dates of the segments are calendar days; the plan
+        -- days below are working days, so a segment only lends its day_offset
+        -- and its clock times
+        select s.day_offset, s.date, s.start_at, s.end_at
+        from production.get_timeline_view_segments(
+                 p_code       => p_view_code,
+                 p_until      => p_until,
+                 p_look_back  => -1,
+                 p_look_ahead => -1,
+                 p_tenant_ids => p_tenant_ids) s
+    ),
+    base as (
+        select b.day_offset, b.plan_date,
+               b.material_id, b.material_name, b.production_line_id,
                b.tenant_id, b.tenant_name, b.resource_uid, b.resource_name,
                -- the row's own resource: valid_resources.resource_field reads it
                b.resource_path,
@@ -51,28 +86,17 @@ begin
                b.param_json, b.formula, b.data, b.fixed_group, b.is_pinned,
                b.start_offset_in_seconds, b.next_start_offset_in_seconds,
                b.lane_item_id, b.lane_id
-        -- only the materials whose interval (action.get_interval_dates on
-        -- interval_start_date and interval_days) says the plan date is a
-        -- production day; the rest of the plan stays out of the nest board
-        from action.get_plan_lanes(
-                 p_until, p_step, p_line_type, p_tenant_ids, p_only_starting_today => true) b
-    ),
-    tenant as (
-        select (v.value ->> 'tenant_id')::integer             as tenant_id,
-               (v.value ->> 'production_company_id')::integer as production_company_id
-        from relation.lookup lk
-        cross join lateral jsonb_array_elements(lk.lookup_json) as v(value)
-        where lk.lookup = 'lookup_tenants'
-    ),
-    the_plan as (
-        -- the newest plan of this date, step and line type wins
-        select plan_id
-        from action.plan
-        where plan_date = v_date and p_step = any (steps)
-          and type = 'material-resource-plan'
-          and (p_line_type is null or line_type = p_line_type)
-        order by plan_id desc
-        limit 1
+        -- The days in view, each with the plan of its own date; day_offset says
+        -- which day a row comes from, plan_date the working day behind it (the
+        -- day before a Monday is the Friday before it). The axis of the time
+        -- scale decides which moments are rows, so a moment it does not reach
+        -- (the noon of the day before) has none, and a day without a plan (a
+        -- weekend) has none either. Only the materials whose interval
+        -- (action.get_interval_dates on interval_start_date and interval_days)
+        -- says that day is a production day; the rest of the plan stays out
+        from action.get_plan_lanes_imposition_group(
+                 p_until, p_step, p_line_type, p_tenant_ids, p_only_starting_today => true,
+                 p_view_code => p_view_code) b
     ),
     lane_nest as (
         -- the nests hung on the lane of this row: the sets of all its plan
@@ -85,134 +109,84 @@ begin
         cross join lateral action.get_lane_item_impositions(li.lane_item_id) x
         group by b2.lane_item_id
     ),
-    -- One aggregate call for all rows without lane nests, and one per distinct
-    -- nest set for the rest, instead of one call per row: the detail behind
-    -- the aggregate is the expensive part and it costs the same for one
-    -- material as for fifty. Window rows are matched back on material and
-    -- line; nest rows on material alone (see row_data).
-    window_agg as (
-        select a.*
-        from mapping.get_production_orderline_aggregate(
-                 p_from             => p_until,
-                 p_date_type        => 'nest',
-                 p_look_back_days   => p_look_back_days,
-                 p_look_ahead_days  => p_look_ahead_days,
-                 -- empty, not null: null would mean every material
-                 p_material_ids     => coalesce((select array_agg(distinct b.material_id)
-                                                 from base b
-                                                 left join lane_nest ln on ln.lane_item_id = b.lane_item_id
-                                                 where b.material_id is not null and ln.nest_ids is null),
-                                                '{}'::integer[]),
-                 p_tenant_ids       => (select array_agg(distinct b.tenant_id) from base b),
+    -- One read for the work of every row: action.get_lane_item_work takes the
+    -- scope of each row (the nests of its lane, else its material and line in
+    -- the day window) and gives back the totals plus the two lists the board
+    -- shows. The fold that used to live here -- an aggregate call per nest set
+    -- and a lateral that summed the delivery classes back together -- is that
+    -- function now, and board 81 reads the same one.
+    work as (
+        -- one call per day in view, with that day as the moment: a row of the
+        -- day before carries the work of that day. The helper takes one moment
+        -- for all the entries it gets, so the day is the loop
+        select d.day_offset, w.*
+        from (select distinct b.day_offset, b.plan_date from base b) d
+        -- the span of that day on the axis, moved to its plan date: the first
+        -- segment start to the last segment end. A segment carries a calendar
+        -- date, the plan date is the working day, so the moment shifts by the
+        -- days between them. A day without segments has no span, and the work
+        -- reader then takes the whole plan date
+        cross join lateral (
+            select min(s.start_at + make_interval(days => d.plan_date - s.date)) as from_at,
+                   max(s.end_at   + make_interval(days => d.plan_date - s.date)) as until_at
+            from segment s
+            where s.day_offset = d.day_offset) a
+        cross join lateral action.get_lane_item_work(
+                 -- that day at the same clock time as p_until
+                 p_until            => (d.plan_date::timestamp
+                                        + (p_until at time zone 'Europe/Amsterdam' - v_date::timestamp))
+                                       at time zone 'Europe/Amsterdam',
+                 p_scope_json       => (select jsonb_agg(jsonb_build_object(
+                                                   'lane_item_id',       b.lane_item_id,
+                                                   'nest_ids',           ln.nest_ids,
+                                                   'material_id',        b.material_id,
+                                                   'production_line_id', b.production_line_id,
+                                                   'resource_path',      b.resource_path::text,
+                                                   'param_json',         b.param_json))
+                                        from base b
+                                        left join lane_nest ln on ln.lane_item_id = b.lane_item_id
+                                        where b.lane_item_id is not null
+                                          and b.day_offset = d.day_offset),
+                 p_date_type        => p_date_type,
                  p_status_sequences => v_status_sequences,
-                 p_is_open          => true,
-                 p_domain_id        => p_domain_id) a
-    ),
-    nest_agg as (
-        -- the nests decide the scope here; the material of the owning item
-        -- narrows the call — the rows are matched back on material anyway,
-        -- and without the filter every call drags the forecast of every
-        -- material along (hundreds of discarded rows per set)
-        select ns.nest_ids as lane_nest_ids, a.*
-        from (select ln.nest_ids, array_agg(distinct b.material_id) as material_ids
-              from lane_nest ln
-              join base b on b.lane_item_id = ln.lane_item_id
-              where b.material_id is not null
-              group by ln.nest_ids) ns
-        cross join lateral mapping.get_production_orderline_aggregate(
-                 p_from             => p_until,
-                 p_date_type        => 'nest',
-                 p_nest_ids         => ns.nest_ids,
-                 p_material_ids     => ns.material_ids,
-                 p_tenant_ids       => (select array_agg(distinct b.tenant_id) from base b),
-                 -- a planned nest set counts all its work whatever the
-                 -- status; the class names carry the state instead
-                 p_status_sequences => null,
-                 p_is_open          => null,
-                 p_domain_id        => p_domain_id) a
+                 -- the day itself, and inside it the span of the axis: the
+                 -- work of a row is the component specs whose nest date falls
+                 -- between the first and the last moment of its day, so the
+                 -- day before counts the evening moment only
+                 p_look_back_days   => 0,
+                 p_look_ahead_days  => 0,
+                 p_from_at          => a.from_at,
+                 p_until_at         => a.until_at,
+                 -- the size at or below which an order is a small one (unit class)
+                 p_threshold        => p_threshold,
+                 p_tenant_ids       => p_tenant_ids,
+                 p_domain_id        => p_domain_id) w
     ),
     row_data as (
         select b.*, ln.nest_ids,
-               o.orderline_count, o.product_amount, o.part_amount, o.amount,
-               o.sqm, o.forecast_sqm, o.rework_count, o.rework_sqm, o.impact_json, o.gross_sqm,
-               o.specs_json, o.part_status_json, o.seconds_to_logistics_date,
-               o.class_names, o.unit_class_names, o.production_impact_in_seconds
+               w.orderline_count, w.product_amount, w.part_amount, w.amount,
+               w.sqm, w.forecast_sqm, w.rework_count, w.rework_sqm, w.impact_json, w.gross_sqm,
+               w.specs_json, w.part_status_json, w.seconds_to_logistics_date,
+               w.class_names, w.unit_class_names,
+               -- the time of the row: the work of the width class only (30
+               -- hours, from the manifests); the other classes ride along in
+               -- the numbers, not in the time
+               (w.delivery_hours_json -> v_width_delivery_hours::text
+                    ->> 'production_impact_in_seconds')::integer as production_impact_in_seconds,
+               w.production_seconds_min, w.production_seconds_max,
+               w.batch_count, w.min_delivery_hours as work_min_delivery_hours,
+               w.delivery_hours_json, w.step_json, w.set_json, w.manifest_json
         from base b
         left join lane_nest ln on ln.lane_item_id = b.lane_item_id
-        -- the work of this material on this line, every delivery class summed:
-        -- the moment collects all open work of its material. A past moment
-        -- carries impositions and gets the real work of that nest set instead;
-        -- a second moment of the same material shows the same numbers — a
-        -- duplicate is a planning moment, not a split of the work.
-        left join lateral (
-            with agg as (
-                select na.orderline_count, na.product_amount, na.part_amount, na.amount,
-                       na.sqm, na.forecast_sqm, na.rework_count, na.rework_sqm, na.impact_json, na.gross_sqm,
-                       na.specs_json, na.part_status_json, na.seconds_to_logistics_date,
-                       na.class_names, na.unit_class_names, na.production_impact_in_seconds
-                from nest_agg na
-                where ln.nest_ids is not null
-                  and na.lane_nest_ids = ln.nest_ids
-                  -- the nests decide the work, not the line: an orderline
-                  -- nested here can carry another line (rerouted work), and
-                  -- the forecast-only rows of the material stay out
-                  and na.material_id = b.material_id
-                  and na.orderline_count > 0
-                union all
-                select wa.orderline_count, wa.product_amount, wa.part_amount, wa.amount,
-                       wa.sqm, wa.forecast_sqm, wa.rework_count, wa.rework_sqm, wa.impact_json, wa.gross_sqm,
-                       wa.specs_json, wa.part_status_json, wa.seconds_to_logistics_date,
-                       wa.class_names, wa.unit_class_names, wa.production_impact_in_seconds
-                from window_agg wa
-                where ln.nest_ids is null
-                  and wa.material_id = b.material_id
-                  and wa.production_line_id = b.production_line_id
-            )
-            select sum(a.orderline_count)::integer as orderline_count,
-                   sum(a.product_amount)           as product_amount,
-                   sum(a.part_amount)::integer     as part_amount,
-                   sum(a.amount)                   as amount,
-                   sum(a.sqm)                      as sqm,
-                   sum(a.forecast_sqm)             as forecast_sqm,
-                   sum(a.rework_count)::integer    as rework_count,
-                   sum(a.rework_sqm)               as rework_sqm,
-                   jsonb_build_object(
-                       'count',         sum((a.impact_json ->> 'count')::integer),
-                       'amount',        sum((a.impact_json ->> 'amount')::numeric),
-                       'sqm',           round(sum((a.impact_json ->> 'sqm')::numeric), 2),
-                       'rework_count',  sum((a.impact_json ->> 'rework_count')::integer),
-                       'rework_amount', sum((a.impact_json ->> 'rework_amount')::numeric),
-                       'rework_sqm',    round(sum((a.impact_json ->> 'rework_sqm')::numeric), 2)) as impact_json,
-                   sum(a.gross_sqm)                as gross_sqm,
-                   -- the specs are a material property, identical on every class row
-                   (array_agg(a.specs_json) filter (where a.specs_json is not null))[1] as specs_json,
-                   -- the part statuses of all classes, summed per status
-                   (select jsonb_agg(jsonb_build_object(
-                               'sequence', x.sequence, 'internal_status_code', x.internal_status_code,
-                               'class_names', x.class_names, 'i18n', x.i18n, 'amount', x.amount)
-                            order by x.sequence)
-                    from (select (e.value ->> 'sequence')::integer   as sequence,
-                                 e.value ->> 'internal_status_code'  as internal_status_code,
-                                 e.value -> 'class_names'            as class_names,
-                                 e.value -> 'i18n'                   as i18n,
-                                 sum((e.value ->> 'amount')::numeric) as amount
-                          from agg a2
-                          cross join lateral jsonb_array_elements(a2.part_status_json) as e(value)
-                          group by 1, 2, 3, 4) x)  as part_status_json,
-                   min(a.seconds_to_logistics_date) as seconds_to_logistics_date,
-                   sum(a.production_impact_in_seconds)::integer as production_impact_in_seconds,
-                   (select array_agg(distinct c order by c)
-                    from agg a3 cross join lateral unnest(a3.class_names) as c)      as class_names,
-                   (select array_agg(distinct c order by c)
-                    from agg a4 cross join lateral unnest(a4.unit_class_names) as c) as unit_class_names
-            from agg a
-            having count(*) > 0
-        ) o on true
+        left join work w on w.lane_item_id = b.lane_item_id and w.day_offset = b.day_offset
     )
     select r.material_id, r.material_name, r.production_line_id,
            r.tenant_id, r.tenant_name, t.production_company_id, r.resource_uid, r.resource_name,
            r.resource_path,
-           r.delivery_hours, r.min_delivery_hours, r.sort_order,
+           r.delivery_hours,
+           -- the shortest delivery time in the work of the row; without work the
+           -- setting of the material
+           coalesce(r.work_min_delivery_hours, r.min_delivery_hours), r.sort_order,
            -- the sizes with what the gross sqm needs of each, and the print
            -- time of the row at both speeds
            jsonb_set(r.param_json, '{specs}', coalesce(r.specs_json, r.param_json -> 'specs'))
@@ -224,21 +198,18 @@ begin
                                  -- runs over, the same names as on get_resource_plan
                                  'planned_start_offset_in_seconds', r.start_offset_in_seconds,
                                  'production_impact_in_seconds',
-                                     case when r.material_id is null then r.next_start_offset_in_seconds
-                                          else greatest(coalesce(r.production_impact_in_seconds, 0), v_min_duration_in_seconds) end) as param_json,
+                                     greatest(coalesce(r.production_impact_in_seconds, 0), v_min_duration_in_seconds)) as param_json,
            r.formula, r.data,
            r.fixed_group, r.is_pinned,
            r.start_offset_in_seconds, r.next_start_offset_in_seconds,
-           -- noop rows keep their window duration; a material row lasts the
-           -- standard production impact of its orderlines (from the
-           -- manifests), never shorter than the floor. The machine formula
-           -- in param_json stays for the resource board (78).
-           case when r.material_id is null then r.next_start_offset_in_seconds
-                else greatest(coalesce(r.production_impact_in_seconds, 0),
-                              v_min_duration_in_seconds)
-           end as duration_in_seconds,
-           -- the day the row's orderlines nest: the plan date of the board
-           v_date as nest_date,
+           -- a row lasts the standard production impact of its orderlines of the
+           -- width class (30 hours, from the manifests), never shorter than the
+           -- floor. The machine formula in param_json stays for the resource side.
+           greatest(coalesce(r.production_impact_in_seconds, 0),
+                    v_min_duration_in_seconds)                as duration_in_seconds,
+           -- the day of the row: the plan date its lane comes from. Working
+           -- days, so the day before a Monday is the Friday before it
+           r.plan_date as nest_date,
            r.orderline_count, r.product_amount, r.part_amount, r.amount,
            r.sqm, r.forecast_sqm, r.rework_count, r.rework_sqm, r.impact_json, r.gross_sqm,
            coalesce(r.part_status_json, '[]'::jsonb),
@@ -246,24 +217,41 @@ begin
            coalesce(r.nest_ids, '{}'::bigint[]),
            coalesce(cardinality(r.nest_ids), 0),
            r.seconds_to_logistics_date,
-           -- the class names of the work plus, on an item row, those of the kind
+           -- the class names of the work plus those of the kind
            coalesce((select array_agg(distinct c order by c)
-                     from unnest(coalesce(r.class_names, '{}'::text[])
-                                 || case when r.lane_item_id is not null then v_plan_class_names else '{}'::text[] end) as c),
+                     from unnest(coalesce(r.class_names, '{}'::text[]) || v_plan_class_names) as c),
                     '{}'::text[]),
            coalesce(r.unit_class_names, '{}'::text[]),
-           r.lane_item_id, r.lane_id,
-           -- the kind of row: every item is a plan row, a noop window has none
-           case when r.lane_item_id is not null then 'plan' end,
-           case when r.lane_item_id is not null then v_plan_type_json end
+           r.lane_item_id, r.lane_id, r.day_offset,
+           -- the kind of row: every row is a plan row
+           'plan'::text,
+           v_plan_type_json,
+           -- the moment the row starts: its own plan date plus the time of day
+           -- in the offset. The offset itself counts from midnight of day 0 (the
+           -- axis), and with working days that is another date than the plan
+           -- date of the row -- the day before a Monday is the Friday before it
+           case when r.start_offset_in_seconds is not null
+                then (r.plan_date::timestamp
+                      + make_interval(secs => r.start_offset_in_seconds - r.day_offset * 86400))
+                     at time zone 'Europe/Amsterdam' end,
+           -- what the work costs on the fastest and on the slowest machine of
+           -- every step, the batches behind the row, and the three lists
+           r.production_seconds_min, r.production_seconds_max,
+           coalesce(r.batch_count, 0),
+           coalesce(r.delivery_hours_json, '{}'::jsonb),
+           coalesce(r.step_json, '{}'::jsonb),
+           coalesce(r.set_json, '[]'::jsonb),
+           coalesce(r.manifest_json, '[]'::jsonb)
     from row_data r
-    left join tenant t on t.tenant_id = r.tenant_id
-    order by r.tenant_id, r.sort_order;
+    left join site.tenant t on t.tenant_id = r.tenant_id
+    -- tenant first, then the day: sort_order starts over per plan, so without
+    -- the day in front of it the days would interleave
+    order by r.tenant_id, r.day_offset, r.sort_order;
 end;
 $$;
 
-alter function mock.get_impose_plan(timestamp with time zone, text, text, integer[], integer, integer, integer) owner to xfw3;
+alter function mock.get_impose_plan(timestamp with time zone, text, text, integer[], integer, integer, text, text) owner to xfw3;
 
 -- the board query is planned per call and inlines the aggregate; JIT compiling
 -- it costs seconds and never pays back
-alter function mock.get_impose_plan(timestamp with time zone, text, text, integer[], integer, integer, integer) set jit = off;
+alter function mock.get_impose_plan(timestamp with time zone, text, text, integer[], integer, integer, text, text) set jit = off;

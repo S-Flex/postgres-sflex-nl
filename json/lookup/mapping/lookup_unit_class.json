@@ -1,0 +1,92 @@
+[
+  {
+    "code": "units-all",
+    "order": 10,
+    "i18n": {
+      "de": {
+        "title": "Alle",
+        "abb": ""
+      },
+      "en": {
+        "title": "All",
+        "abb": ""
+      },
+      "es": {
+        "title": "Todos",
+        "abb": ""
+      },
+      "fr": {
+        "title": "Tous",
+        "abb": ""
+      },
+      "nl": {
+        "title": "Alle",
+        "abb": ""
+      },
+      "uk": {
+        "title": "Усі",
+        "abb": ""
+      }
+    }
+  },
+  {
+    "code": "units-lte-threshold",
+    "order": 20,
+    "i18n": {
+      "de": {
+        "title": "Einzelstück",
+        "abb": "SP"
+      },
+      "en": {
+        "title": "Single piece",
+        "abb": "SP"
+      },
+      "es": {
+        "title": "Pieza única",
+        "abb": "SP"
+      },
+      "fr": {
+        "title": "Pièce unique",
+        "abb": "SP"
+      },
+      "nl": {
+        "title": "Enkelstuks",
+        "abb": "SP"
+      },
+      "uk": {
+        "title": "Одна штука",
+        "abb": "SP"
+      }
+    }
+  },
+  {
+    "code": "units-gt-threshold",
+    "order": 30,
+    "i18n": {
+      "de": {
+        "title": "Mehrstück",
+        "abb": "MP"
+      },
+      "en": {
+        "title": "Multi piece",
+        "abb": "MP"
+      },
+      "es": {
+        "title": "Varias piezas",
+        "abb": "MP"
+      },
+      "fr": {
+        "title": "Plusieurs pièces",
+        "abb": "MP"
+      },
+      "nl": {
+        "title": "Meerstuks",
+        "abb": "MP"
+      },
+      "uk": {
+        "title": "Кілька штук",
+        "abb": "MP"
+      }
+    }
+  }
+]

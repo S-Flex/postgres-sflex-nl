@@ -1,0 +1,60 @@
+[
+  {
+    "code": "warning",
+    "block": {
+      "i18n": {
+        "de": {
+          "title": "3–5 Std."
+        },
+        "en": {
+          "title": "3–5 hrs"
+        },
+        "es": {
+          "title": "3–5 h"
+        },
+        "fr": {
+          "title": "3–5 h"
+        },
+        "nl": {
+          "title": "3–5 uur"
+        },
+        "uk": {
+          "title": "3–5 год"
+        }
+      }
+    },
+    "color": "#FFA726",
+    "order": 0,
+    "max_value": 5,
+    "min_value": 3
+  },
+  {
+    "code": "critical",
+    "block": {
+      "i18n": {
+        "de": {
+          "title": "> 5 Std."
+        },
+        "en": {
+          "title": "> 5 hrs"
+        },
+        "es": {
+          "title": "> 5 h"
+        },
+        "fr": {
+          "title": "> 5 h"
+        },
+        "nl": {
+          "title": "> 5 uur"
+        },
+        "uk": {
+          "title": "> 5 год"
+        }
+      }
+    },
+    "color": "#ff5252",
+    "order": 1,
+    "max_value": null,
+    "min_value": 5
+  }
+]

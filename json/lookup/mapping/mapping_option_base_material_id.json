@@ -1,0 +1,217 @@
+[
+  {
+    "material_id": 1000,
+    "option_title_base": "Anti-graffity coating",
+    "parent_title_base": "Coating"
+  },
+  {
+    "material_id": 1000,
+    "option_title_base": "Beschermende coating glans",
+    "parent_title_base": "Coating"
+  },
+  {
+    "material_id": 1010,
+    "option_title_base": "Beschermende coating mat",
+    "parent_title_base": "Coating"
+  },
+  {
+    "material_id": 1000,
+    "option_title_base": "Direct print met coating",
+    "parent_title_base": "Coating"
+  },
+  {
+    "material_id": 1000,
+    "option_title_base": "Glanzende coating",
+    "parent_title_base": "Coating"
+  },
+  {
+    "material_id": 1010,
+    "option_title_base": "Matte coating",
+    "parent_title_base": "Coating"
+  },
+  {
+    "material_id": 1000,
+    "option_title_base": "Met coating",
+    "parent_title_base": "Coating"
+  },
+  {
+    "material_id": 150,
+    "option_title_base": "Glans Oraguard 210",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 67,
+    "option_title_base": "Wit",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 154,
+    "option_title_base": "Avery Dennison MPI™ DOL 1480 (mat)",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 153,
+    "option_title_base": "Avery Dennison MPI™ DOL 1460 (glans)",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 260,
+    "option_title_base": "Vernis (standaard)",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 235,
+    "option_title_base": "Anti-slip laminaat",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 61,
+    "option_title_base": "Clear View laminaat",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 339,
+    "option_title_base": "Mat permanent",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 147,
+    "option_title_base": "Mat Oraguard 200",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 176,
+    "option_title_base": "3M™ Envision 8550 (Mat)",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 149,
+    "option_title_base": "Mat Oraguard 210",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 1000,
+    "option_title_base": "Gloss",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 449,
+    "option_title_base": "Mat Oraguard 290",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 139,
+    "option_title_base": "Glans 8518",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 1000,
+    "option_title_base": "Glans laminaat",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 1010,
+    "option_title_base": "Mat laminaat",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 148,
+    "option_title_base": "Glans Oraguard 200",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 1000,
+    "option_title_base": "Glans",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 90,
+    "option_title_base": "3M™ Envision 8548 (Glans)",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 1010,
+    "option_title_base": "Mat",
+    "parent_title_base": "Coating"
+  },
+  {
+    "material_id": 241,
+    "option_title_base": "Zandstraal laminaat",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 95,
+    "option_title_base": "One way vision laminaat",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 96,
+    "option_title_base": "Whiteboard",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 448,
+    "option_title_base": "Glans Oraguard 290",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 338,
+    "option_title_base": "Glans permanent",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 287,
+    "option_title_base": "Glans 238",
+    "parent_title_base": "Laminaat"
+  },
+  {
+    "material_id": 3000,
+    "option_title_base": "Een laag full color + Neon + 2 lagen wit",
+    "parent_title_base": "Inkt"
+  },
+  {
+    "material_id": 3000,
+    "option_title_base": "Eén laag full color + Neon",
+    "parent_title_base": "Inkt"
+  },
+  {
+    "material_id": 3000,
+    "option_title_base": "100% full color + Neon",
+    "parent_title_base": "Inkt"
+  },
+  {
+    "material_id": 3000,
+    "option_title_base": "Eén laag full color + Neon + twee lagen wit",
+    "parent_title_base": "Inkt"
+  },
+  {
+    "material_id": 3000,
+    "option_title_base": "Een laag full color + Neon + 2 lagen wit",
+    "parent_title_base": "Print"
+  },
+  {
+    "material_id": 3000,
+    "option_title_base": "Eén laag full color + Neon",
+    "parent_title_base": "Print"
+  },
+  {
+    "material_id": 3000,
+    "option_title_base": "100% full color + Neon",
+    "parent_title_base": "Print"
+  },
+  {
+    "material_id": 3000,
+    "option_title_base": "Eén laag full color + Neon + twee lagen wit",
+    "parent_title_base": "Print"
+  },
+  {
+    "material_id": 3000,
+    "option_title_base": "100% full color + Neon",
+    "parent_title_base": "Ontwerp"
+  },
+  {
+    "material_id": 3000,
+    "option_title_base": "Een laag full color + Neon + 2 lagen wit",
+    "parent_title_base": "Folie"
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "day_shift": "dk-team-kudu-2",
+    "night_shift": "dk-team-kudu-1",
+    "resource_uid": "Kudu-240183"
+  },
+  {
+    "day_shift": "dk-team-210-1",
+    "night_shift": "dk-team-210-2",
+    "resource_uid": "PRs29XOXqeuF"
+  },
+  {
+    "day_shift": "dk-team-210-1",
+    "night_shift": "dk-team-210-2",
+    "resource_uid": "PRdY9CJuOfyB"
+  },
+  {
+    "day_shift": "dk-team-coat-1",
+    "night_shift": "dk-team-coat-2",
+    "resource_uid": "sheet-coater"
+  },
+  {
+    "day_shift": "dk-team-350-2",
+    "night_shift": "dk-team-350-1",
+    "resource_uid": "PRPhXlMibOGj"
+  },
+  {
+    "day_shift": "dk-team-zund-1",
+    "night_shift": "dk-team-zund-2",
+    "resource_uid": "G30XL320933"
+  },
+  {
+    "day_shift": "dk-team-zund-1",
+    "night_shift": "dk-team-zund-2",
+    "resource_uid": "G30XL320836"
+  },
+  {
+    "day_shift": "dk-team-350-2",
+    "night_shift": "dk-team-350-1",
+    "resource_uid": "PRAl-iLUw51-"
+  },
+  {
+    "day_shift": "dk-team-mercury-1",
+    "night_shift": "dk-team-mercury-2",
+    "resource_uid": "sei-mercury-1"
+  },
+  {
+    "day_shift": "dk-team-zund-1",
+    "night_shift": "dk-team-zund-2",
+    "resource_uid": "D30XL320100"
+  },
+  {
+    "day_shift": "bh-team-210-1",
+    "night_shift": "bh-team-210-2",
+    "resource_uid": "PRcwavNbS3lm"
+  },
+  {
+    "day_shift": "bh-team-350-1",
+    "night_shift": "bh-team-350-2",
+    "resource_uid": "PRAixbxgTet1"
+  },
+  {
+    "day_shift": "bh-team-zund-1",
+    "night_shift": "bh-team-zund-2",
+    "resource_uid": "G30XL320795"
+  },
+  {
+    "day_shift": "bh-team-zund-1",
+    "night_shift": "bh-team-zund-2",
+    "resource_uid": "G30XL320532"
+  },
+  {
+    "day_shift": "dk-team-qline-1",
+    "night_shift": "dk-team-qline-2",
+    "resource_uid": "Q3232D13"
+  },
+  {
+    "day_shift": "bh-team-210-1",
+    "night_shift": "bh-team-210-2",
+    "resource_uid": "PRF8bA_zv5Rs"
+  },
+  {
+    "day_shift": "dk-team-zund-2",
+    "night_shift": "dk-team-zund-1",
+    "resource_uid": "G30XL321384"
+  },
+  {
+    "day_shift": "dk-team-210-1",
+    "night_shift": "dk-team-210-2",
+    "resource_uid": "PRkcku8ssWmL"
+  }
+]

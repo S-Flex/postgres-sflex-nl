@@ -28,6 +28,16 @@
             2
           ],
           "is_query_param": true
+        },
+        {
+          "key": "look_back_days",
+          "default_value": 1,
+          "is_query_param": true
+        },
+        {
+          "key": "look_ahead_days",
+          "default_value": 1,
+          "is_query_param": true
         }
       ],
       "children": [],
@@ -502,6 +512,302 @@
                 }
               ],
               "title_field": "title",
+              "value_field": "value"
+            }
+          }
+        },
+        "look_back_days": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Tage davor"
+              },
+              "en": {
+                "title": "Days before"
+              },
+              "es": {
+                "title": "Días antes"
+              },
+              "fr": {
+                "title": "Jours avant"
+              },
+              "nl": {
+                "title": "Dagen ervoor"
+              },
+              "uk": {
+                "title": "Днів до"
+              }
+            },
+            "order": 3,
+            "hidden": true,
+            "control": "select",
+            "input_data": {
+              "data": [
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "0 Tage"
+                    },
+                    "en": {
+                      "title": "0 days"
+                    },
+                    "es": {
+                      "title": "0 días"
+                    },
+                    "fr": {
+                      "title": "0 jours"
+                    },
+                    "nl": {
+                      "title": "0 dagen"
+                    },
+                    "uk": {
+                      "title": "0 днів"
+                    }
+                  },
+                  "value": 0
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "1 Tag"
+                    },
+                    "en": {
+                      "title": "1 day"
+                    },
+                    "es": {
+                      "title": "1 día"
+                    },
+                    "fr": {
+                      "title": "1 jour"
+                    },
+                    "nl": {
+                      "title": "1 dag"
+                    },
+                    "uk": {
+                      "title": "1 день"
+                    }
+                  },
+                  "value": 1
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "2 Tage"
+                    },
+                    "en": {
+                      "title": "2 days"
+                    },
+                    "es": {
+                      "title": "2 días"
+                    },
+                    "fr": {
+                      "title": "2 jours"
+                    },
+                    "nl": {
+                      "title": "2 dagen"
+                    },
+                    "uk": {
+                      "title": "2 днів"
+                    }
+                  },
+                  "value": 2
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "3 Tage"
+                    },
+                    "en": {
+                      "title": "3 days"
+                    },
+                    "es": {
+                      "title": "3 días"
+                    },
+                    "fr": {
+                      "title": "3 jours"
+                    },
+                    "nl": {
+                      "title": "3 dagen"
+                    },
+                    "uk": {
+                      "title": "3 днів"
+                    }
+                  },
+                  "value": 3
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "5 Tage"
+                    },
+                    "en": {
+                      "title": "5 days"
+                    },
+                    "es": {
+                      "title": "5 días"
+                    },
+                    "fr": {
+                      "title": "5 jours"
+                    },
+                    "nl": {
+                      "title": "5 dagen"
+                    },
+                    "uk": {
+                      "title": "5 днів"
+                    }
+                  },
+                  "value": 5
+                }
+              ],
+              "title_field": "i18n",
+              "value_field": "value"
+            }
+          }
+        },
+        "look_ahead_days": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Tage danach"
+              },
+              "en": {
+                "title": "Days after"
+              },
+              "es": {
+                "title": "Días después"
+              },
+              "fr": {
+                "title": "Jours après"
+              },
+              "nl": {
+                "title": "Dagen erna"
+              },
+              "uk": {
+                "title": "Днів після"
+              }
+            },
+            "order": 4,
+            "hidden": true,
+            "control": "select",
+            "input_data": {
+              "data": [
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "0 Tage"
+                    },
+                    "en": {
+                      "title": "0 days"
+                    },
+                    "es": {
+                      "title": "0 días"
+                    },
+                    "fr": {
+                      "title": "0 jours"
+                    },
+                    "nl": {
+                      "title": "0 dagen"
+                    },
+                    "uk": {
+                      "title": "0 днів"
+                    }
+                  },
+                  "value": 0
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "1 Tag"
+                    },
+                    "en": {
+                      "title": "1 day"
+                    },
+                    "es": {
+                      "title": "1 día"
+                    },
+                    "fr": {
+                      "title": "1 jour"
+                    },
+                    "nl": {
+                      "title": "1 dag"
+                    },
+                    "uk": {
+                      "title": "1 день"
+                    }
+                  },
+                  "value": 1
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "2 Tage"
+                    },
+                    "en": {
+                      "title": "2 days"
+                    },
+                    "es": {
+                      "title": "2 días"
+                    },
+                    "fr": {
+                      "title": "2 jours"
+                    },
+                    "nl": {
+                      "title": "2 dagen"
+                    },
+                    "uk": {
+                      "title": "2 днів"
+                    }
+                  },
+                  "value": 2
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "3 Tage"
+                    },
+                    "en": {
+                      "title": "3 days"
+                    },
+                    "es": {
+                      "title": "3 días"
+                    },
+                    "fr": {
+                      "title": "3 jours"
+                    },
+                    "nl": {
+                      "title": "3 dagen"
+                    },
+                    "uk": {
+                      "title": "3 днів"
+                    }
+                  },
+                  "value": 3
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "5 Tage"
+                    },
+                    "en": {
+                      "title": "5 days"
+                    },
+                    "es": {
+                      "title": "5 días"
+                    },
+                    "fr": {
+                      "title": "5 jours"
+                    },
+                    "nl": {
+                      "title": "5 dagen"
+                    },
+                    "uk": {
+                      "title": "5 днів"
+                    }
+                  },
+                  "value": 5
+                }
+              ],
+              "title_field": "i18n",
               "value_field": "value"
             }
           }

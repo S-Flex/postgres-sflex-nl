@@ -917,7 +917,11 @@ drift physically impossible.
 ### 9.9 Calendar and cutoffs
 
 - **`action.dates`** — `date` (pk), `weekday`, `is_weekend`,
-  `tenants_mandatory_day_off` (integer[], leeg = gewone werkdag)
+  `tenants_mandatory_day_off` (integer[], leeg = gewone werkdag), `shift_json`:
+  de shifts van de dag, per shift `tenants` (integer[]), `start_offset_in_seconds`
+  (na middernacht), `shift_duration` (seconden) en `start_time` (alleen leesbaar,
+  de functies rekenen met de offset). Lezers: `log.upsert_state_shift_agg`,
+  `log.get_resource_state_shift_totals`
 - **`action.non_working_times`** — `type`, `rule_path`, `weekday`,
   `start_offset_in_seconds`, `duration_in_seconds`, `moved_at`, `moved_by`
 - **`action.cutoff_time`** — append-only, `type`, `code`, `rule_path`,

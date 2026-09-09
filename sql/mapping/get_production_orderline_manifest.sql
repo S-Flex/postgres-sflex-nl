@@ -4,7 +4,7 @@ drop function if exists mapping.get_production_orderline_manifest(integer, times
 drop function if exists mapping.get_production_orderline_manifest(integer, date, integer, text, integer, integer);
 drop function if exists mapping.get_production_orderline_manifest(integer, date, integer, text, integer, integer, integer[]);
 
-create function mapping.get_production_orderline_manifest(p_material_id integer, p_date date DEFAULT CURRENT_DATE, p_look_ahead_days integer DEFAULT '-1'::integer, p_threshold integer DEFAULT 1, p_domain_id integer DEFAULT 1, p_tenant_ids integer[] DEFAULT NULL::integer[]) returns TABLE(number text, order_sequence integer, order_id integer, production_order_id integer, production_orderline_id integer, sales_orderline_id integer, customer_json jsonb, material_id integer, material_name text, product_amount numeric, sqm numeric, product_width numeric, product_height numeric, ship_separately boolean, production_line_id integer, production_company_id integer, tenant_name text, internal_status_code text, status_sequence integer, status_level text, status_title text, part_amount integer, part_status_json jsonb, nest_date date, production_date date, logistics_date date, logistics_at timestamp without time zone, shipment_date date, dates_json jsonb, impact_json jsonb, rejected_amount numeric, produced_amount numeric, nest_json jsonb, nest_ids bigint[], delivery_class_names text[], class_names text[], unit_class_names text[], queue_class_names text[], manifest_json jsonb)
+create function mapping.get_production_orderline_manifest(p_material_id integer, p_date date DEFAULT CURRENT_DATE, p_look_ahead_days integer DEFAULT '-1'::integer, p_threshold integer DEFAULT 1, p_domain_id integer DEFAULT 1, p_tenant_ids integer[] DEFAULT NULL::integer[]) returns TABLE(number text, order_sequence integer, order_id integer, production_order_id integer, production_orderline_id integer, sales_orderline_id integer, customer_json jsonb, material_id integer, material_name text, product_amount numeric, sqm numeric, product_width numeric, product_height numeric, ship_separately boolean, production_line_id integer, production_company_id integer, tenant_name text, internal_status_code text, status_sequence integer, status_level text, status_title text, part_amount integer, part_status_json jsonb, nest_date date, production_date date, logistics_date date, logistics_at timestamp without time zone, shipment_date date, dates_json jsonb, impact_json jsonb, rejected_amount numeric, produced_amount numeric, nest_json jsonb, nest_ids bigint[], delivery_class_names text[], class_names text[], unit_class_names text[], queue_class_names text[], manifest_json jsonb, fill_percentage numeric)
 	stable
 	language plpgsql
 as $$
@@ -20,7 +20,20 @@ declare
     -- how far the queue looks: at least two working days, at most the
     -- interval of the material; -1 means "decide here", anything else wins
     v_look_ahead_days integer;
+    -- the fill of an imposition of this material: 100 minus the waste of its
+    -- nest group (catalog.imposition_group, the widest format, at its best
+    -- waste factor). The same for every row, so the header of the queue
+    -- reads it from any row. imposition_group_id is the material_id alias
+    -- until the xbom groups arrive
+    v_fill_percentage numeric;
 begin
+    select round((1 - (f.value ->> 'waste_factor')::numeric) * 100, 0) into v_fill_percentage
+    from catalog.imposition_group g
+    cross join lateral jsonb_array_elements(coalesce(g.imposition_group_json -> 'waste', '[]'::jsonb)) f
+    where g.imposition_group_id = p_material_id
+    order by (f.value ->> 'width')::numeric desc, (f.value ->> 'waste_factor')::numeric
+    limit 1;
+
     select min(d.date) into v_next_workday
     from action.dates d
     where d.date > p_date and d.is_weekend = false and not (coalesce(p_tenant_ids, d.tenants_mandatory_day_off) <@ d.tenants_mandatory_day_off and d.tenants_mandatory_day_off <> '{}');
@@ -73,7 +86,8 @@ begin
            -- to there the day is one group, so the board needs no rule of its own
            case when d.nest_date > v_next_workday then d.unit_class_names
                 else '{}'::text[] end,
-           d.manifest_json
+           d.manifest_json,
+           v_fill_percentage
     from detail d
     left join tenant t on t.production_company_id = d.production_company_id
     -- biggest first, the order the nesting queue wants its rows in

@@ -25,8 +25,8 @@ een aparte stap (lookup of env), nu hardcoded zoals de bestaande vier.
 | `batch` | `number` | order | `get_batch` levert `order_id` |
 | `batch` | `production_orderline_id` | orderregel | `sales_orderline_id` aanwezig |
 | `batch` | `nest_name` | nests | `order_id` + `production_orderline_id` aanwezig |
-| `nest_schedule_queue` | `number` | order | `get_production_orderline_manifest` levert alle drie |
-| `nest_schedule_queue` | `production_orderline_id` | orderregel | |
+| `impose_plan_inflow` | `number` | order | `get_production_orderline_manifest` levert alle drie |
+| `impose_plan_inflow` | `production_orderline_id` | orderregel | |
 | `orderinfo` (was `production_board_detail`) | `number` | order | `get_production_orderline_detail` levert alle drie |
 | `orderinfo` | `production_orderline_id` | orderregel | |
 | `uploader_data_list` | `order_id` | order | orderregel-link bestaat er al |

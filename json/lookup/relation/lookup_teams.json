@@ -1,0 +1,102 @@
+[
+  {
+    "code": "print-operators",
+    "i18n": {
+      "de": {
+        "title": "Druckmaschinenführer"
+      },
+      "en": {
+        "title": "Print operators"
+      },
+      "es": {
+        "title": "Operarios de impresión"
+      },
+      "nl": {
+        "title": "Print operators"
+      },
+      "uk": {
+        "title": "Оператори друку"
+      }
+    },
+    "codes": [
+      "printer-operator"
+    ],
+    "order": 1
+  },
+  {
+    "code": "cutter-operators",
+    "i18n": {
+      "de": {
+        "title": "Schneider"
+      },
+      "en": {
+        "title": "Cutter operators"
+      },
+      "es": {
+        "title": "Operarios de corte"
+      },
+      "nl": {
+        "title": "Cutter operators"
+      },
+      "uk": {
+        "title": "Оператори різання"
+      }
+    },
+    "codes": [
+      "cutter-operator"
+    ],
+    "order": 2
+  },
+  {
+    "code": "general",
+    "i18n": {
+      "de": {
+        "title": "Allgemein"
+      },
+      "en": {
+        "title": "General"
+      },
+      "es": {
+        "title": "General"
+      },
+      "nl": {
+        "title": "Algemeen"
+      },
+      "uk": {
+        "title": "Загальний"
+      }
+    },
+    "codes": [
+      "binning-worker",
+      "finishing-worker",
+      "production-worker",
+      "unknown"
+    ],
+    "order": 3
+  },
+  {
+    "code": "lead",
+    "i18n": {
+      "de": {
+        "title": "Leitung"
+      },
+      "en": {
+        "title": "Lead"
+      },
+      "es": {
+        "title": "Liderazgo"
+      },
+      "nl": {
+        "title": "Lead"
+      },
+      "uk": {
+        "title": "Керівництво"
+      }
+    },
+    "codes": [
+      "team-leader",
+      "work-distributor"
+    ],
+    "order": 0
+  }
+]

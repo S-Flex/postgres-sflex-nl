@@ -1041,11 +1041,38 @@
             "resource_uid"
           ],
           "set_order_field": "state.order",
-          "class_names_field": "state.class_name",
+          "set_class_names_field": "state.class_names",
+          "class_names_field": "state.class_names",
           "fill_field": "state.fill",
           "color_field": "state.color",
           "show_legend": true,
-          "set_title_field": "name"
+          "set_title_field": "name",
+          "connections": {
+            "match": [
+              "batch_id"
+            ],
+            "show_for": "filter",
+            "connectors": [
+              {
+                "code": "actual",
+                "kind": "pair",
+                "from_set": "plan",
+                "to_set": "actual",
+                "from_side": "left",
+                "to_side": "left",
+                "class_name": "connection-actual"
+              },
+              {
+                "code": "next",
+                "kind": "sequence",
+                "set": "plan",
+                "order_by": "offset_seconds",
+                "from_side": "right",
+                "to_side": "left",
+                "class_name": "connection-next"
+              }
+            ]
+          }
         }
       }
     ]
@@ -1532,15 +1559,14 @@
           },
           "legend": {
             "filter_param": "states",
-            "items": [
-              "producing",
-              "setup",
-              "idle",
-              "starved",
-              "blocked",
-              "breakdown",
-              "offline"
-            ]
+            "input_data": {
+              "src": [
+                "get_resource_states"
+              ],
+              "params": [],
+              "title_field": "i18n",
+              "value_field": "code"
+            }
           }
         }
       }
@@ -10935,8 +10961,8 @@
             "set": "plan",
             "links": {
               "connector": {
-                "from_anchor_offset_field": "next_trigger_type",
-                "from_anchor_offset_source": "param_json"
+                "source_field": "param_json",
+                "key_field": "next_trigger_type"
               },
               "parent_field": "parent_action_id",
               "foreign_field": "action_id"
@@ -11010,6 +11036,7 @@
             "resource_uids"
           ],
           "set_order_field": "state.order",
+          "set_class_names_field": "state.class_names",
           "timeline_seconds": 64800,
           "class_names_field": "state.class_names",
           "just_in_time_field": "just_in_time",
@@ -11018,7 +11045,33 @@
             "step"
           ],
           "no_label": false,
-          "set_title_field": "name"
+          "set_title_field": "name",
+          "connections": {
+            "match": [
+              "batch_id"
+            ],
+            "show_for": "filter",
+            "connectors": [
+              {
+                "code": "actual",
+                "kind": "pair",
+                "from_set": "plan",
+                "to_set": "actual",
+                "from_side": "left",
+                "to_side": "left",
+                "class_name": "connection-actual"
+              },
+              {
+                "code": "next",
+                "kind": "sequence",
+                "set": "plan",
+                "order_by": "offset_in_seconds",
+                "from_side": "right",
+                "to_side": "left",
+                "class_name": "connection-next"
+              }
+            ]
+          }
         },
         "fields_class_name": "grid grid-cols-6 gap-1"
       }
@@ -12509,6 +12562,11 @@
               },
               "type": "duration"
             }
+          },
+          "tenant_name": {
+            "ui": {
+              "hidden": true
+            }
           }
         },
         "flow_board_config": {
@@ -12601,6 +12659,7 @@
                   "step",
                   "resource_uid"
                 ],
+                "group_title_template": "${tenant_name} ${resource_name}",
                 "class_names_field": "state_json.class_name",
                 "y_axis": {
                   "format": "hh:mm",
@@ -12608,7 +12667,8 @@
                   "max_field": "param_json.total_shift_in_seconds"
                 },
                 "fill_field": "state_json.fill",
-                "color_field": "state_json.color"
+                "color_field": "state_json.color",
+                "set_title_field": "state_json.i18n"
               }
             }
           ],
@@ -12942,7 +13002,7 @@
           {
             "key": "include_weekends",
             "is_optional": true,
-            "default_value": false,
+            "default_value": true,
             "is_query_param": true
           },
           {
@@ -12990,170 +13050,11 @@
               "control": "multi-select",
               "class_name": "col-span-12 @2xl:col-span-2",
               "input_data": {
-                "data": [
-                  {
-                    "code": "producing",
-                    "i18n": {
-                      "de": {
-                        "title": "Produziert"
-                      },
-                      "en": {
-                        "title": "Producing"
-                      },
-                      "es": {
-                        "title": "Produciendo"
-                      },
-                      "fr": {
-                        "title": "En production"
-                      },
-                      "nl": {
-                        "title": "Producing"
-                      },
-                      "uk": {
-                        "title": "Виробництво"
-                      }
-                    }
-                  },
-                  {
-                    "code": "breakdown",
-                    "i18n": {
-                      "de": {
-                        "title": "Störung"
-                      },
-                      "en": {
-                        "title": "Breakdown"
-                      },
-                      "es": {
-                        "title": "Avería"
-                      },
-                      "fr": {
-                        "title": "Panne"
-                      },
-                      "nl": {
-                        "title": "Breakdown"
-                      },
-                      "uk": {
-                        "title": "Поломка"
-                      }
-                    }
-                  },
-                  {
-                    "code": "offline",
-                    "i18n": {
-                      "de": {
-                        "title": "Offline"
-                      },
-                      "en": {
-                        "title": "Offline"
-                      },
-                      "es": {
-                        "title": "Sin conexión"
-                      },
-                      "fr": {
-                        "title": "Hors ligne"
-                      },
-                      "nl": {
-                        "title": "Offline"
-                      },
-                      "uk": {
-                        "title": "Офлайн"
-                      }
-                    }
-                  },
-                  {
-                    "code": "starved",
-                    "i18n": {
-                      "de": {
-                        "title": "Materialmangel"
-                      },
-                      "en": {
-                        "title": "Starved"
-                      },
-                      "es": {
-                        "title": "Sin material"
-                      },
-                      "fr": {
-                        "title": "Sous-alimenté"
-                      },
-                      "nl": {
-                        "title": "Starved"
-                      },
-                      "uk": {
-                        "title": "Голодування"
-                      }
-                    }
-                  },
-                  {
-                    "code": "setup",
-                    "i18n": {
-                      "de": {
-                        "title": "Rüsten"
-                      },
-                      "en": {
-                        "title": "Setup"
-                      },
-                      "es": {
-                        "title": "Configuración"
-                      },
-                      "fr": {
-                        "title": "Configuration"
-                      },
-                      "nl": {
-                        "title": "Setup"
-                      },
-                      "uk": {
-                        "title": "Налаштування"
-                      }
-                    }
-                  },
-                  {
-                    "code": "blocked",
-                    "i18n": {
-                      "de": {
-                        "title": "Blockiert"
-                      },
-                      "en": {
-                        "title": "Blocked"
-                      },
-                      "es": {
-                        "title": "Bloqueado"
-                      },
-                      "fr": {
-                        "title": "Bloqué"
-                      },
-                      "nl": {
-                        "title": "Blocked"
-                      },
-                      "uk": {
-                        "title": "Заблоковано"
-                      }
-                    }
-                  },
-                  {
-                    "code": "idle",
-                    "i18n": {
-                      "de": {
-                        "title": "Leerlauf"
-                      },
-                      "en": {
-                        "title": "Idle"
-                      },
-                      "es": {
-                        "title": "Inactivo"
-                      },
-                      "fr": {
-                        "title": "Inactif"
-                      },
-                      "nl": {
-                        "title": "Idle"
-                      },
-                      "uk": {
-                        "title": "Неактивний"
-                      }
-                    }
-                  }
+                "src": [
+                  "get_resource_states"
                 ],
-                "title_field": "title",
+                "params": [],
+                "title_field": "i18n",
                 "value_field": "code"
               }
             }
@@ -16457,12 +16358,40 @@
                     "value_from": "material_id",
                     "is_query_param": true
                   }
-                ],
-                "hidden_when": [
+                ]
+              },
+              {
+                "i18n": {
+                  "de": {
+                    "title": "Nesting-Queue"
+                  },
+                  "en": {
+                    "title": "Nesting queue"
+                  },
+                  "es": {
+                    "title": "Cola de nesting"
+                  },
+                  "fr": {
+                    "title": "File de nesting"
+                  },
+                  "nl": {
+                    "title": "Nesting wachtrij"
+                  },
+                  "uk": {
+                    "title": "Черга нестингу"
+                  }
+                },
+                "icon": "Grid01",
+                "path": "(sidebar:nest-schedule-queue)",
+                "params": [
                   {
-                    "op": "==",
-                    "value": null,
-                    "field": "material_id"
+                    "key": "material_id",
+                    "is_query_param": true
+                  },
+                  {
+                    "key": "date",
+                    "value_from": "date",
+                    "is_query_param": true
                   }
                 ]
               },
@@ -17224,7 +17153,7 @@
             },
             "input_data": {
               "src": [
-                "get_plan_lanes"
+                "get_plan_lanes_imposition_group"
               ],
               "params": [
                 {
@@ -17256,13 +17185,6 @@
               ]
             },
             "selectable": true,
-            "hidden_when": [
-              {
-                "op": "==",
-                "value": null,
-                "field": "material_id"
-              }
-            ],
             "field_config": {
               "tenant_id": {
                 "ui": {
@@ -17572,15 +17494,18 @@
                 },
                 {
                   "key": "until",
-                  "is_query_param": true
+                  "is_query_param": true,
+                  "is_optional": true
                 },
                 {
                   "key": "look_back",
-                  "is_query_param": true
+                  "is_query_param": true,
+                  "default_value": -1
                 },
                 {
                   "key": "look_ahead",
-                  "is_query_param": true
+                  "is_query_param": true,
+                  "default_value": -1
                 }
               ],
               "x_axis": {
@@ -17588,6 +17513,7 @@
               },
               "title_field": "i18n",
               "time_field": "time",
+              "day_offset_field": "day_offset",
               "class_names_field": "class_names",
               "duration_field": "duration_in_seconds",
               "end_offset_field": "end_offset_in_seconds",
@@ -17634,6 +17560,12 @@
             "is_query_param": true
           },
           {
+            "key": "threshold",
+            "is_optional": true,
+            "default_value": 1,
+            "is_query_param": true
+          },
+          {
             "key": "date",
             "is_optional": true,
             "is_ident_only": true,
@@ -17660,19 +17592,7 @@
         ],
         "widget_id": "get_impose_plan",
         "row_options": {
-          "draggable": true,
-          "order_field": "sort_order",
-          "drop": {
-            "sort": true,
-            "order_type": "rank",
-            "within_fields": [
-              "tenant_id"
-            ],
-            "value_fields": [
-              "resource_uid"
-            ],
-            "commit": "mutation"
-          },
+          "draggable": false,
           "nav": {
             "menu": [
               {
@@ -17713,13 +17633,6 @@
                     "value_from": "material_id",
                     "is_query_param": true
                   }
-                ],
-                "hidden_when": [
-                  {
-                    "field": "material_id",
-                    "op": "==",
-                    "value": null
-                  }
                 ]
               },
               {
@@ -17755,18 +17668,6 @@
                     "value_from": "nest_date",
                     "is_query_param": true
                   }
-                ],
-                "hidden_when": [
-                  {
-                    "field": "material_id",
-                    "op": "==",
-                    "value": null
-                  },
-                  {
-                    "field": "nest_count",
-                    "op": ">",
-                    "value": 0
-                  }
                 ]
               },
               {
@@ -17798,11 +17699,6 @@
                   }
                 ],
                 "hidden_when": [
-                  {
-                    "field": "material_id",
-                    "op": "==",
-                    "value": null
-                  },
                   {
                     "field": "nest_count",
                     "op": "==",
@@ -17879,11 +17775,7 @@
                   "title": "Надходження"
                 }
               },
-              "hidden": false,
-              "order": 0,
-              "no_label": true,
-              "suffix": "m²",
-              "class_name": "col-span-6 text-right"
+              "hidden": true
             },
             "scale": 0
           },
@@ -18125,15 +18017,7 @@
                   "title": "Друкарський план"
                 }
               },
-              "hidden": true,
-              "suffix": "h",
-              "hidden_when": [
-                {
-                  "op": "==",
-                  "value": null,
-                  "field": "min_delivery_hours"
-                }
-              ]
+              "hidden": true
             }
           },
           "production_line_id": {
@@ -18556,7 +18440,28 @@
           },
           "seconds_to_logistics_date": {
             "ui": {
-              "hidden": true
+              "i18n": {
+                "de": {
+                  "title": "Zeit bis Produktion"
+                },
+                "en": {
+                  "title": "Time to production"
+                },
+                "es": {
+                  "title": "Tiempo hasta producción"
+                },
+                "fr": {
+                  "title": "Temps avant production"
+                },
+                "nl": {
+                  "title": "Tijd tot productie"
+                },
+                "uk": {
+                  "title": "Час до виробництва"
+                }
+              },
+              "hidden": true,
+              "type": "duration"
             }
           },
           "unit_class_names": {
@@ -18630,6 +18535,143 @@
               "type": "duration",
               "hidden": true
             }
+          },
+          "production_seconds_min": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Min. Produktionszeit"
+                },
+                "en": {
+                  "title": "Min. production time"
+                },
+                "es": {
+                  "title": "Tiempo mín. de producción"
+                },
+                "fr": {
+                  "title": "Temps de production min."
+                },
+                "nl": {
+                  "title": "Min. productietijd"
+                },
+                "uk": {
+                  "title": "Мін. час виробництва"
+                }
+              },
+              "type": "duration",
+              "hidden": true
+            }
+          },
+          "production_seconds_max": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Max. Produktionszeit"
+                },
+                "en": {
+                  "title": "Max. production time"
+                },
+                "es": {
+                  "title": "Tiempo máx. de producción"
+                },
+                "fr": {
+                  "title": "Temps de production max."
+                },
+                "nl": {
+                  "title": "Max. productietijd"
+                },
+                "uk": {
+                  "title": "Макс. час виробництва"
+                }
+              },
+              "type": "duration",
+              "hidden": true
+            }
+          },
+          "batch_count": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Chargen"
+                },
+                "en": {
+                  "title": "Batches"
+                },
+                "es": {
+                  "title": "Lotes"
+                },
+                "fr": {
+                  "title": "Lots"
+                },
+                "nl": {
+                  "title": "Batches"
+                },
+                "uk": {
+                  "title": "Партії"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "set_json": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Lijst"
+                },
+                "en": {
+                  "title": "List"
+                },
+                "es": {
+                  "title": "Lista"
+                },
+                "fr": {
+                  "title": "Liste"
+                },
+                "nl": {
+                  "title": "Lijst"
+                },
+                "uk": {
+                  "title": "Список"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "manifest_json": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Manifeste"
+                },
+                "en": {
+                  "title": "Manifests"
+                },
+                "es": {
+                  "title": "Manifiestos"
+                },
+                "fr": {
+                  "title": "Manifestes"
+                },
+                "nl": {
+                  "title": "Manifesten"
+                },
+                "uk": {
+                  "title": "Маніфести"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "step_json": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "delivery_hours_json": {
+            "ui": {
+              "hidden": true
+            }
           }
         },
         "filter_match": "all",
@@ -18644,147 +18686,182 @@
             "sections": [
               {
                 "field_config": {
-                  "tenant_name": {
-                    "ui": {
-                      "order": 1,
-                      "hidden": false
-                    }
-                  },
                   "material_name": {
                     "ui": {
                       "order": 0,
-                      "hidden": false
-                    }
-                  }
-                }
-              },
-              {
-                "fields_class_name": "grid grid-cols-2 gap-1",
-                "field_config": {
-                  "sqm": {
-                    "ui": {
-                      "order": 0,
-                      "hidden": false,
-                      "class_name": "text-right"
+                      "no_label": true
                     }
                   },
-                  "forecast_sqm": {
+                  "tenant_name": {
                     "ui": {
                       "order": 1,
-                      "hidden": false,
-                      "class_name": "text-right"
-                    }
-                  },
-                  "orderline_count": {
-                    "ui": {
-                      "order": 2,
-                      "hidden": false,
-                      "class_name": "text-right"
-                    }
-                  },
-                  "amount": {
-                    "ui": {
-                      "order": 3,
-                      "hidden": false,
-                      "class_name": "text-right"
-                    }
-                  },
-                  "gross_sqm": {
-                    "ui": {
-                      "order": 4,
-                      "hidden": false,
-                      "class_name": "text-right"
-                    }
-                  },
-                  "rework_count": {
-                    "ui": {
-                      "order": 5,
-                      "hidden": false,
-                      "class_name": "col-start-1 text-right"
-                    }
-                  },
-                  "rework_sqm": {
-                    "ui": {
-                      "order": 6,
-                      "hidden": false,
-                      "class_name": "text-right"
-                    }
-                  },
-                  "nest_count": {
-                    "ui": {
-                      "order": 7,
-                      "hidden": false,
-                      "class_name": "text-right"
-                    }
-                  },
-                  "delivery_hours": {
-                    "ui": {
-                      "order": 8,
-                      "hidden": false,
-                      "class_name": "col-start-1"
-                    }
-                  },
-                  "min_delivery_hours": {
-                    "ui": {
-                      "order": 9,
-                      "hidden": false
-                    }
-                  },
-                  "param_json.standard_production_impact_in_seconds": {
-                    "ui": {
-                      "order": 10,
-                      "hidden": false,
-                      "class_name": "col-span-2"
-                    }
-                  },
-                  "param_json.fast_production_impact_in_seconds": {
-                    "ui": {
-                      "order": 11,
-                      "hidden": false,
-                      "class_name": "col-span-2"
+                      "no_label": true
                     }
                   }
                 }
               },
               {
                 "group": {
-                  "fields_class_name": "grid grid-cols-6 gap-1",
-                  "data_field": "param_json.specs",
-                  "field_config": {
-                    "param_json.specs.width": {
-                      "ui": {
-                        "order": 0,
-                        "hidden": false,
-                        "suffix": "cm",
-                        "no_label": true,
-                        "class_name": "col-span-2"
-                      }
-                    },
-                    "param_json.specs.height": {
-                      "ui": {
-                        "order": 1,
-                        "hidden": false,
-                        "suffix": "cm",
-                        "no_label": true,
-                        "class_name": "col-span-2"
-                      }
-                    },
-                    "param_json.specs.amount": {
-                      "ui": {
-                        "order": 2,
-                        "hidden": false,
-                        "no_label": true,
-                        "class_name": "col-span-2 text-right"
+                  "data_field": "manifest_json",
+                  "title_field": "i18n",
+                  "items": {
+                    "data_field": "items",
+                    "set_field": "set",
+                    "set_order_field": "sort_order",
+                    "fields_class_name": "grid grid-cols-6 gap-1",
+                    "field_config": {
+                      "nest_date": {
+                        "ui": {
+                          "order": 0,
+                          "no_label": true,
+                          "class_name": "col-span-2 font-semibold",
+                          "type": "date"
+                        }
                       },
-                      "scale": 0
+                      "unit_class_json.i18n": {
+                        "ui": {
+                          "order": 1,
+                          "no_label": true,
+                          "control": "i18n-text",
+                          "class_name": "col-span-1 font-semibold"
+                        }
+                      },
+                      "batch_id": {
+                        "ui": {
+                          "i18n": {
+                            "de": {
+                              "title": "Charge"
+                            },
+                            "en": {
+                              "title": "Batch"
+                            },
+                            "es": {
+                              "title": "Lote"
+                            },
+                            "fr": {
+                              "title": "Lot"
+                            },
+                            "nl": {
+                              "title": "Batch"
+                            },
+                            "uk": {
+                              "title": "Партія"
+                            }
+                          },
+                          "order": 0,
+                          "class_name": "col-span-3 font-semibold"
+                        }
+                      },
+                      "sqm": {
+                        "ui": {
+                          "order": 2,
+                          "no_label": true,
+                          "class_name": "col-span-3 font-semibold text-right",
+                          "suffix": "m²"
+                        }
+                      },
+                      "step_json.print.seconds_min": {
+                        "ui": {
+                          "i18n": {
+                            "de": {
+                              "title": "Druck"
+                            },
+                            "en": {
+                              "title": "Print"
+                            },
+                            "es": {
+                              "title": "Impresión"
+                            },
+                            "fr": {
+                              "title": "Impression"
+                            },
+                            "nl": {
+                              "title": "Print"
+                            },
+                            "uk": {
+                              "title": "Друк"
+                            }
+                          },
+                          "order": 3,
+                          "class_name": "col-span-1"
+                        },
+                        "type": "duration"
+                      },
+                      "step_json.print.seconds_max": {
+                        "ui": {
+                          "order": 4,
+                          "no_label": true,
+                          "class_name": "col-span-1"
+                        },
+                        "type": "duration"
+                      },
+                      "step_json.cut.seconds_min": {
+                        "ui": {
+                          "i18n": {
+                            "de": {
+                              "title": "Schnitt"
+                            },
+                            "en": {
+                              "title": "Cut"
+                            },
+                            "es": {
+                              "title": "Corte"
+                            },
+                            "fr": {
+                              "title": "Coupe"
+                            },
+                            "nl": {
+                              "title": "Cut"
+                            },
+                            "uk": {
+                              "title": "Різання"
+                            }
+                          },
+                          "order": 5,
+                          "class_name": "col-span-1"
+                        },
+                        "type": "duration"
+                      },
+                      "step_json.cut.seconds_max": {
+                        "ui": {
+                          "order": 6,
+                          "no_label": true,
+                          "class_name": "col-span-1"
+                        },
+                        "type": "duration"
+                      }
+                    },
+                    "set_overrides": {
+                      "nest-date": {
+                        "field_config": {
+                          "batch_id": {
+                            "ui": {
+                              "hidden": true
+                            }
+                          }
+                        }
+                      },
+                      "batch": {
+                        "field_config": {
+                          "nest_date": {
+                            "ui": {
+                              "hidden": true
+                            }
+                          },
+                          "unit_class_json.i18n": {
+                            "ui": {
+                              "hidden": true
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 }
               }
             ],
             "input_data": [
-              "data",
-              "label_options"
+              "data"
             ]
           },
           "no_popup": true,
@@ -18872,7 +18949,7 @@
             },
             "input_data": {
               "src": [
-                "get_plan_lanes"
+                "get_plan_lanes_imposition_group"
               ],
               "params": [
                 {
@@ -18903,13 +18980,6 @@
               ]
             },
             "selectable": true,
-            "hidden_when": [
-              {
-                "op": "==",
-                "value": null,
-                "field": "material_id"
-              }
-            ],
             "field_config": {
               "tenant_id": {
                 "ui": {
@@ -19193,7 +19263,8 @@
           "fixed_group_field": "fixed_group",
           "next_start_offset_field": "next_start_offset_in_seconds",
           "duration_field": "duration_in_seconds",
-          "set_date_field": "date",
+          "set_date_field": "nest_date",
+          "start_at_field": "start_at",
           "is_pinned_field": "is_pinned",
           "no_timeline_now": false,
           "column_min_width": 0,
@@ -19220,15 +19291,18 @@
                 },
                 {
                   "key": "until",
-                  "is_query_param": true
+                  "is_query_param": true,
+                  "is_optional": true
                 },
                 {
                   "key": "look_back",
-                  "is_query_param": true
+                  "is_query_param": true,
+                  "default_value": -1
                 },
                 {
                   "key": "look_ahead",
-                  "is_query_param": true
+                  "is_query_param": true,
+                  "default_value": -1
                 }
               ],
               "x_axis": {
@@ -19236,6 +19310,7 @@
               },
               "title_field": "i18n",
               "time_field": "time",
+              "day_offset_field": "day_offset",
               "class_names_field": "class_names",
               "duration_field": "duration_in_seconds",
               "end_offset_field": "end_offset_in_seconds",
@@ -19261,7 +19336,258 @@
           },
           "set_field": "type",
           "set_order_field": "type_json.sort_order",
-          "placement_field": "type_json.placement"
+          "placement_field": "type_json.placement",
+          "set_class_names_field": "type_json.class_names",
+          "lane_item_config": {
+            "fields_class_name": "grid grid-cols-4 gap-1",
+            "field_config": {
+              "material_name": {
+                "ui": {
+                  "order": 0,
+                  "no_label": true,
+                  "class_name": "col-span-4 font-semibold"
+                }
+              },
+              "production_seconds_min": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Min. Zeit"
+                    },
+                    "en": {
+                      "title": "Min. time"
+                    },
+                    "es": {
+                      "title": "Tiempo mín."
+                    },
+                    "fr": {
+                      "title": "Temps min."
+                    },
+                    "nl": {
+                      "title": "Min. tijd"
+                    },
+                    "uk": {
+                      "title": "Мін. час"
+                    }
+                  },
+                  "order": 2,
+                  "class_name": "col-span-1",
+                  "type": "duration"
+                }
+              },
+              "production_seconds_max": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Max. Zeit"
+                    },
+                    "en": {
+                      "title": "Max. time"
+                    },
+                    "es": {
+                      "title": "Tiempo máx."
+                    },
+                    "fr": {
+                      "title": "Temps max."
+                    },
+                    "nl": {
+                      "title": "Max. tijd"
+                    },
+                    "uk": {
+                      "title": "Макс. час"
+                    }
+                  },
+                  "order": 3,
+                  "class_name": "col-span-1",
+                  "type": "duration"
+                }
+              },
+              "sqm": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Fläche"
+                    },
+                    "en": {
+                      "title": "Area"
+                    },
+                    "es": {
+                      "title": "Superficie"
+                    },
+                    "fr": {
+                      "title": "Surface"
+                    },
+                    "nl": {
+                      "title": "Opp."
+                    },
+                    "uk": {
+                      "title": "Площа"
+                    }
+                  },
+                  "order": 5,
+                  "class_name": "col-span-1",
+                  "suffix": "m²"
+                }
+              },
+              "seconds_to_logistics_date": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Zeit bis Produktion"
+                    },
+                    "en": {
+                      "title": "Time to production"
+                    },
+                    "es": {
+                      "title": "Tiempo hasta producción"
+                    },
+                    "fr": {
+                      "title": "Temps avant production"
+                    },
+                    "nl": {
+                      "title": "Tijd tot productie"
+                    },
+                    "uk": {
+                      "title": "Час до виробництва"
+                    }
+                  },
+                  "order": 6,
+                  "control": "badge",
+                  "type": "duration",
+                  "class_name": "col-span-3"
+                }
+              },
+              "min_delivery_hours": {
+                "ui": {
+                  "order": 7,
+                  "no_label": true,
+                  "control": "badge",
+                  "class_name": "col-span-1 text-right"
+                }
+              }
+            },
+            "lane_table_config": {
+              "data_field": "set_json",
+              "set_field": "set",
+              "set_order_field": "sort_order",
+              "class_names_field": "class_names",
+              "fields_class_name": "grid grid-cols-4 gap-1",
+              "field_config": {
+                "orderline_count": {
+                  "ui": {
+                    "order": 0,
+                    "no_label": true,
+                    "control": "template",
+                    "class_name": "col-span-2",
+                    "i18n": {
+                      "de": {
+                        "template": "${orderline_count} Auftragszeilen"
+                      },
+                      "en": {
+                        "template": "${orderline_count} orderlines"
+                      },
+                      "es": {
+                        "template": "${orderline_count} líneas de pedido"
+                      },
+                      "fr": {
+                        "template": "${orderline_count} lignes de commande"
+                      },
+                      "nl": {
+                        "template": "${orderline_count} orderregels"
+                      },
+                      "uk": {
+                        "template": "${orderline_count} рядків замовлення"
+                      }
+                    }
+                  }
+                },
+                "rework_count": {
+                  "ui": {
+                    "order": 1,
+                    "no_label": true,
+                    "control": "template",
+                    "class_name": "col-span-1",
+                    "hidden_when": [
+                      {
+                        "field": "rework_count",
+                        "op": "==",
+                        "value": 0
+                      }
+                    ],
+                    "i18n": {
+                      "de": {
+                        "template": ", ${rework_count}x Nacharbeit"
+                      },
+                      "en": {
+                        "template": ", ${rework_count}x rework"
+                      },
+                      "es": {
+                        "template": ", ${rework_count}x retrabajo"
+                      },
+                      "fr": {
+                        "template": ", ${rework_count}x reprise"
+                      },
+                      "nl": {
+                        "template": ", ${rework_count}x herstel"
+                      },
+                      "uk": {
+                        "template": ", ${rework_count}x переробка"
+                      }
+                    }
+                  }
+                },
+                "i18n": {
+                  "ui": {
+                    "order": 2,
+                    "no_label": true,
+                    "control": "badge",
+                    "class_name": "col-span-1 text-right"
+                  }
+                },
+                "part_status_json": {
+                  "ui": {
+                    "order": 2,
+                    "no_label": true,
+                    "control": "distribution-bar",
+                    "class_name": "col-span-1",
+                    "distribution_bar_config": {
+                      "title_field": "i18n",
+                      "value_field": "amount",
+                      "class_names_field": "class_names",
+                      "sort": {
+                        "field": "sequence"
+                      }
+                    }
+                  }
+                }
+              },
+              "set_overrides": {
+                "orders": {
+                  "field_config": {
+                    "part_status_json": {
+                      "ui": {
+                        "hidden": true
+                      }
+                    }
+                  }
+                },
+                "batch": {
+                  "field_config": {
+                    "i18n": {
+                      "ui": {
+                        "hidden": true
+                      }
+                    },
+                    "rework_count": {
+                      "ui": {
+                        "hidden": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         },
         "fields_class_name": "@container grid grid-cols-6 gap-1"
       }
@@ -19269,7 +19595,7 @@
   },
   {
     "data_group_id": 79,
-    "data_group": "nest_schedule_queue",
+    "data_group": "impose_plan_inflow",
     "data_group_json": [
       {
         "src": [
@@ -19297,10 +19623,15 @@
             "is_optional": true,
             "default_value": 1,
             "is_query_param": true
+          },
+          {
+            "key": "line_type",
+            "is_optional": true,
+            "is_query_param": true
           }
         ],
         "children": [],
-        "widget_id": "nest_schedule_queue",
+        "widget_id": "impose_plan_inflow",
         "field_config": {
           "tenant_name": {
             "ui": {
@@ -19330,22 +19661,22 @@
             "ui": {
               "i18n": {
                 "de": {
-                  "title": "Ausschießen"
+                  "title": "Nestgruppe"
                 },
                 "en": {
-                  "title": "Imposition"
+                  "title": "Nest group"
                 },
                 "es": {
-                  "title": "Imposición"
+                  "title": "Grupo de nesting"
                 },
                 "fr": {
-                  "title": "Imposition"
+                  "title": "Groupe de nesting"
                 },
                 "nl": {
-                  "title": "Impositie"
+                  "title": "Nestgroep"
                 },
                 "uk": {
-                  "title": "Спуск шпальт"
+                  "title": "Група нестингу"
                 }
               },
               "control": "i18n-text"
@@ -19727,6 +20058,32 @@
             "ui": {
               "hidden": true
             }
+          },
+          "fill_percentage": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Füllung"
+                },
+                "en": {
+                  "title": "Fill"
+                },
+                "es": {
+                  "title": "Llenado"
+                },
+                "fr": {
+                  "title": "Remplissage"
+                },
+                "nl": {
+                  "title": "Vulling"
+                },
+                "uk": {
+                  "title": "Заповнення"
+                }
+              },
+              "hidden": true,
+              "type": "percent"
+            }
           }
         },
         "flow_board_config": {
@@ -19765,11 +20122,39 @@
                 "no_label": true,
                 "class_name": "col-span-1"
               }
+            },
+            "impact_json.sqm": {
+              "ui": {
+                "i18n": {
+                  "de": {
+                    "title": "m²"
+                  },
+                  "en": {
+                    "title": "m²"
+                  },
+                  "es": {
+                    "title": "m²"
+                  },
+                  "fr": {
+                    "title": "m²"
+                  },
+                  "nl": {
+                    "title": "m²"
+                  },
+                  "uk": {
+                    "title": "м²"
+                  }
+                },
+                "order": 1,
+                "class_name": "col-span-1 text-right"
+              },
+              "scale": 0,
+              "aggregate_fn": "sum"
             }
           },
           "column_min_width": 300,
           "column_max_width": 400,
-          "fields_class_name": "grid grid-cols-1",
+          "fields_class_name": "grid grid-cols-2",
           "children": [
             {
               "layout": "flow-container",
@@ -19786,22 +20171,22 @@
                   "ui": {
                     "i18n": {
                       "de": {
-                        "title": "Ausschießen"
+                        "title": "Nestgruppe"
                       },
                       "en": {
-                        "title": "Imposition"
+                        "title": "Nest group"
                       },
                       "es": {
-                        "title": "Imposición"
+                        "title": "Grupo de nesting"
                       },
                       "fr": {
-                        "title": "Imposition"
+                        "title": "Groupe de nesting"
                       },
                       "nl": {
-                        "title": "Impositie"
+                        "title": "Nestgroep"
                       },
                       "uk": {
-                        "title": "Спуск шпальт"
+                        "title": "Група нестингу"
                       }
                     },
                     "order": 0,
@@ -20375,7 +20760,146 @@
                 }
               ]
             }
-          ]
+          ],
+          "header": {
+            "fields_class_name": "grid grid-cols-3 gap-2",
+            "field_config": {
+              "fill_percentage": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Füllung"
+                    },
+                    "en": {
+                      "title": "Fill"
+                    },
+                    "es": {
+                      "title": "Llenado"
+                    },
+                    "fr": {
+                      "title": "Remplissage"
+                    },
+                    "nl": {
+                      "title": "Vulling"
+                    },
+                    "uk": {
+                      "title": "Заповнення"
+                    }
+                  },
+                  "order": 0,
+                  "control": "donut-chart",
+                  "class_name": "col-span-1 row-span-2",
+                  "donut_chart_config": {
+                    "center": {
+                      "field": "fill_percentage",
+                      "type": "percent"
+                    }
+                  }
+                }
+              },
+              "resource_uids": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Drucker"
+                    },
+                    "en": {
+                      "title": "Printer"
+                    },
+                    "es": {
+                      "title": "Impresora"
+                    },
+                    "fr": {
+                      "title": "Imprimante"
+                    },
+                    "nl": {
+                      "title": "Printer"
+                    },
+                    "uk": {
+                      "title": "Принтер"
+                    }
+                  },
+                  "order": 1,
+                  "control": "multi-select",
+                  "class_name": "col-span-2",
+                  "input_data": {
+                    "src": [
+                      "get_resources"
+                    ],
+                    "params": [
+                      {
+                        "key": "line_type",
+                        "is_query_param": true
+                      },
+                      {
+                        "key": "step",
+                        "default_value": "print",
+                        "is_query_param": true
+                      }
+                    ],
+                    "title_field": "resource_name",
+                    "value_field": "resource_uid"
+                  }
+                }
+              }
+            },
+            "navs": [
+              {
+                "menu": [
+                  {
+                    "i18n": {
+                      "de": {
+                        "title": "Weiter zur Sammelform"
+                      },
+                      "en": {
+                        "title": "Continue to gangrun"
+                      },
+                      "es": {
+                        "title": "Continuar al gangrun"
+                      },
+                      "fr": {
+                        "title": "Continuer vers le gangrun"
+                      },
+                      "nl": {
+                        "title": "Doorzetten naar gangrun"
+                      },
+                      "uk": {
+                        "title": "Далі до ганграну"
+                      }
+                    },
+                    "type": "button",
+                    "path": "(detail:impose-plan-inflow)",
+                    "params": [
+                      {
+                        "key": "material_id",
+                        "is_query_param": true
+                      },
+                      {
+                        "key": "date",
+                        "is_query_param": true
+                      },
+                      {
+                        "key": "look_ahead_days",
+                        "is_query_param": true
+                      },
+                      {
+                        "key": "threshold",
+                        "is_query_param": true
+                      },
+                      {
+                        "key": "line_type",
+                        "is_query_param": true
+                      },
+                      {
+                        "key": "resource_uids",
+                        "is_query_param": true
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
         },
         "window_class_name": "p-8"
       }
@@ -20410,6 +20934,16 @@
               1,
               2
             ],
+            "is_query_param": true
+          },
+          {
+            "key": "look_back_days",
+            "default_value": 1,
+            "is_query_param": true
+          },
+          {
+            "key": "look_ahead_days",
+            "default_value": 1,
             "is_query_param": true
           }
         ],
@@ -20888,6 +21422,302 @@
                 "value_field": "value"
               }
             }
+          },
+          "look_back_days": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Tage davor"
+                },
+                "en": {
+                  "title": "Days before"
+                },
+                "es": {
+                  "title": "Días antes"
+                },
+                "fr": {
+                  "title": "Jours avant"
+                },
+                "nl": {
+                  "title": "Dagen ervoor"
+                },
+                "uk": {
+                  "title": "Днів до"
+                }
+              },
+              "order": 3,
+              "hidden": true,
+              "control": "select",
+              "input_data": {
+                "data": [
+                  {
+                    "i18n": {
+                      "de": {
+                        "title": "0 Tage"
+                      },
+                      "en": {
+                        "title": "0 days"
+                      },
+                      "es": {
+                        "title": "0 días"
+                      },
+                      "fr": {
+                        "title": "0 jours"
+                      },
+                      "nl": {
+                        "title": "0 dagen"
+                      },
+                      "uk": {
+                        "title": "0 днів"
+                      }
+                    },
+                    "value": 0
+                  },
+                  {
+                    "i18n": {
+                      "de": {
+                        "title": "1 Tag"
+                      },
+                      "en": {
+                        "title": "1 day"
+                      },
+                      "es": {
+                        "title": "1 día"
+                      },
+                      "fr": {
+                        "title": "1 jour"
+                      },
+                      "nl": {
+                        "title": "1 dag"
+                      },
+                      "uk": {
+                        "title": "1 день"
+                      }
+                    },
+                    "value": 1
+                  },
+                  {
+                    "i18n": {
+                      "de": {
+                        "title": "2 Tage"
+                      },
+                      "en": {
+                        "title": "2 days"
+                      },
+                      "es": {
+                        "title": "2 días"
+                      },
+                      "fr": {
+                        "title": "2 jours"
+                      },
+                      "nl": {
+                        "title": "2 dagen"
+                      },
+                      "uk": {
+                        "title": "2 днів"
+                      }
+                    },
+                    "value": 2
+                  },
+                  {
+                    "i18n": {
+                      "de": {
+                        "title": "3 Tage"
+                      },
+                      "en": {
+                        "title": "3 days"
+                      },
+                      "es": {
+                        "title": "3 días"
+                      },
+                      "fr": {
+                        "title": "3 jours"
+                      },
+                      "nl": {
+                        "title": "3 dagen"
+                      },
+                      "uk": {
+                        "title": "3 днів"
+                      }
+                    },
+                    "value": 3
+                  },
+                  {
+                    "i18n": {
+                      "de": {
+                        "title": "5 Tage"
+                      },
+                      "en": {
+                        "title": "5 days"
+                      },
+                      "es": {
+                        "title": "5 días"
+                      },
+                      "fr": {
+                        "title": "5 jours"
+                      },
+                      "nl": {
+                        "title": "5 dagen"
+                      },
+                      "uk": {
+                        "title": "5 днів"
+                      }
+                    },
+                    "value": 5
+                  }
+                ],
+                "title_field": "i18n",
+                "value_field": "value"
+              }
+            }
+          },
+          "look_ahead_days": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Tage danach"
+                },
+                "en": {
+                  "title": "Days after"
+                },
+                "es": {
+                  "title": "Días después"
+                },
+                "fr": {
+                  "title": "Jours après"
+                },
+                "nl": {
+                  "title": "Dagen erna"
+                },
+                "uk": {
+                  "title": "Днів після"
+                }
+              },
+              "order": 4,
+              "hidden": true,
+              "control": "select",
+              "input_data": {
+                "data": [
+                  {
+                    "i18n": {
+                      "de": {
+                        "title": "0 Tage"
+                      },
+                      "en": {
+                        "title": "0 days"
+                      },
+                      "es": {
+                        "title": "0 días"
+                      },
+                      "fr": {
+                        "title": "0 jours"
+                      },
+                      "nl": {
+                        "title": "0 dagen"
+                      },
+                      "uk": {
+                        "title": "0 днів"
+                      }
+                    },
+                    "value": 0
+                  },
+                  {
+                    "i18n": {
+                      "de": {
+                        "title": "1 Tag"
+                      },
+                      "en": {
+                        "title": "1 day"
+                      },
+                      "es": {
+                        "title": "1 día"
+                      },
+                      "fr": {
+                        "title": "1 jour"
+                      },
+                      "nl": {
+                        "title": "1 dag"
+                      },
+                      "uk": {
+                        "title": "1 день"
+                      }
+                    },
+                    "value": 1
+                  },
+                  {
+                    "i18n": {
+                      "de": {
+                        "title": "2 Tage"
+                      },
+                      "en": {
+                        "title": "2 days"
+                      },
+                      "es": {
+                        "title": "2 días"
+                      },
+                      "fr": {
+                        "title": "2 jours"
+                      },
+                      "nl": {
+                        "title": "2 dagen"
+                      },
+                      "uk": {
+                        "title": "2 днів"
+                      }
+                    },
+                    "value": 2
+                  },
+                  {
+                    "i18n": {
+                      "de": {
+                        "title": "3 Tage"
+                      },
+                      "en": {
+                        "title": "3 days"
+                      },
+                      "es": {
+                        "title": "3 días"
+                      },
+                      "fr": {
+                        "title": "3 jours"
+                      },
+                      "nl": {
+                        "title": "3 dagen"
+                      },
+                      "uk": {
+                        "title": "3 днів"
+                      }
+                    },
+                    "value": 3
+                  },
+                  {
+                    "i18n": {
+                      "de": {
+                        "title": "5 Tage"
+                      },
+                      "en": {
+                        "title": "5 days"
+                      },
+                      "es": {
+                        "title": "5 días"
+                      },
+                      "fr": {
+                        "title": "5 jours"
+                      },
+                      "nl": {
+                        "title": "5 dagen"
+                      },
+                      "uk": {
+                        "title": "5 днів"
+                      }
+                    },
+                    "value": 5
+                  }
+                ],
+                "title_field": "i18n",
+                "value_field": "value"
+              }
+            }
           }
         }
       }
@@ -21071,7 +21901,7 @@
               "order": 1,
               "no_label": true,
               "suffix": "m²",
-              "class_name": "col-span-6 text-right"
+              "class_name": "col-span-6"
             },
             "scale": 0
           },
@@ -22084,43 +22914,38 @@
                   "sqm": {
                     "ui": {
                       "order": 0,
-                      "hidden": false,
-                      "class_name": "text-right"
+                      "hidden": false
                     }
                   },
                   "forecast_sqm": {
                     "ui": {
                       "order": 1,
-                      "hidden": false,
-                      "class_name": "text-right"
+                      "hidden": false
                     }
                   },
                   "gross_sqm": {
                     "ui": {
                       "order": 2,
-                      "hidden": false,
-                      "class_name": "text-right"
+                      "hidden": false
                     }
                   },
                   "impact_json.count": {
                     "ui": {
                       "order": 3,
-                      "hidden": false,
-                      "class_name": "text-right"
+                      "hidden": false
                     }
                   },
                   "impact_json.amount": {
                     "ui": {
                       "order": 4,
-                      "hidden": false,
-                      "class_name": "text-right"
+                      "hidden": false
                     }
                   },
                   "impact_json.rework_count": {
                     "ui": {
                       "order": 5,
                       "hidden": false,
-                      "class_name": "col-start-1 text-right",
+                      "class_name": "col-start-1",
                       "hidden_when": [
                         {
                           "field": "impact_json.rework_count",
@@ -22134,7 +22959,6 @@
                     "ui": {
                       "order": 6,
                       "hidden": false,
-                      "class_name": "text-right",
                       "hidden_when": [
                         {
                           "field": "impact_json.rework_count",
@@ -22148,7 +22972,7 @@
                     "ui": {
                       "order": 7,
                       "hidden": false,
-                      "class_name": "col-start-1 text-right"
+                      "class_name": "col-start-1"
                     }
                   },
                   "param_json.standard_production_impact_in_seconds": {
@@ -22169,35 +22993,32 @@
                     "ui": {
                       "order": 10,
                       "hidden": false,
-                      "class_name": "col-start-1 text-right"
+                      "class_name": "col-start-1"
                     }
                   },
                   "progress_json.remaining_amount": {
                     "ui": {
                       "order": 11,
-                      "hidden": false,
-                      "class_name": "text-right"
+                      "hidden": false
                     }
                   },
                   "progress_json.remaining_percentage": {
                     "ui": {
                       "order": 12,
                       "hidden": false,
-                      "class_name": "col-start-1 text-right"
+                      "class_name": "col-start-1"
                     }
                   },
                   "param_json.production_impact_in_seconds": {
                     "ui": {
                       "order": 13,
-                      "hidden": false,
-                      "class_name": "text-right"
+                      "hidden": false
                     }
                   },
                   "param_json.remaining_impact_in_seconds": {
                     "ui": {
                       "order": 14,
-                      "hidden": false,
-                      "class_name": "text-right"
+                      "hidden": false
                     }
                   }
                 }
@@ -22231,7 +23052,6 @@
                     "ui": {
                       "order": 3,
                       "hidden": false,
-                      "class_name": "text-right",
                       "hidden_when": [
                         {
                           "field": "param_json.is_run",
@@ -22245,7 +23065,6 @@
                     "ui": {
                       "order": 4,
                       "hidden": false,
-                      "class_name": "text-right",
                       "hidden_when": [
                         {
                           "field": "param_json.is_run",
@@ -22299,7 +23118,7 @@
             },
             "input_data": {
               "src": [
-                "get_plan_lanes"
+                "get_plan_lanes_resource"
               ],
               "params": [
                 {
@@ -22316,11 +23135,6 @@
                   "key": "tenant_ids",
                   "is_optional": true,
                   "is_query_param": true
-                },
-                {
-                  "key": "plan_type",
-                  "default_value": "production-plan",
-                  "is_query_param": false
                 },
                 {
                   "key": "steps",
@@ -22396,6 +23210,7 @@
           },
           "duration_field": "duration_in_seconds",
           "is_pinned_field": "is_pinned",
+          "start_at_field": "start_at",
           "no_timeline_now": false,
           "column_min_width": 0,
           "set_group_fields": [
@@ -22420,19 +23235,23 @@
                 },
                 {
                   "key": "until",
-                  "is_query_param": true
+                  "is_query_param": true,
+                  "is_optional": true
                 },
                 {
                   "key": "look_back",
-                  "is_query_param": true
+                  "is_query_param": true,
+                  "default_value": -1
                 },
                 {
                   "key": "look_ahead",
-                  "is_query_param": true
+                  "is_query_param": true,
+                  "default_value": -1
                 }
               ],
               "title_field": "i18n",
               "time_field": "time",
+              "day_offset_field": "day_offset",
               "class_names_field": "class_names",
               "duration_field": "duration_in_seconds",
               "end_offset_field": "end_offset_in_seconds",
@@ -22455,6 +23274,7 @@
           "set_field": "type",
           "set_order_field": "type_json.sort_order",
           "placement_field": "type_json.placement",
+          "set_class_names_field": "type_json.class_names",
           "evaluate": {
             "formula_field": "type_json.formula",
             "params_field": "param_json"
@@ -22518,7 +23338,33 @@
             "duration_field": "duration_in_seconds",
             "class_names_field": "class_names"
           },
-          "set_title_field": "type_json.i18n"
+          "set_title_field": "type_json.i18n",
+          "connections": {
+            "match": [
+              "batch_id"
+            ],
+            "show_for": "filter",
+            "connectors": [
+              {
+                "code": "actual",
+                "kind": "pair",
+                "from_set": "plan",
+                "to_set": "actual",
+                "from_side": "left",
+                "to_side": "left",
+                "class_name": "connection-actual"
+              },
+              {
+                "code": "next",
+                "kind": "sequence",
+                "set": "plan",
+                "order_by": "start_offset_in_seconds",
+                "from_side": "right",
+                "to_side": "left",
+                "class_name": "connection-next"
+              }
+            ]
+          }
         },
         "fields_class_name": "@container grid grid-cols-6 gap-1"
       }
@@ -23469,6 +24315,2019 @@
           ]
         },
         "window_class_name": "p-8"
+      }
+    ]
+  },
+  {
+    "data_group_id": 78,
+    "data_group": "impose_resource_plan",
+    "data_group_json": [
+      {
+        "src": [
+          "get_impose_plan"
+        ],
+        "layout": "timeline",
+        "params": [
+          {
+            "key": "line_type",
+            "default_value": "sheet",
+            "is_query_param": true
+          },
+          {
+            "key": "until",
+            "is_optional": true,
+            "is_query_param": true
+          },
+          {
+            "key": "tenant_ids",
+            "is_optional": true,
+            "is_query_param": true
+          },
+          {
+            "key": "threshold",
+            "is_optional": true,
+            "default_value": 1,
+            "is_query_param": true
+          },
+          {
+            "key": "date",
+            "is_optional": true,
+            "is_ident_only": true,
+            "is_query_param": true
+          },
+          {
+            "key": "start_offset_in_seconds",
+            "is_optional": true,
+            "is_ident_only": true,
+            "is_query_param": true
+          },
+          {
+            "key": "material_id",
+            "is_optional": true,
+            "is_ident_only": true,
+            "is_query_param": true
+          },
+          {
+            "key": "production_line_id",
+            "is_optional": true,
+            "is_ident_only": true,
+            "is_query_param": true
+          }
+        ],
+        "widget_id": "impose_resource_plan",
+        "row_options": {
+          "draggable": false,
+          "nav": {
+            "menu": [
+              {
+                "i18n": {
+                  "de": {
+                    "title": "Auftragspositionen"
+                  },
+                  "en": {
+                    "title": "Orderlines"
+                  },
+                  "es": {
+                    "title": "Líneas de pedido"
+                  },
+                  "fr": {
+                    "title": "Lignes de commande"
+                  },
+                  "nl": {
+                    "title": "Orderlijnen"
+                  },
+                  "uk": {
+                    "title": "Рядки замовлення"
+                  }
+                },
+                "path": "(sidebar:orderinfo)",
+                "params": [
+                  {
+                    "key": "date",
+                    "value_from": "nest_date",
+                    "is_query_param": true
+                  },
+                  {
+                    "key": "production_line_ids",
+                    "value_from": "production_line_id",
+                    "is_query_param": true
+                  },
+                  {
+                    "key": "material_ids",
+                    "value_from": "material_id",
+                    "is_query_param": true
+                  }
+                ]
+              },
+              {
+                "i18n": {
+                  "de": {
+                    "title": "Nesting-Queue"
+                  },
+                  "en": {
+                    "title": "Nesting queue"
+                  },
+                  "es": {
+                    "title": "Cola de nesting"
+                  },
+                  "fr": {
+                    "title": "File de nesting"
+                  },
+                  "nl": {
+                    "title": "Nesting wachtrij"
+                  },
+                  "uk": {
+                    "title": "Черга нестингу"
+                  }
+                },
+                "icon": "Grid01",
+                "path": "(sidebar:nest-schedule-queue)",
+                "params": [
+                  {
+                    "key": "material_id",
+                    "is_query_param": true
+                  },
+                  {
+                    "key": "date",
+                    "value_from": "nest_date",
+                    "is_query_param": true
+                  }
+                ]
+              },
+              {
+                "i18n": {
+                  "de": {
+                    "title": "Nest-Detail"
+                  },
+                  "en": {
+                    "title": "Nest detail"
+                  },
+                  "es": {
+                    "title": "Detalle del nido"
+                  },
+                  "fr": {
+                    "title": "Détail du nid"
+                  },
+                  "nl": {
+                    "title": "Nest detail"
+                  },
+                  "uk": {
+                    "title": "Деталі гнізда"
+                  }
+                },
+                "path": "(sidebar:nest-detail)",
+                "params": [
+                  {
+                    "key": "nest_ids",
+                    "is_query_param": true
+                  }
+                ],
+                "hidden_when": [
+                  {
+                    "field": "nest_count",
+                    "op": "==",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "i18n": {
+                  "de": {
+                    "title": "Materialprognose"
+                  },
+                  "en": {
+                    "title": "Material forecast"
+                  },
+                  "es": {
+                    "title": "Previsión de material"
+                  },
+                  "fr": {
+                    "title": "Prévision matériau"
+                  },
+                  "nl": {
+                    "title": "Materiaalforecast"
+                  },
+                  "uk": {
+                    "title": "Прогноз матеріалу"
+                  }
+                },
+                "icon": "TrendUp01",
+                "path": "(sidebar:material-forecast)",
+                "params": [
+                  {
+                    "key": "material_id",
+                    "is_query_param": true
+                  },
+                  {
+                    "key": "from",
+                    "value_from": "nest_date",
+                    "is_query_param": true
+                  }
+                ],
+                "hidden_when": [
+                  {
+                    "field": "forecast_sqm",
+                    "op": "==",
+                    "value": null
+                  }
+                ]
+              }
+            ]
+          },
+          "selectable": true
+        },
+        "field_config": {
+          "sqm": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Zulauf"
+                },
+                "en": {
+                  "title": "Inflow"
+                },
+                "es": {
+                  "title": "Entrada"
+                },
+                "fr": {
+                  "title": "Flux entrant"
+                },
+                "nl": {
+                  "title": "Inflow"
+                },
+                "uk": {
+                  "title": "Надходження"
+                }
+              },
+              "hidden": true
+            },
+            "scale": 0
+          },
+          "date": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Datum"
+                },
+                "en": {
+                  "title": "Date"
+                },
+                "es": {
+                  "title": "Fecha"
+                },
+                "fr": {
+                  "title": "Date"
+                },
+                "nl": {
+                  "title": "Datum"
+                },
+                "uk": {
+                  "title": "Дата"
+                }
+              },
+              "type": "date",
+              "hidden": true
+            }
+          },
+          "is_pinned": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "tenant_id": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "sort_order": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "class_names": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "material_id": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "tenant_name": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Produktionsstandort"
+                },
+                "en": {
+                  "title": "Production location"
+                },
+                "es": {
+                  "title": "Ubicación de producción"
+                },
+                "fr": {
+                  "title": "Site de production"
+                },
+                "nl": {
+                  "title": "Productielocatie"
+                },
+                "uk": {
+                  "title": "Виробнича локація"
+                }
+              },
+              "hidden": true,
+              "no_label": true
+            }
+          },
+          "forecast_sqm": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Prognose"
+                },
+                "en": {
+                  "title": "Forecast"
+                },
+                "es": {
+                  "title": "Previsión"
+                },
+                "fr": {
+                  "title": "Prévision"
+                },
+                "nl": {
+                  "title": "Forecast"
+                },
+                "uk": {
+                  "title": "Прогноз"
+                }
+              },
+              "hidden": true
+            },
+            "scale": 0
+          },
+          "resource_uid": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "material_name": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Material"
+                },
+                "en": {
+                  "title": "Material"
+                },
+                "es": {
+                  "title": "Material"
+                },
+                "fr": {
+                  "title": "Matériau"
+                },
+                "nl": {
+                  "title": "Materiaal"
+                },
+                "uk": {
+                  "title": "Матеріал"
+                }
+              },
+              "hidden": true,
+              "no_label": true
+            }
+          },
+          "resource_name": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Ressource"
+                },
+                "en": {
+                  "title": "Resource"
+                },
+                "es": {
+                  "title": "Recurso"
+                },
+                "fr": {
+                  "title": "Ressource"
+                },
+                "nl": {
+                  "title": "Resource"
+                },
+                "uk": {
+                  "title": "Ресурс"
+                }
+              },
+              "hidden": true,
+              "no_label": true
+            }
+          },
+          "delivery_hours": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "St. lieferzeit"
+                },
+                "en": {
+                  "title": "Std. delivery"
+                },
+                "es": {
+                  "title": "Entrega est."
+                },
+                "fr": {
+                  "title": "Délai std."
+                },
+                "nl": {
+                  "title": "St. levertijd"
+                },
+                "uk": {
+                  "title": "Ст. доставка"
+                }
+              },
+              "hidden": true,
+              "suffix": "h"
+            }
+          },
+          "fixed_group": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "param_json.specs": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Spezifikationen"
+                },
+                "en": {
+                  "title": "Specs"
+                },
+                "es": {
+                  "title": "Especificaciones"
+                },
+                "fr": {
+                  "title": "Spécifications"
+                },
+                "nl": {
+                  "title": "Specificaties"
+                },
+                "uk": {
+                  "title": "Специфікації"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "min_delivery_hours": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Druckplan"
+                },
+                "en": {
+                  "title": "Print agenda"
+                },
+                "es": {
+                  "title": "Agenda de impresión"
+                },
+                "fr": {
+                  "title": "Agenda d'impression"
+                },
+                "nl": {
+                  "title": "Print agenda"
+                },
+                "uk": {
+                  "title": "Друкарський план"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "production_line_id": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Produktionslinie"
+                },
+                "en": {
+                  "title": "Production line"
+                },
+                "es": {
+                  "title": "Línea de producción"
+                },
+                "fr": {
+                  "title": "Ligne de production"
+                },
+                "nl": {
+                  "title": "Productielijn"
+                },
+                "uk": {
+                  "title": "Виробнича лінія"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "duration_in_seconds": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "production_company_id": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "param_json.specs.width": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Breite"
+                },
+                "en": {
+                  "title": "Width"
+                },
+                "es": {
+                  "title": "Ancho"
+                },
+                "fr": {
+                  "title": "Largeur"
+                },
+                "nl": {
+                  "title": "Breedte"
+                },
+                "uk": {
+                  "title": "Ширина"
+                }
+              },
+              "hidden": true,
+              "suffix": "cm"
+            }
+          },
+          "param_json.specs.height": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Höhe"
+                },
+                "en": {
+                  "title": "Height"
+                },
+                "es": {
+                  "title": "Alto"
+                },
+                "fr": {
+                  "title": "Hauteur"
+                },
+                "nl": {
+                  "title": "Hoogte"
+                },
+                "uk": {
+                  "title": "Висота"
+                }
+              },
+              "hidden": true,
+              "suffix": "cm"
+            }
+          },
+          "param_json.specs.amount": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Anzahl"
+                },
+                "en": {
+                  "title": "Amount"
+                },
+                "es": {
+                  "title": "Cantidad"
+                },
+                "fr": {
+                  "title": "Nombre"
+                },
+                "nl": {
+                  "title": "Aantal"
+                },
+                "uk": {
+                  "title": "Кількість"
+                }
+              },
+              "hidden": true
+            },
+            "scale": 0
+          },
+          "start_offset_in_seconds": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "param_json.fast_production_impact_in_seconds": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Min. druckzeit"
+                },
+                "en": {
+                  "title": "Min. print time"
+                },
+                "es": {
+                  "title": "Mín. tiempo de impresión"
+                },
+                "fr": {
+                  "title": "Min. temps d'impression"
+                },
+                "nl": {
+                  "title": "Min. printtijd"
+                },
+                "uk": {
+                  "title": "Мін. час друку"
+                }
+              },
+              "order": 6,
+              "hidden": true,
+              "class_name": "col-span-3",
+              "type": "duration"
+            }
+          },
+          "param_json.standard_production_impact_in_seconds": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Max. druckzeit"
+                },
+                "en": {
+                  "title": "Max. print time"
+                },
+                "es": {
+                  "title": "Máx. tiempo de impresión"
+                },
+                "fr": {
+                  "title": "Max. temps d'impression"
+                },
+                "nl": {
+                  "title": "Max. printtijd"
+                },
+                "uk": {
+                  "title": "Макс. час друку"
+                }
+              },
+              "order": 4,
+              "hidden": true,
+              "class_name": "col-span-3",
+              "type": "duration"
+            }
+          },
+          "orderline_count": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Auftragszeilen"
+                },
+                "en": {
+                  "title": "Orderlines"
+                },
+                "es": {
+                  "title": "Líneas de pedido"
+                },
+                "fr": {
+                  "title": "Lignes de commande"
+                },
+                "nl": {
+                  "title": "Orderregels"
+                },
+                "uk": {
+                  "title": "Рядки замовлення"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "product_amount": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Einheiten"
+                },
+                "en": {
+                  "title": "Units"
+                },
+                "es": {
+                  "title": "Unidades"
+                },
+                "fr": {
+                  "title": "Unités"
+                },
+                "nl": {
+                  "title": "Units"
+                },
+                "uk": {
+                  "title": "Одиниці"
+                }
+              },
+              "hidden": true
+            },
+            "scale": 0
+          },
+          "part_amount": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Teile"
+                },
+                "en": {
+                  "title": "Parts"
+                },
+                "es": {
+                  "title": "Partes"
+                },
+                "fr": {
+                  "title": "Pièces"
+                },
+                "nl": {
+                  "title": "Parts"
+                },
+                "uk": {
+                  "title": "Частини"
+                }
+              },
+              "hidden": true
+            },
+            "scale": 0
+          },
+          "amount": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Anzahl"
+                },
+                "en": {
+                  "title": "Amount"
+                },
+                "es": {
+                  "title": "Cantidad"
+                },
+                "fr": {
+                  "title": "Nombre"
+                },
+                "nl": {
+                  "title": "Aantal"
+                },
+                "uk": {
+                  "title": "Кількість"
+                }
+              },
+              "hidden": true
+            },
+            "scale": 0
+          },
+          "rework_count": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Nacharbeit"
+                },
+                "en": {
+                  "title": "Rework"
+                },
+                "es": {
+                  "title": "Retrabajo"
+                },
+                "fr": {
+                  "title": "Reprise"
+                },
+                "nl": {
+                  "title": "Herstel"
+                },
+                "uk": {
+                  "title": "Переробка"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "rework_sqm": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "H. m²"
+                },
+                "en": {
+                  "title": "Rw m²"
+                },
+                "es": {
+                  "title": "Retr. m²"
+                },
+                "fr": {
+                  "title": "Repr. m²"
+                },
+                "nl": {
+                  "title": "H. m²"
+                },
+                "uk": {
+                  "title": "Пер. м²"
+                }
+              },
+              "hidden": true
+            },
+            "scale": 0
+          },
+          "gross_sqm": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Brutto m²"
+                },
+                "en": {
+                  "title": "Gross m²"
+                },
+                "es": {
+                  "title": "m² brutos"
+                },
+                "fr": {
+                  "title": "m² bruts"
+                },
+                "nl": {
+                  "title": "Bruto m²"
+                },
+                "uk": {
+                  "title": "Брутто м²"
+                }
+              },
+              "hidden": true
+            },
+            "scale": 0
+          },
+          "nest_ids": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "nest_count": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Nests"
+                },
+                "en": {
+                  "title": "Nests"
+                },
+                "es": {
+                  "title": "Nests"
+                },
+                "fr": {
+                  "title": "Nests"
+                },
+                "nl": {
+                  "title": "Nests"
+                },
+                "uk": {
+                  "title": "Нести"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "part_status_json": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Status"
+                },
+                "en": {
+                  "title": "Status"
+                },
+                "es": {
+                  "title": "Estado"
+                },
+                "fr": {
+                  "title": "Statut"
+                },
+                "nl": {
+                  "title": "Status"
+                },
+                "uk": {
+                  "title": "Статус"
+                }
+              },
+              "control": "distribution-bar",
+              "distribution_bar_config": {
+                "title_field": "i18n",
+                "value_field": "amount",
+                "class_names_field": "class_names",
+                "sort": {
+                  "field": "sequence"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "seconds_to_logistics_date": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Zeit bis Produktion"
+                },
+                "en": {
+                  "title": "Time to production"
+                },
+                "es": {
+                  "title": "Tiempo hasta producción"
+                },
+                "fr": {
+                  "title": "Temps avant production"
+                },
+                "nl": {
+                  "title": "Tijd tot productie"
+                },
+                "uk": {
+                  "title": "Час до виробництва"
+                }
+              },
+              "hidden": true,
+              "type": "duration"
+            }
+          },
+          "unit_class_names": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "nest_date": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Nestdatum"
+                },
+                "en": {
+                  "title": "Nest date"
+                },
+                "es": {
+                  "title": "Fecha de anidado"
+                },
+                "fr": {
+                  "title": "Date d'imbrication"
+                },
+                "nl": {
+                  "title": "Nestdatum"
+                },
+                "uk": {
+                  "title": "Дата нестингу"
+                }
+              },
+              "type": "date",
+              "hidden": true
+            }
+          },
+          "type": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "type_json": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "param_json.planned_start_offset_in_seconds": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "param_json.production_impact_in_seconds": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Geplante Zeit"
+                },
+                "en": {
+                  "title": "Planned time"
+                },
+                "es": {
+                  "title": "Tiempo planificado"
+                },
+                "fr": {
+                  "title": "Temps planifié"
+                },
+                "nl": {
+                  "title": "Geplande tijd"
+                },
+                "uk": {
+                  "title": "Запланований час"
+                }
+              },
+              "type": "duration",
+              "hidden": true
+            }
+          },
+          "production_seconds_min": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Min. Produktionszeit"
+                },
+                "en": {
+                  "title": "Min. production time"
+                },
+                "es": {
+                  "title": "Tiempo mín. de producción"
+                },
+                "fr": {
+                  "title": "Temps de production min."
+                },
+                "nl": {
+                  "title": "Min. productietijd"
+                },
+                "uk": {
+                  "title": "Мін. час виробництва"
+                }
+              },
+              "type": "duration",
+              "hidden": true
+            }
+          },
+          "production_seconds_max": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Max. Produktionszeit"
+                },
+                "en": {
+                  "title": "Max. production time"
+                },
+                "es": {
+                  "title": "Tiempo máx. de producción"
+                },
+                "fr": {
+                  "title": "Temps de production max."
+                },
+                "nl": {
+                  "title": "Max. productietijd"
+                },
+                "uk": {
+                  "title": "Макс. час виробництва"
+                }
+              },
+              "type": "duration",
+              "hidden": true
+            }
+          },
+          "batch_count": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Chargen"
+                },
+                "en": {
+                  "title": "Batches"
+                },
+                "es": {
+                  "title": "Lotes"
+                },
+                "fr": {
+                  "title": "Lots"
+                },
+                "nl": {
+                  "title": "Batches"
+                },
+                "uk": {
+                  "title": "Партії"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "set_json": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Lijst"
+                },
+                "en": {
+                  "title": "List"
+                },
+                "es": {
+                  "title": "Lista"
+                },
+                "fr": {
+                  "title": "Liste"
+                },
+                "nl": {
+                  "title": "Lijst"
+                },
+                "uk": {
+                  "title": "Список"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "manifest_json": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Manifeste"
+                },
+                "en": {
+                  "title": "Manifests"
+                },
+                "es": {
+                  "title": "Manifiestos"
+                },
+                "fr": {
+                  "title": "Manifestes"
+                },
+                "nl": {
+                  "title": "Manifesten"
+                },
+                "uk": {
+                  "title": "Маніфести"
+                }
+              },
+              "hidden": true
+            }
+          },
+          "step_json": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "delivery_hours_json": {
+            "ui": {
+              "hidden": true
+            }
+          }
+        },
+        "filter_match": "all",
+        "filter_fields": [
+          "start_offset_in_seconds",
+          "material_id",
+          "tenant_id",
+          "production_line_id"
+        ],
+        "timeline_config": {
+          "tooltip": {
+            "sections": [
+              {
+                "field_config": {
+                  "material_name": {
+                    "ui": {
+                      "order": 0,
+                      "no_label": true
+                    }
+                  },
+                  "tenant_name": {
+                    "ui": {
+                      "order": 1,
+                      "no_label": true
+                    }
+                  }
+                }
+              },
+              {
+                "group": {
+                  "data_field": "manifest_json",
+                  "title_field": "i18n",
+                  "items": {
+                    "data_field": "items",
+                    "set_field": "set",
+                    "set_order_field": "sort_order",
+                    "fields_class_name": "grid grid-cols-6 gap-1",
+                    "field_config": {
+                      "nest_date": {
+                        "ui": {
+                          "order": 0,
+                          "no_label": true,
+                          "class_name": "col-span-2 font-semibold",
+                          "type": "date"
+                        }
+                      },
+                      "unit_class_json.i18n": {
+                        "ui": {
+                          "order": 1,
+                          "no_label": true,
+                          "control": "i18n-text",
+                          "class_name": "col-span-1 font-semibold"
+                        }
+                      },
+                      "batch_id": {
+                        "ui": {
+                          "i18n": {
+                            "de": {
+                              "title": "Charge"
+                            },
+                            "en": {
+                              "title": "Batch"
+                            },
+                            "es": {
+                              "title": "Lote"
+                            },
+                            "fr": {
+                              "title": "Lot"
+                            },
+                            "nl": {
+                              "title": "Batch"
+                            },
+                            "uk": {
+                              "title": "Партія"
+                            }
+                          },
+                          "order": 0,
+                          "class_name": "col-span-3 font-semibold"
+                        }
+                      },
+                      "sqm": {
+                        "ui": {
+                          "order": 2,
+                          "no_label": true,
+                          "class_name": "col-span-3 font-semibold text-right",
+                          "suffix": "m²"
+                        }
+                      },
+                      "step_json.print.seconds_min": {
+                        "ui": {
+                          "i18n": {
+                            "de": {
+                              "title": "Druck"
+                            },
+                            "en": {
+                              "title": "Print"
+                            },
+                            "es": {
+                              "title": "Impresión"
+                            },
+                            "fr": {
+                              "title": "Impression"
+                            },
+                            "nl": {
+                              "title": "Print"
+                            },
+                            "uk": {
+                              "title": "Друк"
+                            }
+                          },
+                          "order": 3,
+                          "class_name": "col-span-1"
+                        },
+                        "type": "duration"
+                      },
+                      "step_json.print.seconds_max": {
+                        "ui": {
+                          "order": 4,
+                          "no_label": true,
+                          "class_name": "col-span-1"
+                        },
+                        "type": "duration"
+                      },
+                      "step_json.cut.seconds_min": {
+                        "ui": {
+                          "i18n": {
+                            "de": {
+                              "title": "Schnitt"
+                            },
+                            "en": {
+                              "title": "Cut"
+                            },
+                            "es": {
+                              "title": "Corte"
+                            },
+                            "fr": {
+                              "title": "Coupe"
+                            },
+                            "nl": {
+                              "title": "Cut"
+                            },
+                            "uk": {
+                              "title": "Різання"
+                            }
+                          },
+                          "order": 5,
+                          "class_name": "col-span-1"
+                        },
+                        "type": "duration"
+                      },
+                      "step_json.cut.seconds_max": {
+                        "ui": {
+                          "order": 6,
+                          "no_label": true,
+                          "class_name": "col-span-1"
+                        },
+                        "type": "duration"
+                      }
+                    },
+                    "set_overrides": {
+                      "nest-date": {
+                        "field_config": {
+                          "batch_id": {
+                            "ui": {
+                              "hidden": true
+                            }
+                          }
+                        }
+                      },
+                      "batch": {
+                        "field_config": {
+                          "nest_date": {
+                            "ui": {
+                              "hidden": true
+                            }
+                          },
+                          "unit_class_json.i18n": {
+                            "ui": {
+                              "hidden": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "input_data": [
+              "data"
+            ]
+          },
+          "no_popup": true,
+          "no_timeline": false,
+          "offset_field": "start_offset_in_seconds",
+          "label_options": {
+            "tooltip": {
+              "sections": [
+                {
+                  "field_config": {
+                    "resource_name": {
+                      "ui": {
+                        "order": 0
+                      }
+                    },
+                    "tenant_name": {
+                      "ui": {
+                        "order": 1
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "draggable": true,
+            "order_field": "sort_order",
+            "drop": {
+              "sort": true,
+              "order_type": "rank",
+              "within_fields": [
+                "tenant_id"
+              ],
+              "value_fields": [
+                "resource_uid"
+              ],
+              "commit": "mutation"
+            },
+            "input_data": {
+              "src": [
+                "get_plan_lanes_resource"
+              ],
+              "params": [
+                {
+                  "key": "until",
+                  "is_optional": true,
+                  "is_query_param": true
+                },
+                {
+                  "key": "line_type",
+                  "default_value": "sheet",
+                  "is_query_param": true
+                },
+                {
+                  "key": "tenant_ids",
+                  "is_optional": true,
+                  "is_query_param": true
+                },
+                {
+                  "key": "steps",
+                  "default_value": [
+                    "impose"
+                  ],
+                  "is_query_param": true
+                }
+              ],
+              "group_by": [
+                "tenant_id",
+                "resource_uid"
+              ]
+            },
+            "selectable": true,
+            "field_config": {
+              "tenant_id": {
+                "ui": {
+                  "hidden": true
+                }
+              },
+              "sort_order": {
+                "ui": {
+                  "hidden": true
+                }
+              },
+              "material_id": {
+                "ui": {
+                  "hidden": true
+                }
+              },
+              "tenant_name": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Produktionsstandort"
+                    },
+                    "en": {
+                      "title": "Production location"
+                    },
+                    "es": {
+                      "title": "Ubicación de producción"
+                    },
+                    "fr": {
+                      "title": "Site de production"
+                    },
+                    "nl": {
+                      "title": "Productielocatie"
+                    },
+                    "uk": {
+                      "title": "Виробнича локація"
+                    }
+                  },
+                  "hidden": true,
+                  "no_label": true
+                }
+              },
+              "resource_uid": {
+                "ui": {
+                  "hidden": true
+                }
+              },
+              "material_name": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Material"
+                    },
+                    "en": {
+                      "title": "Material"
+                    },
+                    "es": {
+                      "title": "Material"
+                    },
+                    "fr": {
+                      "title": "Matériau"
+                    },
+                    "nl": {
+                      "title": "Materiaal"
+                    },
+                    "uk": {
+                      "title": "Матеріал"
+                    }
+                  },
+                  "no_label": true,
+                  "class_name": "text-xs col-span-4",
+                  "hidden": true
+                }
+              },
+              "resource_name": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Ressource"
+                    },
+                    "en": {
+                      "title": "Resource"
+                    },
+                    "es": {
+                      "title": "Recurso"
+                    },
+                    "fr": {
+                      "title": "Ressource"
+                    },
+                    "nl": {
+                      "title": "Resource"
+                    },
+                    "uk": {
+                      "title": "Ресурс"
+                    }
+                  },
+                  "hidden": false,
+                  "no_label": true,
+                  "order": 0,
+                  "class_name": "text-xs col-span-4"
+                }
+              },
+              "delivery_hours": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "St. lieferzeit"
+                    },
+                    "en": {
+                      "title": "Std. delivery"
+                    },
+                    "es": {
+                      "title": "Entrega est."
+                    },
+                    "fr": {
+                      "title": "Délai std."
+                    },
+                    "nl": {
+                      "title": "St. levertijd"
+                    },
+                    "uk": {
+                      "title": "Ст. доставка"
+                    }
+                  },
+                  "class_name": "text-xs col-span-2",
+                  "hidden": true
+                }
+              },
+              "fixed_group": {
+                "ui": {
+                  "hidden": true
+                }
+              },
+              "param_json.specs": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Spezifikationen"
+                    },
+                    "en": {
+                      "title": "Specs"
+                    },
+                    "es": {
+                      "title": "Especificaciones"
+                    },
+                    "fr": {
+                      "title": "Spécifications"
+                    },
+                    "nl": {
+                      "title": "Specificaties"
+                    },
+                    "uk": {
+                      "title": "Специфікації"
+                    }
+                  },
+                  "hidden": true
+                }
+              },
+              "min_delivery_hours": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Druckplan"
+                    },
+                    "en": {
+                      "title": "Print agenda"
+                    },
+                    "es": {
+                      "title": "Agenda de impresión"
+                    },
+                    "fr": {
+                      "title": "Agenda d'impression"
+                    },
+                    "nl": {
+                      "title": "Print agenda"
+                    },
+                    "uk": {
+                      "title": "Друкарський план"
+                    }
+                  },
+                  "class_name": "text-xs col-span-2",
+                  "hidden_when": [
+                    {
+                      "op": "==",
+                      "value": null,
+                      "field": "min_delivery_hours"
+                    }
+                  ],
+                  "hidden": true
+                }
+              },
+              "production_line_id": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Produktionslinie"
+                    },
+                    "en": {
+                      "title": "Production line"
+                    },
+                    "es": {
+                      "title": "Línea de producción"
+                    },
+                    "fr": {
+                      "title": "Ligne de production"
+                    },
+                    "nl": {
+                      "title": "Productielijn"
+                    },
+                    "uk": {
+                      "title": "Виробнича лінія"
+                    }
+                  },
+                  "hidden": true
+                }
+              },
+              "param_json.specs.width": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Breite"
+                    },
+                    "en": {
+                      "title": "Width"
+                    },
+                    "es": {
+                      "title": "Ancho"
+                    },
+                    "fr": {
+                      "title": "Largeur"
+                    },
+                    "nl": {
+                      "title": "Breedte"
+                    },
+                    "uk": {
+                      "title": "Ширина"
+                    }
+                  },
+                  "hidden": true
+                }
+              },
+              "param_json.specs.height": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Höhe"
+                    },
+                    "en": {
+                      "title": "Height"
+                    },
+                    "es": {
+                      "title": "Alto"
+                    },
+                    "fr": {
+                      "title": "Hauteur"
+                    },
+                    "nl": {
+                      "title": "Hoogte"
+                    },
+                    "uk": {
+                      "title": "Висота"
+                    }
+                  },
+                  "hidden": true
+                }
+              },
+              "next_start_offset_in_seconds": {
+                "ui": {
+                  "hidden": true
+                }
+              }
+            },
+            "column_min_width": 200,
+            "fields_class_name": "grid grid-cols-4 gap-1",
+            "group_by": [
+              "tenant_id"
+            ],
+            "group_title_fields": [
+              "tenant_name"
+            ],
+            "deselectable": true
+          },
+          "fixed_group_field": "fixed_group",
+          "next_start_offset_field": "next_start_offset_in_seconds",
+          "duration_field": "duration_in_seconds",
+          "set_date_field": "nest_date",
+          "start_at_field": "start_at",
+          "is_pinned_field": "is_pinned",
+          "no_timeline_now": false,
+          "column_min_width": 0,
+          "set_group_fields": [
+            "tenant_id",
+            "resource_uid"
+          ],
+          "timeline_seconds": 864000,
+          "class_names_field": "class_names",
+          "chain_scope": "plan",
+          "time_scale_config": {
+            "mode": "relative",
+            "type": "time",
+            "input_data": {
+              "src": [
+                "get_timeline_view_segments"
+              ],
+              "params": [
+                {
+                  "key": "code",
+                  "default_value": "nest-time-scale",
+                  "is_query_param": false
+                },
+                {
+                  "key": "until",
+                  "is_query_param": true,
+                  "is_optional": true
+                },
+                {
+                  "key": "look_back",
+                  "is_query_param": true,
+                  "default_value": -1
+                },
+                {
+                  "key": "look_ahead",
+                  "is_query_param": true,
+                  "default_value": -1
+                }
+              ],
+              "x_axis": {
+                "title_field": "date"
+              },
+              "title_field": "i18n",
+              "time_field": "time",
+              "day_offset_field": "day_offset",
+              "class_names_field": "class_names",
+              "duration_field": "duration_in_seconds",
+              "end_offset_field": "end_offset_in_seconds",
+              "segment_size_field": "segment_size_in_seconds",
+              "offset_field": "start_offset_in_seconds"
+            },
+            "zoom": 2.2
+          },
+          "group_by": [
+            "tenant_id"
+          ],
+          "group_title_fields": [
+            "tenant_name"
+          ],
+          "no_label": false,
+          "evaluate": {
+            "formula_field": "type_json.formula",
+            "params_field": "param_json"
+          },
+          "valid_resources": {
+            "field": "data.valid_resources",
+            "resource_field": "resource_path"
+          },
+          "set_field": "type",
+          "set_order_field": "type_json.sort_order",
+          "placement_field": "type_json.placement",
+          "set_class_names_field": "type_json.class_names",
+          "lane_item_config": {
+            "fields_class_name": "grid grid-cols-4 gap-1",
+            "field_config": {
+              "material_name": {
+                "ui": {
+                  "order": 0,
+                  "no_label": true,
+                  "class_name": "col-span-4 font-semibold"
+                }
+              },
+              "production_seconds_min": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Min. Zeit"
+                    },
+                    "en": {
+                      "title": "Min. time"
+                    },
+                    "es": {
+                      "title": "Tiempo mín."
+                    },
+                    "fr": {
+                      "title": "Temps min."
+                    },
+                    "nl": {
+                      "title": "Min. tijd"
+                    },
+                    "uk": {
+                      "title": "Мін. час"
+                    }
+                  },
+                  "order": 2,
+                  "class_name": "col-span-1",
+                  "type": "duration"
+                }
+              },
+              "production_seconds_max": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Max. Zeit"
+                    },
+                    "en": {
+                      "title": "Max. time"
+                    },
+                    "es": {
+                      "title": "Tiempo máx."
+                    },
+                    "fr": {
+                      "title": "Temps max."
+                    },
+                    "nl": {
+                      "title": "Max. tijd"
+                    },
+                    "uk": {
+                      "title": "Макс. час"
+                    }
+                  },
+                  "order": 3,
+                  "class_name": "col-span-1",
+                  "type": "duration"
+                }
+              },
+              "sqm": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Fläche"
+                    },
+                    "en": {
+                      "title": "Area"
+                    },
+                    "es": {
+                      "title": "Superficie"
+                    },
+                    "fr": {
+                      "title": "Surface"
+                    },
+                    "nl": {
+                      "title": "Opp."
+                    },
+                    "uk": {
+                      "title": "Площа"
+                    }
+                  },
+                  "order": 5,
+                  "class_name": "col-span-1",
+                  "suffix": "m²"
+                }
+              },
+              "seconds_to_logistics_date": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Zeit bis Produktion"
+                    },
+                    "en": {
+                      "title": "Time to production"
+                    },
+                    "es": {
+                      "title": "Tiempo hasta producción"
+                    },
+                    "fr": {
+                      "title": "Temps avant production"
+                    },
+                    "nl": {
+                      "title": "Tijd tot productie"
+                    },
+                    "uk": {
+                      "title": "Час до виробництва"
+                    }
+                  },
+                  "order": 6,
+                  "control": "badge",
+                  "type": "duration",
+                  "class_name": "col-span-3"
+                }
+              },
+              "min_delivery_hours": {
+                "ui": {
+                  "order": 7,
+                  "no_label": true,
+                  "control": "badge",
+                  "class_name": "col-span-1 text-right"
+                }
+              }
+            },
+            "lane_table_config": {
+              "data_field": "set_json",
+              "set_field": "set",
+              "set_order_field": "sort_order",
+              "class_names_field": "class_names",
+              "fields_class_name": "grid grid-cols-4 gap-1",
+              "field_config": {
+                "orderline_count": {
+                  "ui": {
+                    "order": 0,
+                    "no_label": true,
+                    "control": "template",
+                    "class_name": "col-span-2",
+                    "i18n": {
+                      "de": {
+                        "template": "${orderline_count} Auftragszeilen"
+                      },
+                      "en": {
+                        "template": "${orderline_count} orderlines"
+                      },
+                      "es": {
+                        "template": "${orderline_count} líneas de pedido"
+                      },
+                      "fr": {
+                        "template": "${orderline_count} lignes de commande"
+                      },
+                      "nl": {
+                        "template": "${orderline_count} orderregels"
+                      },
+                      "uk": {
+                        "template": "${orderline_count} рядків замовлення"
+                      }
+                    }
+                  }
+                },
+                "rework_count": {
+                  "ui": {
+                    "order": 1,
+                    "no_label": true,
+                    "control": "template",
+                    "class_name": "col-span-1",
+                    "hidden_when": [
+                      {
+                        "field": "rework_count",
+                        "op": "==",
+                        "value": 0
+                      }
+                    ],
+                    "i18n": {
+                      "de": {
+                        "template": ", ${rework_count}x Nacharbeit"
+                      },
+                      "en": {
+                        "template": ", ${rework_count}x rework"
+                      },
+                      "es": {
+                        "template": ", ${rework_count}x retrabajo"
+                      },
+                      "fr": {
+                        "template": ", ${rework_count}x reprise"
+                      },
+                      "nl": {
+                        "template": ", ${rework_count}x herstel"
+                      },
+                      "uk": {
+                        "template": ", ${rework_count}x переробка"
+                      }
+                    }
+                  }
+                },
+                "i18n": {
+                  "ui": {
+                    "order": 2,
+                    "no_label": true,
+                    "control": "badge",
+                    "class_name": "col-span-1 text-right"
+                  }
+                },
+                "part_status_json": {
+                  "ui": {
+                    "order": 2,
+                    "no_label": true,
+                    "control": "distribution-bar",
+                    "class_name": "col-span-1",
+                    "distribution_bar_config": {
+                      "title_field": "i18n",
+                      "value_field": "amount",
+                      "class_names_field": "class_names",
+                      "sort": {
+                        "field": "sequence"
+                      }
+                    }
+                  }
+                }
+              },
+              "set_overrides": {
+                "orders": {
+                  "field_config": {
+                    "part_status_json": {
+                      "ui": {
+                        "hidden": true
+                      }
+                    }
+                  }
+                },
+                "batch": {
+                  "field_config": {
+                    "i18n": {
+                      "ui": {
+                        "hidden": true
+                      }
+                    },
+                    "rework_count": {
+                      "ui": {
+                        "hidden": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fields_class_name": "@container grid grid-cols-6 gap-1"
       }
     ]
   }

@@ -1,0 +1,25 @@
+[
+  {
+    "type": "0401C",
+    "content": {
+      "text": "Zijflappen 10 cm.",
+      "title": "Doos plaat groot"
+    },
+    "formula": "(2 * ({width} * {length}) + 2 * {height} * ({width} + {length}) + 2 * {width} * 10)) / 10000"
+  },
+  {
+    "type": "0410",
+    "content": {
+      "title": "Pizzadoos"
+    },
+    "formula": "((2 * {length} + 3 * {height}) * ({width} + 2 * {height}) - 2 * {height} * {height}) / 10000"
+  },
+  {
+    "type": "P403C",
+    "content": {
+      "title": "Kanaaldoos"
+    },
+    "formula": "(2 * {width} * ({length} + 2 * 5.5 + 16) + 2 * 5.5 * ({length} + 8)) / 10000",
+    "edgeProtection": true
+  }
+]

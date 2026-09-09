@@ -5,7 +5,7 @@
 --   lane_item       -> action.plan_lane + action.lane_item (source 'material-plan')
 --   source_ref      -> mock.material_impose_plan (the weekly pattern)
 --   schedule        -> mock.material_print_schedule (delivery class + interval)
---   get_plan_lanes  -> the label read
+--   get_plan_lanes_imposition_group -> the label read
 --   get_impose_plan -> the board read (adds the orderline aggregate)
 
 -- 1. the weekly pattern: is there a row for today's weekday?
@@ -44,12 +44,12 @@ ORDER BY m.material_id;
 -- 4. does the label read serve it, and does the interval filter drop it?
 SELECT 'starting_today=true' AS mode, material_id, delivery_hours, fixed_group,
        start_offset_in_seconds, lane_item_id
-FROM action.get_plan_lanes(now(), 'print', 'sheet', NULL, true)
+FROM action.get_plan_lanes_imposition_group(now(), 'print', 'sheet', NULL, true)
 WHERE material_id IN (480, 481)
 UNION ALL
 SELECT 'starting_today=false', material_id, delivery_hours, fixed_group,
        start_offset_in_seconds, lane_item_id
-FROM action.get_plan_lanes(now(), 'print', 'sheet', NULL, false)
+FROM action.get_plan_lanes_imposition_group(now(), 'print', 'sheet', NULL, false)
 WHERE material_id IN (480, 481)
 ORDER BY 1, 2;
 

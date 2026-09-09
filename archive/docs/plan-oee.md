@@ -95,7 +95,7 @@ Het venster is de noemer, dus dit bepaalt elk OEE-percentage.
 | `log.hr_shift_planning` | `department_group_id` + `business_date` | `shift_json` is een **medewerkersrooster** (groepen × personen), geen tijdvensters | ja, tot 2026-09-15 |
 
 `action.dates.shift_json` staat al op de sloopnominatie:
-`sql/migration_dates_tenants_day_off.sql` §3 is BLOCKED met "dropping
+`archive/sql/migrations/migration_dates_tenants_day_off.sql` §3 is BLOCKED met "dropping
 shift_json breaks log.upsert_state_shift_agg ... and
 log.get_resource_state_shift_totals ... Give those two a new shift source
 (relation.shift_planning?) first".
@@ -286,7 +286,7 @@ geen: het is de envelope van `producing + starved.running` en zou dubbeltellen.
 
 De versimpelde vorm leeft in een **nieuwe tabel `log.lookup`** (zelfde vorm
 als `relation.lookup`; mirror `json/lookup/log/lookup_resource_state.json`,
-script `sql/update_log_lookup_resource_state.sql`), zodat niets in één keer
+script `archive/sql/migrations/update_log_lookup_resource_state.sql`), zodat niets in één keer
 om hoeft: `relation.lookup` houdt de oude geneste vorm en alle bestaande
 lezers — de hele v1-pagina incluis — blijven ongewijzigd draaien. Alleen de
 OEE-read (`get_resource_state_shift_totals`) leest `log.lookup`; de rest
@@ -372,8 +372,8 @@ migratiescripts zijn daarna opgeruimd. Wat blijft:
 | blijvend script | rol |
 |---|---|
 | `sql/log/*.sql`, `sql/action/*.sql` | de object-mirrors — dit is de bron; deployen = drop + file draaien |
-| `sql/update_log_lookup_resource_state.sql` | gegenereerd uit `json/lookup/log/lookup_resource_state.json`; na elke wijziging in de JSON opnieuw genereren en draaien |
-| `sql/update_shift_totals.sql` | gegenereerde drop + create van de OEE-read, uit de mirror |
+| `archive/sql/migrations/update_log_lookup_resource_state.sql` | gegenereerd uit `json/lookup/log/lookup_resource_state.json`; na elke wijziging in de JSON opnieuw genereren en draaien |
+| `archive/sql/migrations/update_shift_totals.sql` | gegenereerde drop + create van de OEE-read, uit de mirror |
 | `sql/update_data_group_partial.sql` | gegenereerd met `node scripts/build_update_data_group.js <ids>` |
 | `sql/check_state_shift_agg.sql` | blijvende read-only checks op de tellende data |
 
@@ -397,7 +397,7 @@ Wat er stond (en wat het deed) in volgorde van uitvoering:
    `starved.running`), `_produced`, `_plan_batch` naar `log.lookup`
 6. shiftdefinitie `23:59` → `00:00` (werkdag = exact 18 h) + backfill
 7. data_groups 19/29/62/64 op de nieuwe vorm; het frontend-contract staat in
-   `docs/handoff-oee-frontend.md`
+   `archive/docs/handoff-oee-frontend.md`
 
 ## 7. open beslissingen
 

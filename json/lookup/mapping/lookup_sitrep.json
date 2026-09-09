@@ -1,0 +1,257 @@
+[
+  {
+    "nav": {
+      "path": "(sidebar:sitrep-detail)",
+      "params": [
+        {
+          "key": "day_offset",
+          "default_value": 0,
+          "is_query_param": true
+        }
+      ]
+    },
+    "i18n": {
+      "de": {
+        "title": "Verspätet",
+        "templates": [
+          "qm: {sqm_total}",
+          "Aufträge: {order_count}"
+        ]
+      },
+      "en": {
+        "title": "Delayed",
+        "templates": [
+          "sqm's: {sqm_total}",
+          "orders: {order_count}"
+        ]
+      },
+      "es": {
+        "title": "Retrasado",
+        "templates": [
+          "m²: {sqm_total}",
+          "pedidos: {order_count}"
+        ]
+      },
+      "fr": {
+        "title": "En retard",
+        "templates": [
+          "m²: {sqm_total}",
+          "commandes: {order_count}"
+        ]
+      },
+      "nl": {
+        "title": "Vertraagd",
+        "templates": [
+          "m2's: {sqm_total}",
+          "orders: {order_count}"
+        ]
+      },
+      "uk": {
+        "title": "Затримано",
+        "templates": [
+          "м²: {sqm_total}",
+          "замовлення: {order_count}"
+        ]
+      }
+    },
+    "formula": [
+      "sqm_color_index=1",
+      "order_color_index=1"
+    ]
+  },
+  {
+    "nav": {
+      "path": "(sidebar:sitrep-detail)",
+      "params": [
+        {
+          "key": "day_offset",
+          "default_value": 1,
+          "is_query_param": true
+        }
+      ]
+    },
+    "i18n": {
+      "de": {
+        "title": "Heute",
+        "templates": [
+          "qm: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "Aufträge: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "en": {
+        "title": "Today",
+        "templates": [
+          "sqm's: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "orders: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "es": {
+        "title": "Hoy",
+        "templates": [
+          "m²: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "pedidos: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "fr": {
+        "title": "Aujourd'hui",
+        "templates": [
+          "m²: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "commandes: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "nl": {
+        "title": "Vandaag",
+        "templates": [
+          "m2's: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "orders: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "uk": {
+        "title": "Сьогодні",
+        "templates": [
+          "м²: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "замовлення: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      }
+    },
+    "params": {
+      "noon_epoch": 43200,
+      "evening_epoch": 64800,
+      "midnight_epoch": 0
+    },
+    "formula": [
+      "sqm_color_index = ((current_time_epoch >= midnight_epoch && current_time_epoch < noon_epoch && sqm_pct_done > 70) || (current_time_epoch >= noon_epoch && current_time_epoch < evening_epoch && sqm_pct_done > 80) || (current_time_epoch >= evening_epoch && sqm_pct_done > 90)) ? 0 : 1",
+      "order_color_index = ((current_time_epoch >= midnight_epoch && current_time_epoch < noon_epoch && order_pct_done > 70) || (current_time_epoch >= noon_epoch && current_time_epoch < evening_epoch && order_pct_done > 80) || (current_time_epoch >= evening_epoch && order_pct_done > 90)) ? 0 : 1"
+    ]
+  },
+  {
+    "nav": {
+      "path": "(sidebar:sitrep-detail)",
+      "params": [
+        {
+          "key": "day_offset",
+          "default_value": 2,
+          "is_query_param": true
+        }
+      ]
+    },
+    "i18n": {
+      "de": {
+        "title": "Morgen",
+        "templates": [
+          "qm: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "Aufträge: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "en": {
+        "title": "Tomorrow",
+        "templates": [
+          "sqm's: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "orders: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "es": {
+        "title": "Mañana",
+        "templates": [
+          "m²: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "pedidos: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "fr": {
+        "title": "Demain",
+        "templates": [
+          "m²: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "commandes: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "nl": {
+        "title": "Morgen",
+        "templates": [
+          "m2's: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "orders: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "uk": {
+        "title": "Завтра",
+        "templates": [
+          "м²: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "замовлення: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      }
+    },
+    "params": {
+      "noon_epoch": 43200,
+      "evening_epoch": 64800,
+      "midnight_epoch": 0
+    },
+    "formula": [
+      "sqm_color_index = ((current_time_epoch >= midnight_epoch && current_time_epoch < noon_epoch && sqm_pct_done > 70) || (current_time_epoch >= noon_epoch && current_time_epoch < evening_epoch && sqm_pct_done > 80) || (current_time_epoch >= evening_epoch && sqm_pct_done > 90)) ? 0 : 1",
+      "order_color_index = ((current_time_epoch >= midnight_epoch && current_time_epoch < noon_epoch && order_pct_done > 70) || (current_time_epoch >= noon_epoch && current_time_epoch < evening_epoch && order_pct_done > 80) || (current_time_epoch >= evening_epoch && order_pct_done > 90)) ? 0 : 1"
+    ]
+  },
+  {
+    "nav": {
+      "path": "(sidebar:sitrep-detail)",
+      "params": [
+        {
+          "key": "day_offset",
+          "default_value": 3,
+          "is_query_param": true
+        }
+      ]
+    },
+    "i18n": {
+      "de": {
+        "title": "Übermorgen",
+        "templates": [
+          "qm: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "Aufträge: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "en": {
+        "title": "Day after tomorrow",
+        "templates": [
+          "sqm's: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "orders: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "es": {
+        "title": "Pasado mañana",
+        "templates": [
+          "m²: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "pedidos: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "fr": {
+        "title": "Après-demain",
+        "templates": [
+          "m²: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "commandes: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "nl": {
+        "title": "Overmorgen",
+        "templates": [
+          "m2's: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "orders: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      },
+      "uk": {
+        "title": "Післязавтра",
+        "templates": [
+          "м²: {sqm_total} > {sqm_open} ({sqm_pct_done}%)",
+          "замовлення: {order_count} > {order_open} ({order_pct_done}%)"
+        ]
+      }
+    },
+    "params": {
+      "noon_epoch": 43200,
+      "evening_epoch": 64800,
+      "midnight_epoch": 0
+    },
+    "formula": [
+      "sqm_color_index = ((current_time_epoch >= midnight_epoch && current_time_epoch < noon_epoch && sqm_pct_done > 70) || (current_time_epoch >= noon_epoch && current_time_epoch < evening_epoch && sqm_pct_done > 80) || (current_time_epoch >= evening_epoch && sqm_pct_done > 90)) ? 2 : 2",
+      "order_color_index = ((current_time_epoch >= midnight_epoch && current_time_epoch < noon_epoch && order_pct_done > 70) || (current_time_epoch >= noon_epoch && current_time_epoch < evening_epoch && order_pct_done > 80) || (current_time_epoch >= evening_epoch && order_pct_done > 90)) ? 2 : 2"
+    ]
+  }
+]

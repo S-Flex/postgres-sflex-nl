@@ -32,13 +32,13 @@ alleen `docs/blocks-migration-proposal.md` noemt het nog.
 
 Update 2026-08-24 (batch 1 gearchiveerd): data_groups 17, 20, 21, 28, 32, 33,
 37, 60 en 61 zijn verplaatst naar `archive/data_group/`, uit de export gehaald
-en verwijderd via `sql/migration_archive_data_groups.sql`. Hun data_tables en
+en verwijderd via `archive/sql/migrations/migration_archive_data_groups.sql`. Hun data_tables en
 functies volgen in een latere batch.
 
 Update 2026-08-24 (batch 2, functies): `job.get_job_summary` en de zeven
 `relation.get_production_line_*`-functies (block_sum, conversion_margin_stats,
 oee_stats, production_faults, resources, status_time, model) zijn verplaatst
-naar `archive/sql/` en vervallen via `sql/migration_archive_functions.sql`.
+naar `archive/sql/` en vervallen via `archive/sql/migrations/migration_archive_functions.sql`.
 
 Update 2026-08-24 (batch 3, functies): `relation.get_resource_info`,
 `get_resource_maintenance` en `get_resource_status`, plus
@@ -46,15 +46,23 @@ Update 2026-08-24 (batch 3, functies): `relation.get_resource_info`,
 `sql/action/rule_path.sql`) zijn naar `archive/sql/` verplaatst en zitten in
 hetzelfde drop-script.
 
+Update 2026-09-07 (batch 4, functies): `mock.get_resource_plan_batch` (tweeling van
+`log.get_resource_plan_batch`, die `get_resource_timeline` gebruikt) en
+`mock.get_print_schedule_test` (testkopie van `get_print_schedule`) — geen bord, geen
+aanroeper — naar `archive/sql/mock/` en in hetzelfde drop-script. Data_groups 19
+(`resource_oee_timeline`, pagina `oee`) en 56 (`plan_timeline`, pagina
+`production-planning`) staan in pages.json en blijven; 56 vervalt pas als de pagina op
+`resource_plan` (81) staat, 19 als 81 de geproduceerde items als subniveau krijgt.
+
 Update 2026-08-24: de pagina `nest-schedule-queue` is aan pages.json toegevoegd —
-data_group `nest_schedule_queue` (79) is daarmee **gebruikt**, de sidebar-links
+data_group `impose_plan_inflow` (79) is daarmee **gebruikt**, de sidebar-links
 ernaartoe zijn niet langer kapot en `mapping.get_production_orderline_manifest`
 blijft behouden.
 
 ## onnodige data_groups (25)
 
 ✓ = gearchiveerd (bestand naar `archive/data_group/`, delete in
-`sql/migration_archive_data_groups.sql`).
+`archive/sql/migrations/migration_archive_data_groups.sql`).
 
 "Verwijzingen buiten pages.json" telt niet mee voor het criterium, maar staat erbij
 zodat je weet wat er meebreekt. `update_data_group_inline.sql`, de export
@@ -75,15 +83,15 @@ verwijzen per definitie).
 | 9 | testFormAddresses | ja | nee | geen |
 | 83 | widget_showcase | ja | nee | legacy block 1 (page 2), `docs/data-groups-and-navigation.md` — **nieuwste id, mogelijk lopend werk** |
 | 37 | ✓ nest_schedule_old | ja | ja | geen |
-| 61 | ✓ plan-capacity | ja | ja | legacy block 11 (page 20), `rename-map.json`, `docs/handoff-control-room.md`, `docs/data-group-governance.md`, gerefereerd door plan-capacity-overview (zelf onnodig) |
+| 61 | ✓ plan-capacity | ja | ja | legacy block 11 (page 20), `rename-map.json`, `archive/docs/handoff-control-room.md`, `docs/data-group-governance.md`, gerefereerd door plan-capacity-overview (zelf onnodig) |
 | 60 | ✓ plan-capacity-overview | ja | ja | legacy block 12 (page 21), zelfde docs/rename-map |
 | 17 | ~~✓~~ production_line_overview | ja | ja | **teruggezet 2026-08-31**: toch nodig. Pagina `production-line-overview` toegevoegd aan pages.json, dus voldoet nu aan het criterium. Opgeschoond bij terugzetten: legacy `"page": 50` en block-titel eruit, twee dode sidebar-links verwijderd |
-| 81 | production_schedule | ja | ja | `docs/plan-production-schedule.md` — **actief voorstel, zie kanttekening** |
-| 82 | production_schedule_filter | ja | ja | `docs/plan-production-schedule.md` — idem |
+| 81 | production_schedule | ja | ja | `archive/docs/plan-production-schedule.md` — **actief voorstel, zie kanttekening** |
+| 82 | production_schedule_filter | ja | ja | `archive/docs/plan-production-schedule.md` — idem |
 | 28 | ✓ resource_blocked_jobs | ja | ja | geen |
 | 33 | ✓ resource_plan_timeline | ja | ja | geen (src wijst al naar niet-bestaande data_table) |
 | 21 | ✓ resource_production | ja | ja | geen |
-| 32 | ✓ resource_queue | ja | ja | comment in `sql/migration_fix_log_data_readers.sql`; doelwit van kapotte sidebar-link `queued-jobs` |
+| 32 | ✓ resource_queue | ja | ja | comment in `archive/sql/migrations/migration_fix_log_data_readers.sql`; doelwit van kapotte sidebar-link `queued-jobs` |
 | 20 | ✓ resource_tco | ja | ja | geen |
 | 74 | test_form_save_types | ja | ja | geen |
 | 50 | test_get_nesting_preview | ja | ja | legacy block 5 (page 17), `sql/site/test_get_nesting_preview.sql` |
@@ -104,7 +112,7 @@ data_group-json aanwezig (grep, `.history/` uitgesloten).
 ### zonder voorbehoud (21)
 
 ✓ = gearchiveerd (definitiebestand naar `archive/sql/`, drop in
-`sql/migration_archive_functions.sql`).
+`archive/sql/migrations/migration_archive_functions.sql`).
 
 | functie | alleen gebruikt door (onnodige) data_group(s) | definitiebestand |
 |---|---|---|
@@ -135,7 +143,7 @@ data_group-json aanwezig (grep, `.history/` uitgesloten).
 | functie | gebruikt door | waarom oppassen |
 |---|---|---|
 | relation.get_login | login (data_table `getLogin`) | als de login-flow van de frontend/API dit endpoint direct aanroept (buiten het data_group-systeem om) breekt inloggen; externe callers zijn vanaf hier onzichtbaar |
-| mock.get_production_plan (was get_production_schedule) | production_schedule | `docs/plan-production-schedule.md` is een **actief voorstel** dat hier juist naartoe bouwt (vervangt plan_timeline); weggooien = het voorstel weggooien |
+| mock.get_production_plan (was get_production_schedule) | production_schedule | `archive/docs/plan-production-schedule.md` is een **actief voorstel** dat hier juist naartoe bouwt (vervangt plan_timeline); weggooien = het voorstel weggooien |
 | site.get_widget_showcase | widget_showcase | data_group 83 is het nieuwste id; oogt als dev/showcase-werk, geen repo-bestand |
 | site.save_widget_showcase | widget_showcase (ook als `stored_proc` van de data_table) | idem |
 
@@ -188,18 +196,18 @@ Alleen eigen definitiebestand in de repo:
 - mock.batch_info, mock.generate_production_plan, mock.get_panel_production_impact, mock.get_resource_state_per_day
 - relation.get_pricing_formula
 - ~~relation.get_production_lines~~ — krijgt per
-  `docs/plan-production-board-customer-filter.md` alsnog een gebruiker
+  `archive/docs/plan-production-board-customer-filter.md` alsnog een gebruiker
   (herschreven tot platte lijst voor het board-filter)
 - site.create_data_table_sync_json, site.get_formula_graph_with_subgraphs (hoort bij formulaGraphEditor-familie)
-- job.crud_specs_log, job.get_cart_statuses (beide ook genoemd in `sql/migration_rename_log_to_event.sql` — mogelijk bewust achtergelaten aliassen)
+- job.crud_specs_log, job.get_cart_statuses (beide ook genoemd in `archive/sql/migrations/migration_rename_log_to_event.sql` — mogelijk bewust achtergelaten aliassen)
 
 Wel in ontwerp-docs genoemd (waarschijnlijk bedoeld voor het nieuwe model — niet opruimen zonder die docs te herzien):
 - action.get_nest_moments (`docs/inventory.md`)
-- ✓ action.rule_path_ancestors, action.rule_path_matches (`docs/handoff-cowork.md`, `docs/inventory.md`) — gearchiveerd in batch 3, incl. `sql/action/rule_path.sql`
+- ✓ action.rule_path_ancestors, action.rule_path_matches (`archive/docs/handoff-cowork.md`, `docs/inventory.md`) — gearchiveerd in batch 3, incl. `sql/action/rule_path.sql`
 - catalog.crud_line_item_resource (`docs/domain-model.md`)
 - catalog.get_item_prices (`docs/pricing-chain.md`, `sql/catalog/item_price_formula.sql`)
 - legacy.insert_nest_log (`docs/domain-model.md`)
-- mock.crud_material_resource_plan (`docs/handoff-cowork.md` — en centraal in het lane-items-plan)
+- mock.crud_material_resource_plan (`archive/docs/handoff-cowork.md` — en centraal in het lane-items-plan)
 - production.compute_imposition_manifest_production_impact (`docs/domain-model.md`)
 - production.imposition_unit_status_update (`docs/domain-model.md`, `docs/spec-status-flow.md`)
 - mapping.get_component_specs_with_manifest — `docs/inventory.md` zegt expliciet **vervallen** (vervangen door `mapping.get_production_orderline_manifest`); dit is de veiligste kandidaat van de hele appendix
@@ -218,15 +226,15 @@ Wel in ontwerp-docs genoemd (waarschijnlijk bedoeld voor het nieuwe model — ni
    `json/block/block_*.json` bestanden zijn er de export van.
 3. **Actief werk tussen de "onnodige" groepen:** production_schedule (81) +
    production_schedule_filter (82) en widget_showcase (83) zijn de nieuwste ids en
-   komen voor in actieve plannen (`docs/plan-production-schedule.md`).
+   komen voor in actieve plannen (`archive/docs/plan-production-schedule.md`).
    Onnodig volgens het criterium van vandaag, maar archiveren betekent dat die
-   plannen ze straks terug moeten halen. (nest_schedule_queue (79) stond hier ook,
+   plannen ze straks terug moeten halen. (impose_plan_inflow (79) stond hier ook,
    maar staat sinds 2026-08-24 in pages.json en is gebruikt.)
 4. **Kapotte src op een gebruikte pagina:** data_group `resource_ink` (pagina
    ink-heads) heeft src `get_resource_ink` waarvoor **geen data_table bestaat** (en
    geen functie). Ofwel de pagina is deels kapot, ofwel er bestaat een
    resolutie-fallback die ik niet kan zien. Eerst begrijpen, dan pas opruimen.
-   Zelfde patroon bij `resource_plan_timeline` (onnodig) en `nest_schedule_queue`
+   Zelfde patroon bij `resource_plan_timeline` (onnodig) en `impose_plan_inflow`
    (src zonder data_table; de functie bestaat daar wél — en die pagina is sinds
    2026-08-24 **in gebruik**, dus dit verdient een echte fix of de fallback-uitleg).
 5. **Kapotte data_table-verwijzingen:** `get_formula` → niet-bestaand
@@ -250,3 +258,51 @@ Wel in ontwerp-docs genoemd (waarschijnlijk bedoeld voor het nieuwe model — ni
 8. De prosrc-scan matcht op naam (ongekwalificeerd); een functie die alleen in
    dynamische SQL (EXECUTE met samengestelde naam) wordt aangeroepen zou een vals
    "nergens gerefereerd" kunnen opleveren. Niet aangetroffen, wel mogelijk.
+
+Update 2026-09-08 (opruiming `sql/`): 46 losse eenmalige scripts die gedraaid
+zijn — `update_*`, `backfill_*`, `repair_*` en de `migration_*` van eerdere
+batches — zijn naar `archive/sql/migrations/` verplaatst; hun definities staan
+in de canonieke bestanden onder `sql/<schema>/`. Alle verwijzingen in `docs/`
+zijn meeverhuisd. Wat direct in `sql/` blijft staan:
+
+| bestand | waarom |
+|---|---|
+| `update_impose_plan_day_window.sql` | nog te draaien |
+| `update_lane_item_type_titles.sql` | nog te draaien: de i18n van `lookup_lane_item_type` staat in de repo, niet in de database |
+| `update_data_group.sql`, `update_data_group_inline.sql`, `update_data_group_partial.sql` | het deploy-mechanisme van de data_groups (gegenereerd door `scripts/build_update_data_group.js`) |
+| `check_data_group.sql`, `check_plan_reads.sql`, `check_state_shift_agg.sql`, `verify_plan_lanes_material.sql`, `test_impact_formulas.sql`, `test_production_impact_formula.sql` | read-only checks die bruikbaar blijven |
+| `delete_old_nests.sql`, `backfill_spec_unit_manifest.sql` | onderhoud, opnieuw te draaien wanneer nodig |
+
+Bij die opruiming zijn ook alle 29 lookups van de database gespiegeld naar
+`json/lookup/<schema>/<lookup>.json`, zoals de conventie vraagt — dat was de
+enige plek waar de inhoud van bijvoorbeeld `lookup_resource_state`,
+`lookup_internal_status` en `lookup_production_line` in de repo alleen nog in
+een gedraaid update-script stond. De vier bestanden die er al waren zijn niet
+overschreven: `action/lookup_lane_item_type.json` loopt bewust voor op de
+database (de i18n hierboven), de andere drie waren inhoudelijk gelijk.
+
+Update 2026-09-08 (opruiming `docs/`): twaalf documenten waarvan het werk in de
+database staat zijn naar `archive/docs/` verplaatst, met alle verwijzingen mee:
+
+| document | waarom af |
+|---|---|
+| `plan-lanes-boards.md` | de drie borden lopen; `get_plan_lanes` is inmiddels zelfs gesplitst in twee reads |
+| `plan-production-schedule.md` | voorstel voor `mock.get_production_plan`, die niet meer bestaat — `action.get_resource_plan` doet het |
+| `plan-oee.md` | `counts_as`, `log.state_shift_agg` en de shift-totalen staan in de database |
+| `plan-oee-donut.md` | de donut leest dezelfde keten; de handoff is eruit |
+| `plan-production-board-customer-filter.md` | lijnen-array en klantfilter zitten in de functies en in het bord |
+| `plan-pv2-links.md` | de `nav.path`-links naar pv2 staan in acht data_groups |
+| `handoff-control-room.md`, `handoff-cowork.md`, `handoff-data-group-vocabulary.md`, `handoff-oee-frontend.md`, `handoff-oee-donut-frontend.md`, `handoff-state-refresh.md` | overgedragen en gebouwd |
+
+Wat in `docs/` blijft: de referentiedocumenten (`domain-model`, `resource-path`,
+`paths-and-hierarchies`, `pricing-chain`, `spec-status-flow`, `catalog-formula`,
+`database-erd`, `data-group-governance`, `data-group-layout`,
+`data-groups-and-navigation`, `legacy-planning-chain`, `nest-status-sync`,
+`imposition-unit-manifest` + `formula-impact-per-step`, `contracts/`), de
+plannen die nog open staan (`plan-date-parameters`, `plan-help-mode`,
+`plan-lookup-block-i18n` — er staan nog `block`-wrappers in zes lookups,
+`blocks-migration-proposal` — `pages.json` is nog niet gevouwen), de twee
+handoffs waar de frontend nog op moet antwoorden
+(`handoff-resource-plan-frontend`, `handoff-time-scale-frontend`), het levende
+`plan-lane-model.md`, deze analyse, en de twee oogstlijsten (`inventory.md`
+heeft nog zestien open regels, `chats-to-archive.md` hangt daaraan).

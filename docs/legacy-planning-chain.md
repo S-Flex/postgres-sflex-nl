@@ -34,7 +34,7 @@ print_schedule (75)                  →   mock.get_print_schedule
                                              └─ evaluate_many_nas                          (per row × panel size)
     label_options.input_data.src     →   mock.get_print_schedule_materials
 
-nest_schedule_queue (79)             →   mapping.get_production_orderline_manifest
+impose_plan_inflow (79)             →   mapping.get_production_orderline_manifest
                                              └─ mapping.get_production_orderline_detail   (manifest_json on the row)
 
 anything else needing orderlines     →   mapping.get_production_orderline_detail  (graph, sitrep, ...)
@@ -263,7 +263,7 @@ aggregate and graph (filter at the scan, not on the rows coming back).
 
 Nothing done so far changed the output shape of a function except the two
 removals (`rework_json` → `impact_json`, `status_json` gone), which are in
-`docs/handoff-control-room.md`'s scope only as data, not as config.
+`archive/docs/handoff-control-room.md`'s scope only as data, not as config.
 
 ## 6. how to measure
 

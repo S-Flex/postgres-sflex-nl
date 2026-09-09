@@ -1,5 +1,5 @@
 -- Read-only checks after deploying the plan reads (2026-09-04), see
--- docs/plan-lanes-boards.md "performance". Run each block on its own.
+-- archive/docs/plan-lanes-boards.md "performance". Run each block on its own.
 
 -- 1. get_impose_plan works again (it failed with "column
 --    na.production_impact_in_seconds does not exist" while the live
@@ -12,7 +12,7 @@ FROM mock.get_impose_plan(now(), 'print', 'sheet', NULL, 0, 0, 1);
 --    (was 135), print_schedule <= 300 ms (was 465-545), interval <= 1 ms
 --    (was 5-9)
 EXPLAIN (ANALYZE, SUMMARY)
-SELECT * FROM action.get_plan_lanes(now(), 'print', 'sheet', NULL, true, 'material-resource-plan', NULL);
+SELECT * FROM action.get_plan_lanes_imposition_group(now(), 'print', 'sheet', NULL, true);
 
 EXPLAIN (ANALYZE, SUMMARY)
 SELECT * FROM mock.get_print_schedule(now(), 'sheet', NULL, false);

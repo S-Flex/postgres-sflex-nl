@@ -1,4 +1,4 @@
--- Step 1 + 2 of docs/plan-production-board-customer-filter.md: the customer
+-- Step 1 + 2 of archive/docs/plan-production-board-customer-filter.md: the customer
 -- table, its backfill, the search function and the crud hook. Safe to run
 -- ahead of the board changes — nothing reads the table yet.
 

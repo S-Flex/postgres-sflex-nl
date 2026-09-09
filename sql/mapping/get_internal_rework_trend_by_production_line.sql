@@ -26,7 +26,9 @@ as $$
     orderline_counts AS (
         SELECT
             date_trunc('week', cs.production_date)::date AS week_start,
-            COUNT(DISTINCT cs.production_orderline_id) AS orderline_count
+            -- one row per orderline (uq_component_specs_orderline_id), so no distinct;
+            -- the scan is index-only on (resolved_production_line_id, production_date)
+            COUNT(*) AS orderline_count
         FROM mapping.component_specs cs, params p
         WHERE cs.production_date >= p.until_ts - (p_weeks - 1) * interval '1 week'
           AND cs.production_date < p.until_ts + interval '1 day'

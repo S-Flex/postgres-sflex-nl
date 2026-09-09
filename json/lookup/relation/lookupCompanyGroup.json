@@ -1,0 +1,74 @@
+[
+  {
+    "content": {
+      "text": "Premium Partners"
+    },
+    "customerGroupId": 1
+  },
+  {
+    "content": {
+      "text": "Gold Resellers"
+    },
+    "customerGroupId": 2
+  },
+  {
+    "content": {
+      "text": "Silver Resellers"
+    },
+    "customerGroupId": 3
+  },
+  {
+    "content": {
+      "text": "Bronze Resellers"
+    },
+    "customerGroupId": 4
+  },
+  {
+    "content": {
+      "text": "Trial Resellers"
+    },
+    "customerGroupId": 5
+  },
+  {
+    "content": {
+      "text": "Export Partners"
+    },
+    "customerGroupId": 6
+  },
+  {
+    "content": {
+      "text": "Regional Partners"
+    },
+    "customerGroupId": 7
+  },
+  {
+    "content": {
+      "text": "Print Specialists"
+    },
+    "customerGroupId": 8
+  },
+  {
+    "content": {
+      "text": "Signage Specialists"
+    },
+    "customerGroupId": 9
+  },
+  {
+    "content": {
+      "text": "Event Suppliers"
+    },
+    "customerGroupId": 10
+  },
+  {
+    "content": {
+      "text": "Corporate Resellers"
+    },
+    "customerGroupId": 11
+  },
+  {
+    "content": {
+      "text": "Educational Partners"
+    },
+    "customerGroupId": 12
+  }
+]

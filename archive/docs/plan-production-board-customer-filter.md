@@ -86,7 +86,7 @@ Buiten de data_groups om: navs/menu-items die de boardpagina openen met
 1. **Kan vooruit, breekt niets**: `mapping.customer` + backfill,
    `mapping.get_customers`, data_tables `get_customers` en
    `get_production_lines` en `get_numbers` — **klaar in de repo**:
-   `sql/migration_customer_table.sql` (tabel + backfill + de drie
+   `archive/sql/migrations/migration_customer_table.sql` (tabel + backfill + de drie
    data_table-rijen; `query` is gewoon de schema-gekwalificeerde
    functienaam), `sql/mapping/{customer,get_customers}.sql` en
    `sql/relation/get_production_lines.sql` (herschreven naar een platte

@@ -1,0 +1,18 @@
+[
+  {
+    "states": [
+      {
+        "code": "producing",
+        "group": "running"
+      },
+      {
+        "code": "idle",
+        "group": "idle"
+      },
+      {
+        "code": "batch-reserved",
+        "group": "running"
+      }
+    ]
+  }
+]

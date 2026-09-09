@@ -271,6 +271,11 @@
             },
             "type": "duration"
           }
+        },
+        "tenant_name": {
+          "ui": {
+            "hidden": true
+          }
         }
       },
       "flow_board_config": {
@@ -363,6 +368,7 @@
                 "step",
                 "resource_uid"
               ],
+              "group_title_template": "${tenant_name} ${resource_name}",
               "class_names_field": "state_json.class_name",
               "y_axis": {
                 "format": "hh:mm",
@@ -370,7 +376,8 @@
                 "max_field": "param_json.total_shift_in_seconds"
               },
               "fill_field": "state_json.fill",
-              "color_field": "state_json.color"
+              "color_field": "state_json.color",
+              "set_title_field": "state_json.i18n"
             }
           }
         ],

@@ -1,6 +1,6 @@
 {
   "data_group_id": 79,
-  "data_group": "nest_schedule_queue",
+  "data_group": "impose_plan_inflow",
   "data_group_json": [
     {
       "src": [
@@ -28,10 +28,15 @@
           "is_optional": true,
           "default_value": 1,
           "is_query_param": true
+        },
+        {
+          "key": "line_type",
+          "is_optional": true,
+          "is_query_param": true
         }
       ],
       "children": [],
-      "widget_id": "nest_schedule_queue",
+      "widget_id": "impose_plan_inflow",
       "field_config": {
         "tenant_name": {
           "ui": {
@@ -61,22 +66,22 @@
           "ui": {
             "i18n": {
               "de": {
-                "title": "Ausschießen"
+                "title": "Nestgruppe"
               },
               "en": {
-                "title": "Imposition"
+                "title": "Nest group"
               },
               "es": {
-                "title": "Imposición"
+                "title": "Grupo de nesting"
               },
               "fr": {
-                "title": "Imposition"
+                "title": "Groupe de nesting"
               },
               "nl": {
-                "title": "Impositie"
+                "title": "Nestgroep"
               },
               "uk": {
-                "title": "Спуск шпальт"
+                "title": "Група нестингу"
               }
             },
             "control": "i18n-text"
@@ -458,6 +463,32 @@
           "ui": {
             "hidden": true
           }
+        },
+        "fill_percentage": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Füllung"
+              },
+              "en": {
+                "title": "Fill"
+              },
+              "es": {
+                "title": "Llenado"
+              },
+              "fr": {
+                "title": "Remplissage"
+              },
+              "nl": {
+                "title": "Vulling"
+              },
+              "uk": {
+                "title": "Заповнення"
+              }
+            },
+            "hidden": true,
+            "type": "percent"
+          }
         }
       },
       "flow_board_config": {
@@ -496,11 +527,39 @@
               "no_label": true,
               "class_name": "col-span-1"
             }
+          },
+          "impact_json.sqm": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "m²"
+                },
+                "en": {
+                  "title": "m²"
+                },
+                "es": {
+                  "title": "m²"
+                },
+                "fr": {
+                  "title": "m²"
+                },
+                "nl": {
+                  "title": "m²"
+                },
+                "uk": {
+                  "title": "м²"
+                }
+              },
+              "order": 1,
+              "class_name": "col-span-1 text-right"
+            },
+            "scale": 0,
+            "aggregate_fn": "sum"
           }
         },
         "column_min_width": 300,
         "column_max_width": 400,
-        "fields_class_name": "grid grid-cols-1",
+        "fields_class_name": "grid grid-cols-2",
         "children": [
           {
             "layout": "flow-container",
@@ -517,22 +576,22 @@
                 "ui": {
                   "i18n": {
                     "de": {
-                      "title": "Ausschießen"
+                      "title": "Nestgruppe"
                     },
                     "en": {
-                      "title": "Imposition"
+                      "title": "Nest group"
                     },
                     "es": {
-                      "title": "Imposición"
+                      "title": "Grupo de nesting"
                     },
                     "fr": {
-                      "title": "Imposition"
+                      "title": "Groupe de nesting"
                     },
                     "nl": {
-                      "title": "Impositie"
+                      "title": "Nestgroep"
                     },
                     "uk": {
-                      "title": "Спуск шпальт"
+                      "title": "Група нестингу"
                     }
                   },
                   "order": 0,
@@ -1106,7 +1165,146 @@
               }
             ]
           }
-        ]
+        ],
+        "header": {
+          "fields_class_name": "grid grid-cols-3 gap-2",
+          "field_config": {
+            "fill_percentage": {
+              "ui": {
+                "i18n": {
+                  "de": {
+                    "title": "Füllung"
+                  },
+                  "en": {
+                    "title": "Fill"
+                  },
+                  "es": {
+                    "title": "Llenado"
+                  },
+                  "fr": {
+                    "title": "Remplissage"
+                  },
+                  "nl": {
+                    "title": "Vulling"
+                  },
+                  "uk": {
+                    "title": "Заповнення"
+                  }
+                },
+                "order": 0,
+                "control": "donut-chart",
+                "class_name": "col-span-1 row-span-2",
+                "donut_chart_config": {
+                  "center": {
+                    "field": "fill_percentage",
+                    "type": "percent"
+                  }
+                }
+              }
+            },
+            "resource_uids": {
+              "ui": {
+                "i18n": {
+                  "de": {
+                    "title": "Drucker"
+                  },
+                  "en": {
+                    "title": "Printer"
+                  },
+                  "es": {
+                    "title": "Impresora"
+                  },
+                  "fr": {
+                    "title": "Imprimante"
+                  },
+                  "nl": {
+                    "title": "Printer"
+                  },
+                  "uk": {
+                    "title": "Принтер"
+                  }
+                },
+                "order": 1,
+                "control": "multi-select",
+                "class_name": "col-span-2",
+                "input_data": {
+                  "src": [
+                    "get_resources"
+                  ],
+                  "params": [
+                    {
+                      "key": "line_type",
+                      "is_query_param": true
+                    },
+                    {
+                      "key": "step",
+                      "default_value": "print",
+                      "is_query_param": true
+                    }
+                  ],
+                  "title_field": "resource_name",
+                  "value_field": "resource_uid"
+                }
+              }
+            }
+          },
+          "navs": [
+            {
+              "menu": [
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "Weiter zur Sammelform"
+                    },
+                    "en": {
+                      "title": "Continue to gangrun"
+                    },
+                    "es": {
+                      "title": "Continuar al gangrun"
+                    },
+                    "fr": {
+                      "title": "Continuer vers le gangrun"
+                    },
+                    "nl": {
+                      "title": "Doorzetten naar gangrun"
+                    },
+                    "uk": {
+                      "title": "Далі до ганграну"
+                    }
+                  },
+                  "type": "button",
+                  "path": "(detail:impose-plan-inflow)",
+                  "params": [
+                    {
+                      "key": "material_id",
+                      "is_query_param": true
+                    },
+                    {
+                      "key": "date",
+                      "is_query_param": true
+                    },
+                    {
+                      "key": "look_ahead_days",
+                      "is_query_param": true
+                    },
+                    {
+                      "key": "threshold",
+                      "is_query_param": true
+                    },
+                    {
+                      "key": "line_type",
+                      "is_query_param": true
+                    },
+                    {
+                      "key": "resource_uids",
+                      "is_query_param": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
       },
       "window_class_name": "p-8"
     }

@@ -46,8 +46,10 @@ niet in de repo-DDL staat. Of hij live bestaat: te checken (§4).
 | `mock.material_print_schedule` | per materiaal: `interval_days`, `interval_start_date`, `delivery_hours`, `nest_moment_codes`, `resource_uids`, `tenant_id` — de instellingen waarmee de print-schedule zijn kaarten berekent |
 | `mock.generate_plan(date, step, line_type)` | patroon → `plan` (type `material-resource-plan`) + materiaallanes + `lane_item` (`source = 'material-plan'`) + `imposition_group_lane_item`. Draait dagelijks vooruit voor 14 werkdagen in `site.refresh_derived_data` |
 | `mock.generate_production_plan(date, step, line_type)` | `plan` (type `production-plan`) + machine-dag-lanes (`lane.resource_path`) + `plan_lane`. Schrijft **geen** lane_items |
-| `action.get_plan_lanes` | de labels van elk bord (75, 76, 78, 81): materiaalmodus (items van het dagplan) of resourcemodus (`p_steps`) |
-| `mock.get_impose_plan` | de items van 76/78: `get_plan_lanes(only_starting_today)` + nests via `imposition_lane_item` + één `get_production_orderline_aggregate`-aanroep per nest-set; duur = productie-impact uit de manifests met een vloer van 900 s |
+| `action.get_plan_lanes_imposition_group` | de labels van de nest-borden (75, 76): één rij per lane van het dagplan, `p_step` = de step van het plan dat gelezen wordt. De as van `p_view_code` bepaalt welke dagen in beeld zijn en welke momenten rijen zijn; draagt `day_offset` en `plan_date` |
+| `action.get_plan_lanes_resource` | de labels van 81: één rij per machine-lane van een plan van de dag, `p_steps` = de steps waarvan de resources lanes zijn |
+| `action.get_lane_item_work` | het werk achter een lane-item: één entry per rij die een bord tekent (nests, of materiaal + lijn in het dagvenster), en terug de totalen, de lijst van de rij (per batch of per status), de manifest-lijst met sub-lijst, en per stap de snelste/traagste machine. Leest `get_production_orderline_detail` maximaal twee keer; 76 en 81 lezen hem beide |
+| `mock.get_impose_plan` | de items van 76/78: `get_plan_lanes_imposition_group(only_starting_today)` + nests via `imposition_lane_item` + één `get_production_orderline_aggregate`-aanroep per nest-set; duur = productie-impact uit de manifests met een vloer van 900 s |
 | `mock.get_print_schedule` | de kaarten van 75: **geen lane_items**. Per materiaal uit `material_print_schedule`: productiedagen via `get_interval_dates`, per `nest_moment_code` een kaart, met de forecast van die dag en een formule-evaluatie per maat. `lane_item_id` bestaat hier dus niet |
 | `mock.get_production_schedule` | de items van 81: `plan_lane` → `lane` → `lane_item` (level 0) + `nest_lane_item` + aggregate per nest-set; level 1 uit de logs |
 | `action.crud_lane_item` | update (verplaatsen/pinnen/sorteren), create (extra moment), delete; elke mutatie schrijft terug naar `material_impose_plan` |
@@ -57,14 +59,14 @@ niet in de repo-DDL staat. Of hij live bestaat: te checken (§4).
 
 | bord | items | labels | drag & drop |
 |---|---|---|---|
-| 75 print_schedule | `get_print_schedule` (berekend) | `get_plan_lanes` (materiaalmodus) | geen `drop`-blok |
-| 76 impose_plan | `get_impose_plan` | `get_plan_lanes` | `drop: rank, within tenant_id, commit mutation` → `crud_lane_item` |
-| 78 impose_resource_plan | `get_impose_plan` | `get_plan_lanes` (`steps {impose}`) | idem |
-| 81 production_resource_plan | `get_production_plan` (data_table) → `mock.get_production_schedule` | `get_plan_lanes` (`production-plan`, steps) | — |
-| 79 nest_schedule_queue | orderregels per materiaal | — | — |
+| 75 print_schedule | `get_print_schedule` (berekend) | `get_plan_lanes_imposition_group` | geen `drop`-blok |
+| 76 impose_plan | `get_impose_plan` | `get_plan_lanes_imposition_group` | `drop: rank, within tenant_id, commit mutation` → `crud_lane_item` |
+| 78 impose_resource_plan | `get_impose_plan` | `get_plan_lanes_resource` (`steps {impose}`) | idem |
+| 81 production_resource_plan | `get_production_plan` (data_table) → `mock.get_production_schedule` | `get_plan_lanes_resource` (steps) | — |
+| 79 impose_plan_inflow | orderregels per materiaal | — | — |
 
 Rij-identiteit komt uit `site.data_table.data_table_json.primary_keys`;
-`get_plan_lanes` en `get_impose_plan` hebben `lane_item_id` daarin,
+`get_plan_lanes_imposition_group` en `get_impose_plan` hebben `lane_item_id` daarin,
 `get_print_schedule` niet.
 
 ### 1.5 de begrippen die nu door elkaar lopen
@@ -78,8 +80,8 @@ Rij-identiteit komt uit `site.data_table.data_table_json.primary_keys`;
 | `material_print_schedule` (instellingen per materiaal) | intervallen, klassen, momenten | geen plan, geen lane: instellingen — `material_plan_setting`? |
 | plan-type `material-resource-plan` | patroon-dagplan (impose én print) | de lanes zijn materialen, niet resources: `material-plan`? |
 | `get_print_schedule`, `get_production_schedule`, `get_impose_plan`, `get_production_plan` (data_table) | de item-reads van 75, 81, 76/78, 81 | één werkwoordenset: `get_<bord>_items`? De data_table-namen zijn frontend-contract |
-| `get_plan_lanes` | labels van elk bord | past al |
-| `steps` op `plan`, `step` op `material_impose_plan`, `p_step`/`p_steps` in reads | de productiestap(pen) | `steps text[]` overal waar het er meer dan één kunnen zijn |
+| `get_plan_lanes_imposition_group` / `get_plan_lanes_resource` | labels van de nest-borden en van 81 | gesplitst (was één functie met twee modi); `p_plan_type` is vervallen |
+| `steps` op `plan`, `step` op `material_impose_plan`, `p_step` (de step van het plan) / `p_steps` (de steps van de resources) in reads | de productiestap(pen) | `p_step` en `p_steps` staan sinds de splitsing elk in hun eigen functie |
 | `source = 'material-plan'` op `lane_item` | gestampt uit het patroon | volgt de naam van het patroon |
 
 Hernoemen raakt: tabellen (data), functies (drop + create), `site.data_table`
@@ -109,7 +111,7 @@ Het `planned/`-ontwerp loopt via `to → from` omhoog. Ik houd die aan tenzij je
 anders zegt.
 
 **B. Traagheid nest-planning** — welk bord bedoel je: 76 impose_plan, 78
-impose_resource_plan of 79 nest_schedule_queue? Op 4 sep mat ik `get_impose_plan`
+impose_resource_plan of 79 impose_plan_inflow? Op 4 sep mat ik `get_impose_plan`
 op 2,4-2,7 s server-side; op 27 aug was de vaste voet "één aggregate-aanroep per
 nest-set plus ~40 ms plantijd per aanroep" (`force_custom_plan` op de detail),
 en batchen werd toen afgewezen. Ik meet opnieuw zodra de tunnel er is (§4) en
@@ -315,7 +317,7 @@ hield de schatting van het materiaalfilter (28.446 rijen voor 566). Nu schat
 hij klein en lopen alle joins over de indexen. Gemeten als losse query:
 nest-scope 1.285 → 255 ms, bordvenster ongewijzigd (~0,8 s, nested loops zoals
 voorheen). Output identiek in beide scopes (`except all` leeg, 566 en 7.586
-rijen). Script: `sql/update_orderline_detail_scope.sql`, met drie checks.
+rijen). Script: `archive/sql/migrations/update_orderline_detail_scope.sql`, met drie checks.
 
 **Controle.** Detail-body als losse query voor de grootste set: 1.285 ms → doel
 < 200 ms, zelfde rijen. Daarna `get_impose_plan` voor een werkdag: 1,9 s →
@@ -343,7 +345,7 @@ insert; wordt: append van de nieuwe set van het item); `mock.get_impose_plan`
 de repo-mirror is stuk, zie stap 0 hieronder); `action.get_plan_lanes` raakt
 het niet.
 
-**Stand 5 sep: gebouwd, wacht op draaien** — `sql/update_imposition_lane_item_append.sql`.
+**Stand 5 sep: gebouwd, wacht op draaien** — `archive/sql/migrations/update_imposition_lane_item_append.sql`.
 De tabel wordt in place omgezet (`ALTER`: eigen id, `moved_at`, `imposition_id`
 nullable, indexen op `(lane_item_id, moved_at desc)` en `imposition_id`); de
 bestaande rijen delen één `moved_at` en zijn zo de eerste set van hun item.
@@ -394,7 +396,7 @@ een lane), `mock.get_impose_plan` indirect via `get_plan_lanes`.
 op `get_plan_lanes` in alle vier aanroepvormen). Elke lane heeft precies één
 subtabelrij (check-query, verwacht 0 wezen en 0 dubbelen).
 
-**Stand 5 sep: gebouwd, wacht op draaien** — `sql/update_lane_kinds.sql`. De
+**Stand 5 sep: gebouwd, wacht op draaien** — `archive/sql/migrations/update_lane_kinds.sql`. De
 migratie zit in de transactie met een `DO`-blok dat stopt als de soorten niet
 kloppen (elke lane precies één subtabelrij). Vooraf is van elke bord-read een
 baseline genomen (aantal rijen en md5 over de rijen: labels 75/76/78/81 en
@@ -472,21 +474,21 @@ printer van B. Extra items waarvan de batch weg is worden weer verwijderd.
 blijven in het model (één batch per item, voor de resourcekant en `crud_nest`),
 maar zijn geen rij op de materiaalborden: `get_plan_lanes` geeft per lane alleen
 het patroon-item, `get_impose_plan` telt de nests van alle items van de lane op
-die rij bij elkaar (`sql/update_material_rows_aggregate.sql`; 5 sep sheet: 102 →
+die rij bij elkaar (`archive/sql/migrations/update_material_rows_aggregate.sql`; 5 sep sheet: 102 →
 46 rijen). De controle hieronder ("acht items in plaats van één blok") is daarmee
 achterhaald.
 
 **Stand 5 sep: crud_nest-deel gebouwd, wacht op draaien** —
-`sql/update_nest_batch_items.sql` (crud_nest, get_plan_lanes, crud_lane_item, plus
+`archive/sql/migrations/update_nest_batch_items.sql` (crud_nest, get_plan_lanes, crud_lane_item, plus
 de hernoeming `is_fixed_group` → `fixed_group` in kolom, lookup en de drie reads;
 data_groups 75/76/78/81 in `sql/update_data_group_partial.sql`) en
-daarna `sql/backfill_nest_lane_items.sql`, dat de lijn-fout (1.338 nests) en de
+daarna `archive/sql/migrations/backfill_nest_lane_items.sql`, dat de lijn-fout (1.338 nests) en de
 gemengde batches (229 items) in één keer rechtzet: per materiaallane de nests
 van eigen dag, materiaal en lijn, per batch een item, de eerste batch op het
 patroon-item, sets append-only. `get_plan_lanes` toont batch-items als momenten
 en leent materiaal, lijn, tenant en resource van het patroon-item van de lane;
 `crud_lane_item` schrijft alleen vanuit een patroon-item terug naar het patroon.
-Het pv2-deel: `sql/update_pv2_batch_items.sql` (functie, `crud_object`, backfill in een
+Het pv2-deel: `archive/sql/migrations/update_pv2_batch_items.sql` (functie, `crud_object`, backfill in een
 DO-blok, drie checks). Dry run 5 sep: 42 pv2-items met nests op een andere
 batch, 89 nests, 48 extra items, 31 hoofditems zonder eigen nests (duur 0),
 duren tellen per item exact op tot het blok.
@@ -499,7 +501,7 @@ zonder haakjes; SQL leest dat van links naar rechts, dus alleen items die een ne
 *verloren* telden als gewijzigd. De 233 patroon-items zijn wel herschreven, maar de
 594 batch-items en 93 patroon-items die alleen nests *kregen* hebben nooit een set
 gekregen: 5.202 van de 7.198 nests vielen van de materiaal-lanes (ze stonden nog op
-hun pv2-items en in de migratierijen van 11:30). `sql/repair_nest_lane_item_sets.sql`
+hun pv2-items en in de migratierijen van 11:30). `archive/sql/migrations/repair_nest_lane_item_sets.sql`
 zet ze terug volgens dezelfde regel, zonder iets te raken wat `crud_nest` sindsdien
 plaatste (dry run: 594 batch-items 4.477 rijen, 93 patroon-items 725 rijen, geen item
 met twee batches). Gedraaid 6 sep: 7.198 nests, 0 batch-items zonder set, 0 gemengd.
@@ -507,7 +509,7 @@ Les: verschil in twee richtingen altijd met haakjes.
 **Nagemeten 6 sep (item 257870).** De huidige set draagt één batch; de gemengde
 rijen die een join zonder `moved_at`-filter toont zijn de oudere set-schrijfacties
 (historie, append-only). Twee gaten in `crud_nest` gedicht in
-`sql/update_nest_batch_move.sql`: de batch die een item "vandaag draagt" telde de
+`archive/sql/migrations/update_nest_batch_move.sql`: de batch die een item "vandaag draagt" telde de
 payload-nests mee (een nest dat zijn batch kreeg bleef zo op zijn item staan en
 mengde het), en de pv2-items werden alleen bij `crud_object` rechtgezet — nu roept
 `crud_nest` `sync_pv2_batch_items` aan voor de pv2-items met een payload-nest.
@@ -686,7 +688,7 @@ samenvoeging (baseline-hashes zoals bij stap 3). Een extra step in de lookup met
 - `site.data_table`: `get_resource_plan` erbij (primary keys
   `lane_item_id`, `type`), `get_production_plan` vervalt na de omzetting.
 
-**Stand 5 sep: gebouwd, wacht op draaien** — `sql/update_resource_plan.sql` en daarna
+**Stand 5 sep: gebouwd, wacht op draaien** — `archive/sql/migrations/update_resource_plan.sql` en daarna
 `sql/update_data_group_partial.sql` (81, 82).
 - `action.lane_item.type` (text, default `plan`) vervangt `level`; alle 6.950 items zijn
   `plan`. Schrijvers omgezet: `crud_lane_item`, `crud_object`, `sync_pv2_batch_items`,
@@ -723,7 +725,7 @@ samenvoeging (baseline-hashes zoals bij stap 3). Een extra step in de lookup met
   stukken) in plaats van 838 rijen, elke lane sluitend gedekt zonder overlap. Van de
   50 batch-runs staat 26 op dezelfde lane gepland en 38 op een lane van die dag; een
   actual-item hangt dus niet aan een plan-item. Afgeleid bij het lezen, niet
-  opgeslagen. Script: `sql/update_resource_plan_actual.sql`, dan de partial (81).
+  opgeslagen. Script: `archive/sql/migrations/update_resource_plan_actual.sql`, dan de partial (81).
 - **duur via formule (6 sep):** `lookup_lane_item_type` draagt per soort een `formula`
   (regels `name=expression`, zoals de resource-formule in `resource_setting`) die
   `start_offset_in_seconds` en `duration_in_seconds` berekent uit `param_json`:
@@ -735,7 +737,7 @@ samenvoeging (baseline-hashes zoals bij stap 3). Een extra step in de lookup met
   `set_order_field` = `type_json.sort_order`, `placement_field` = `type_json.placement`
   (plan `chain`, progress en actual `offset`), `evaluate {formula_field, params_field}`,
   `set_overrides` per soort, `items {data_field: states_json, …}` voor het subniveau. Script:
-  `sql/update_resource_plan_formula.sql`, dan de partial (81).
+  `archive/sql/migrations/update_resource_plan_formula.sql`, dan de partial (81).
 - nog niet in deze stap: de plan/progress-splitsing van bord 76 (`get_impose_plan`,
   materiaalmodus) — volgt als 7b, met dezelfde `progress_json`.
 - **76 rekent met de soort-formule (6 sep):** `evaluate.formula_field` stond op `formula`
@@ -748,12 +750,36 @@ samenvoeging (baseline-hashes zoals bij stap 3). Een extra step in de lookup met
   plan, progress en actual. Elke soort draagt een basisclass in `class_names`:
   `timeline-plan`, `timeline-progress`, `timeline-actual` (lookup_lane_item_type voor 76
   en 81; `get_plan_timeline` zet `timeline-<group>` vóór `state.class_names` voor 56).
-  Script: `sql/update_timeline_set_classes.sql`; de css is van de frontend.
+  Script: `archive/sql/migrations/update_timeline_set_classes.sql`; de css is van de frontend.
 - lookup-spiegel `json/lookup/relation/lookup_step_category.json` stond achter op de
   database (11 stappen, oude statuscodes zoals `imposed`/`packaged`); vervangen door de
   database-inhoud (12 stappen, met `calander` en `apply`, codes `nested`/`packed`).
 
-### stap 8 — opruimen en hernoemen wat overbleef
+### stap 7c — impose-lanes uit het material-resource-plan (7 sep)
+
+**Gevonden.** De patroonrijen (`mock.material_impose_plan`) hebben sinds 8 aug step
+`impose`; `generate_plan` filtert op de step waarmee hij wordt aangeroepen en
+`refresh_derived_data` riep hem aan met `print`: elk plan vanaf 9 sep is leeg gestampt
+(0 lanes). Het material-resource-plan ís het impose-dagplan: de stap heet nu overal
+`impose` (plan.steps, defaults van `get_impose_plan` en `get_plan_lanes`, refresh).
+
+**Wat verandert.** `generate_plan` maakt naast de materiaallanes één resource lane per
+impose-machine die het patroon noemt (`resource_lane`, bestaande lane van die dag
+hergebruikt, achter de materiaallanes in `plan_lane`). `get_plan_lanes` (resourcemodus)
+en `get_resource_plan` lezen de resource lanes van álle plantypes van de dag; bij een
+impose-lane zijn de items de plan-items van de materiaallanes waarvan het patroon die
+machine noemt — het patroon-item met fixed group en klassetijd van bord 76 (via
+`get_plan_lanes`), de batch-items als fillers. Duur: productie-impact van de nests, anders
+van het open werk van het materiaal (regel van 76), nooit onder 900. Actual-rijen blijven
+leeg: het log kent de impose-machines niet. Bord 81 stuurt geen `plan_type` meer mee.
+Script: `archive/sql/migrations/update_impose_lanes.sql` (functies, steps-update, backfill in een DO-blok:
+lege plannen opnieuw stampen, bestaande plannen krijgen hun resource lanes).
+
+**Breedte van een rij op 76 (7 sep):** `duration_in_seconds` en `production_impact_in_seconds`
+tellen alleen het werk van de leverklasse 30 uur (`v_width_delivery_hours` in
+`get_impose_plan`); de andere klassen blijven in de getallen van de rij, niet in de tijd.
+Script: `archive/sql/migrations/update_impose_plan_width.sql`. De impose-lanes op 81 rekenen nog met alle klassen.
+
 
 **Wat verandert.** `plan.type`: weg (de lane-soort zegt het) of hernoemd naar
 `imposition-group-plan`/`resource-plan`; `lane_item.source` `material-plan` →

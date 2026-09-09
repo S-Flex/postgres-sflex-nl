@@ -1,0 +1,110 @@
+[
+  {
+    "code": "falling",
+    "block": {
+      "i18n": {
+        "de": {
+          "title": "Fallend"
+        },
+        "en": {
+          "title": "Falling"
+        },
+        "es": {
+          "title": "Descendente"
+        },
+        "fr": {
+          "title": "En baisse"
+        },
+        "nl": {
+          "title": "Dalend"
+        },
+        "uk": {
+          "title": "Спадає"
+        }
+      }
+    },
+    "color": "#5DCAA5",
+    "order": 0
+  },
+  {
+    "code": "stable",
+    "block": {
+      "i18n": {
+        "de": {
+          "title": "Stabil"
+        },
+        "en": {
+          "title": "Stable"
+        },
+        "es": {
+          "title": "Estable"
+        },
+        "fr": {
+          "title": "Stable"
+        },
+        "nl": {
+          "title": "Stabiel"
+        },
+        "uk": {
+          "title": "Стабільний"
+        }
+      }
+    },
+    "color": "#A0A0A0",
+    "order": 1
+  },
+  {
+    "code": "rising",
+    "block": {
+      "i18n": {
+        "de": {
+          "title": "Steigend"
+        },
+        "en": {
+          "title": "Rising"
+        },
+        "es": {
+          "title": "Ascendente"
+        },
+        "fr": {
+          "title": "En hausse"
+        },
+        "nl": {
+          "title": "Stijgend"
+        },
+        "uk": {
+          "title": "Зростає"
+        }
+      }
+    },
+    "color": "#F09595",
+    "order": 2
+  },
+  {
+    "code": "insufficient-data",
+    "block": {
+      "i18n": {
+        "de": {
+          "title": "Zu wenig Daten"
+        },
+        "en": {
+          "title": "Insufficient data"
+        },
+        "es": {
+          "title": "Datos insuficientes"
+        },
+        "fr": {
+          "title": "Données insuffisantes"
+        },
+        "nl": {
+          "title": "Onvoldoende data"
+        },
+        "uk": {
+          "title": "Недостатньо даних"
+        }
+      }
+    },
+    "color": "#6B6B6B",
+    "order": 3
+  }
+]

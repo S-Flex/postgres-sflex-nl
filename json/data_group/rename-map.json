@@ -96,6 +96,11 @@
       "change": "page resource-plan -> nest-resource-plan + production-resource-plan; pages.json sections carry params [{key, default_value}] merged per key over the params of the section's data_group",
       "count": 2,
       "detail": "two pages on the same resource_plan_filter/resource_plan; only the steps default differs (impose vs print, coat, laminate, route, cut). 2026-09-06"
+    },
+    {
+      "change": "data_group nest_schedule_queue (79) -> impose_plan_inflow; widget_id follows; the label of manifest_json.imposition reads Nestgroep (Nest group), never Imposition",
+      "count": 1,
+      "detail": "the inflow of orderlines per material behind board 76, one flow-grid per tenant, a container per nest group (imposition grouping keys). Page nest-schedule-queue keeps its code and gets sidebar_width 50%. 2026-09-07"
     }
   ],
   "keys": [

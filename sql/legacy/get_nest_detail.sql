@@ -24,7 +24,19 @@ BEGIN
         n.batch_id,
         n.nest_id,
         n.nest_name,
-        n.nest_json,
+        -- job_thumbnail as the Backblaze object key the board's template
+        -- expects (printfactory/jobs/<guid>/thumbnails/page-1.png): older nests
+        -- carry the hub-relative /thumbnails/<guid>-1.png; an empty string or an
+        -- upload-error object (564 nests) is none
+        CASE WHEN jsonb_typeof(n.nest_json -> 'job_thumbnail') = 'object'
+               OR n.nest_json ->> 'job_thumbnail' = ''
+             THEN n.nest_json || '{"job_thumbnail": null}'::jsonb
+             WHEN n.nest_json ->> 'job_thumbnail' LIKE '/thumbnails/%'
+             THEN jsonb_set(n.nest_json, '{job_thumbnail}',
+                            to_jsonb('printfactory/jobs/'
+                                     || regexp_replace(n.nest_json ->> 'job_thumbnail', '^/thumbnails/(.*)-1\.png$', '\1')
+                                     || '/thumbnails/page-1.png'))
+             ELSE n.nest_json END,
         n.nested_at,
         n.updated_at,
         rdl.start_at

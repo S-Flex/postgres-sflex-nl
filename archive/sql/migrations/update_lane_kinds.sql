@@ -107,7 +107,7 @@ declare
 begin
     -- A production plan for one day and one step. Lanes are machine-days:
     -- created once per machine per day, then hung under this plan; a lane
-    -- another plan already made is reused (docs/plan-production-schedule.md).
+    -- another plan already made is reused (archive/docs/plan-production-schedule.md).
     insert into action.plan (plan_date, steps, type, line_type)
     values (p_date, array[p_step], 'production-plan', p_line_type)
     returning plan_id into v_plan_id;

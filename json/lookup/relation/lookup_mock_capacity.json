@@ -1,0 +1,27 @@
+[
+  {
+    "ratio": 0.8,
+    "cutter_uid": "G30XL320933",
+    "printer_uid": "PRdY9CJuOfyB"
+  },
+  {
+    "ratio": 0.85,
+    "cutter_uid": "16474",
+    "printer_uid": "PRs29XOXqeuF"
+  },
+  {
+    "ratio": 0.65,
+    "cutter_uid": "15577",
+    "printer_uid": "PRkcku8ssWmL"
+  },
+  {
+    "ratio": 0.78,
+    "cutter_uid": "Q3232D13",
+    "printer_uid": "PRAl-iLUw51-"
+  },
+  {
+    "ratio": 0.55,
+    "cutter_uid": "G30XL320836",
+    "printer_uid": "PRPhXlMibOGj"
+  }
+]

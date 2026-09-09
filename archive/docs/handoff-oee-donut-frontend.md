@@ -1,7 +1,7 @@
 # handoff: OEE-donut (29) — legenda als filter, OEE in het midden, planning als binnenring
 
 Datum: 2026-09-05. Voor de Claude Code-sessie in de frontend-repo. Hoort bij
-`docs/plan-oee-donut.md` (het besluit) en `docs/handoff-oee-frontend.md` (het
+`archive/docs/plan-oee-donut.md` (het besluit) en `archive/docs/handoff-oee-frontend.md` (het
 contract van de area-chart, dat de donut nu deelt).
 
 ## wat er verandert aan de data
@@ -129,6 +129,6 @@ starved en blocked).
 ## wat je níét hoeft te doen
 
 De tabel achter de functie wordt door de database zelf actueel gehouden na
-elke `crud_state_log`/`crud_data_log` (`docs/handoff-state-refresh.md`). De
+elke `crud_state_log`/`crud_data_log` (`archive/docs/handoff-state-refresh.md`). De
 donut hoeft niet te pollen of iets te verversen; elke load is bij tot en met
 de laatste batch.

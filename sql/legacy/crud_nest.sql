@@ -1,6 +1,10 @@
+-- same signature, dropped first so the script re-runs
+drop function if exists legacy.crud_nest(jsonb, boolean);
+
 create function legacy.crud_nest(p_param_json jsonb, p_no_results boolean DEFAULT false) returns TABLE(param_id integer, track_by integer, crud text, domain_id integer, batch_id bigint, nest_id bigint, nest_counter integer, reproduced_counter integer, nest_name text, amount integer, width numeric, height numeric, nest_json jsonb, sort_order integer, status jsonb, possible_states bigint, possible_multiple_states bigint)
 	language plpgsql
 as $$
+#variable_conflict use_column
 DECLARE
     last_updated_at timestamp;
     rec             record;
@@ -316,7 +320,7 @@ BEGIN
                             WHERE x.lane_item_id = i.lane_item_id)
     ),
     new_set AS (
-        SELECT lane_item_id, imposition_id, sort_order FROM kept
+        SELECT k.lane_item_id, k.imposition_id, k.sort_order FROM kept k
         UNION ALL
         SELECT t.lane_item_id, t.nest_id, t.sort_order FROM target t
     )

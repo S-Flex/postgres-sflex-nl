@@ -5,9 +5,12 @@ drop function if exists mapping.get_production_orderline_detail(timestamp with t
 drop function if exists mapping.get_production_orderline_detail(timestamp with time zone, text, integer, integer, boolean, boolean, integer[], text[], integer, integer[], integer[], bigint[], boolean, integer, integer, integer[], timestamp without time zone);
 drop function if exists mapping.get_production_orderline_detail(timestamp with time zone, text, integer, integer, boolean, boolean, integer[], text[], integer, integer[], integer[], bigint[], boolean, integer, integer, integer[], timestamp with time zone);
 -- the version before production_impact_in_seconds joined the output
+drop function if exists mapping.get_production_orderline_detail(timestamp with time zone, text, integer, integer, boolean, boolean, integer[], text[], integer[], integer[], integer[], bigint[], boolean, integer, integer, integer[], timestamp without time zone);
+-- the version before the moment window (p_from_at, p_until_at) and 'units-all'
 drop function if exists mapping.get_production_orderline_detail(timestamp with time zone, text, integer, integer, boolean, boolean, integer[], text[], integer[], integer[], integer[], bigint[], boolean, integer, integer, integer[], timestamp without time zone, integer);
+drop function if exists mapping.get_production_orderline_detail(timestamp with time zone, text, integer, integer, boolean, boolean, integer[], text[], integer[], integer[], integer[], bigint[], boolean, integer, integer, integer[], timestamp without time zone, integer, timestamp with time zone, timestamp with time zone);
 
-create function mapping.get_production_orderline_detail(p_date timestamp with time zone DEFAULT CURRENT_DATE, p_date_type text DEFAULT 'logistics'::text, p_look_back_days integer DEFAULT NULL::integer, p_look_ahead_days integer DEFAULT NULL::integer, p_include_weekend boolean DEFAULT true, p_include_mandatory_days_off boolean DEFAULT true, p_status_sequences integer[] DEFAULT NULL::integer[], p_status_levels text[] DEFAULT NULL::text[], p_production_line_ids integer[] DEFAULT NULL::integer[], p_material_ids integer[] DEFAULT NULL::integer[], p_batch_ids integer[] DEFAULT NULL::integer[], p_nest_ids bigint[] DEFAULT NULL::bigint[], p_is_open boolean DEFAULT true, p_threshold integer DEFAULT 1, p_domain_id integer DEFAULT 1, p_tenant_ids integer[] DEFAULT NULL::integer[], p_logistics_at timestamp without time zone DEFAULT NULL::timestamp without time zone, p_customer_id integer DEFAULT NULL::integer) returns TABLE(number text, order_sequence integer, order_id integer, production_order_id integer, production_orderline_id integer, sales_orderline_id integer, customer_json jsonb, material_id integer, material_name text, product_amount numeric, sqm numeric, product_width numeric, product_height numeric, ship_separately boolean, production_line_id integer, production_company_id integer, delivery_hours integer, internal_status_code text, status_sequence integer, status_level text, status_title text, part_amount integer, part_status_json jsonb, nest_date date, production_date date, logistics_date date, logistics_at timestamp without time zone, shipment_date date, dates_json jsonb, impact_json jsonb, rejected_amount numeric, produced_amount numeric, nest_json jsonb, nest_ids bigint[], delivery_class_names text[], class_names text[], unit_class_names text[], order_count integer, manifest_json jsonb, production_impact_in_seconds integer)
+create function mapping.get_production_orderline_detail(p_date timestamp with time zone DEFAULT CURRENT_DATE, p_date_type text DEFAULT 'logistics'::text, p_look_back_days integer DEFAULT NULL::integer, p_look_ahead_days integer DEFAULT NULL::integer, p_include_weekend boolean DEFAULT true, p_include_mandatory_days_off boolean DEFAULT true, p_status_sequences integer[] DEFAULT NULL::integer[], p_status_levels text[] DEFAULT NULL::text[], p_production_line_ids integer[] DEFAULT NULL::integer[], p_material_ids integer[] DEFAULT NULL::integer[], p_batch_ids integer[] DEFAULT NULL::integer[], p_nest_ids bigint[] DEFAULT NULL::bigint[], p_is_open boolean DEFAULT true, p_threshold integer DEFAULT 1, p_domain_id integer DEFAULT 1, p_tenant_ids integer[] DEFAULT NULL::integer[], p_logistics_at timestamp without time zone DEFAULT NULL::timestamp without time zone, p_customer_id integer DEFAULT NULL::integer, p_from_at timestamp with time zone DEFAULT NULL::timestamp with time zone, p_until_at timestamp with time zone DEFAULT NULL::timestamp with time zone) returns TABLE(number text, order_sequence integer, order_id integer, production_order_id integer, production_orderline_id integer, sales_orderline_id integer, customer_json jsonb, material_id integer, material_name text, product_amount numeric, sqm numeric, product_width numeric, product_height numeric, ship_separately boolean, production_line_id integer, production_company_id integer, delivery_hours integer, internal_status_code text, status_sequence integer, status_level text, status_title text, part_amount integer, part_status_json jsonb, nest_date date, production_date date, logistics_date date, logistics_at timestamp without time zone, shipment_date date, dates_json jsonb, impact_json jsonb, rejected_amount numeric, produced_amount numeric, nest_json jsonb, nest_ids bigint[], delivery_class_names text[], class_names text[], unit_class_names text[], order_count integer, manifest_json jsonb, production_impact_in_seconds integer, impact_scope_json jsonb)
 	stable
 	SET plan_cache_mode=force_custom_plan
 	language plpgsql
@@ -16,6 +19,12 @@ as $$
 declare
     v_zone  constant text     := 'Europe/Amsterdam';
     v_alert constant interval := interval '2 hours';
+    -- up to and including the next working day after the viewed day an
+    -- orderline is imposed with everything else, whatever its size (unit
+    -- class 'units-all'); beyond it the size decides. The same rule as the
+    -- nest queue (get_production_orderline_manifest), read here so every
+    -- board shares it
+    v_next_workday date;
     -- below this sequence an orderline is not nested yet
     v_nested_sequence constant integer := 450;
     -- The viewed moment is the reference for every class name; never now(),
@@ -28,7 +37,27 @@ declare
     v_scope text := case when p_batch_ids is not null then 'batch'
                          when p_nest_ids  is not null then 'nest'
                          else 'window' end;
+    -- the materials asked plus the groups planned under them: a group whose
+    -- parent (catalog.imposition_group.parent_imposition_group_id; the group
+    -- ids are the material ids) is asked counts as that material. Null stays
+    -- null (every material), an empty array stays empty (none)
+    v_material_ids integer[] := case when p_material_ids is null then null
+        else coalesce((select array_agg(distinct m)
+                       from (select unnest(p_material_ids) as m
+                             union
+                             select g.imposition_group_id
+                             from catalog.imposition_group g
+                             where g.parent_imposition_group_id = any (p_material_ids)) x),
+                      '{}'::integer[]) end;
 begin
+    -- the next working day after the viewed day, for the tenants asked
+    select min(d.date) into v_next_workday
+    from action.dates d
+    where d.date > v_day
+      and d.is_weekend = false
+      and not (coalesce(p_tenant_ids, d.tenants_mandatory_day_off) <@ d.tenants_mandatory_day_off
+               and d.tenants_mandatory_day_off <> '{}');
+
     -- Everything between the two edges is returned, so the filter below stays
     -- a plain range on one column. No window means both edges stay NULL.
     if v_scope = 'window' then
@@ -82,7 +111,7 @@ begin
           and (p_production_line_ids is null or cardinality(p_production_line_ids) = 0
                or cs.first_production_line_id = any (p_production_line_ids))
           and (p_customer_id is null or cs.customer_id = p_customer_id)
-          and (p_material_ids is null or cs.material_id = any (p_material_ids))
+          and (v_material_ids is null or cs.material_id = any (v_material_ids))
           -- a board card carries its logistics grain: today's cards the exact
           -- cutoff moment, other days a midnight stamp meaning the whole day
           -- (the same derivation as get_production_board_aggregate). The
@@ -95,16 +124,24 @@ begin
                    and cs.logistics_date >= p_logistics_at
                    and cs.logistics_date <  p_logistics_at + interval '1 day'))
           -- One branch per date, so the comparison stays on a single column.
-          and (v_scope <> 'window' or v_from is null
+          -- A moment window (p_from_at, p_until_at; half open) wins over the
+          -- day window: a board whose axis starts in the evening asks for the
+          -- work from that moment on, not from midnight. The nest date is the
+          -- one timestamptz and compares with the moments as they are; the
+          -- other dates are clock times and take the moments as clock times
+          and (v_scope <> 'window' or (v_from is null and p_from_at is null)
                or (p_date_type = 'logistics'
-                   and cs.logistics_date >= v_from and cs.logistics_date < v_until)
+                   and cs.logistics_date >= coalesce(p_from_at  at time zone v_zone, v_from)
+                   and cs.logistics_date <  coalesce(p_until_at at time zone v_zone, v_until))
                or (p_date_type = 'production'
-                   and cs.production_date >= v_from and cs.production_date < v_until)
+                   and cs.production_date >= coalesce(p_from_at  at time zone v_zone, v_from)
+                   and cs.production_date <  coalesce(p_until_at at time zone v_zone, v_until))
                or (p_date_type = 'nest'
-                   and cs.nest_date >= (v_from::timestamp  at time zone v_zone)
-                   and cs.nest_date <  (v_until::timestamp at time zone v_zone))
+                   and cs.nest_date >= coalesce(p_from_at,  v_from::timestamp  at time zone v_zone)
+                   and cs.nest_date <  coalesce(p_until_at, v_until::timestamp at time zone v_zone))
                or (p_date_type = 'shipment'
-                   and cs.shipment_date >= v_from and cs.shipment_date < v_until))
+                   and cs.shipment_date >= coalesce(p_from_at  at time zone v_zone, v_from)
+                   and cs.shipment_date <  coalesce(p_until_at at time zone v_zone, v_until)))
           -- Batch and nest scope narrow the base here already: every
           -- enrichment below runs over the rows in scope instead of the whole
           -- open workload. A board fires one call per nest set, so without
@@ -148,7 +185,12 @@ begin
     -- this orderline on that nest was produced again, once per rerun.
     nest_agg as materialized (
         select onst.production_orderline_id,
-               jsonb_agg(jsonb_build_object('nest_id', onst.nest_id, 'amount', onst.amount)
+               -- batch_id rides along: a reader that splits a lane item into
+               -- its batches needs the batch of every nest, and the pieces on
+               -- that nest to divide the orderline over them
+               jsonb_agg(jsonb_build_object('nest_id',  onst.nest_id,
+                                            'batch_id', onst.batch_id,
+                                            'amount',   onst.amount)
                          order by onst.nest_id)         as nest_json,
                array_agg(onst.nest_id order by onst.nest_id) as nest_ids,
                coalesce(sum(r.rework_count), 0)::integer      as nest_rework_count,
@@ -227,11 +269,17 @@ begin
     -- create_spec_unit_manifest from the xbom formulas), multiplied by the
     -- units in the final select.
     manifest_impact as materialized (
-        select m.production_orderline_id,
-               sum(m.production_impact_per_unit) as impact_per_unit
-        from mapping.spec_unit_manifest m
-        join orderline_base ob on ob.production_orderline_id = m.production_orderline_id
-        group by m.production_orderline_id
+        select s.production_orderline_id,
+               sum(s.impact_per_unit) as impact_per_unit,
+               -- the same seconds per scope: the scope of a manifest row is
+               -- its step, so a reader can tell print from cut
+               jsonb_object_agg(s.scope, s.impact_per_unit) as impact_scope_json
+        from (select m.production_orderline_id, m.scope,
+                     sum(m.production_impact_per_unit) as impact_per_unit
+              from mapping.spec_unit_manifest m
+              join orderline_base ob on ob.production_orderline_id = m.production_orderline_id
+              group by m.production_orderline_id, m.scope) s
+        group by s.production_orderline_id
     ),
     -- One name per material, only for the materials in scope.
     material_name as (
@@ -324,8 +372,14 @@ begin
                         or coalesce(na.nest_rework_count, 0) > 0 then 'plan-rework' end
              ]) c where c is not null order by c)
         end,
-        -- production_order_amount is kept on the row, so no aggregate needed
+        -- The unit class says with what an orderline is imposed: with a nest
+        -- date up to and including the next working day everything goes
+        -- together, further out the small orders (production_order_amount at
+        -- or below p_threshold) apart from the big ones. Three groups that do
+        -- not overlap. production_order_amount is kept on the row, so no
+        -- aggregate needed
         case when ob.production_order_amount is null then '{}'::text[]
+             when (ob.nest_date at time zone v_zone)::date <= v_next_workday then array['units-all']
              when ob.production_order_amount <= p_threshold then array['units-lte-threshold']
              else array['units-gt-threshold'] end,
         -- 1 on the first orderline of every order: a board sums this into
@@ -337,9 +391,10 @@ begin
         -- the standard production impact of the whole orderline: units
         -- (parts when there are more of them than products, as in the
         -- aggregate's amount) times the per-unit sum of its manifest rows
-        round(greatest(coalesce((select sum(x) from unnest(pg.part_amount) x), 0),
-                       coalesce(ob.product_amount, 0))
-              * coalesce(mi.impact_per_unit, 0))::integer
+        round(u.units * coalesce(mi.impact_per_unit, 0))::integer,
+        -- the same seconds split over the steps of the work
+        (select jsonb_object_agg(e.key, round(u.units * (e.value #>> '{}')::numeric))
+         from jsonb_each(coalesce(mi.impact_scope_json, '{}'::jsonb)) e)
     from orderline_base ob
     left join nest_agg na               on na.production_orderline_id   = ob.production_orderline_id
     left join orderline_rework orw      on orw.production_orderline_id  = ob.production_orderline_id
@@ -347,11 +402,17 @@ begin
     left join part_status_json_agg psja on psja.production_orderline_id = ob.production_orderline_id
     left join manifest_impact mi        on mi.production_orderline_id   = ob.production_orderline_id
     left join material_name mn          on mn.material_id = ob.material_id
+    -- the units the impact counts: the parts when there are more of them than
+    -- products, as in the aggregate's amount
+    cross join lateral (
+        select greatest(coalesce((select sum(x) from unnest(pg.part_amount) x), 0),
+                        coalesce(ob.product_amount, 0)) as units
+    ) u
     where v_scope = 'window'
        or ob.production_orderline_id in (select production_orderline_id from in_scope)
     order by ob.production_order_id, ob.production_orderline_id;
 end;
 $$;
 
-alter function mapping.get_production_orderline_detail(timestamp with time zone, text, integer, integer, boolean, boolean, integer[], text[], integer[], integer[], integer[], bigint[], boolean, integer, integer, integer[], timestamp without time zone, integer) owner to xfw3;
+alter function mapping.get_production_orderline_detail(timestamp with time zone, text, integer, integer, boolean, boolean, integer[], text[], integer[], integer[], integer[], bigint[], boolean, integer, integer, integer[], timestamp without time zone, integer, timestamp with time zone, timestamp with time zone) owner to xfw3;
 

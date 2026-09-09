@@ -1,0 +1,132 @@
+[
+  {
+    "id": 0,
+    "content": {
+      "text": "Packaging"
+    },
+    "chargeableWeightFormula": "{weight}"
+  },
+  {
+    "id": 1,
+    "content": {
+      "text": "GEL National B2B"
+    },
+    "country": "DE",
+    "energySurchargePrice": 0,
+    "shipping_method_codes": [
+      "VN-TRANSPORT-48-BH",
+      "VN-TRANSPORT-XL-BH"
+    ],
+    "chargeableWeightFormula": "max({weight}, ({length} * {width} * {height}) / 6667)",
+    "energySurchargePercentage": 0
+  },
+  {
+    "id": 2,
+    "content": {
+      "text": "OPC"
+    },
+    "country": "DE",
+    "energySurchargePrice": 0,
+    "chargeableWeightFormula": "max({weight},({length} * {width} * {height}) / 6000)",
+    "energySurchargePercentage": 0
+  },
+  {
+    "id": 3,
+    "content": {
+      "text": "DHL Bulky goods"
+    },
+    "country": "DE",
+    "energySurchargePrice": 0,
+    "shipping_method_codes": [
+      "DHL-48-BH"
+    ],
+    "chargeableWeightFormula": "{weight}",
+    "energySurchargePercentage": 0
+  },
+  {
+    "id": 4,
+    "content": {
+      "text": "DHL Parcel"
+    },
+    "country": "DE",
+    "energySurchargePrice": 0,
+    "shipping_method_codes": [
+      "DHL-48-BH"
+    ],
+    "chargeableWeightFormula": "{weight}",
+    "energySurchargePercentage": 0
+  },
+  {
+    "id": 5,
+    "content": {
+      "text": "DHL Euro"
+    },
+    "energySurchargePrice": 0,
+    "shipping_method_codes": [
+      "DHL-48-BH"
+    ],
+    "chargeableWeightFormula": "{weight}",
+    "energySurchargePercentage": 0
+  },
+  {
+    "id": 6,
+    "content": {
+      "text": "UPS Standard"
+    },
+    "energySurchargePrice": 0,
+    "shipping_method_codes": [
+      "UPS-48-ST-DE-BH"
+    ],
+    "chargeableWeightFormula": "max({weight},({length} * {width} * {height}) / 5000)",
+    "energySurchargePercentage": 0
+  },
+  {
+    "id": 7,
+    "content": {
+      "text": "DHL for you"
+    },
+    "country": "NL",
+    "energySurchargePrice": 0,
+    "chargeableWeightFormula": "{weight}",
+    "energySurchargePercentage": 15.25
+  },
+  {
+    "id": 8,
+    "content": {
+      "text": "DHL Europlus Benelux"
+    },
+    "country": "NL",
+    "energySurchargePrice": 0,
+    "chargeableWeightFormula": "{weight}",
+    "energySurchargePercentage": 15.25
+  },
+  {
+    "id": 9,
+    "content": {
+      "text": "DHL Expresser"
+    },
+    "country": "NL",
+    "energySurchargePrice": 0,
+    "chargeableWeightFormula": "{weight}",
+    "energySurchargePercentage": 15.25
+  },
+  {
+    "id": 10,
+    "content": {
+      "text": "PostNL"
+    },
+    "country": "NL",
+    "energySurchargePrice": 0,
+    "chargeableWeightFormula": "{weight}",
+    "energySurchargePercentage": 0
+  },
+  {
+    "id": 11,
+    "content": {
+      "text": "DHL Europlus International"
+    },
+    "energySurchargePrice": 0,
+    "chargeableWeightFormula": "{weight}",
+    "energySurchargePercentage": 15.25
+  }
+]

@@ -1,5 +1,8 @@
 -- The one item read of the resource board (docs/plan-lane-model.md, stap 7):
--- one row per lane item on the resource lanes of the day's production plans,
+-- one row per lane item on the resource lanes of the day's plans — the
+-- production plans, and the impose plan (material-resource-plan) whose
+-- resource lanes are the impose machines and whose items are the material
+-- items whose pattern names that machine (stap 7c) —
 -- for the steps asked (p_steps null = every step planned that day), in three
 -- kinds of rows, named by lane_item.type and action.lookup /
 -- lookup_lane_item_type:
@@ -36,12 +39,12 @@
 -- readers without an evaluator. p_types filters the kinds (null = all).
 --
 -- Replaces mock.get_production_plan (81) and the resource mode of
--- mock.get_impose_plan (78). The labels come from action.get_plan_lanes in
--- resource mode.
+-- mock.get_impose_plan (78). The labels come from action.get_plan_lanes_resource in
+-- the resource read.
 drop function if exists action.get_resource_plan(timestamp with time zone, text, integer[], text[], text[], integer);
 
 create function action.get_resource_plan(p_until timestamp with time zone DEFAULT now(), p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_steps text[] DEFAULT NULL::text[], p_types text[] DEFAULT NULL::text[], p_domain_id integer DEFAULT 1)
-    returns TABLE(tenant_id integer, tenant_name text, production_company_id integer, resource_uid text, resource_name text, resource_path ltree, lane_id bigint, step text, type text, type_json jsonb, lane_item_id bigint, sort_order numeric, is_pinned boolean, no_split boolean, fixed_group text, start_offset_in_seconds integer, duration_in_seconds integer, start_at timestamp with time zone, end_at timestamp with time zone, nest_ids bigint[], nest_count integer, batch_id integer, batch_name text, material_id integer, material_name text, impact_json jsonb, sqm numeric, forecast_sqm numeric, gross_sqm numeric, part_status_json jsonb, progress_json jsonb, state_json jsonb, group_state_json jsonb, states_json jsonb, class_names text[], param_json jsonb)
+    returns TABLE(tenant_id integer, tenant_name text, production_company_id integer, resource_uid text, resource_name text, resource_path ltree, lane_id bigint, step text, type text, type_json jsonb, lane_item_id bigint, sort_order numeric, is_pinned boolean, no_split boolean, fixed_group text, start_offset_in_seconds integer, duration_in_seconds integer, start_at timestamp with time zone, end_at timestamp with time zone, nest_ids bigint[], nest_count integer, batch_id integer, batch_name text, material_id integer, material_name text, impact_json jsonb, sqm numeric, forecast_sqm numeric, gross_sqm numeric, part_status_json jsonb, progress_json jsonb, state_json jsonb, group_state_json jsonb, states_json jsonb, class_names text[], param_json jsonb, min_delivery_hours integer, production_seconds_min integer, production_seconds_max integer, batch_count integer, delivery_hours_json jsonb, step_json jsonb, set_json jsonb, manifest_json jsonb)
     stable
     language plpgsql
     set jit = off
@@ -63,7 +66,15 @@ declare
     v_type_lookup              jsonb;
     -- a gap longer than this inside a batch splits its run in two
     v_gap_split_in_seconds     integer;
+    -- at or below this sequence an orderline is not on a nest yet: the open
+    -- work of a material item without nests (the same rule as get_impose_plan)
+    v_max_status_sequence constant integer := 450;
+    v_status_sequences         integer[];
 begin
+    select array_agg(distinct s.sequence) into v_status_sequences
+    from mapping.internal_status s
+    where s.domain_id = p_domain_id and s.sequence <= v_max_status_sequence;
+
     select lk.lookup_json into v_state_lookup
     from relation.lookup lk where lk.lookup = 'lookup_resource_state';
 
@@ -97,33 +108,28 @@ begin
         where lk.lookup = 'lookup_step_category'
     ),
     tenant as (
-        select (v.value ->> 'tenant_id')::integer             as tenant_id,
-               v.value ->> 'name'                             as tenant_name,
-               v.value ->> 'abb'                              as abb,
-               (v.value ->> 'production_company_id')::integer as production_company_id
-        from relation.lookup lk
-        cross join lateral jsonb_array_elements(lk.lookup_json) as v(value)
-        where lk.lookup = 'lookup_tenants'
+        select t.tenant_id, t.name as tenant_name, t.abb, t.production_company_id
+        from site.tenant t
     ),
-    -- the steps asked, else every step a production plan of the day carries
+    -- the steps asked, else every step a plan of the day carries: the
+    -- production plans (print, coat, cut, ...) and the impose plan (the
+    -- material-resource-plan, whose resource lanes are the impose machines)
     wanted_step as (
         select distinct s.step
         from action.plan p
         cross join lateral unnest(p.steps) as s(step)
         where p.plan_date = v_date
-          and p.type = 'production-plan'
           and (p_line_type is null or p.line_type = p_line_type)
           and (p_steps is null or s.step = any (p_steps))
     ),
     the_plan as (
-        -- per step the newest production plan of the day that covers it
-        select distinct on (ws.step) ws.step, p.plan_id
+        -- per step and plan type the newest plan of the day that covers it
+        select distinct on (ws.step, p.type) ws.step, p.plan_id
         from wanted_step ws
         join action.plan p on ws.step = any (p.steps)
         where p.plan_date = v_date
-          and p.type = 'production-plan'
           and (p_line_type is null or p.line_type = p_line_type)
-        order by ws.step, p.plan_id desc
+        order by ws.step, p.type, p.plan_id desc
     ),
     -- one lane = one machine's day, the machine's step names the lane's step;
     -- the tenant through the first label of the path (the site abb)
@@ -143,15 +149,50 @@ begin
         where (p_tenant_ids is null or t.tenant_id = any (p_tenant_ids))
         order by l.lane_id, tp.plan_id desc
     ),
-    -- planned items with the nests hung on them
+    -- the material lanes of the impose plan, with the resource their pattern
+    -- names and what the material boards derive per lane: material, line,
+    -- fixed group and class time — the same read board 76 uses, so both
+    -- boards agree on every item
+    material_lane as (
+        select b.lane_id, b.lane_item_id as pattern_item_id,
+               b.material_id, b.material_name, b.production_line_id,
+               b.resource_path, b.fixed_group, b.start_offset_in_seconds, b.param_json
+        -- the day of p_until only: a resource board is one day, while the
+        -- lanes read gives every day of its view
+        from action.get_plan_lanes_imposition_group(
+                 p_until, p_line_type => p_line_type, p_tenant_ids => p_tenant_ids,
+                 p_only_starting_today => true) b
+        where b.lane_id is not null
+          and b.day_offset = 0
+    ),
+    -- planned items with the nests hung on them: the items on the lane itself
+    -- (production plans), plus for an impose lane the items of every material
+    -- lane whose pattern names its resource — the pattern item with the class
+    -- time and fixed group of board 76, the batch items as fillers of the same
+    -- material (one batch per item)
     item as (
         select li.lane_item_id, li.lane_id, li.sort_order, li.is_pinned, li.no_split,
                li.fixed_group, li.start_offset_in_seconds, li.duration_in_seconds,
+               null::integer as material_id, null::text as material_name, null::integer as production_line_id,
+               '{}'::jsonb as param_json,
                (select array_agg(distinct x.imposition_id)
                 from action.get_lane_item_impositions(li.lane_item_id) x) as nest_ids
         from action.lane_item li
         join lane on lane.lane_id = li.lane_id
         where li.type = 'plan'
+        union all
+        select li.lane_item_id, lane.lane_id, li.sort_order, li.is_pinned, li.no_split,
+               case when li.lane_item_id = ml.pattern_item_id then ml.fixed_group end,
+               case when li.lane_item_id = ml.pattern_item_id then ml.start_offset_in_seconds
+                    else li.start_offset_in_seconds end,
+               li.duration_in_seconds,
+               ml.material_id, ml.material_name, ml.production_line_id,
+               ml.param_json,
+               (select array_agg(distinct x.imposition_id)
+                from action.get_lane_item_impositions(li.lane_item_id) x)
+        from lane
+        join material_lane ml on ml.resource_path = lane.resource_path
+        join action.lane_item li on li.lane_id = ml.lane_id and li.type = 'plan'
     ),
     -- what the nests of an item say: the batch, the run (amount x area), the
     -- materials, and the least advanced status, which names the item's state
@@ -170,68 +211,30 @@ begin
         left join mapping.internal_status ist on ist.code = n.nest_json ->> 'internal_status_code' and ist.domain_id = p_domain_id
         group by i.lane_item_id
     ),
-    -- one aggregate call per distinct nest set, narrowed to the materials of
-    -- its nests (without that every call drags every material's forecast
-    -- along). A planned set counts all its work whatever the status; the
-    -- part statuses say what is done
-    agg_rows as materialized (
-        select ns.nest_ids as lane_nest_ids, a.*
-        from (select i.nest_ids,
-                     (select array_agg(distinct m) from item_nest nf
-                      join item i2 on i2.lane_item_id = nf.lane_item_id
-                      cross join lateral unnest(nf.material_ids) as m
-                      where i2.nest_ids = i.nest_ids)              as material_ids
-              from item i
-              where i.nest_ids is not null
-              group by i.nest_ids) ns
-        cross join lateral mapping.get_production_orderline_aggregate(
-                 p_from             => p_until,
+    -- One read for the work of every item: action.get_lane_item_work takes the
+    -- scope of each item (its own nests, else its material and line on the day)
+    -- and gives back the totals plus the lists. Board 76 reads the same
+    -- function, so both boards agree on every item.
+    work as (
+        select w.*
+        from action.get_lane_item_work(
+                 p_until            => p_until,
+                 p_scope_json       => (select jsonb_agg(jsonb_build_object(
+                                                   'lane_item_id',       i.lane_item_id,
+                                                   'nest_ids',           i.nest_ids,
+                                                   'material_id',        i.material_id,
+                                                   'production_line_id', i.production_line_id,
+                                                   'resource_path',      l.resource_path::text,
+                                                   'param_json',         i.param_json))
+                                        from item i
+                                        join lane l on l.lane_id = i.lane_id
+                                        where i.nest_ids is not null or i.material_id is not null),
                  p_date_type        => 'nest',
-                 p_nest_ids         => ns.nest_ids,
-                 p_material_ids     => ns.material_ids,
-                 p_status_sequences => null,
-                 p_is_open          => null,
-                 p_domain_id        => p_domain_id) a
-        where a.orderline_count > 0
-    ),
-    -- summed over the materials of the set; the material is named when the
-    -- set has one, else null
-    item_agg as (
-        select r.lane_nest_ids as nest_ids,
-               sum(r.orderline_count)::integer as orderline_count,
-               sum(r.sqm)                      as sqm,
-               -- the forecast of the set's materials on their lines for the day, the
-               -- same number on every item of that material (like board 76)
-               sum(r.forecast_sqm)             as forecast_sqm,
-               sum(r.gross_sqm)                as gross_sqm,
-               jsonb_build_object(
-                   'count',         sum((r.impact_json ->> 'count')::integer),
-                   'amount',        sum((r.impact_json ->> 'amount')::numeric),
-                   'sqm',           round(sum((r.impact_json ->> 'sqm')::numeric), 2),
-                   'rework_count',  sum((r.impact_json ->> 'rework_count')::integer),
-                   'rework_amount', sum((r.impact_json ->> 'rework_amount')::numeric),
-                   'rework_sqm',    round(sum((r.impact_json ->> 'rework_sqm')::numeric), 2)) as impact_json,
-               case when count(distinct r.material_id) = 1 then min(r.material_id) end   as material_id,
-               case when count(distinct r.material_id) = 1 then min(r.material_name) end as material_name,
-               -- the part statuses of the whole set, summed per status
-               (select jsonb_agg(jsonb_build_object(
-                           'sequence', x.sequence, 'internal_status_code', x.internal_status_code,
-                           'class_names', x.class_names, 'i18n', x.i18n, 'amount', x.amount)
-                        order by x.sequence)
-                from (select (e.value ->> 'sequence')::integer   as sequence,
-                             e.value ->> 'internal_status_code'  as internal_status_code,
-                             e.value -> 'class_names'            as class_names,
-                             e.value -> 'i18n'                   as i18n,
-                             sum((e.value ->> 'amount')::numeric) as amount
-                      from agg_rows b
-                      cross join lateral jsonb_array_elements(b.part_status_json) as e(value)
-                      where b.lane_nest_ids = r.lane_nest_ids
-                      group by 1, 2, 3, 4) x)                                          as part_status_json,
-               (select array_agg(distinct c order by c)
-                from agg_rows b cross join lateral unnest(b.class_names) as c
-                where b.lane_nest_ids = r.lane_nest_ids)                                as class_names
-        from agg_rows r
-        group by r.lane_nest_ids
+                 p_status_sequences => v_status_sequences,
+                 p_look_back_days   => 0,
+                 p_look_ahead_days  => 0,
+                 p_tenant_ids       => p_tenant_ids,
+                 p_domain_id        => p_domain_id) w
     ),
     -- the plan rows: the lane's resource names the row
     plan_row as (
@@ -239,19 +242,30 @@ begin
                l.resource_uid, l.resource_name, l.resource_path, l.lane_id, l.step,
                i.lane_item_id, i.sort_order, i.is_pinned, i.no_split, i.fixed_group,
                i.start_offset_in_seconds,
-               -- pv2's duration when it sent one, else the print time of the run
-               -- (nest area x amount) at the resource's speed, never shorter
+               -- pv2's duration when it sent one; a material item (impose) lasts
+               -- the standard production impact of its work, from the nests or
+               -- the open work, as on board 76; else the print time of the run
+               -- (nest area x amount) at the resource's speed — never shorter
                -- than the minimum
                case when i.duration_in_seconds > 0 then i.duration_in_seconds
+                    when i.material_id is not null
+                         then greatest(coalesce(w.production_impact_in_seconds, 0),
+                                       v_min_duration_in_seconds)
                     else greatest(ceil(coalesce(nf.run_sqm, 0) * v_standard_seconds_per_sqm
-                                       / coalesce(nullif(mock.get_resource_speed_factor(ag.material_id, l.resource_uid), 0), 1))::integer,
+                                       / coalesce(nullif(mock.get_resource_speed_factor(w.material_id, l.resource_uid), 0), 1))::integer,
                                   v_min_duration_in_seconds) end                       as duration_in_seconds,
                coalesce(i.nest_ids, '{}'::bigint[])                                   as nest_ids,
                coalesce(cardinality(i.nest_ids), 0)                                    as nest_count,
                nf.batch_id, nf.batch_name,
-               ag.material_id, ag.material_name,
-               ag.impact_json, ag.sqm, ag.forecast_sqm, ag.gross_sqm,
-               coalesce(ag.part_status_json, '[]'::jsonb)                              as part_status_json,
+               -- the material of the set, else of the material item itself; the
+               -- work of the set, else the open work of the material
+               coalesce(w.material_id, i.material_id)                                  as material_id,
+               coalesce(w.material_name, i.material_name)                              as material_name,
+               w.impact_json                                                           as impact_json,
+               w.sqm                                                                   as sqm,
+               w.forecast_sqm                                                          as forecast_sqm,
+               w.gross_sqm                                                             as gross_sqm,
+               coalesce(w.part_status_json, '[]'::jsonb)                               as part_status_json,
                -- the state of a planned item is the least advanced status of its
                -- nests, from the same lookup the actual rows use
                (select st.value from jsonb_array_elements(v_state_lookup) as ss(value)
@@ -260,12 +274,12 @@ begin
                (select ss.value - 'states' from jsonb_array_elements(v_state_lookup) as ss(value)
                                            cross join lateral jsonb_array_elements(ss.value -> 'states') as st(value)
                  where st.value ->> 'code' = coalesce(nf.internal_status_code, 'batch') limit 1) as group_state_json,
-               coalesce(ag.class_names, '{}'::text[])                                  as class_names,
+               coalesce(w.class_names, '{}'::text[])                                   as class_names,
                jsonb_build_object(
                    'standard_production_impact_in_seconds', ceil(coalesce(nf.run_sqm, 0) * v_standard_seconds_per_sqm)::integer,
                    'run_sqm',                                round(coalesce(nf.run_sqm, 0), 2),
-                   'speed_factor',                           mock.get_resource_speed_factor(ag.material_id, l.resource_uid),
-                   'orderline_count',                        ag.orderline_count)      as param_json,
+                   'speed_factor',                           mock.get_resource_speed_factor(coalesce(w.material_id, i.material_id), l.resource_uid),
+                   'orderline_count',                        w.orderline_count) as param_json,
                -- what is done and what remains for the lane's step: the part
                -- amounts at or past the step's done status against the rest.
                -- Without orderline amounts nothing is known to be done
@@ -273,15 +287,23 @@ begin
                coalesce(pr.remaining_amount, 0)                                        as remaining_amount,
                case when coalesce(pr.done_amount, 0) + coalesce(pr.remaining_amount, 0) > 0
                     then coalesce(pr.remaining_amount, 0) / (coalesce(pr.done_amount, 0) + coalesce(pr.remaining_amount, 0))
-                    else 1 end                                                         as remaining_share
+                    else 1 end                                                         as remaining_share,
+               -- what the work costs on the fastest and on the slowest machine of
+               -- every step, the batches behind the item, and the lists
+               w.min_delivery_hours, w.production_seconds_min, w.production_seconds_max,
+               coalesce(w.batch_count, 0)                                              as batch_count,
+               coalesce(w.delivery_hours_json, '{}'::jsonb)                            as delivery_hours_json,
+               coalesce(w.step_json, '{}'::jsonb)                                      as step_json,
+               coalesce(w.set_json, '[]'::jsonb)                                       as set_json,
+               coalesce(w.manifest_json, '[]'::jsonb)                                  as manifest_json
         from item i
         join lane l on l.lane_id = i.lane_id
         left join item_nest nf on nf.lane_item_id = i.lane_item_id
-        left join item_agg ag on ag.nest_ids = i.nest_ids
+        left join work w on w.lane_item_id = i.lane_item_id
         left join lateral (
             select sum((e.value ->> 'amount')::numeric) filter (where (e.value ->> 'sequence')::integer >= l.done_sequence) as done_amount,
                    sum((e.value ->> 'amount')::numeric) filter (where (e.value ->> 'sequence')::integer <  l.done_sequence) as remaining_amount
-            from jsonb_array_elements(coalesce(ag.part_status_json, '[]'::jsonb)) as e(value)
+            from jsonb_array_elements(coalesce(w.part_status_json, '[]'::jsonb)) as e(value)
             where l.done_sequence is not null
         ) pr on true
     ),
@@ -423,7 +445,9 @@ begin
                p.param_json || jsonb_build_object(
                    'planned_start_offset_in_seconds', p.start_offset_in_seconds,
                    'production_impact_in_seconds',    p.duration_in_seconds,
-                   'remaining_impact_in_seconds',     round(p.duration_in_seconds * p.remaining_share)::integer) as param_json
+                   'remaining_impact_in_seconds',     round(p.duration_in_seconds * p.remaining_share)::integer) as param_json,
+               p.min_delivery_hours, p.production_seconds_min, p.production_seconds_max,
+               p.batch_count, p.delivery_hours_json, p.step_json, p.set_json, p.manifest_json
         from plan_row p
 
         union all
@@ -447,7 +471,9 @@ begin
                p.param_json || jsonb_build_object(
                    'planned_start_offset_in_seconds', p.start_offset_in_seconds,
                    'production_impact_in_seconds',    p.duration_in_seconds,
-                   'remaining_impact_in_seconds',     round(p.duration_in_seconds * p.remaining_share)::integer)
+                   'remaining_impact_in_seconds',     round(p.duration_in_seconds * p.remaining_share)::integer),
+               p.min_delivery_hours, p.production_seconds_min, p.production_seconds_max,
+               p.batch_count, p.delivery_hours_json, p.step_json, p.set_json, p.manifest_json
         from plan_row p
         where round(p.duration_in_seconds * p.remaining_share) > 0
 
@@ -473,7 +499,9 @@ begin
                    'produced_count',                  a.produced_count,
                    'producing_in_seconds',            a.producing_seconds,
                    'actual_start_offset_in_seconds',  a.start_offset_in_seconds,
-                   'actual_duration_in_seconds',      a.duration_in_seconds)
+                   'actual_duration_in_seconds',      a.duration_in_seconds),
+               null::integer, null::integer, null::integer,
+               0, '{}'::jsonb, '{}'::jsonb, '[]'::jsonb, '[]'::jsonb
         from actual_row a
         join lane l on l.resource_uid = a.resource_uid
     )
@@ -488,7 +516,9 @@ begin
            -- the class names of the kind ride along with the row's own
            (select array_agg(distinct c order by c)
             from unnest(r.class_names || coalesce(k.class_names, '{}'::text[])) as c) as class_names,
-           r.param_json
+           r.param_json,
+           r.min_delivery_hours, r.production_seconds_min, r.production_seconds_max,
+           r.batch_count, r.delivery_hours_json, r.step_json, r.set_json, r.manifest_json
     from rows r
     left join kind k on k.type = r.type
     where p_types is null or r.type = any (p_types)

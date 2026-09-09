@@ -17,8 +17,10 @@ begin
     -- ahead of time — the plannable items are generated from this planning
     -- later, so the plan must exist before any item does. mock.generate_plan
     -- builds the whole set: the plan (with tenant_ids), the material lanes
-    -- from the weekly pattern, plan_lane and the material link per lane.
-    perform mock.generate_plan(d.date, 'print', lt.line_type)
+    -- from the weekly pattern (step impose: the nesting moments), a resource
+    -- lane per impose machine the pattern names, plan_lane and the material
+    -- link per lane.
+    perform mock.generate_plan(d.date, 'impose', lt.line_type)
     from (select dt.date, dt.tenants_mandatory_day_off
           from action.dates dt
           where dt.date >= current_date

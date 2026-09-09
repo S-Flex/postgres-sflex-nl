@@ -134,7 +134,7 @@ A data group passes `dates` as the text form of a datemultirange —
 can compose the multirange (a date picker with multiple ranges, or "workdays
 between"), the params `look_back_days` / `look_ahead_days` stay on the data
 group and the SQL bridge does the conversion. That is a control-room question
-to settle before step 4 below; put it in `docs/handoff-control-room.md` when
+to settle before step 4 below; put it in `archive/docs/handoff-control-room.md` when
 it lands.
 
 ## steps

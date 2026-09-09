@@ -1,0 +1,74 @@
+[
+  {
+    "code": "all",
+    "i18n": {
+      "de": {
+        "title": "Alles"
+      },
+      "en": {
+        "title": "All"
+      },
+      "es": {
+        "title": "Todo"
+      },
+      "fr": {
+        "title": "Tout"
+      },
+      "nl": {
+        "title": "Alles"
+      },
+      "uk": {
+        "title": "Усі"
+      }
+    },
+    "order": 0
+  },
+  {
+    "code": "lte",
+    "i18n": {
+      "de": {
+        "title": "1"
+      },
+      "en": {
+        "title": "1"
+      },
+      "es": {
+        "title": "1"
+      },
+      "fr": {
+        "title": "1"
+      },
+      "nl": {
+        "title": "1"
+      },
+      "uk": {
+        "title": "1"
+      }
+    },
+    "order": 1
+  },
+  {
+    "code": "gt",
+    "i18n": {
+      "de": {
+        "title": "> 1"
+      },
+      "en": {
+        "title": "> 1"
+      },
+      "es": {
+        "title": "> 1"
+      },
+      "fr": {
+        "title": "> 1"
+      },
+      "nl": {
+        "title": "> 1"
+      },
+      "uk": {
+        "title": "> 1"
+      }
+    },
+    "order": 2
+  }
+]

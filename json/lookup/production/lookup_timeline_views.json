@@ -1,0 +1,193 @@
+[
+  {
+    "code": "print-day-scale",
+    "segments": [
+      {
+        "time": "00:00:00",
+        "day_offset": 0,
+        "duration_in_seconds": 864000
+      }
+    ],
+    "exclude_weekend": true,
+    "segment_size_in_seconds": 86400,
+    "exclude_mandatory_day_off": true
+  },
+  {
+    "code": "nest-time-scale",
+    "segments": [
+      {
+        "i18n": {
+          "en": "18 hours",
+          "nl": "18 uurs"
+        },
+        "time": "21:45:00",
+        "day_offset": -1,
+        "class_names": [
+          "state-rush"
+        ],
+        "duration_in_seconds": 900
+      },
+      {
+        "time": "22:00:00",
+        "day_offset": -1,
+        "duration_in_seconds": 7200
+      },
+      {
+        "time": "06:00:00",
+        "day_offset": 0,
+        "duration_in_seconds": 64800
+      },
+      {
+        "i18n": {
+          "en": "30 hours",
+          "nl": "30 uurs"
+        },
+        "time": "12:00:00",
+        "day_offset": 0,
+        "class_names": [
+          "state-rush"
+        ],
+        "duration_in_seconds": 900
+      },
+      {
+        "i18n": {
+          "en": "24 hours",
+          "nl": "24 uurs"
+        },
+        "time": "16:45:00",
+        "day_offset": 0,
+        "class_names": [
+          "state-rush"
+        ],
+        "duration_in_seconds": 900
+      },
+      {
+        "i18n": {
+          "en": "18 hours",
+          "nl": "18 uurs"
+        },
+        "time": "21:45:00",
+        "day_offset": 0,
+        "class_names": [
+          "state-rush"
+        ],
+        "duration_in_seconds": 900
+      }
+    ],
+    "segment_size_in_seconds": 3600
+  },
+  {
+    "code": "nest-schedule",
+    "segments": [
+      {
+        "i18n": {
+          "en": "Previous day",
+          "nl": "Vorige dag"
+        },
+        "time": "21:45:00",
+        "day_offset": -1,
+        "duration_in_seconds": 36900
+      },
+      {
+        "i18n": {
+          "en": "Morning early",
+          "nl": "Ochtend vroeg"
+        },
+        "time": "06:00:00",
+        "day_offset": 0,
+        "duration_in_seconds": 7200
+      },
+      {
+        "i18n": {
+          "en": "Morning late",
+          "nl": "Ochtend laat"
+        },
+        "time": "10:00:00",
+        "day_offset": 0,
+        "duration_in_seconds": 7200
+      },
+      {
+        "i18n": {
+          "en": "30 hours",
+          "nl": "30 uurs"
+        },
+        "time": "12:00:00",
+        "day_offset": 0,
+        "duration_in_seconds": 900
+      },
+      {
+        "i18n": {
+          "en": "Afternoon early",
+          "nl": "Middag vroeg"
+        },
+        "time": "12:15:00",
+        "day_offset": 0,
+        "duration_in_seconds": 8100
+      },
+      {
+        "i18n": {
+          "en": "Afternoon late",
+          "nl": "Middag laat"
+        },
+        "time": "14:30:00",
+        "day_offset": 0,
+        "duration_in_seconds": 8100
+      },
+      {
+        "i18n": {
+          "en": "24 hours",
+          "nl": "24 uurs"
+        },
+        "time": "16:45:00",
+        "day_offset": 0,
+        "duration_in_seconds": 900
+      },
+      {
+        "i18n": {
+          "en": "Evening early",
+          "nl": "Avond vroeg"
+        },
+        "time": "17:00:00",
+        "day_offset": 0,
+        "duration_in_seconds": 8550
+      },
+      {
+        "i18n": {
+          "en": "Evening late",
+          "nl": "Avond laat"
+        },
+        "time": "19:22:30",
+        "day_offset": 0,
+        "duration_in_seconds": 8550
+      },
+      {
+        "i18n": {
+          "en": "18 hours",
+          "nl": "18 uurs"
+        },
+        "time": "21:45:00",
+        "day_offset": 0,
+        "duration_in_seconds": 900
+      },
+      {
+        "i18n": {
+          "en": "Night",
+          "nl": "Nacht"
+        },
+        "time": "22:00:00",
+        "day_offset": 0,
+        "duration_in_seconds": 7200
+      }
+    ]
+  },
+  {
+    "code": "production-schedule",
+    "segments": [
+      {
+        "time": "06:00:00",
+        "duration_in_seconds": 64800
+      }
+    ],
+    "segment_size_in_seconds": 3600
+  }
+]

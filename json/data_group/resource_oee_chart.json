@@ -191,15 +191,14 @@
         },
         "legend": {
           "filter_param": "states",
-          "items": [
-            "producing",
-            "setup",
-            "idle",
-            "starved",
-            "blocked",
-            "breakdown",
-            "offline"
-          ]
+          "input_data": {
+            "src": [
+              "get_resource_states"
+            ],
+            "params": [],
+            "title_field": "i18n",
+            "value_field": "code"
+          }
         }
       }
     }

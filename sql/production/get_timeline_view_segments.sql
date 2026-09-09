@@ -1,4 +1,4 @@
-create function production.get_timeline_view_segments(p_code text, p_until timestamp with time zone DEFAULT now(), p_look_back integer DEFAULT 0, p_look_ahead integer DEFAULT 0, p_tenant_ids integer[] DEFAULT NULL::integer[]) returns TABLE(code text, i18n jsonb, class_names jsonb, "time" time with time zone, duration_in_seconds integer, segment_size_in_seconds integer, start_offset_in_seconds integer, end_offset_in_seconds integer, sort_order integer, is_current boolean, date date, start_at timestamp with time zone, end_at timestamp with time zone)
+create function production.get_timeline_view_segments(p_code text, p_until timestamp with time zone DEFAULT now(), p_look_back integer DEFAULT -1, p_look_ahead integer DEFAULT -1, p_tenant_ids integer[] DEFAULT NULL::integer[]) returns TABLE(code text, i18n jsonb, class_names jsonb, "time" time with time zone, duration_in_seconds integer, segment_size_in_seconds integer, start_offset_in_seconds integer, end_offset_in_seconds integer, sort_order integer, is_current boolean, day_offset integer, date date, start_at timestamp with time zone, end_at timestamp with time zone)
 	language plpgsql
 as $$
 #variable_conflict use_column
@@ -106,6 +106,9 @@ BEGIN
            n.day_index * 86400 + extract(epoch FROM n."time")::integer + n.duration_in_seconds,
            n.sort_order - m.anchor_order + 1,
            n.sort_order IS NOT DISTINCT FROM m.current_order,
+           -- the day of the segment relative to the day of p_until: -1 the day
+           -- before, 0 that day, 1 the day after — the offsets count from day 0
+           n.day_index,
            n.date,
            n.start_at,
            n.end_at

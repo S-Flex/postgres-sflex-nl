@@ -43,7 +43,7 @@ dk . sheet . print . 320 . uv . durst . p5-350hs-automat . 473363
 Imposeren gebeurt meestal per materiaalbreedte, niet per machine: één resource
 per unieke `site.material.width` die printers heeft, met `impose` op positie 3
 (`dk.sheet.impose.210`). Die basis wordt **afgeleid uit de printerpaden**
-(`sql/migration_impose_resources.sql`), zodat een nieuwe printerbreedte
+(`archive/sql/migrations/migration_impose_resources.sql`), zodat een nieuwe printerbreedte
 vanzelf zijn impose-resource oplevert.
 
 Imposeert één machine op zijn eigen manier, dan krijgt die een **dieper**
@@ -167,8 +167,8 @@ naar de 8 posities is nog te doen. Daarbinnen:
   `epson.scg6000`, `swissq.karibu`, `swissq.kudu`.
 - Breedte nog vast te stellen voor vrijwel alle machines waar hij niet in de
   modelnaam zit.
-- `sql/migration_nest_resources.sql` (nog niet gedraaid) volgt de oude
-  volgorde — omzetten naar 8 posities zodra width/medium per printergroep
+- Een migratie voor de nest-resources is er nog niet (dat script is nooit
+  geschreven): omzetten naar 8 posities zodra width/medium per printergroep
   bekend zijn.
 - Het kolom-comment op `relation.resource.resource_path` beschrijft de oude
   volgorde — bijwerken bij de padmigratie.

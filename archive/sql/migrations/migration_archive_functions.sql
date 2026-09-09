@@ -19,4 +19,10 @@ DROP FUNCTION IF EXISTS relation.get_resource_status(integer);
 DROP FUNCTION IF EXISTS action.rule_path_matches(text, text[]);
 DROP FUNCTION IF EXISTS action.rule_path_ancestors(text);
 
+-- batch 4 (7 sep): two copies nobody calls. mock.get_resource_plan_batch is the
+-- twin of log.get_resource_plan_batch (the one get_resource_timeline uses);
+-- mock.get_print_schedule_test is the test copy of get_print_schedule
+DROP FUNCTION IF EXISTS mock.get_resource_plan_batch(text, timestamp with time zone, timestamp with time zone);
+DROP FUNCTION IF EXISTS mock.get_print_schedule_test(timestamp with time zone, text, integer[], boolean);
+
 COMMIT;

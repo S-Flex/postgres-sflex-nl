@@ -1,0 +1,732 @@
+[
+  {
+    "step": "paused",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Wachten",
+      "xBomState": "Wachten",
+      "batchState": "Wachten",
+      "optionState": "Gepauzeerd",
+      "containerState": "Gepauzeerd"
+    },
+    "xBomStateId": 1,
+    "batchStateId": 1,
+    "xBomIsLocked": 0,
+    "batchIsLocked": 0,
+    "optionStateId": 1,
+    "xBomClassName": "paused",
+    "batchClassName": "paused",
+    "optionIsLocked": 0,
+    "optionClassName": "paused",
+    "containerStateId": 1,
+    "containerIsLocked": 0,
+    "containerClassName": "paused"
+  },
+  {
+    "step": "start",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Start",
+      "xBomState": "Start",
+      "batchState": "Wachten",
+      "optionState": "Optie",
+      "containerState": "Concept"
+    },
+    "xBomStateId": 2,
+    "batchStateId": 1,
+    "xBomIsLocked": 0,
+    "batchIsLocked": 0,
+    "optionStateId": 2,
+    "xBomClassName": "initialized",
+    "batchClassName": "paused",
+    "optionIsLocked": 0,
+    "optionClassName": "initialized",
+    "containerStateId": 2,
+    "containerIsLocked": 0,
+    "containerClassName": "initialized"
+  },
+  {
+    "step": "proposal",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Voorstel",
+      "xBomState": "Voorstel",
+      "batchState": "Wachten",
+      "optionState": "Optie",
+      "containerState": "Voorstel"
+    },
+    "xBomStateId": 4,
+    "batchStateId": 1,
+    "xBomIsLocked": 0,
+    "batchIsLocked": 0,
+    "optionStateId": 2,
+    "xBomClassName": "initialized",
+    "batchClassName": "paused",
+    "optionIsLocked": 0,
+    "optionClassName": "initialized",
+    "containerStateId": 4,
+    "containerIsLocked": 0,
+    "containerClassName": "initialized"
+  },
+  {
+    "step": "pendingApproval",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Kredietcontrole",
+      "xBomState": "Kredietcontrole",
+      "batchState": "Wachten",
+      "optionState": "Optie",
+      "containerState": "Voorstel"
+    },
+    "xBomStateId": 8,
+    "batchStateId": 1,
+    "xBomIsLocked": 0,
+    "batchIsLocked": 0,
+    "optionStateId": 2,
+    "xBomClassName": "initialized",
+    "batchClassName": "paused",
+    "optionIsLocked": 0,
+    "optionClassName": "initialized",
+    "containerStateId": 4,
+    "containerIsLocked": 0,
+    "containerClassName": "initialized"
+  },
+  {
+    "step": "design",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Ontwerp",
+      "xBomState": "Ontwerp",
+      "batchState": "Wachten",
+      "optionState": "Opdracht",
+      "containerState": "Opdracht"
+    },
+    "xBomStateId": 16,
+    "batchStateId": 1,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 0,
+    "optionStateId": 4,
+    "xBomClassName": "started",
+    "batchClassName": "paused",
+    "optionIsLocked": 0,
+    "optionClassName": "started",
+    "containerStateId": 8,
+    "containerIsLocked": 0,
+    "containerClassName": "started"
+  },
+  {
+    "step": "preprod",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Preprod",
+      "xBomState": "Preprod",
+      "batchState": "Wachten",
+      "optionState": "Opdracht",
+      "containerState": "Opdracht"
+    },
+    "xBomStateId": 32,
+    "batchStateId": 1,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 0,
+    "optionStateId": 4,
+    "xBomClassName": "preprod",
+    "batchClassName": "paused",
+    "optionIsLocked": 1,
+    "optionClassName": "started",
+    "containerStateId": 8,
+    "containerIsLocked": 0,
+    "containerClassName": "started"
+  },
+  {
+    "step": "rip",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Rippen",
+      "xBomState": "Rippen",
+      "batchState": "Rippen",
+      "optionState": "In productie",
+      "containerState": "In productie"
+    },
+    "xBomStateId": 64,
+    "batchStateId": 2,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 0,
+    "optionStateId": 8,
+    "xBomClassName": "rip",
+    "batchClassName": "started",
+    "optionIsLocked": 1,
+    "optionClassName": "inProgress",
+    "containerStateId": 16,
+    "containerIsLocked": 0,
+    "containerClassName": "inProgress"
+  },
+  {
+    "step": "reserve",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Reserveren",
+      "xBomState": "Reserveren",
+      "batchState": "Reserveren",
+      "optionState": "In productie",
+      "containerState": "In productie"
+    },
+    "xBomStateId": 128,
+    "batchStateId": 4,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 8,
+    "xBomClassName": "reserve",
+    "batchClassName": "reserve",
+    "optionIsLocked": 1,
+    "optionClassName": "inProgress",
+    "containerStateId": 16,
+    "containerIsLocked": 0,
+    "containerClassName": "inProgress"
+  },
+  {
+    "step": "print",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Printen",
+      "xBomState": "Printen",
+      "batchState": "Printen",
+      "optionState": "In productie",
+      "containerState": "In productie"
+    },
+    "xBomStateId": 256,
+    "batchStateId": 8,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 8,
+    "xBomClassName": "print",
+    "batchClassName": "print",
+    "optionIsLocked": 1,
+    "optionClassName": "inProgress",
+    "containerStateId": 16,
+    "containerIsLocked": 0,
+    "containerClassName": "inProgress"
+  },
+  {
+    "step": "laminate",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Lamineren",
+      "xBomState": "Lamineren",
+      "batchState": "print",
+      "optionState": "In productie",
+      "containerState": "In productie"
+    },
+    "xBomStateId": 512,
+    "batchStateId": 8,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 8,
+    "xBomClassName": "laminate",
+    "batchClassName": "print",
+    "optionIsLocked": 1,
+    "optionClassName": "inProgress",
+    "containerStateId": 16,
+    "containerIsLocked": 0,
+    "containerClassName": "inProgress"
+  },
+  {
+    "step": "preassemble",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Plakken productie",
+      "xBomState": "Plakken productie",
+      "batchState": "print",
+      "optionState": "In productie",
+      "containerState": "In productie"
+    },
+    "xBomStateId": 1024,
+    "batchStateId": 8,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 8,
+    "xBomClassName": "preassemble",
+    "batchClassName": "print",
+    "optionIsLocked": 1,
+    "optionClassName": "inProgress",
+    "containerStateId": 16,
+    "containerIsLocked": 0,
+    "containerClassName": "inProgress"
+  },
+  {
+    "step": "cutting",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Snijden/frezen",
+      "xBomState": "Snijden/frezen",
+      "batchState": "Snijden/frezen",
+      "optionState": "In productie",
+      "containerState": "In productie"
+    },
+    "xBomStateId": 2048,
+    "batchStateId": 16,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 8,
+    "xBomClassName": "cutting",
+    "batchClassName": "cutting",
+    "optionIsLocked": 1,
+    "optionClassName": "inProgress",
+    "containerStateId": 16,
+    "containerIsLocked": 0,
+    "containerClassName": "inProgress"
+  },
+  {
+    "step": "plot",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Plotten",
+      "xBomState": "Plotten",
+      "batchState": "Snijden/frezen",
+      "optionState": "In productie",
+      "containerState": "In productie"
+    },
+    "xBomStateId": 4096,
+    "batchStateId": 16,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 8,
+    "xBomClassName": "plot",
+    "batchClassName": "cutting",
+    "optionIsLocked": 1,
+    "optionClassName": "inProgress",
+    "containerStateId": 16,
+    "containerIsLocked": 0,
+    "containerClassName": "inProgress"
+  },
+  {
+    "step": "peel_appl",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Pel/appl.",
+      "xBomState": "Pel/appl.",
+      "batchState": "Snijden/frezen",
+      "optionState": "In productie",
+      "containerState": "In productie"
+    },
+    "xBomStateId": 8192,
+    "batchStateId": 16,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 8,
+    "xBomClassName": "peel_appl",
+    "batchClassName": "cutting",
+    "optionIsLocked": 1,
+    "optionClassName": "inProgress",
+    "containerStateId": 16,
+    "containerIsLocked": 0,
+    "containerClassName": "inProgress"
+  },
+  {
+    "step": "finish",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Afwerken",
+      "xBomState": "Afwerken",
+      "batchState": "Afwerken",
+      "optionState": "In productie",
+      "containerState": "In productie"
+    },
+    "xBomStateId": 16384,
+    "batchStateId": 32,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 8,
+    "xBomClassName": "finish",
+    "batchClassName": "finish",
+    "optionIsLocked": 1,
+    "optionClassName": "inProgress",
+    "containerStateId": 16,
+    "containerIsLocked": 0,
+    "containerClassName": "inProgress"
+  },
+  {
+    "step": "assemble",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Assembleren",
+      "xBomState": "Assembleren",
+      "batchState": "Afwerken",
+      "optionState": "In productie",
+      "containerState": "In productie"
+    },
+    "xBomStateId": 32768,
+    "batchStateId": 32,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 8,
+    "xBomClassName": "assemble",
+    "batchClassName": "finish",
+    "optionIsLocked": 1,
+    "optionClassName": "inProgress",
+    "containerStateId": 16,
+    "containerIsLocked": 0,
+    "containerClassName": "inProgress"
+  },
+  {
+    "step": "outsource",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Bestellen",
+      "xBomState": "Bestellen",
+      "batchState": "Extern",
+      "optionState": "Extern",
+      "containerState": "Extern"
+    },
+    "xBomStateId": 65536,
+    "batchStateId": 64,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 16,
+    "xBomClassName": "outsource",
+    "batchClassName": "logistic",
+    "optionIsLocked": 1,
+    "optionClassName": "inProgress",
+    "containerStateId": 32,
+    "containerIsLocked": 0,
+    "containerClassName": "inProgress"
+  },
+  {
+    "step": "check",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Check",
+      "xBomState": "Check",
+      "batchState": "Logistiek",
+      "optionState": "Logistiek",
+      "containerState": "Logistiek"
+    },
+    "sortOrder": 3,
+    "xBomStateId": 131072,
+    "batchStateId": 64,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 16,
+    "xBomClassName": "check",
+    "batchClassName": "logistic",
+    "optionIsLocked": 1,
+    "optionClassName": "inProgress",
+    "containerStateId": 32,
+    "containerIsLocked": 0,
+    "containerClassName": "inProgress"
+  },
+  {
+    "step": "pack",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Verpakken",
+      "xBomState": "Verpakken",
+      "batchState": "Logistiek",
+      "optionState": "Logistiek",
+      "containerState": "Logistiek"
+    },
+    "xBomStateId": 262144,
+    "batchStateId": 64,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 16,
+    "xBomClassName": "pack",
+    "batchClassName": "logistic",
+    "optionIsLocked": 1,
+    "optionClassName": "inProgress",
+    "containerStateId": 32,
+    "containerIsLocked": 0,
+    "containerClassName": "inProgress"
+  },
+  {
+    "step": "plan",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Arbeid",
+      "xBomState": "Inplannen",
+      "batchState": "Logistiek",
+      "optionState": "Logistiek",
+      "containerState": "Logistiek"
+    },
+    "xBomStateId": 524288,
+    "batchStateId": 64,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 16,
+    "xBomClassName": "plan",
+    "batchClassName": "logistic",
+    "optionIsLocked": 1,
+    "optionClassName": "inProgress",
+    "containerStateId": 32,
+    "containerIsLocked": 0,
+    "containerClassName": "inProgress"
+  },
+  {
+    "step": "send",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Verzenden",
+      "xBomState": "Verzenden",
+      "batchState": "Klaar",
+      "optionState": "Afleveren",
+      "containerState": "Afleveren"
+    },
+    "xBomStateId": 1048576,
+    "batchStateId": 128,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 32,
+    "xBomClassName": "send",
+    "batchClassName": "completed",
+    "optionIsLocked": 1,
+    "optionClassName": "delivery",
+    "containerStateId": 64,
+    "containerIsLocked": 0,
+    "containerClassName": "delivery"
+  },
+  {
+    "step": "deliver",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Bezorgen",
+      "xBomState": "Bezorgen",
+      "batchState": "Klaar",
+      "optionState": "Afleveren",
+      "containerState": "Afleveren"
+    },
+    "xBomStateId": 2097152,
+    "batchStateId": 128,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 32,
+    "xBomClassName": "deliver",
+    "batchClassName": "completed",
+    "optionIsLocked": 1,
+    "optionClassName": "delivery",
+    "containerStateId": 64,
+    "containerIsLocked": 0,
+    "containerClassName": "delivery"
+  },
+  {
+    "step": "install",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Montage",
+      "xBomState": "Montage",
+      "batchState": "Klaar",
+      "optionState": "Afleveren",
+      "containerState": "Afleveren"
+    },
+    "xBomStateId": 4194304,
+    "batchStateId": 128,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 32,
+    "xBomClassName": "install",
+    "batchClassName": "completed",
+    "optionIsLocked": 1,
+    "optionClassName": "delivery",
+    "containerStateId": 64,
+    "containerIsLocked": 0,
+    "containerClassName": "delivery"
+  },
+  {
+    "step": "pickup",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Opgehaald",
+      "xBomState": "Opgehaald",
+      "batchState": "Klaar",
+      "optionState": "Afleveren",
+      "containerState": "Afleveren"
+    },
+    "xBomStateId": 8388608,
+    "batchStateId": 128,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 32,
+    "xBomClassName": "pickup",
+    "batchClassName": "completed",
+    "optionIsLocked": 1,
+    "optionClassName": "delivery",
+    "containerStateId": 64,
+    "containerIsLocked": 0,
+    "containerClassName": "delivery"
+  },
+  {
+    "step": "invoice",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Factureren",
+      "xBomState": "Factureren",
+      "batchState": "Klaar",
+      "optionState": "Klaar",
+      "containerState": "Klaar"
+    },
+    "xBomStateId": 16777216,
+    "batchStateId": 128,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 64,
+    "xBomClassName": "invoice",
+    "batchClassName": "completed",
+    "optionIsLocked": 1,
+    "optionClassName": "complete",
+    "containerStateId": 128,
+    "containerIsLocked": 0,
+    "containerClassName": "complete"
+  },
+  {
+    "step": "end",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Einde",
+      "xBomState": "Einde",
+      "batchState": "Einde",
+      "optionState": "Afgerond",
+      "containerState": "Afgerond"
+    },
+    "xBomStateId": 33554432,
+    "batchStateId": 256,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 128,
+    "xBomClassName": "completed",
+    "batchClassName": "completed",
+    "optionIsLocked": 1,
+    "optionClassName": "completed",
+    "containerStateId": 256,
+    "containerIsLocked": 1,
+    "containerClassName": "completed"
+  },
+  {
+    "step": "cancelled",
+    "content": {
+      "ml": {
+        "en": {
+          "text": ""
+        }
+      },
+      "text": "Geannuleerd",
+      "xBomState": "Geannuleerd",
+      "batchState": "Geannuleerd",
+      "optionState": "Geannuleerd",
+      "containerState": "Geannuleerd"
+    },
+    "xBomStateId": 67108864,
+    "batchStateId": 512,
+    "xBomIsLocked": 1,
+    "batchIsLocked": 1,
+    "optionStateId": 256,
+    "xBomClassName": "cancelled",
+    "batchClassName": "cancelled",
+    "optionIsLocked": 1,
+    "optionClassName": "cancelled",
+    "containerStateId": 512,
+    "containerIsLocked": 1,
+    "containerClassName": "cancelled"
+  }
+]

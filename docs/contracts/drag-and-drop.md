@@ -32,7 +32,7 @@ correct here:
 - `no_split_field` (board level): new. Which gesture triggers a split is not stated;
   add it to the gestures table when it exists.
 - `group_title_fields`: `group_by` holds ids only, the display column per level comes
-  from `group_title_fields`, same order (see `docs/handoff-control-room.md` §8).
+  from `group_title_fields`, same order (see `archive/docs/handoff-control-room.md` §8).
 - `copy_index_field` is **dropped** (data side, this change): planned moments are real
   `action.lane_item` rows now, so a Ctrl+drag copy is a **new lane item** created by the
   mutation — no index bookkeeping on the client. The key is gone from every data group
@@ -106,6 +106,11 @@ Columns the source must accept on update when `commit: "mutation"`:
 | each `group_by` level crossed | crossing | the target group's value |
 | `is_pinned_field` | Shift | the flipped boolean |
 | — (Ctrl) | Ctrl | no column: the mutation **inserts** a new lane item copying the dragged row (offset, duration, links) |
+
+The mutation goes to the `stored_proc` of the data table (`action.crud_lane_item` for the
+nest boards), one element per changed row:
+`{"crud": "update" | "create" | "delete", "track_by": <order in the batch>, "data": {<the columns above>}}`.
+`data` carries only what changed; `track_by` comes back on the result row.
 
 ---
 
@@ -208,5 +213,7 @@ On `nest_resource_schedule`, `within_fields` already pins a card to its lane, so
   row of group `"18"` shares the value. Same home and same correction as the key above. The
   layout only treats a board as scheduled when a lane actually carries the column, not merely
   because the key is named.
+- pinned comes from the data: `is_pinned` on the lane item, every item of a past day, and every
+  item that already has nests (its time is the moment of its first nest). Only the rest chains.
 - `timeline_config.chain_scope` — `"plan"` (one chain per main group) or `"lane"` (one per
   lane, lanes run in parallel).

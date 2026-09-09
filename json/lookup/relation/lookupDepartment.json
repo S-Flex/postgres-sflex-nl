@@ -1,0 +1,5284 @@
+[
+  {
+    "id": 807,
+    "name": "Toplevel",
+    "type": "office",
+    "active": true,
+    "created": "2022-11-22T12:36:38Z",
+    "modified": "2023-02-02T13:10:53Z",
+    "addressId": null,
+    "departments": [],
+    "costCenterId": null,
+    "departmentGroups": []
+  },
+  {
+    "id": 128,
+    "name": "Probo BV",
+    "type": "office",
+    "active": true,
+    "created": "2019-09-05T13:02:38Z",
+    "modified": "2024-01-05T14:52:27Z",
+    "addressId": 2,
+    "departments": [],
+    "costCenterId": null,
+    "departmentGroups": [
+      {
+        "id": 170,
+        "name": "Productie",
+        "type": "department_group",
+        "active": true,
+        "created": "2019-12-20T14:30:26Z",
+        "modified": "2023-02-02T13:10:54Z",
+        "departments": [],
+        "costCenterId": null,
+        "departmentGroups": [
+          {
+            "id": 174,
+            "name": "Plaat",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-12-20T14:31:55Z",
+            "modified": "2025-09-02T06:57:11Z",
+            "departments": [
+              {
+                "id": 230,
+                "name": "Ploegleider",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:41:06Z",
+                "modified": "2025-07-11T08:05:12Z",
+                "costCenterId": null
+              },
+              {
+                "id": 908,
+                "name": "Werkverdeler",
+                "type": "department",
+                "active": true,
+                "created": "2025-04-10T07:39:03Z",
+                "modified": "2025-07-11T08:05:12Z",
+                "costCenterId": null
+              },
+              {
+                "id": 734,
+                "name": "Senior Operator",
+                "type": "department",
+                "active": false,
+                "created": "2022-06-08T09:55:17Z",
+                "modified": "2025-07-11T09:21:20Z",
+                "costCenterId": null
+              },
+              {
+                "id": 926,
+                "name": "P5 HS-5",
+                "type": "department",
+                "active": true,
+                "created": "2025-07-11T07:57:26Z",
+                "modified": "2025-09-08T08:59:56Z",
+                "costCenterId": null
+              },
+              {
+                "id": 773,
+                "name": "P5-2 & PS-HS-3",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T13:33:53Z",
+                "modified": "2025-09-08T08:59:56Z",
+                "costCenterId": null
+              },
+              {
+                "id": 927,
+                "name": "P5-HS-3",
+                "type": "department",
+                "active": false,
+                "created": "2025-07-11T07:57:27Z",
+                "modified": "2025-07-11T09:21:19Z",
+                "costCenterId": null
+              },
+              {
+                "id": 228,
+                "name": "P5-4 & Automat",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:40:52Z",
+                "modified": "2025-09-08T08:59:56Z",
+                "costCenterId": null
+              },
+              {
+                "id": 928,
+                "name": "P5-2 en P5-4",
+                "type": "department",
+                "active": false,
+                "created": "2025-07-11T07:57:28Z",
+                "modified": "2025-07-11T09:21:17Z",
+                "costCenterId": null
+              },
+              {
+                "id": 929,
+                "name": "Swiss Q & SEI Mercury",
+                "type": "department",
+                "active": true,
+                "created": "2025-07-11T07:57:29Z",
+                "modified": "2025-07-11T08:05:12Z",
+                "costCenterId": null
+              },
+              {
+                "id": 226,
+                "name": "Zund 1",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:40:44Z",
+                "modified": "2025-07-11T08:05:12Z",
+                "costCenterId": null
+              },
+              {
+                "id": 772,
+                "name": "Zund 2",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T13:33:24Z",
+                "modified": "2025-07-11T08:05:12Z",
+                "costCenterId": null
+              },
+              {
+                "id": 771,
+                "name": "Zund 3",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T13:32:54Z",
+                "modified": "2025-07-11T08:05:12Z",
+                "costCenterId": null
+              },
+              {
+                "id": 770,
+                "name": "Zund DB",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T13:32:24Z",
+                "modified": "2025-07-11T08:05:12Z",
+                "costCenterId": null
+              },
+              {
+                "id": 930,
+                "name": "Zund Q-Line",
+                "type": "department",
+                "active": true,
+                "created": "2025-07-11T08:05:10Z",
+                "modified": "2025-07-11T08:05:10Z",
+                "costCenterId": null
+              },
+              {
+                "id": 747,
+                "name": "Coating Burkle",
+                "type": "department",
+                "active": true,
+                "created": "2022-07-25T10:53:22Z",
+                "modified": "2025-07-11T08:05:12Z",
+                "costCenterId": null
+              },
+              {
+                "id": 220,
+                "name": "Inpak 1",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:40:15Z",
+                "modified": "2025-07-11T08:05:13Z",
+                "costCenterId": null
+              },
+              {
+                "id": 765,
+                "name": "Durst P5-6 (hal 2)",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T13:22:36Z",
+                "modified": "2025-07-11T10:18:42Z",
+                "costCenterId": null
+              },
+              {
+                "id": 769,
+                "name": "Inpak 2",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T13:31:33Z",
+                "modified": "2025-07-11T08:05:13Z",
+                "costCenterId": null
+              },
+              {
+                "id": 766,
+                "name": "Zund 5 DB (hal 2)",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T13:29:52Z",
+                "modified": "2025-07-11T10:18:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 768,
+                "name": "Inpak 3",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T13:30:56Z",
+                "modified": "2025-07-11T08:05:13Z",
+                "costCenterId": null
+              },
+              {
+                "id": 767,
+                "name": "Inpak 4",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T13:30:22Z",
+                "modified": "2025-07-11T08:05:14Z",
+                "costCenterId": null
+              },
+              {
+                "id": 900,
+                "name": "Zund 6 (hal 2)",
+                "type": "department",
+                "active": true,
+                "created": "2024-11-19T11:10:37Z",
+                "modified": "2025-07-11T10:18:44Z",
+                "costCenterId": null
+              },
+              {
+                "id": 750,
+                "name": "Inpak 6 (hal 2)",
+                "type": "department",
+                "active": true,
+                "created": "2022-07-25T11:27:51Z",
+                "modified": "2025-07-11T10:16:01Z",
+                "costCenterId": null
+              },
+              {
+                "id": 751,
+                "name": "Snijden/Frezen Zund Hal 2",
+                "type": "department",
+                "active": true,
+                "created": "2022-07-27T11:34:03Z",
+                "modified": "2025-07-11T10:18:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 864,
+                "name": "Inpak 5 & Binning",
+                "type": "department",
+                "active": true,
+                "created": "2024-04-24T12:43:31Z",
+                "modified": "2025-07-11T08:05:14Z",
+                "costCenterId": null
+              },
+              {
+                "id": 573,
+                "name": "Opleiding",
+                "type": "department",
+                "active": true,
+                "created": "2020-10-12T07:13:08Z",
+                "modified": "2025-07-11T08:05:48Z",
+                "costCenterId": null
+              },
+              {
+                "id": 232,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:41:14Z",
+                "modified": "2025-07-11T08:05:48Z",
+                "costCenterId": null
+              },
+              {
+                "id": 286,
+                "name": "Plakstudio 1",
+                "type": "department",
+                "active": false,
+                "created": "2019-12-20T14:46:11Z",
+                "modified": "2025-09-08T09:00:57Z",
+                "costCenterId": null
+              },
+              {
+                "id": 282,
+                "name": "Plakstudio 2",
+                "type": "department",
+                "active": false,
+                "created": "2019-12-20T14:45:21Z",
+                "modified": "2025-09-08T09:00:57Z",
+                "costCenterId": null
+              },
+              {
+                "id": 764,
+                "name": "Overige",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T13:21:54Z",
+                "modified": "2025-07-11T08:05:49Z",
+                "costCenterId": null
+              },
+              {
+                "id": 883,
+                "name": "Lean",
+                "type": "department",
+                "active": true,
+                "created": "2024-07-30T12:36:38Z",
+                "modified": "2025-07-11T10:18:47Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 172,
+            "name": "Sublimatie/textiel",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-12-20T14:31:39Z",
+            "modified": "2025-09-02T06:57:11Z",
+            "departments": [
+              {
+                "id": 214,
+                "name": "Ploegleider",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:38:36Z",
+                "modified": "2024-10-03T13:26:35Z",
+                "costCenterId": null
+              },
+              {
+                "id": 212,
+                "name": "Durst Alpha",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:37:00Z",
+                "modified": "2024-10-03T13:26:35Z",
+                "costCenterId": null
+              },
+              {
+                "id": 735,
+                "name": "Senior Operator",
+                "type": "department",
+                "active": false,
+                "created": "2022-06-08T09:55:18Z",
+                "modified": "2024-01-05T08:38:19Z",
+                "costCenterId": null
+              },
+              {
+                "id": 777,
+                "name": "P5 / Rhotex 1 / Rhotex 2",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:19:42Z",
+                "modified": "2024-10-03T13:26:35Z",
+                "costCenterId": null
+              },
+              {
+                "id": 208,
+                "name": "Verlijmen / Assembleren",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:36:36Z",
+                "modified": "2024-10-29T07:55:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 662,
+                "name": "Assembleren akoestisch",
+                "type": "department",
+                "active": false,
+                "created": "2021-09-15T11:48:07Z",
+                "modified": "2024-10-29T07:55:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 593,
+                "name": "Zund",
+                "type": "department",
+                "active": true,
+                "created": "2021-01-04T08:13:05Z",
+                "modified": "2024-10-03T13:26:35Z",
+                "costCenterId": null
+              },
+              {
+                "id": 206,
+                "name": "Eurolaser 1",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:36:27Z",
+                "modified": "2024-10-03T13:26:35Z",
+                "costCenterId": null
+              },
+              {
+                "id": 595,
+                "name": "Eurolaser 2",
+                "type": "department",
+                "active": true,
+                "created": "2021-01-13T13:23:36Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 649,
+                "name": "Pees 1",
+                "type": "department",
+                "active": true,
+                "created": "2021-07-30T10:01:19Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 783,
+                "name": "Pees 2",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:21:58Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 891,
+                "name": "Meevo Peesmachine",
+                "type": "department",
+                "active": true,
+                "created": "2024-10-03T13:26:34Z",
+                "modified": "2024-10-03T13:26:34Z",
+                "costCenterId": null
+              },
+              {
+                "id": 651,
+                "name": "Enkelstik 1",
+                "type": "department",
+                "active": true,
+                "created": "2021-07-30T10:01:34Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 788,
+                "name": "Enkelstik 2",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:23:58Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 787,
+                "name": "Enkelstik 3",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:23:37Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 786,
+                "name": "Enkelstik 4",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:23:10Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 785,
+                "name": "Enkelstik 5",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:22:48Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 653,
+                "name": "Dubbelstik 1",
+                "type": "department",
+                "active": true,
+                "created": "2021-07-30T10:01:50Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 782,
+                "name": "Dubbelstik 2",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:21:34Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 781,
+                "name": "Dubbelstik 3",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:21:13Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 780,
+                "name": "Dubbelstik 4",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:20:52Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 779,
+                "name": "Dubbelstik 5",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:20:28Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 774,
+                "name": "Dubbelstik 6",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:18:30Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 216,
+                "name": "Dubbelstik 7",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:38:46Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 776,
+                "name": "Binning",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:19:17Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 200,
+                "name": "Inpak 1",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:35:54Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 198,
+                "name": "Inpak 2",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:35:41Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 418,
+                "name": "Inpak 3",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T14:32:22Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 784,
+                "name": "Ringen / Assembleren",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:22:20Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 605,
+                "name": "Opleiding",
+                "type": "department",
+                "active": true,
+                "created": "2021-02-01T13:27:02Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 778,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:20:04Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 775,
+                "name": "Overige",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-12T14:18:54Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 884,
+                "name": "Lean",
+                "type": "department",
+                "active": true,
+                "created": "2024-07-30T12:36:38Z",
+                "modified": "2024-10-03T13:26:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 893,
+                "name": "Sipan",
+                "type": "department",
+                "active": true,
+                "created": "2024-10-10T08:30:41Z",
+                "modified": "2024-10-10T08:30:41Z",
+                "costCenterId": null
+              },
+              {
+                "id": 915,
+                "name": "Extern",
+                "type": "department",
+                "active": true,
+                "created": "2025-05-16T11:34:08Z",
+                "modified": "2025-05-16T11:34:08Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 180,
+            "name": "Folie",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-12-20T14:33:09Z",
+            "modified": "2025-09-02T06:57:11Z",
+            "departments": [
+              {
+                "id": 324,
+                "name": "Ploegleider",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:24:56Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 322,
+                "name": "HP 1",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:24:48Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 753,
+                "name": "HP 2",
+                "type": "department",
+                "active": true,
+                "created": "2022-08-18T11:45:47Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 326,
+                "name": "Senior Operator",
+                "type": "department",
+                "active": false,
+                "created": "2019-12-20T15:25:05Z",
+                "modified": "2024-01-05T08:42:32Z",
+                "costCenterId": null
+              },
+              {
+                "id": 474,
+                "name": "Durst P5",
+                "type": "department",
+                "active": true,
+                "created": "2020-02-03T09:15:04Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 284,
+                "name": "Lamineren 1",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:45:29Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 410,
+                "name": "Lamineren 2",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T14:30:55Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 320,
+                "name": "Zund 1",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:24:36Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 278,
+                "name": "Zund 2",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:45:06Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 274,
+                "name": "Zund 3",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:44:49Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 890,
+                "name": "Zund 4",
+                "type": "department",
+                "active": true,
+                "created": "2024-08-30T07:52:46Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 754,
+                "name": "Snijden Fotoba",
+                "type": "department",
+                "active": true,
+                "created": "2022-08-18T11:46:36Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 280,
+                "name": "Inpak  1",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:45:14Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 752,
+                "name": "Inpak 2",
+                "type": "department",
+                "active": true,
+                "created": "2022-08-18T11:41:18Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 810,
+                "name": "Binning",
+                "type": "department",
+                "active": true,
+                "created": "2022-12-08T12:59:00Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 603,
+                "name": "Opleiding",
+                "type": "department",
+                "active": true,
+                "created": "2021-02-01T13:26:27Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 840,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-05T08:42:32Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 841,
+                "name": "Overige",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-05T08:42:32Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 849,
+                "name": "Plakstudio 1",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-16T11:19:40Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 850,
+                "name": "Plakstudio 2",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-16T11:19:40Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              },
+              {
+                "id": 885,
+                "name": "Lean",
+                "type": "department",
+                "active": true,
+                "created": "2024-07-30T12:36:38Z",
+                "modified": "2024-08-30T07:52:46Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 182,
+            "name": "Label",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-12-20T14:33:17Z",
+            "modified": "2025-09-02T06:57:11Z",
+            "departments": [
+              {
+                "id": 822,
+                "name": "Ploegleider",
+                "type": "department",
+                "active": true,
+                "created": "2023-10-20T13:23:32Z",
+                "modified": "2025-01-16T11:33:07Z",
+                "costCenterId": 35
+              },
+              {
+                "id": 338,
+                "name": "Durst Tau",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:26:20Z",
+                "modified": "2025-01-16T11:33:07Z",
+                "costCenterId": null
+              },
+              {
+                "id": 336,
+                "name": "Spartanics",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:26:20Z",
+                "modified": "2025-01-16T11:33:08Z",
+                "costCenterId": null
+              },
+              {
+                "id": 340,
+                "name": "Senior Operator",
+                "type": "department",
+                "active": false,
+                "created": "2019-12-20T15:26:40Z",
+                "modified": "2024-01-05T08:42:32Z",
+                "costCenterId": null
+              },
+              {
+                "id": 334,
+                "name": "SEI 1",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:26:08Z",
+                "modified": "2025-01-16T11:33:08Z",
+                "costCenterId": null
+              },
+              {
+                "id": 903,
+                "name": "SEI 2",
+                "type": "department",
+                "active": true,
+                "created": "2025-01-16T11:33:06Z",
+                "modified": "2025-01-16T11:33:06Z",
+                "costCenterId": null
+              },
+              {
+                "id": 408,
+                "name": "ABG",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T14:30:36Z",
+                "modified": "2025-01-16T11:33:08Z",
+                "costCenterId": null
+              },
+              {
+                "id": 332,
+                "name": "Omega 1",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:25:58Z",
+                "modified": "2025-01-16T11:33:08Z",
+                "costCenterId": null
+              },
+              {
+                "id": 328,
+                "name": "Omega 2",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:25:41Z",
+                "modified": "2025-01-16T11:33:08Z",
+                "costCenterId": null
+              },
+              {
+                "id": 330,
+                "name": "Inpak",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:25:50Z",
+                "modified": "2025-01-16T11:33:08Z",
+                "costCenterId": null
+              },
+              {
+                "id": 619,
+                "name": "Opleiding",
+                "type": "department",
+                "active": true,
+                "created": "2021-02-01T13:29:59Z",
+                "modified": "2025-01-16T11:33:08Z",
+                "costCenterId": null
+              },
+              {
+                "id": 886,
+                "name": "Lean",
+                "type": "department",
+                "active": true,
+                "created": "2024-07-30T12:36:38Z",
+                "modified": "2025-01-16T11:33:08Z",
+                "costCenterId": null
+              },
+              {
+                "id": 823,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2023-10-20T13:23:57Z",
+                "modified": "2025-01-16T11:33:08Z",
+                "costCenterId": null
+              },
+              {
+                "id": 824,
+                "name": "Overige",
+                "type": "department",
+                "active": true,
+                "created": "2023-10-20T13:24:19Z",
+                "modified": "2025-01-16T11:33:08Z",
+                "costCenterId": null
+              },
+              {
+                "id": 342,
+                "name": "-",
+                "type": "department",
+                "active": false,
+                "created": "2019-12-20T15:27:00Z",
+                "modified": "2024-01-05T08:42:32Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 184,
+            "name": "Papier",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-12-20T14:33:27Z",
+            "modified": "2025-09-02T06:57:11Z",
+            "departments": [
+              {
+                "id": 350,
+                "name": "HP  12000",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:27:49Z",
+                "modified": "2024-10-08T07:58:05Z",
+                "costCenterId": null
+              },
+              {
+                "id": 348,
+                "name": "Afwerken  Amstel Graphics 1",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:27:42Z",
+                "modified": "2024-10-08T07:58:05Z",
+                "costCenterId": null
+              },
+              {
+                "id": 352,
+                "name": "Ploegleider",
+                "type": "department",
+                "active": false,
+                "created": "2019-12-20T15:27:59Z",
+                "modified": "2024-01-05T08:42:32Z",
+                "costCenterId": null
+              },
+              {
+                "id": 346,
+                "name": "Afwerken Amstel Graphics 2",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:27:35Z",
+                "modified": "2024-10-08T07:58:05Z",
+                "costCenterId": null
+              },
+              {
+                "id": 892,
+                "name": "Inpak",
+                "type": "department",
+                "active": true,
+                "created": "2024-10-08T07:58:05Z",
+                "modified": "2024-10-08T07:58:05Z",
+                "costCenterId": null
+              },
+              {
+                "id": 607,
+                "name": "Opleiding",
+                "type": "department",
+                "active": true,
+                "created": "2021-02-01T13:27:20Z",
+                "modified": "2024-10-08T07:58:05Z",
+                "costCenterId": null
+              },
+              {
+                "id": 842,
+                "name": "Overige",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-05T08:42:32Z",
+                "modified": "2024-10-08T07:58:05Z",
+                "costCenterId": null
+              },
+              {
+                "id": 354,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:28:12Z",
+                "modified": "2024-10-08T07:58:05Z",
+                "costCenterId": null
+              },
+              {
+                "id": 887,
+                "name": "Lean",
+                "type": "department",
+                "active": true,
+                "created": "2024-07-30T12:36:38Z",
+                "modified": "2024-10-08T07:58:05Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 178,
+            "name": "UV",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-12-20T14:32:56Z",
+            "modified": "2025-09-02T06:57:11Z",
+            "departments": [
+              {
+                "id": 270,
+                "name": "Ploegleider",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:44:25Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 268,
+                "name": "Werkverdeler",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:44:17Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 800,
+                "name": "P5-500 / 312-7 / 512-2",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-28T07:06:20Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 839,
+                "name": "HS D4 1&2",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-05T08:31:25Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 799,
+                "name": "512-3 / 512-4 / 312-5",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-28T07:05:35Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 272,
+                "name": "Zund 1",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:44:34Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 460,
+                "name": "Zund 2",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-31T15:32:09Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 266,
+                "name": "Zund 3",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:44:10Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 264,
+                "name": "Bullmer",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:44:02Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 490,
+                "name": "Aristo",
+                "type": "department",
+                "active": true,
+                "created": "2020-02-07T13:15:47Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 575,
+                "name": "PlastGrommet Operator",
+                "type": "department",
+                "active": true,
+                "created": "2020-10-12T07:13:35Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 742,
+                "name": "Ringmachine 1",
+                "type": "department",
+                "active": true,
+                "created": "2022-07-01T09:37:45Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 741,
+                "name": "Ringmachine 2",
+                "type": "department",
+                "active": true,
+                "created": "2022-07-01T09:37:33Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 740,
+                "name": "Ringmachine 3",
+                "type": "department",
+                "active": true,
+                "created": "2022-07-01T09:37:20Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 746,
+                "name": "Ringmachine groot 4",
+                "type": "department",
+                "active": true,
+                "created": "2022-07-19T11:28:19Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 739,
+                "name": "Ringmachine 5",
+                "type": "department",
+                "active": true,
+                "created": "2022-07-01T09:37:10Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 924,
+                "name": "Ringmachine PG",
+                "type": "department",
+                "active": true,
+                "created": "2025-07-03T14:10:09Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 745,
+                "name": "Zoommachine 1",
+                "type": "department",
+                "active": true,
+                "created": "2022-07-01T09:42:37Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 744,
+                "name": "Zoommachine 2",
+                "type": "department",
+                "active": true,
+                "created": "2022-07-01T09:42:25Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 743,
+                "name": "Zoommachine 3",
+                "type": "department",
+                "active": true,
+                "created": "2022-07-01T09:42:13Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 925,
+                "name": "Zoommachine PG",
+                "type": "department",
+                "active": true,
+                "created": "2025-07-03T14:10:09Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 609,
+                "name": "Zoommachine groot",
+                "type": "department",
+                "active": true,
+                "created": "2021-02-01T13:27:40Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 262,
+                "name": "Roll-ups",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:43:51Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 488,
+                "name": "Naaimachine 1",
+                "type": "department",
+                "active": true,
+                "created": "2020-02-07T13:15:14Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 737,
+                "name": "Inpak Groot 4",
+                "type": "department",
+                "active": false,
+                "created": "2022-06-14T10:38:28Z",
+                "modified": "2025-06-19T12:21:59Z",
+                "costCenterId": null
+              },
+              {
+                "id": 736,
+                "name": "Binning",
+                "type": "department",
+                "active": true,
+                "created": "2022-06-08T09:55:19Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 258,
+                "name": "Inpak 1",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:43:28Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 756,
+                "name": "Inpak groot 2",
+                "type": "department",
+                "active": true,
+                "created": "2022-08-25T08:31:51Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 260,
+                "name": "Inpak 3",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:43:38Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 525,
+                "name": "Zeilmakerij Ploegleiding",
+                "type": "department",
+                "active": true,
+                "created": "2020-06-17T15:12:06Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 757,
+                "name": "Zeilmakerij Lasmachine",
+                "type": "department",
+                "active": true,
+                "created": "2022-08-25T08:32:39Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 758,
+                "name": "Zeilmakerij Ringmachine",
+                "type": "department",
+                "active": true,
+                "created": "2022-08-25T08:33:13Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 760,
+                "name": "Zeilmakerij Peesmachine",
+                "type": "department",
+                "active": true,
+                "created": "2022-08-25T08:34:14Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 759,
+                "name": "Zeilmakerij Stikmachine 1",
+                "type": "department",
+                "active": true,
+                "created": "2022-08-25T08:33:43Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 667,
+                "name": "Zeilmakerij Stikmachine 2",
+                "type": "department",
+                "active": true,
+                "created": "2021-10-15T08:32:34Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 876,
+                "name": "Zeilmakerij Zoom",
+                "type": "department",
+                "active": true,
+                "created": "2024-05-29T09:28:55Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 877,
+                "name": "Zeilmakerij Ring",
+                "type": "department",
+                "active": true,
+                "created": "2024-05-29T09:29:40Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 738,
+                "name": "Opleiding",
+                "type": "department",
+                "active": true,
+                "created": "2022-06-14T10:39:10Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 486,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-02-07T13:14:57Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 252,
+                "name": "Overige",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:43:03Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 888,
+                "name": "Lean",
+                "type": "department",
+                "active": true,
+                "created": "2024-07-30T12:36:38Z",
+                "modified": "2025-09-02T06:44:40Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 933,
+            "name": "Zeilmakerij",
+            "type": "department_group",
+            "active": true,
+            "created": "2025-09-02T06:44:36Z",
+            "modified": "2025-09-02T06:57:11Z",
+            "departments": [
+              {
+                "id": 934,
+                "name": "Ploegleider",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-02T06:44:36Z",
+                "modified": "2025-09-02T11:39:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 940,
+                "name": "Zoommachine 1",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-02T06:44:38Z",
+                "modified": "2025-09-02T11:39:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 935,
+                "name": "Zoommachine 2",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-02T06:44:36Z",
+                "modified": "2025-09-02T11:39:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 939,
+                "name": "Ringmachine 1",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-02T06:44:37Z",
+                "modified": "2025-09-02T11:39:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 936,
+                "name": "Ringmachine 2",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-02T06:44:36Z",
+                "modified": "2025-09-02T11:39:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 944,
+                "name": "Lasmachine",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-02T11:39:21Z",
+                "modified": "2025-09-02T11:39:21Z",
+                "costCenterId": null
+              },
+              {
+                "id": 937,
+                "name": "Stikmachine",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-02T06:44:37Z",
+                "modified": "2025-09-02T11:39:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 938,
+                "name": "Peesmachine",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-02T06:44:37Z",
+                "modified": "2025-09-02T11:39:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 941,
+                "name": "Naaimachine",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-02T06:44:38Z",
+                "modified": "2025-09-02T11:39:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 943,
+                "name": "Inpakker",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-02T11:36:28Z",
+                "modified": "2025-09-02T11:39:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 942,
+                "name": "Opleiding",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-02T06:44:38Z",
+                "modified": "2025-09-02T11:39:22Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 870,
+            "name": "Overig",
+            "type": "department_group",
+            "active": true,
+            "created": "2024-04-30T14:17:28Z",
+            "modified": "2025-09-02T06:57:11Z",
+            "departments": [
+              {
+                "id": 871,
+                "name": "Verhuizing - Huis spanjaarden",
+                "type": "department",
+                "active": true,
+                "created": "2024-04-30T14:17:28Z",
+                "modified": "2024-08-08T08:10:04Z",
+                "costCenterId": null
+              },
+              {
+                "id": 872,
+                "name": "Reserve Fulfillment",
+                "type": "department",
+                "active": true,
+                "created": "2024-04-30T14:17:28Z",
+                "modified": "2024-04-30T14:17:28Z",
+                "costCenterId": null
+              },
+              {
+                "id": 873,
+                "name": "Reserve Folie",
+                "type": "department",
+                "active": true,
+                "created": "2024-04-30T14:17:28Z",
+                "modified": "2024-04-30T14:17:28Z",
+                "costCenterId": null
+              },
+              {
+                "id": 874,
+                "name": "Reserve UV",
+                "type": "department",
+                "active": true,
+                "created": "2024-04-30T14:17:28Z",
+                "modified": "2024-04-30T14:17:28Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 714,
+            "name": "Canvas",
+            "type": "department_group",
+            "active": true,
+            "created": "2022-02-10T10:57:57Z",
+            "modified": "2025-09-02T06:57:11Z",
+            "departments": [
+              {
+                "id": 673,
+                "name": "Canvas handmatig 1",
+                "type": "department",
+                "active": true,
+                "created": "2021-10-22T11:19:55Z",
+                "modified": "2024-01-05T08:45:07Z",
+                "costCenterId": null
+              },
+              {
+                "id": 844,
+                "name": "Canvas handmatig 2",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-05T08:45:07Z",
+                "modified": "2024-01-05T08:45:07Z",
+                "costCenterId": null
+              },
+              {
+                "id": 675,
+                "name": "Canvas Fastframe",
+                "type": "department",
+                "active": true,
+                "created": "2021-10-22T11:20:23Z",
+                "modified": "2024-01-05T08:45:07Z",
+                "costCenterId": null
+              },
+              {
+                "id": 677,
+                "name": "Inpak",
+                "type": "department",
+                "active": true,
+                "created": "2021-10-22T11:22:07Z",
+                "modified": "2024-01-05T08:45:07Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 909,
+            "name": "UV - DE",
+            "type": "department_group",
+            "active": true,
+            "created": "2025-05-14T08:08:33Z",
+            "modified": "2025-09-02T06:57:11Z",
+            "departments": [
+              {
+                "id": 910,
+                "name": "Ploegleider",
+                "type": "department",
+                "active": true,
+                "created": "2025-05-14T08:08:33Z",
+                "modified": "2025-05-14T08:08:33Z",
+                "costCenterId": null
+              },
+              {
+                "id": 911,
+                "name": "Printen",
+                "type": "department",
+                "active": true,
+                "created": "2025-05-14T08:08:34Z",
+                "modified": "2025-05-14T08:08:34Z",
+                "costCenterId": null
+              },
+              {
+                "id": 912,
+                "name": "Snijden",
+                "type": "department",
+                "active": true,
+                "created": "2025-05-14T08:08:35Z",
+                "modified": "2025-05-14T08:08:35Z",
+                "costCenterId": null
+              },
+              {
+                "id": 913,
+                "name": "Afwerking",
+                "type": "department",
+                "active": true,
+                "created": "2025-05-14T08:08:36Z",
+                "modified": "2025-05-14T08:08:36Z",
+                "costCenterId": null
+              },
+              {
+                "id": 914,
+                "name": "Inpak",
+                "type": "department",
+                "active": true,
+                "created": "2025-05-14T08:08:37Z",
+                "modified": "2025-05-14T08:08:37Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 945,
+            "name": "Sign Again",
+            "type": "department_group",
+            "active": true,
+            "created": "2025-09-11T10:40:58Z",
+            "modified": "2025-09-11T10:40:58Z",
+            "departments": [
+              {
+                "id": 948,
+                "name": "Ploegleider",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-11T10:40:59Z",
+                "modified": "2025-09-11T10:40:59Z",
+                "costCenterId": null
+              },
+              {
+                "id": 947,
+                "name": "Operator",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-11T10:40:59Z",
+                "modified": "2025-09-11T10:40:59Z",
+                "costCenterId": null
+              },
+              {
+                "id": 946,
+                "name": "Productiemedewerker",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-11T10:40:58Z",
+                "modified": "2025-09-11T10:40:58Z",
+                "costCenterId": null
+              },
+              {
+                "id": 949,
+                "name": "Opleiding",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-11T10:40:59Z",
+                "modified": "2025-09-11T10:40:59Z",
+                "costCenterId": null
+              },
+              {
+                "id": 950,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2025-09-11T10:41:00Z",
+                "modified": "2025-09-11T10:41:00Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          }
+        ]
+      },
+      {
+        "id": 808,
+        "name": "Fulfillment",
+        "type": "department_group",
+        "active": true,
+        "created": "2022-11-22T12:44:47Z",
+        "modified": "2023-02-02T13:10:54Z",
+        "departments": [],
+        "costCenterId": null,
+        "departmentGroups": [
+          {
+            "id": 186,
+            "name": "Fulfillment",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-12-20T14:33:43Z",
+            "modified": "2023-02-02T13:11:03Z",
+            "departments": [
+              {
+                "id": 366,
+                "name": "Lijnmanager",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:29:12Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 629,
+                "name": "Ploegleiding",
+                "type": "department",
+                "active": true,
+                "created": "2021-03-08T09:05:02Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 671,
+                "name": "Aanvoerder",
+                "type": "department",
+                "active": true,
+                "created": "2021-10-22T11:19:48Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 679,
+                "name": "Panotec 2 line 2",
+                "type": "department",
+                "active": true,
+                "created": "2021-10-22T11:22:21Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 789,
+                "name": "Inpak line 2.1",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-22T07:49:38Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 793,
+                "name": "Inpak line 2.2",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-22T07:52:54Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 797,
+                "name": "Inpak line 2.3",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-22T07:56:22Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 635,
+                "name": "Aanmelden line 2",
+                "type": "department",
+                "active": true,
+                "created": "2021-05-21T08:13:16Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 362,
+                "name": "Panotec 1 line 3/4",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:28:57Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 792,
+                "name": "Inpak line 3.1",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-22T07:52:13Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 790,
+                "name": "Inpak line 3.2",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-22T07:50:26Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 798,
+                "name": "Inpak line 3.3",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-22T07:56:55Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 360,
+                "name": "Inpak line 4.1 groot",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:28:48Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 795,
+                "name": "Inpak line 4.2 groot",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-22T07:54:30Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 794,
+                "name": "Inpak line 4.3 groot",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-22T07:53:54Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 791,
+                "name": "Inpak line 4.4 groot",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-22T07:51:37Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 625,
+                "name": "Inpak line 4.5 groot",
+                "type": "department",
+                "active": true,
+                "created": "2021-03-05T11:41:35Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 570,
+                "name": "Aanvoer CMC 1 line 1/2",
+                "type": "department",
+                "active": true,
+                "created": "2020-09-29T13:57:48Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 568,
+                "name": "Aanvoer CMC 2 line 1/2",
+                "type": "department",
+                "active": true,
+                "created": "2020-09-29T13:57:48Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 572,
+                "name": "Operator CMC line 1",
+                "type": "department",
+                "active": true,
+                "created": "2020-09-29T13:57:48Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 456,
+                "name": "Aanmelden line 3/4",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-31T14:50:06Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 843,
+                "name": "Aanmelden ONB",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-05T08:44:02Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 627,
+                "name": "Kardex 1",
+                "type": "department",
+                "active": true,
+                "created": "2021-03-05T11:42:37Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 730,
+                "name": "Kardex 2",
+                "type": "department",
+                "active": true,
+                "created": "2022-06-08T09:55:15Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 665,
+                "name": "Voorbereiding",
+                "type": "department",
+                "active": true,
+                "created": "2021-10-01T11:29:17Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 508,
+                "name": "Picking zone",
+                "type": "department",
+                "active": true,
+                "created": "2020-03-03T14:27:18Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 645,
+                "name": "Projecten / Assembleren 1",
+                "type": "department",
+                "active": true,
+                "created": "2021-06-21T13:38:56Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 611,
+                "name": "Projecten / Assembleren 2",
+                "type": "department",
+                "active": true,
+                "created": "2021-02-01T13:28:44Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 661,
+                "name": "Afhaalbalie",
+                "type": "department",
+                "active": true,
+                "created": "2021-08-25T11:16:57Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 356,
+                "name": "Intern transport & schoonmaak",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:28:29Z",
+                "modified": "2025-03-26T09:52:57Z",
+                "costCenterId": null
+              },
+              {
+                "id": 796,
+                "name": "Opleiding",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-22T07:55:16Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 723,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2022-04-19T08:39:40Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 681,
+                "name": "Overige",
+                "type": "department",
+                "active": true,
+                "created": "2021-10-22T11:22:41Z",
+                "modified": "2024-01-05T08:44:02Z",
+                "costCenterId": null
+              },
+              {
+                "id": 889,
+                "name": "Lean",
+                "type": "department",
+                "active": true,
+                "created": "2024-07-30T12:36:38Z",
+                "modified": "2024-07-30T12:36:38Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 190,
+            "name": "Supply",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-12-20T14:34:01Z",
+            "modified": "2023-02-02T13:11:03Z",
+            "departments": [
+              {
+                "id": 806,
+                "name": "Manager Categories",
+                "type": "department",
+                "active": true,
+                "created": "2022-11-22T11:04:33Z",
+                "modified": "2024-07-05T08:21:47Z",
+                "costCenterId": null
+              },
+              {
+                "id": 617,
+                "name": "Opleiding",
+                "type": "department",
+                "active": true,
+                "created": "2021-02-01T13:29:33Z",
+                "modified": "2024-07-05T08:21:47Z",
+                "costCenterId": null
+              },
+              {
+                "id": 386,
+                "name": "Assistent manager",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:30:44Z",
+                "modified": "2024-07-05T08:21:47Z",
+                "costCenterId": null
+              },
+              {
+                "id": 384,
+                "name": "Heftruckchauffeur",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:30:35Z",
+                "modified": "2024-07-05T08:21:47Z",
+                "costCenterId": null
+              },
+              {
+                "id": 880,
+                "name": "Magazijnmedewerker",
+                "type": "department",
+                "active": true,
+                "created": "2024-07-05T08:21:47Z",
+                "modified": "2024-07-05T08:21:47Z",
+                "costCenterId": null
+              },
+              {
+                "id": 382,
+                "name": "Medewerker voorraadbeheer",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:30:27Z",
+                "modified": "2024-07-05T08:21:47Z",
+                "costCenterId": null
+              },
+              {
+                "id": 400,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T14:28:58Z",
+                "modified": "2024-07-05T08:21:47Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          }
+        ]
+      },
+      {
+        "id": 809,
+        "name": "Logistiek",
+        "type": "department_group",
+        "active": true,
+        "created": "2022-11-22T12:46:41Z",
+        "modified": "2023-11-14T15:28:42Z",
+        "departments": [],
+        "costCenterId": null,
+        "departmentGroups": [
+          {
+            "id": 615,
+            "name": "Logistiekmanagement",
+            "type": "department_group",
+            "active": true,
+            "created": "2021-02-01T13:29:14Z",
+            "modified": "2023-11-14T15:58:11Z",
+            "departments": [
+              {
+                "id": 830,
+                "name": "Logistiek Manager",
+                "type": "department",
+                "active": true,
+                "created": "2023-11-14T15:58:11Z",
+                "modified": "2023-11-14T15:58:11Z",
+                "costCenterId": null
+              },
+              {
+                "id": 831,
+                "name": "Logistiek Engineer",
+                "type": "department",
+                "active": true,
+                "created": "2023-11-14T16:00:32Z",
+                "modified": "2023-11-14T16:00:32Z",
+                "costCenterId": null
+              },
+              {
+                "id": 902,
+                "name": "Lijnmanager Fulfillment",
+                "type": "department",
+                "active": true,
+                "created": "2024-12-10T07:37:50Z",
+                "modified": "2024-12-10T07:37:50Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 188,
+            "name": "ONB",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-12-20T14:33:52Z",
+            "modified": "2023-11-14T15:34:56Z",
+            "departments": [
+              {
+                "id": 597,
+                "name": "Transportmanager",
+                "type": "department",
+                "active": true,
+                "created": "2021-01-15T10:12:29Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 380,
+                "name": "Assistent manager",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:30:15Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 716,
+                "name": "CE-Chauffeur Dokkum",
+                "type": "department",
+                "active": true,
+                "created": "2022-02-25T13:53:18Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 699,
+                "name": "Senior Bezorger Tilburg",
+                "type": "department",
+                "active": true,
+                "created": "2021-10-27T09:51:17Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 697,
+                "name": "Senior Bezorger Dokkum",
+                "type": "department",
+                "active": true,
+                "created": "2021-10-27T09:50:43Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 695,
+                "name": "Senior Bezorger Apeldoorn",
+                "type": "department",
+                "active": true,
+                "created": "2021-10-27T09:50:21Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 693,
+                "name": "Senior Bezorger Aalsmeer",
+                "type": "department",
+                "active": true,
+                "created": "2021-10-27T09:49:50Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 852,
+                "name": "Senior Bezorger Roermond",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-23T12:45:44Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 861,
+                "name": "Senior Bezorger Dordrecht",
+                "type": "department",
+                "active": true,
+                "created": "2024-04-15T13:10:42Z",
+                "modified": "2024-04-15T13:10:42Z",
+                "costCenterId": null
+              },
+              {
+                "id": 378,
+                "name": "Plannen",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:30:07Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 762,
+                "name": "Customer Succes ONB",
+                "type": "department",
+                "active": true,
+                "created": "2022-08-25T08:35:58Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 376,
+                "name": "Sorteren",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:30:00Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 374,
+                "name": "Bezorger Tilburg",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:29:52Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 372,
+                "name": "Bezorger Aalsmeer",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:29:43Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 462,
+                "name": "Bezorger Dokkum",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-31T15:47:14Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 631,
+                "name": "Bezorger Apeldoorn",
+                "type": "department",
+                "active": true,
+                "created": "2021-05-04T09:37:25Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 851,
+                "name": "Bezorger Roermond",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-23T12:45:43Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 860,
+                "name": "Bezorger Dordrecht",
+                "type": "department",
+                "active": true,
+                "created": "2024-04-15T13:10:42Z",
+                "modified": "2024-04-15T13:10:42Z",
+                "costCenterId": null
+              },
+              {
+                "id": 370,
+                "name": "Depothouder Aalsmeer",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:29:34Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 368,
+                "name": "Depothouder Tilburg",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:29:24Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 633,
+                "name": "Depothouder Apeldoorn",
+                "type": "department",
+                "active": true,
+                "created": "2021-05-04T09:37:57Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 853,
+                "name": "Depothouder Roermond",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-23T12:45:44Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 863,
+                "name": "Depothouder Dordrecht",
+                "type": "department",
+                "active": true,
+                "created": "2024-04-15T13:10:42Z",
+                "modified": "2024-04-15T13:10:42Z",
+                "costCenterId": null
+              },
+              {
+                "id": 613,
+                "name": "Opleiding",
+                "type": "department",
+                "active": true,
+                "created": "2021-02-01T13:29:08Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 717,
+                "name": "Sorteermedewerker Aalsmeer",
+                "type": "department",
+                "active": true,
+                "created": "2022-03-07T08:51:40Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 718,
+                "name": "Sorteermedewerker Dokkum",
+                "type": "department",
+                "active": true,
+                "created": "2022-03-07T08:51:40Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 719,
+                "name": "Sorteermedewerker Apeldoorn",
+                "type": "department",
+                "active": true,
+                "created": "2022-03-07T08:51:40Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 720,
+                "name": "Sorteermedewerker Tilburg",
+                "type": "department",
+                "active": true,
+                "created": "2022-03-07T08:51:40Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 854,
+                "name": "Sorteermedewerker Roermond",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-23T12:45:44Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 862,
+                "name": "Sorteermedewerker Dordrecht",
+                "type": "department",
+                "active": true,
+                "created": "2024-04-15T13:10:42Z",
+                "modified": "2024-04-15T13:10:42Z",
+                "costCenterId": null
+              },
+              {
+                "id": 402,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T14:29:05Z",
+                "modified": "2024-04-15T13:10:43Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          }
+        ]
+      },
+      {
+        "id": 396,
+        "name": "Kantoor",
+        "type": "department_group",
+        "active": true,
+        "created": "2019-12-23T09:29:29Z",
+        "modified": "2024-01-05T14:52:27Z",
+        "departments": [
+          {
+            "id": 516,
+            "name": "Flexpool CS",
+            "type": "department",
+            "active": false,
+            "created": "2020-03-09T11:58:40Z",
+            "modified": "2024-01-05T11:46:58Z",
+            "costCenterId": null
+          }
+        ],
+        "costCenterId": null,
+        "departmentGroups": [
+          {
+            "id": 894,
+            "name": "MT -  Team",
+            "type": "department_group",
+            "active": true,
+            "created": "2024-10-30T12:44:22Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 895,
+                "name": "CEO",
+                "type": "department",
+                "active": true,
+                "created": "2024-10-30T12:44:22Z",
+                "modified": "2024-10-30T12:44:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 896,
+                "name": "CFO",
+                "type": "department",
+                "active": true,
+                "created": "2024-10-30T12:44:22Z",
+                "modified": "2024-10-30T12:44:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 897,
+                "name": "CTO",
+                "type": "department",
+                "active": true,
+                "created": "2024-10-30T12:44:23Z",
+                "modified": "2024-10-30T12:44:23Z",
+                "costCenterId": null
+              },
+              {
+                "id": 898,
+                "name": "CPO",
+                "type": "department",
+                "active": true,
+                "created": "2024-10-30T12:44:23Z",
+                "modified": "2024-10-30T12:44:23Z",
+                "costCenterId": null
+              },
+              {
+                "id": 899,
+                "name": "CCO / Commercieel Directeur",
+                "type": "department",
+                "active": true,
+                "created": "2024-10-30T12:44:23Z",
+                "modified": "2024-10-30T12:44:23Z",
+                "costCenterId": null
+              },
+              {
+                "id": 904,
+                "name": "COO",
+                "type": "department",
+                "active": true,
+                "created": "2025-01-28T14:36:53Z",
+                "modified": "2025-01-28T14:36:53Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 16,
+            "name": "Productiemanagement",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-02T11:13:09Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 804,
+                "name": "Operationeel Manager",
+                "type": "department",
+                "active": true,
+                "created": "2022-11-16T09:34:52Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 24,
+                "name": "Productiemanager",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 857,
+                "name": "Assistent productiemanager",
+                "type": "department",
+                "active": true,
+                "created": "2024-03-08T09:09:15Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 801,
+                "name": "Planningscoördinator",
+                "type": "department",
+                "active": true,
+                "created": "2022-11-02T11:36:31Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 641,
+                "name": "Personeelsplanner",
+                "type": "department",
+                "active": true,
+                "created": "2021-06-09T11:21:06Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 687,
+                "name": "Productieplanner (Plaat)",
+                "type": "department",
+                "active": true,
+                "created": "2021-10-25T14:29:44Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 729,
+                "name": "Productieplanner (Subtex)",
+                "type": "department",
+                "active": true,
+                "created": "2022-06-08T09:55:14Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 725,
+                "name": "Productieplanner (Folie)",
+                "type": "department",
+                "active": true,
+                "created": "2022-05-12T14:39:29Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 755,
+                "name": "Productieplanner (Label-Papier)",
+                "type": "department",
+                "active": true,
+                "created": "2022-08-18T11:49:11Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 476,
+                "name": "Productieplanner (UV)",
+                "type": "department",
+                "active": true,
+                "created": "2020-02-03T09:15:17Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 901,
+                "name": "Planning Controller",
+                "type": "department",
+                "active": true,
+                "created": "2024-11-27T09:08:44Z",
+                "modified": "2024-11-27T09:08:44Z",
+                "costCenterId": null
+              },
+              {
+                "id": 703,
+                "name": "Procescoördinator productieplanning",
+                "type": "department",
+                "active": true,
+                "created": "2021-11-09T09:54:03Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 802,
+                "name": "Operations Controller",
+                "type": "department",
+                "active": true,
+                "created": "2022-11-07T14:52:02Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 2,
+                "name": "Kwaliteitsbeheer",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 502,
+                "name": "Coördinator Arbo & Veiligheid",
+                "type": "department",
+                "active": true,
+                "created": "2020-02-27T09:06:58Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 254,
+                "name": "Werkvoorbereiding projecten",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T14:43:13Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 749,
+                "name": "Opleiding",
+                "type": "department",
+                "active": true,
+                "created": "2022-07-25T11:18:33Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 643,
+                "name": "Assistent Productieplanner",
+                "type": "department",
+                "active": true,
+                "created": "2021-06-21T13:37:04Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 715,
+                "name": "Werkvoorbereider (weekend)",
+                "type": "department",
+                "active": true,
+                "created": "2022-02-16T14:05:47Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 500,
+                "name": "Assistent Productie Weekend",
+                "type": "department",
+                "active": true,
+                "created": "2020-02-27T09:06:25Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 422,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T15:38:58Z",
+                "modified": "2024-11-27T09:08:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 905,
+                "name": "Production supervisor",
+                "type": "department",
+                "active": true,
+                "created": "2025-03-27T14:51:48Z",
+                "modified": "2025-03-27T14:51:48Z",
+                "costCenterId": null
+              },
+              {
+                "id": 921,
+                "name": "Pricing specialist",
+                "type": "department",
+                "active": true,
+                "created": "2025-06-18T11:22:47Z",
+                "modified": "2025-06-18T11:22:47Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 836,
+            "name": "Salesmanagement",
+            "type": "department_group",
+            "active": true,
+            "created": "2023-12-27T10:49:12Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 837,
+                "name": "Commercieel Manager",
+                "type": "department",
+                "active": true,
+                "created": "2023-12-27T10:49:12Z",
+                "modified": "2023-12-27T10:49:12Z",
+                "costCenterId": null
+              },
+              {
+                "id": 845,
+                "name": "Manager Sales",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-05T10:45:52Z",
+                "modified": "2024-01-05T10:45:52Z",
+                "costCenterId": null
+              },
+              {
+                "id": 846,
+                "name": "Manager Services",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-05T10:45:52Z",
+                "modified": "2024-01-05T10:45:52Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 825,
+            "name": "Drukkerijen",
+            "type": "department_group",
+            "active": true,
+            "created": "2023-10-23T07:18:46Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 826,
+                "name": "Senior Customer Relationship Manager",
+                "type": "department",
+                "active": true,
+                "created": "2023-10-23T07:20:40Z",
+                "modified": "2024-04-25T09:49:09Z",
+                "costCenterId": null
+              },
+              {
+                "id": 827,
+                "name": "Customer Relationship Manager",
+                "type": "department",
+                "active": true,
+                "created": "2023-10-23T07:21:56Z",
+                "modified": "2024-04-25T09:49:09Z",
+                "costCenterId": null
+              },
+              {
+                "id": 866,
+                "name": "Junior Customer relationship manager",
+                "type": "department",
+                "active": true,
+                "created": "2024-04-25T09:49:09Z",
+                "modified": "2024-05-22T13:45:55Z",
+                "costCenterId": null
+              },
+              {
+                "id": 828,
+                "name": "Senior Customer Success Medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2023-10-23T07:23:23Z",
+                "modified": "2024-04-25T09:49:09Z",
+                "costCenterId": null
+              },
+              {
+                "id": 829,
+                "name": "Customer Success Medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2023-10-23T07:24:28Z",
+                "modified": "2024-04-25T09:49:09Z",
+                "costCenterId": null
+              },
+              {
+                "id": 920,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2025-06-10T13:16:01Z",
+                "modified": "2025-06-10T13:16:01Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 162,
+            "name": "Beurs & Event",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-09T14:48:01Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 142,
+                "name": "Teamleider",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-09T14:48:01Z",
+                "modified": "2025-05-26T08:33:51Z",
+                "costCenterId": null
+              },
+              {
+                "id": 138,
+                "name": "Customer Relationship Manager",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-09T14:48:01Z",
+                "modified": "2025-05-26T08:33:51Z",
+                "costCenterId": null
+              },
+              {
+                "id": 72,
+                "name": "Accountmanager",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2025-05-26T08:33:51Z",
+                "costCenterId": null
+              },
+              {
+                "id": 918,
+                "name": "Senior Customer Succes Medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2025-05-26T08:33:50Z",
+                "modified": "2025-05-26T08:33:50Z",
+                "costCenterId": null
+              },
+              {
+                "id": 74,
+                "name": "Customer Succes Medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2025-05-26T08:33:51Z",
+                "costCenterId": null
+              },
+              {
+                "id": 70,
+                "name": "Projectbegeleider",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2025-05-26T08:33:51Z",
+                "costCenterId": null
+              },
+              {
+                "id": 438,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T15:42:31Z",
+                "modified": "2025-05-26T08:33:51Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 554,
+            "name": "Signmakers",
+            "type": "department_group",
+            "active": true,
+            "created": "2020-09-15T14:42:31Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 556,
+                "name": "Teamleider",
+                "type": "department",
+                "active": false,
+                "created": "2020-09-15T14:42:31Z",
+                "modified": "2024-01-05T10:45:52Z",
+                "costCenterId": null
+              },
+              {
+                "id": 558,
+                "name": "Customer Relationship Manager",
+                "type": "department",
+                "active": true,
+                "created": "2020-09-15T14:42:31Z",
+                "modified": "2025-05-26T08:33:51Z",
+                "costCenterId": null
+              },
+              {
+                "id": 865,
+                "name": "Junior Customer relationship manager",
+                "type": "department",
+                "active": true,
+                "created": "2024-04-25T09:20:09Z",
+                "modified": "2025-05-26T08:33:51Z",
+                "costCenterId": null
+              },
+              {
+                "id": 560,
+                "name": "Accountmanager",
+                "type": "department",
+                "active": true,
+                "created": "2020-09-15T14:42:31Z",
+                "modified": "2025-05-26T08:33:51Z",
+                "costCenterId": null
+              },
+              {
+                "id": 919,
+                "name": "Senior Customer Succes Medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2025-05-26T08:33:51Z",
+                "modified": "2025-05-26T08:33:51Z",
+                "costCenterId": null
+              },
+              {
+                "id": 562,
+                "name": "Customer Succes Medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2020-09-15T14:42:31Z",
+                "modified": "2025-05-26T08:33:51Z",
+                "costCenterId": null
+              },
+              {
+                "id": 564,
+                "name": "Projectbegeleider",
+                "type": "department",
+                "active": true,
+                "created": "2020-09-15T14:42:31Z",
+                "modified": "2025-05-26T08:33:51Z",
+                "costCenterId": null
+              },
+              {
+                "id": 566,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-09-15T14:42:31Z",
+                "modified": "2025-05-26T08:33:51Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 580,
+            "name": "API/België",
+            "type": "department_group",
+            "active": true,
+            "created": "2020-11-24T10:52:08Z",
+            "modified": "2025-02-21T08:33:04Z",
+            "departments": [
+              {
+                "id": 582,
+                "name": "Teamleider",
+                "type": "department",
+                "active": false,
+                "created": "2020-11-24T10:52:08Z",
+                "modified": "2024-01-05T10:45:52Z",
+                "costCenterId": null
+              },
+              {
+                "id": 584,
+                "name": "Customer Relationship Manager",
+                "type": "department",
+                "active": true,
+                "created": "2020-11-24T10:52:08Z",
+                "modified": "2025-05-26T08:33:07Z",
+                "costCenterId": null
+              },
+              {
+                "id": 586,
+                "name": "Accountmanager",
+                "type": "department",
+                "active": true,
+                "created": "2020-11-24T10:52:08Z",
+                "modified": "2025-05-26T08:33:07Z",
+                "costCenterId": null
+              },
+              {
+                "id": 917,
+                "name": "Senior Customer succes medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2025-05-26T08:33:06Z",
+                "modified": "2025-08-14T06:18:59Z",
+                "costCenterId": null
+              },
+              {
+                "id": 588,
+                "name": "Customer Succes Medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2020-11-24T10:52:08Z",
+                "modified": "2025-05-26T08:33:07Z",
+                "costCenterId": null
+              },
+              {
+                "id": 590,
+                "name": "Projectbegeleider",
+                "type": "department",
+                "active": true,
+                "created": "2020-11-24T10:52:08Z",
+                "modified": "2025-05-26T08:33:07Z",
+                "costCenterId": null
+              },
+              {
+                "id": 592,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-11-24T10:52:08Z",
+                "modified": "2025-05-26T08:33:07Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 158,
+            "name": "Reclamebureaus",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-09T14:48:01Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 90,
+                "name": "Manager Custom Succes",
+                "type": "department",
+                "active": false,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2024-01-05T14:51:26Z",
+                "costCenterId": null
+              },
+              {
+                "id": 478,
+                "name": "Customer Relationship Manager",
+                "type": "department",
+                "active": true,
+                "created": "2020-02-03T09:15:59Z",
+                "modified": "2025-05-26T08:33:06Z",
+                "costCenterId": null
+              },
+              {
+                "id": 30,
+                "name": "Quality Management",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2025-05-26T08:33:06Z",
+                "costCenterId": null
+              },
+              {
+                "id": 104,
+                "name": "Teamleider",
+                "type": "department",
+                "active": false,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2024-01-05T14:51:26Z",
+                "costCenterId": null
+              },
+              {
+                "id": 916,
+                "name": "Senior Customer Succes Medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2025-05-26T08:33:06Z",
+                "modified": "2025-05-26T08:33:06Z",
+                "costCenterId": null
+              },
+              {
+                "id": 116,
+                "name": "Customer Succes Medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2025-05-26T08:33:06Z",
+                "costCenterId": null
+              },
+              {
+                "id": 514,
+                "name": "Consginatiedienst",
+                "type": "department",
+                "active": true,
+                "created": "2020-03-04T14:22:09Z",
+                "modified": "2025-05-26T08:33:06Z",
+                "costCenterId": null
+              },
+              {
+                "id": 448,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-31T14:47:27Z",
+                "modified": "2025-05-26T08:33:07Z",
+                "costCenterId": null
+              },
+              {
+                "id": 523,
+                "name": "Medewerker Flexpool",
+                "type": "department",
+                "active": false,
+                "created": "2020-06-11T09:02:40Z",
+                "modified": "2023-12-27T10:53:33Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 834,
+            "name": "Customer Succes",
+            "type": "department_group",
+            "active": true,
+            "created": "2023-12-27T10:49:12Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 835,
+                "name": "Customer Succes Medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2023-12-27T10:49:12Z",
+                "modified": "2023-12-27T10:49:12Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 533,
+            "name": "Assortimentsteam",
+            "type": "department_group",
+            "active": true,
+            "created": "2020-07-22T14:21:45Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 535,
+                "name": "Manager Categories",
+                "type": "department",
+                "active": true,
+                "created": "2020-07-22T14:23:17Z",
+                "modified": "2024-05-02T08:20:00Z",
+                "costCenterId": null
+              },
+              {
+                "id": 875,
+                "name": "Productowner",
+                "type": "department",
+                "active": true,
+                "created": "2024-05-02T08:20:00Z",
+                "modified": "2024-05-02T08:20:00Z",
+                "costCenterId": null
+              },
+              {
+                "id": 539,
+                "name": "Assortimentsbeheerder",
+                "type": "department",
+                "active": true,
+                "created": "2020-07-22T14:23:17Z",
+                "modified": "2024-05-02T08:20:00Z",
+                "costCenterId": null
+              },
+              {
+                "id": 541,
+                "name": "Product Integratiespecialist",
+                "type": "department",
+                "active": true,
+                "created": "2020-07-22T14:23:17Z",
+                "modified": "2024-05-02T08:20:00Z",
+                "costCenterId": null
+              },
+              {
+                "id": 543,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-07-22T14:23:17Z",
+                "modified": "2024-05-02T08:20:00Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 52,
+            "name": "Data",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-02T11:13:09Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 711,
+                "name": "Teamlead Data",
+                "type": "department",
+                "active": true,
+                "created": "2022-01-11T07:28:48Z",
+                "modified": "2023-02-02T13:11:17Z",
+                "costCenterId": null
+              },
+              {
+                "id": 150,
+                "name": "Productowner Data",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-09T14:48:01Z",
+                "modified": "2023-02-02T13:11:17Z",
+                "costCenterId": null
+              },
+              {
+                "id": 148,
+                "name": "Junior Data Analist",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-09T14:48:01Z",
+                "modified": "2023-02-02T13:11:17Z",
+                "costCenterId": null
+              },
+              {
+                "id": 432,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T15:42:31Z",
+                "modified": "2023-02-02T13:11:18Z",
+                "costCenterId": null
+              },
+              {
+                "id": 803,
+                "name": "Data Analist",
+                "type": "department",
+                "active": true,
+                "created": "2022-11-11T08:33:17Z",
+                "modified": "2023-02-02T13:11:18Z",
+                "costCenterId": null
+              },
+              {
+                "id": 907,
+                "name": "Data Engineer",
+                "type": "department",
+                "active": true,
+                "created": "2025-03-31T10:44:25Z",
+                "modified": "2025-03-31T10:44:25Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 152,
+            "name": "Development",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-09T14:48:01Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 300,
+                "name": "Teamleider Development",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:20:18Z",
+                "modified": "2023-02-02T13:11:18Z",
+                "costCenterId": null
+              },
+              {
+                "id": 298,
+                "name": "Productowner P&L",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:20:07Z",
+                "modified": "2023-02-02T13:11:18Z",
+                "costCenterId": null
+              },
+              {
+                "id": 302,
+                "name": "Lead Developer",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:20:32Z",
+                "modified": "2023-02-02T13:11:18Z",
+                "costCenterId": null
+              },
+              {
+                "id": 310,
+                "name": "Software Architect",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:21:13Z",
+                "modified": "2023-02-02T13:11:18Z",
+                "costCenterId": null
+              },
+              {
+                "id": 314,
+                "name": "Software Tester",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:21:31Z",
+                "modified": "2023-02-02T13:11:18Z",
+                "costCenterId": null
+              },
+              {
+                "id": 308,
+                "name": "Ontwikkelaar services",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:21:05Z",
+                "modified": "2023-02-02T13:11:18Z",
+                "costCenterId": null
+              },
+              {
+                "id": 304,
+                "name": "Developer",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:20:46Z",
+                "modified": "2023-02-02T13:11:18Z",
+                "costCenterId": null
+              },
+              {
+                "id": 705,
+                "name": "Process Automation Developer",
+                "type": "department",
+                "active": true,
+                "created": "2021-11-10T10:58:22Z",
+                "modified": "2023-02-02T13:11:18Z",
+                "costCenterId": null
+              },
+              {
+                "id": 316,
+                "name": "Procesdeskundige",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:21:43Z",
+                "modified": "2023-02-02T13:11:18Z",
+                "costCenterId": null
+              },
+              {
+                "id": 318,
+                "name": "Junior Procesdeskundige",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:21:56Z",
+                "modified": "2023-02-02T13:11:19Z",
+                "costCenterId": null
+              },
+              {
+                "id": 446,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T15:46:03Z",
+                "modified": "2023-02-02T13:11:19Z",
+                "costCenterId": null
+              },
+              {
+                "id": 721,
+                "name": "Junior Developer",
+                "type": "department",
+                "active": true,
+                "created": "2022-03-21T12:44:26Z",
+                "modified": "2023-02-02T13:11:19Z",
+                "costCenterId": null
+              },
+              {
+                "id": 923,
+                "name": "Product Owner Development",
+                "type": "department",
+                "active": true,
+                "created": "2025-06-24T12:10:13Z",
+                "modified": "2025-06-24T12:10:13Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 166,
+            "name": "DTP",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-09T14:48:01Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 550,
+                "name": "Teammanager",
+                "type": "department",
+                "active": true,
+                "created": "2020-08-12T09:02:39Z",
+                "modified": "2024-01-05T10:47:08Z",
+                "costCenterId": null
+              },
+              {
+                "id": 86,
+                "name": "DTP medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:19Z",
+                "costCenterId": null
+              },
+              {
+                "id": 436,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T15:42:31Z",
+                "modified": "2023-02-02T13:11:19Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 76,
+            "name": "Finance",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-02T11:13:09Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 78,
+                "name": "Manager Finance & Control",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:19Z",
+                "costCenterId": null
+              },
+              {
+                "id": 80,
+                "name": "Controller",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:19Z",
+                "costCenterId": null
+              },
+              {
+                "id": 82,
+                "name": "Assistent Controller",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:19Z",
+                "costCenterId": null
+              },
+              {
+                "id": 84,
+                "name": "Medewerker Debiteurenbeheer",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:19Z",
+                "costCenterId": null
+              },
+              {
+                "id": 140,
+                "name": "Administratief medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-09T14:48:01Z",
+                "modified": "2023-02-02T13:11:19Z",
+                "costCenterId": null
+              },
+              {
+                "id": 430,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T15:42:31Z",
+                "modified": "2023-02-02T13:11:20Z",
+                "costCenterId": null
+              },
+              {
+                "id": 932,
+                "name": "Opleiding",
+                "type": "department",
+                "active": true,
+                "created": "2025-08-20T06:36:49Z",
+                "modified": "2025-08-20T06:36:49Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 108,
+            "name": "HR",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-02T11:13:09Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 817,
+                "name": "HR manager",
+                "type": "department",
+                "active": true,
+                "created": "2023-07-07T09:36:09Z",
+                "modified": "2023-07-12T10:24:51Z",
+                "costCenterId": null
+              },
+              {
+                "id": 818,
+                "name": "HR Businesspartner",
+                "type": "department",
+                "active": true,
+                "created": "2023-07-07T09:36:25Z",
+                "modified": "2023-07-12T10:23:55Z",
+                "costCenterId": null
+              },
+              {
+                "id": 529,
+                "name": "HR medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2020-07-03T11:46:55Z",
+                "modified": "2023-07-12T10:23:21Z",
+                "costCenterId": null
+              },
+              {
+                "id": 110,
+                "name": "HR Adviseur",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-07-12T10:24:29Z",
+                "costCenterId": null
+              },
+              {
+                "id": 44,
+                "name": "Junior HR adviseur",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-07-12T10:25:06Z",
+                "costCenterId": null
+              },
+              {
+                "id": 426,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T15:42:31Z",
+                "modified": "2023-07-07T09:36:40Z",
+                "costCenterId": null
+              },
+              {
+                "id": 847,
+                "name": "Medewerker interne communicatie",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-09T08:10:18Z",
+                "modified": "2024-01-09T08:10:18Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 164,
+            "name": "IT",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-09T14:48:01Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 811,
+                "name": "ICT Medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2022-12-12T10:07:07Z",
+                "modified": "2023-02-02T13:11:20Z",
+                "costCenterId": null
+              },
+              {
+                "id": 647,
+                "name": "Coördinator IT",
+                "type": "department",
+                "active": true,
+                "created": "2021-06-23T10:14:27Z",
+                "modified": "2023-02-02T13:11:20Z",
+                "costCenterId": null
+              },
+              {
+                "id": 144,
+                "name": "Teammanager IT",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-09T14:48:01Z",
+                "modified": "2023-02-02T13:11:20Z",
+                "costCenterId": null
+              },
+              {
+                "id": 146,
+                "name": "Junior ICT medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-09T14:48:01Z",
+                "modified": "2023-02-02T13:11:20Z",
+                "costCenterId": null
+              },
+              {
+                "id": 434,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T15:42:31Z",
+                "modified": "2023-02-02T13:11:20Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 40,
+            "name": "Keuken",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-02T11:13:09Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 122,
+                "name": "Kok",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:20Z",
+                "costCenterId": null
+              },
+              {
+                "id": 42,
+                "name": "Keukenhulp",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:21Z",
+                "costCenterId": null
+              },
+              {
+                "id": 424,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T15:39:29Z",
+                "modified": "2023-02-02T13:11:21Z",
+                "costCenterId": null
+              },
+              {
+                "id": 577,
+                "name": "Dokwurk",
+                "type": "department",
+                "active": true,
+                "created": "2020-10-30T13:41:06Z",
+                "modified": "2023-02-02T13:11:21Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 58,
+            "name": "Marketing",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-02T11:13:09Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 728,
+                "name": "Marketing medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2022-06-08T09:52:17Z",
+                "modified": "2023-02-02T13:11:21Z",
+                "costCenterId": null
+              },
+              {
+                "id": 707,
+                "name": "Employer Branding Specialist",
+                "type": "department",
+                "active": true,
+                "created": "2021-11-17T15:19:10Z",
+                "modified": "2023-02-02T13:11:21Z",
+                "costCenterId": null
+              },
+              {
+                "id": 639,
+                "name": "Senior Marketeer",
+                "type": "department",
+                "active": true,
+                "created": "2021-05-25T09:09:35Z",
+                "modified": "2023-02-02T13:11:21Z",
+                "costCenterId": null
+              },
+              {
+                "id": 637,
+                "name": "Fotograaf",
+                "type": "department",
+                "active": true,
+                "created": "2021-05-25T09:09:29Z",
+                "modified": "2023-02-02T13:11:21Z",
+                "costCenterId": null
+              },
+              {
+                "id": 132,
+                "name": "Marketing manager",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-09T14:48:01Z",
+                "modified": "2023-02-02T13:11:21Z",
+                "costCenterId": null
+              },
+              {
+                "id": 124,
+                "name": "Marketing Coördinator",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:21Z",
+                "costCenterId": null
+              },
+              {
+                "id": 34,
+                "name": "Content Marketeer",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:21Z",
+                "costCenterId": null
+              },
+              {
+                "id": 120,
+                "name": "Business consultant",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:21Z",
+                "costCenterId": null
+              },
+              {
+                "id": 36,
+                "name": "Brand designer",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:21Z",
+                "costCenterId": null
+              },
+              {
+                "id": 452,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-31T14:49:09Z",
+                "modified": "2023-02-02T13:11:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 659,
+                "name": "Coördinator Online Services",
+                "type": "department",
+                "active": true,
+                "created": "2021-08-23T15:28:12Z",
+                "modified": "2023-02-02T13:11:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 657,
+                "name": "Brand Manager",
+                "type": "department",
+                "active": true,
+                "created": "2021-08-23T15:28:05Z",
+                "modified": "2023-02-02T13:11:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 838,
+                "name": "Event Coördinator",
+                "type": "department",
+                "active": true,
+                "created": "2023-12-28T11:12:04Z",
+                "modified": "2023-12-28T11:12:04Z",
+                "costCenterId": null
+              },
+              {
+                "id": 848,
+                "name": "Marketing en Business Developer",
+                "type": "department",
+                "active": true,
+                "created": "2024-01-12T07:32:29Z",
+                "modified": "2024-01-12T07:32:29Z",
+                "costCenterId": null
+              },
+              {
+                "id": 821,
+                "name": "UX Designer",
+                "type": "department",
+                "active": true,
+                "created": "2023-10-19T08:38:08Z",
+                "modified": "2023-10-19T08:38:08Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 506,
+            "name": "Motiflow",
+            "type": "department_group",
+            "active": true,
+            "created": "2020-03-03T11:11:04Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 669,
+                "name": "Design Specialist",
+                "type": "department",
+                "active": true,
+                "created": "2021-10-18T07:57:38Z",
+                "modified": "2023-02-02T13:11:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 504,
+                "name": "Customer Care Medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2020-03-03T11:10:22Z",
+                "modified": "2023-02-02T13:11:22Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 160,
+            "name": "New Business",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-09T14:48:01Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 118,
+                "name": "Commercieel manager",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2024-01-05T14:52:27Z",
+                "costCenterId": null
+              },
+              {
+                "id": 92,
+                "name": "Teammanager",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2024-01-05T10:47:08Z",
+                "costCenterId": null
+              },
+              {
+                "id": 112,
+                "name": "Customer Succes Medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 48,
+                "name": "Accountmanager New Business",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 450,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-31T14:48:04Z",
+                "modified": "2023-02-02T13:11:22Z",
+                "costCenterId": null
+              },
+              {
+                "id": 813,
+                "name": "Customer Relationship Manager",
+                "type": "department",
+                "active": true,
+                "created": null,
+                "modified": "2023-11-09T08:24:55Z",
+                "costCenterId": null
+              },
+              {
+                "id": 814,
+                "name": "Junior Assortimentsbeheerder",
+                "type": "department",
+                "active": true,
+                "created": null,
+                "modified": "2023-11-09T08:47:31Z",
+                "costCenterId": null
+              },
+              {
+                "id": 815,
+                "name": "'-'",
+                "type": "department",
+                "active": true,
+                "created": null,
+                "modified": null,
+                "costCenterId": null
+              },
+              {
+                "id": 816,
+                "name": "'-'",
+                "type": "department",
+                "active": true,
+                "created": null,
+                "modified": null,
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 468,
+            "name": "Process Automation",
+            "type": "department_group",
+            "active": true,
+            "created": "2020-02-03T09:11:31Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 518,
+                "name": "Process Engineer",
+                "type": "department",
+                "active": true,
+                "created": "2020-03-09T11:58:56Z",
+                "modified": "2023-12-15T10:14:16Z",
+                "costCenterId": null
+              },
+              {
+                "id": 470,
+                "name": "Junior Process Engineer",
+                "type": "department",
+                "active": true,
+                "created": "2020-02-03T09:11:51Z",
+                "modified": "2023-12-15T10:14:16Z",
+                "costCenterId": null
+              },
+              {
+                "id": 879,
+                "name": "Overig",
+                "type": "department",
+                "active": true,
+                "created": "2024-07-04T07:25:14Z",
+                "modified": "2024-07-04T07:25:14Z",
+                "costCenterId": null
+              },
+              {
+                "id": 819,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2023-08-18T11:19:47Z",
+                "modified": "2023-08-18T11:19:47Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 64,
+            "name": "Receptie",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-02T11:13:09Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 102,
+                "name": "Balie",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:23Z",
+                "costCenterId": null
+              },
+              {
+                "id": 428,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T15:42:31Z",
+                "modified": "2023-02-02T13:11:23Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 466,
+            "name": "Secretariaat",
+            "type": "department_group",
+            "active": true,
+            "created": "2020-02-03T09:10:22Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 88,
+                "name": "Office Manager",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2025-07-15T10:50:31Z",
+                "costCenterId": null
+              },
+              {
+                "id": 878,
+                "name": "Management trainee",
+                "type": "department",
+                "active": true,
+                "created": "2024-07-03T13:49:03Z",
+                "modified": "2024-07-03T13:49:03Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 156,
+            "name": "TD & FACILITAIR",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-09T14:48:01Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 50,
+                "name": "Manager TD en Facilitair",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2024-07-19T12:56:44Z",
+                "costCenterId": null
+              },
+              {
+                "id": 288,
+                "name": "Teammanager Technische Dienst",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:19:17Z",
+                "modified": "2024-07-19T12:56:44Z",
+                "costCenterId": null
+              },
+              {
+                "id": 292,
+                "name": "Facilitair Coördinator Productie",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:19:37Z",
+                "modified": "2024-07-19T12:56:44Z",
+                "costCenterId": null
+              },
+              {
+                "id": 867,
+                "name": "Facilitair Coördinatoor Kantoor",
+                "type": "department",
+                "active": true,
+                "created": "2024-04-25T11:04:13Z",
+                "modified": "2024-07-19T12:56:44Z",
+                "costCenterId": null
+              },
+              {
+                "id": 290,
+                "name": "Technisch Specialist",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:19:28Z",
+                "modified": "2024-07-19T12:56:44Z",
+                "costCenterId": null
+              },
+              {
+                "id": 294,
+                "name": "Specialist Kleurbeheer",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:19:46Z",
+                "modified": "2024-07-19T12:56:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 512,
+                "name": "Consignatiedienst",
+                "type": "department",
+                "active": true,
+                "created": "2020-03-04T14:21:32Z",
+                "modified": "2024-07-19T12:56:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 444,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T15:46:03Z",
+                "modified": "2024-07-19T12:56:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 709,
+                "name": "Werkvoorbereider",
+                "type": "department",
+                "active": true,
+                "created": "2021-12-13T20:00:24Z",
+                "modified": "2024-07-19T12:56:45Z",
+                "costCenterId": null
+              },
+              {
+                "id": 722,
+                "name": "Kwaliteitsbeheer",
+                "type": "department",
+                "active": false,
+                "created": "2022-03-21T15:53:16Z",
+                "modified": "2025-06-10T10:32:26Z",
+                "costCenterId": null
+              },
+              {
+                "id": 724,
+                "name": "Technisch Operator",
+                "type": "department",
+                "active": false,
+                "created": "2022-05-04T10:08:32Z",
+                "modified": "2025-06-10T10:32:23Z",
+                "costCenterId": null
+              },
+              {
+                "id": 805,
+                "name": "Medewerker Technische Dienst",
+                "type": "department",
+                "active": false,
+                "created": "2022-11-17T14:23:25Z",
+                "modified": "2025-06-10T10:32:25Z",
+                "costCenterId": null
+              },
+              {
+                "id": 882,
+                "name": "Coördinator Arbo en veiligheid",
+                "type": "department",
+                "active": true,
+                "created": "2024-07-19T12:56:44Z",
+                "modified": "2025-06-13T06:53:37Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": [
+              {
+                "id": 472,
+                "name": "Industriele Schoonmaak",
+                "type": "department_group",
+                "active": true,
+                "created": "2020-02-03T09:12:22Z",
+                "modified": "2024-07-19T12:56:45Z",
+                "departments": [
+                  {
+                    "id": 296,
+                    "name": "Facilitair medewerker",
+                    "type": "department",
+                    "active": true,
+                    "created": "2019-12-20T15:19:54Z",
+                    "modified": "2023-08-01T07:45:06Z",
+                    "costCenterId": null
+                  },
+                  {
+                    "id": 579,
+                    "name": "Dokwurk",
+                    "type": "department",
+                    "active": true,
+                    "created": "2020-10-30T13:41:39Z",
+                    "modified": "2023-02-02T13:11:24Z",
+                    "costCenterId": null
+                  },
+                  {
+                    "id": 881,
+                    "name": "Extern",
+                    "type": "department",
+                    "active": true,
+                    "created": "2024-07-17T09:14:26Z",
+                    "modified": "2024-07-17T09:14:26Z",
+                    "costCenterId": null
+                  }
+                ],
+                "costCenterId": null,
+                "departmentGroups": []
+              }
+            ]
+          },
+          {
+            "id": 60,
+            "name": "Webdesign",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-02T11:13:09Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 106,
+                "name": "Productowner",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:24Z",
+                "costCenterId": null
+              },
+              {
+                "id": 114,
+                "name": "Designer",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:24Z",
+                "costCenterId": null
+              },
+              {
+                "id": 98,
+                "name": "Front-end Developer",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:24Z",
+                "costCenterId": null
+              },
+              {
+                "id": 454,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-31T14:49:31Z",
+                "modified": "2023-02-02T13:11:24Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 492,
+            "name": "Team Duitsland",
+            "type": "department_group",
+            "active": true,
+            "created": "2020-02-07T13:19:27Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 498,
+                "name": "Manager Sales",
+                "type": "department",
+                "active": true,
+                "created": "2020-02-07T13:20:24Z",
+                "modified": "2025-04-11T12:40:20Z",
+                "costCenterId": null
+              },
+              {
+                "id": 496,
+                "name": "Teamleider Duitsland",
+                "type": "department",
+                "active": true,
+                "created": "2020-02-07T13:19:50Z",
+                "modified": "2023-02-02T13:11:25Z",
+                "costCenterId": null
+              },
+              {
+                "id": 494,
+                "name": "Medewerker Duitsland",
+                "type": "department",
+                "active": true,
+                "created": "2020-02-07T13:19:37Z",
+                "modified": "2023-02-02T13:11:25Z",
+                "costCenterId": null
+              },
+              {
+                "id": 712,
+                "name": "Customer Relationship Manager",
+                "type": "department",
+                "active": true,
+                "created": "2022-02-02T16:33:18Z",
+                "modified": "2023-06-08T07:38:29Z",
+                "costCenterId": null
+              },
+              {
+                "id": 763,
+                "name": "Content Marketeer",
+                "type": "department",
+                "active": true,
+                "created": "2022-09-09T08:23:20Z",
+                "modified": "2023-02-02T13:11:25Z",
+                "costCenterId": null
+              },
+              {
+                "id": 855,
+                "name": "Online Marketeer",
+                "type": "department",
+                "active": true,
+                "created": "2024-02-09T11:37:43Z",
+                "modified": "2024-02-09T11:37:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 856,
+                "name": "Senior Marketeer",
+                "type": "department",
+                "active": true,
+                "created": "2024-02-09T11:37:43Z",
+                "modified": "2024-02-09T11:37:43Z",
+                "costCenterId": null
+              },
+              {
+                "id": 812,
+                "name": "Accountmanagers",
+                "type": "department",
+                "active": true,
+                "created": null,
+                "modified": "2025-04-11T12:44:08Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 28,
+            "name": "Productontwikkeling",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-02T11:13:09Z",
+            "modified": "2024-10-30T12:45:41Z",
+            "departments": [
+              {
+                "id": 404,
+                "name": "Sign Again",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T14:29:25Z",
+                "modified": "2023-02-02T13:11:25Z",
+                "costCenterId": null
+              },
+              {
+                "id": 32,
+                "name": "Productontwikkelaar",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:25Z",
+                "costCenterId": null
+              },
+              {
+                "id": 655,
+                "name": "Junior Productontwikkelaar",
+                "type": "department",
+                "active": true,
+                "created": "2021-08-20T08:29:57Z",
+                "modified": "2023-02-02T13:11:25Z",
+                "costCenterId": null
+              },
+              {
+                "id": 442,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T15:46:03Z",
+                "modified": "2023-02-02T13:11:25Z",
+                "costCenterId": null
+              },
+              {
+                "id": 931,
+                "name": "Ploegleider Sign Again",
+                "type": "department",
+                "active": true,
+                "created": "2025-07-15T10:59:38Z",
+                "modified": "2025-07-15T10:59:38Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 545,
+            "name": "Online Marketing",
+            "type": "department_group",
+            "active": true,
+            "created": "2020-07-22T14:26:29Z",
+            "modified": "2024-10-30T12:45:42Z",
+            "departments": [
+              {
+                "id": 547,
+                "name": "Performance Manager",
+                "type": "department",
+                "active": true,
+                "created": "2020-07-22T14:26:38Z",
+                "modified": "2023-02-02T13:11:25Z",
+                "costCenterId": null
+              },
+              {
+                "id": 549,
+                "name": "Online Marketeer",
+                "type": "department",
+                "active": true,
+                "created": "2020-07-22T14:26:48Z",
+                "modified": "2023-02-02T13:11:25Z",
+                "costCenterId": null
+              },
+              {
+                "id": 906,
+                "name": "Manager Online Marketing",
+                "type": "department",
+                "active": true,
+                "created": "2025-03-28T15:45:04Z",
+                "modified": "2025-03-28T15:45:04Z",
+                "costCenterId": null
+              },
+              {
+                "id": 922,
+                "name": "Stagiar",
+                "type": "department",
+                "active": true,
+                "created": "2025-06-24T11:18:16Z",
+                "modified": "2025-06-24T11:18:16Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 192,
+            "name": "Supply - indirect",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-12-20T14:34:10Z",
+            "modified": "2024-10-30T12:45:42Z",
+            "departments": [
+              {
+                "id": 394,
+                "name": "Manager",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:31:17Z",
+                "modified": "2023-02-02T13:11:25Z",
+                "costCenterId": null
+              },
+              {
+                "id": 621,
+                "name": "Opleiding",
+                "type": "department",
+                "active": true,
+                "created": "2021-02-01T13:30:44Z",
+                "modified": "2023-02-02T13:11:26Z",
+                "costCenterId": null
+              },
+              {
+                "id": 392,
+                "name": "Coordinator",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:31:10Z",
+                "modified": "2023-02-02T13:11:26Z",
+                "costCenterId": null
+              },
+              {
+                "id": 390,
+                "name": "Projecten",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:31:01Z",
+                "modified": "2023-02-02T13:11:26Z",
+                "costCenterId": null
+              },
+              {
+                "id": 388,
+                "name": "Inkopen",
+                "type": "department",
+                "active": true,
+                "created": "2019-12-20T15:30:53Z",
+                "modified": "2023-02-02T13:11:26Z",
+                "costCenterId": null
+              },
+              {
+                "id": 398,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T14:28:50Z",
+                "modified": "2023-02-02T13:11:26Z",
+                "costCenterId": null
+              },
+              {
+                "id": 727,
+                "name": "commercieel administratief medewerker",
+                "type": "department",
+                "active": true,
+                "created": "2022-05-27T13:09:15Z",
+                "modified": "2023-02-02T13:11:26Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 710,
+    "name": "Archief",
+    "type": "office",
+    "active": true,
+    "created": "2021-12-29T14:29:34Z",
+    "modified": "2023-02-02T13:10:53Z",
+    "addressId": null,
+    "departments": [
+      {
+        "id": 520,
+        "name": "Projectgroep",
+        "type": "department",
+        "active": true,
+        "created": "2020-03-13T08:23:33Z",
+        "modified": "2023-02-02T13:11:26Z",
+        "costCenterId": null
+      },
+      {
+        "id": 623,
+        "name": "Projecten",
+        "type": "department",
+        "active": true,
+        "created": "2021-02-12T14:22:49Z",
+        "modified": "2023-02-02T13:11:26Z",
+        "costCenterId": null
+      },
+      {
+        "id": 527,
+        "name": "Canvas verpakken",
+        "type": "department",
+        "active": true,
+        "created": "2020-06-17T15:12:06Z",
+        "modified": "2023-02-02T13:11:26Z",
+        "costCenterId": null
+      }
+    ],
+    "costCenterId": null,
+    "departmentGroups": [
+      {
+        "id": 482,
+        "name": "Archief",
+        "type": "department_group",
+        "active": true,
+        "created": "2020-02-07T13:13:23Z",
+        "modified": "2023-02-02T13:11:26Z",
+        "departments": [
+          {
+            "id": 364,
+            "name": "Coordinator (fulfilment )",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T15:29:04Z",
+            "modified": "2023-02-02T13:11:26Z",
+            "costCenterId": null
+          },
+          {
+            "id": 748,
+            "name": "Oproep Flex ",
+            "type": "department",
+            "active": true,
+            "created": "2022-07-25T11:17:34Z",
+            "modified": "2023-02-02T13:11:26Z",
+            "costCenterId": null
+          },
+          {
+            "id": 599,
+            "name": "-",
+            "type": "department",
+            "active": true,
+            "created": "2021-02-01T13:25:56Z",
+            "modified": "2023-02-02T13:11:27Z",
+            "costCenterId": null
+          },
+          {
+            "id": 726,
+            "name": "-",
+            "type": "department",
+            "active": true,
+            "created": "2022-05-12T14:40:09Z",
+            "modified": "2023-02-02T13:11:27Z",
+            "costCenterId": null
+          },
+          {
+            "id": 406,
+            "name": "-",
+            "type": "department",
+            "active": true,
+            "created": "2020-01-29T14:29:41Z",
+            "modified": "2023-02-02T13:11:27Z",
+            "costCenterId": null
+          },
+          {
+            "id": 26,
+            "name": "Medewerker Centrale Planning",
+            "type": "department",
+            "active": true,
+            "created": "2019-09-02T11:13:09Z",
+            "modified": "2023-02-02T13:11:27Z",
+            "costCenterId": null
+          },
+          {
+            "id": 732,
+            "name": "-",
+            "type": "department",
+            "active": true,
+            "created": "2022-06-08T09:55:16Z",
+            "modified": "2023-02-02T13:11:27Z",
+            "costCenterId": null
+          },
+          {
+            "id": 761,
+            "name": "-",
+            "type": "department",
+            "active": true,
+            "created": "2022-08-25T08:34:47Z",
+            "modified": "2023-02-02T13:11:27Z",
+            "costCenterId": null
+          },
+          {
+            "id": 733,
+            "name": "-",
+            "type": "department",
+            "active": true,
+            "created": "2022-06-08T09:55:17Z",
+            "modified": "2023-02-02T13:11:27Z",
+            "costCenterId": null
+          },
+          {
+            "id": 344,
+            "name": "-",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T15:27:25Z",
+            "modified": "2023-02-02T13:11:27Z",
+            "costCenterId": null
+          },
+          {
+            "id": 552,
+            "name": "Teamlead Centrale Planning",
+            "type": "department",
+            "active": true,
+            "created": "2020-09-09T15:15:32Z",
+            "modified": "2023-02-02T13:11:27Z",
+            "costCenterId": null
+          },
+          {
+            "id": 458,
+            "name": "Handsnijden",
+            "type": "department",
+            "active": true,
+            "created": "2020-01-31T15:31:53Z",
+            "modified": "2023-02-02T13:11:27Z",
+            "costCenterId": null
+          },
+          {
+            "id": 210,
+            "name": "Print - Durst Rhotex",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:36:48Z",
+            "modified": "2023-02-02T13:11:28Z",
+            "costCenterId": null
+          },
+          {
+            "id": 521,
+            "name": "Data ophalen",
+            "type": "department",
+            "active": true,
+            "created": "2020-06-10T12:51:06Z",
+            "modified": "2023-02-02T13:11:28Z",
+            "costCenterId": null
+          },
+          {
+            "id": 484,
+            "name": "Handsnijden",
+            "type": "department",
+            "active": true,
+            "created": "2020-02-07T13:14:43Z",
+            "modified": "2023-02-02T13:11:28Z",
+            "costCenterId": null
+          },
+          {
+            "id": 204,
+            "name": "Confectie - enkelstik",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:36:15Z",
+            "modified": "2023-02-02T13:11:28Z",
+            "costCenterId": null
+          },
+          {
+            "id": 202,
+            "name": "Confectie - dubbelstik",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:36:05Z",
+            "modified": "2023-02-02T13:11:28Z",
+            "costCenterId": null
+          },
+          {
+            "id": 358,
+            "name": "Inpakken & aanmelden",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T15:28:39Z",
+            "modified": "2023-02-02T13:11:28Z",
+            "costCenterId": null
+          },
+          {
+            "id": 312,
+            "name": "Technisch Productontwikkelaar",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T15:21:23Z",
+            "modified": "2023-02-02T13:11:28Z",
+            "costCenterId": null
+          },
+          {
+            "id": 256,
+            "name": "NEF (uv)",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:43:21Z",
+            "modified": "2023-02-02T13:11:28Z",
+            "costCenterId": null
+          },
+          {
+            "id": 412,
+            "name": "Stagiair (uv)",
+            "type": "department",
+            "active": true,
+            "created": "2020-01-29T14:31:14Z",
+            "modified": "2023-02-02T13:11:28Z",
+            "costCenterId": null
+          },
+          {
+            "id": 246,
+            "name": "Werkvoorbereiding - WW",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:42:34Z",
+            "modified": "2023-02-02T13:11:28Z",
+            "costCenterId": null
+          },
+          {
+            "id": 689,
+            "name": "Werkvoorbereider",
+            "type": "department",
+            "active": true,
+            "created": "2021-10-25T14:30:40Z",
+            "modified": "2023-02-02T13:11:28Z",
+            "costCenterId": null
+          },
+          {
+            "id": 683,
+            "name": "Werkvoorbereider",
+            "type": "department",
+            "active": true,
+            "created": "2021-10-25T14:28:26Z",
+            "modified": "2023-02-02T13:11:28Z",
+            "costCenterId": null
+          },
+          {
+            "id": 691,
+            "name": "Werkvoorbereider",
+            "type": "department",
+            "active": true,
+            "created": "2021-10-25T14:31:19Z",
+            "modified": "2023-02-02T13:11:28Z",
+            "costCenterId": null
+          },
+          {
+            "id": 276,
+            "name": "Werkvoorbereider",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:44:58Z",
+            "modified": "2023-02-02T13:11:29Z",
+            "costCenterId": null
+          },
+          {
+            "id": 685,
+            "name": "Werkvoorbereider",
+            "type": "department",
+            "active": true,
+            "created": "2021-10-25T14:29:16Z",
+            "modified": "2023-02-02T13:11:29Z",
+            "costCenterId": null
+          },
+          {
+            "id": 222,
+            "name": "Frezen - Cosign",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:40:27Z",
+            "modified": "2023-02-02T13:11:29Z",
+            "costCenterId": null
+          }
+        ],
+        "costCenterId": null,
+        "departmentGroups": []
+      },
+      {
+        "id": 176,
+        "name": "Hout",
+        "type": "department_group",
+        "active": true,
+        "created": "2019-12-20T14:32:43Z",
+        "modified": "2023-02-02T13:11:26Z",
+        "departments": [
+          {
+            "id": 250,
+            "name": "Lijnmanager",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:42:52Z",
+            "modified": "2023-02-02T13:11:29Z",
+            "costCenterId": null
+          },
+          {
+            "id": 248,
+            "name": "Ploegleider",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:42:43Z",
+            "modified": "2023-02-02T13:11:29Z",
+            "costCenterId": null
+          },
+          {
+            "id": 244,
+            "name": "Print - Fuiji",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:42:26Z",
+            "modified": "2023-02-02T13:11:29Z",
+            "costCenterId": null
+          },
+          {
+            "id": 242,
+            "name": "Print - Agfa",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:42:16Z",
+            "modified": "2023-02-02T13:11:29Z",
+            "costCenterId": null
+          },
+          {
+            "id": 240,
+            "name": "Sealen",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:42:08Z",
+            "modified": "2023-02-02T13:11:29Z",
+            "costCenterId": null
+          },
+          {
+            "id": 238,
+            "name": "Frezen - Cosign",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:42:00Z",
+            "modified": "2023-02-02T13:11:29Z",
+            "costCenterId": null
+          },
+          {
+            "id": 236,
+            "name": "Inpakken",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:41:32Z",
+            "modified": "2023-02-02T13:11:29Z",
+            "costCenterId": null
+          },
+          {
+            "id": 234,
+            "name": "Dokwurk",
+            "type": "department",
+            "active": true,
+            "created": "2019-12-20T14:41:23Z",
+            "modified": "2023-02-02T13:11:29Z",
+            "costCenterId": null
+          },
+          {
+            "id": 414,
+            "name": "Stagiair",
+            "type": "department",
+            "active": true,
+            "created": "2020-01-29T14:31:54Z",
+            "modified": "2023-02-02T13:11:29Z",
+            "costCenterId": null
+          },
+          {
+            "id": 601,
+            "name": "Opleiding",
+            "type": "department",
+            "active": true,
+            "created": "2021-02-01T13:26:12Z",
+            "modified": "2023-02-02T13:11:30Z",
+            "costCenterId": null
+          },
+          {
+            "id": 731,
+            "name": "Senior Operator",
+            "type": "department",
+            "active": true,
+            "created": "2022-06-08T09:55:15Z",
+            "modified": "2023-02-02T13:11:30Z",
+            "costCenterId": null
+          }
+        ],
+        "costCenterId": null,
+        "departmentGroups": []
+      },
+      {
+        "id": 531,
+        "name": "Assortimentsteam",
+        "type": "department_group",
+        "active": true,
+        "created": "2020-07-22T14:21:34Z",
+        "modified": "2023-02-02T13:11:26Z",
+        "departments": [],
+        "costCenterId": null,
+        "departmentGroups": [
+          {
+            "id": 56,
+            "name": "Assortimentsteam Papier en Labels",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-02T11:13:09Z",
+            "modified": "2023-02-02T13:11:30Z",
+            "departments": [
+              {
+                "id": 46,
+                "name": "Teamleider",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:30Z",
+                "costCenterId": null
+              },
+              {
+                "id": 66,
+                "name": "Online Marketeer",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:30Z",
+                "costCenterId": null
+              },
+              {
+                "id": 68,
+                "name": "Assortimentsbeheerder",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:30Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 54,
+            "name": "Assortimentsteam Sublimatie, Textiel en UV,",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-02T11:13:09Z",
+            "modified": "2023-02-02T13:11:30Z",
+            "departments": [
+              {
+                "id": 100,
+                "name": "Teamleider",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:30Z",
+                "costCenterId": null
+              },
+              {
+                "id": 96,
+                "name": "Online Marketeer",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:30Z",
+                "costCenterId": null
+              },
+              {
+                "id": 134,
+                "name": "Assortimentsbeheerder",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-09T14:48:01Z",
+                "modified": "2023-02-02T13:11:30Z",
+                "costCenterId": null
+              },
+              {
+                "id": 94,
+                "name": "Junior Accountmanager",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:30Z",
+                "costCenterId": null
+              },
+              {
+                "id": 440,
+                "name": "Stagiair",
+                "type": "department",
+                "active": true,
+                "created": "2020-01-29T15:46:03Z",
+                "modified": "2023-02-02T13:11:30Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          },
+          {
+            "id": 154,
+            "name": "Assortimentsteam Plaat en Folie",
+            "type": "department_group",
+            "active": true,
+            "created": "2019-09-09T14:48:01Z",
+            "modified": "2023-02-02T13:11:30Z",
+            "departments": [
+              {
+                "id": 136,
+                "name": "Teamleider",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-09T14:48:01Z",
+                "modified": "2023-02-02T13:11:30Z",
+                "costCenterId": null
+              },
+              {
+                "id": 126,
+                "name": "Online Marketeer",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:31Z",
+                "costCenterId": null
+              },
+              {
+                "id": 480,
+                "name": "Assortimentsbeheerder",
+                "type": "department",
+                "active": true,
+                "created": "2020-02-03T09:43:48Z",
+                "modified": "2023-02-02T13:11:31Z",
+                "costCenterId": null
+              },
+              {
+                "id": 38,
+                "name": "Accountmanager",
+                "type": "department",
+                "active": true,
+                "created": "2019-09-02T11:13:09Z",
+                "modified": "2023-02-02T13:11:31Z",
+                "costCenterId": null
+              }
+            ],
+            "costCenterId": null,
+            "departmentGroups": []
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -3,9 +3,19 @@ drop function if exists action.crud_lane_item(jsonb, boolean);
 create function action.crud_lane_item(p_param_json jsonb, p_no_results boolean DEFAULT false) returns TABLE(param_id integer, track_by integer, crud text, lane_item_id bigint, lane_id bigint, material_impose_plan_id bigint)
 	language sql
 as $$
-    -- The client mutations of the planning boards, on lane_item level. Every
-    -- mutation writes through to mock.material_impose_plan, so re-stamping a
-    -- plan reproduces what the planner did:
+    -- The client mutations of the planning boards, on lane_item level: the
+    -- stored_proc of the data tables get_impose_plan and
+    -- get_plan_lanes_imposition_group. One element per mutation:
+    --   {"crud": "update", "track_by": 1,
+    --    "data": {"lane_item_id": 8842, "start_offset_in_seconds": 43200,
+    --             "sort_order": 20450, "is_pinned": true}}
+    -- crud is create, update or delete; track_by is the order of the
+    -- mutations in the batch and comes back on the result row; data carries
+    -- the properties: lane_item_id (update, delete, the source of a copy),
+    -- start_offset_in_seconds, sort_order, is_pinned, and for a create lane_id,
+    -- plan_id and imposition_group_id. A property left out of data keeps its
+    -- value. Every mutation writes through to mock.material_impose_plan, so
+    -- re-stamping a plan reproduces what the planner did:
     --   update — move/pin/sort: the item and its pattern row
     --   create — an extra moment: a new pattern row with the next instance,
     --            plus the lane and the item it stamps to
@@ -14,15 +24,16 @@ as $$
     -- Set-based throughout: ids are drawn from the sequences up front, so a
     -- created row can be paired back to its payload row without a temp table.
     WITH payload AS (
-        SELECT row_number() OVER ()::integer AS param_id,
-               coalesce(te.track_by, 0)      AS track_by,
-               te.crud, te.lane_item_id, te.lane_id, te.plan_id,
+        SELECT row_number() OVER (ORDER BY coalesce((t.element ->> 'track_by')::integer, 0))::integer AS param_id,
+               coalesce((t.element ->> 'track_by')::integer, 0) AS track_by,
+               t.element ->> 'crud'                             AS crud,
+               te.lane_item_id, te.lane_id, te.plan_id,
                te.start_offset_in_seconds, te.sort_order, te.is_pinned,
                te.imposition_group_id
         FROM jsonb_array_elements(p_param_json) AS t(element)
-        CROSS JOIN LATERAL jsonb_to_record(t.element) AS te(
-            track_by integer, crud text, lane_item_id bigint, lane_id bigint,
-            plan_id bigint, start_offset_in_seconds integer, sort_order numeric,
+        CROSS JOIN LATERAL jsonb_to_record(coalesce(t.element -> 'data', '{}'::jsonb)) AS te(
+            lane_item_id bigint, lane_id bigint, plan_id bigint,
+            start_offset_in_seconds integer, sort_order numeric,
             is_pinned boolean, imposition_group_id integer)
     ),
     -- what an update or a copy starts from: the item, its lane and the

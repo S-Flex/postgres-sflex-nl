@@ -114,7 +114,7 @@ niet gedraaid. Staat in de draailijst hieronder.
 1. [`sql/action/get_interval_dates.sql`](../sql/action/get_interval_dates.sql) — create or replace, zelfde signatuur
 2. [`sql/mock/get_print_schedule.sql`](../sql/mock/get_print_schedule.sql) — drop + create
 3. [`sql/mapping/get_production_orderline_aggregate.sql`](../sql/mapping/get_production_orderline_aggregate.sql) — repareert 76/78
-4. [`sql/migration_component_specs_production_date_idx.sql`](../sql/migration_component_specs_production_date_idx.sql) — `CREATE INDEX CONCURRENTLY`, los draaien, niet in een transactie
+4. [`archive/sql/migrations/migration_component_specs_production_date_idx.sql`](../archive/sql/migrations/migration_component_specs_production_date_idx.sql) — `CREATE INDEX CONCURRENTLY`, los draaien, niet in een transactie
 5. het manifest: zie `docs/imposition-unit-manifest.md` "draaivolgorde" (functie, crud_nest, backfill)
 6. [`sql/check_plan_reads.sql`](../sql/check_plan_reads.sql) — de read-only checks achteraf
 
@@ -154,8 +154,8 @@ Te draaien (volgorde):
 5. [`sql/mapping/create_spec_unit_manifest.sql`](../sql/mapping/create_spec_unit_manifest.sql)
    — builder evalueert de xbom-formule naar `production_impact_per_unit`.
 6. Formules door Cees op de xbom-rijen; test op een paar orderregels
-   (stappen in [`sql/migration_impact_backfill.sql`](../sql/migration_impact_backfill.sql)).
-7. [`sql/migration_impact_backfill.sql`](../sql/migration_impact_backfill.sql)
+   (stappen in [`archive/sql/migrations/migration_impact_backfill.sql`](../archive/sql/migrations/migration_impact_backfill.sql)).
+7. [`archive/sql/migrations/migration_impact_backfill.sql`](../archive/sql/migrations/migration_impact_backfill.sql)
    — alle open orderregels opnieuw resolven.
 8. In één sessie:
    [`sql/mapping/get_production_orderline_detail.sql`](../sql/mapping/get_production_orderline_detail.sql) →

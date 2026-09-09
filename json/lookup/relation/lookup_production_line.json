@@ -1,0 +1,202 @@
+[
+  {
+    "code": "not-applicable",
+    "i18n": {
+      "de": "Nicht zutreffend",
+      "en": "Not applicable",
+      "es": "No aplicable",
+      "fr": "Non applicable",
+      "nl": "Niet van toepassing"
+    }
+  },
+  {
+    "code": "uv",
+    "i18n": {
+      "de": "UV",
+      "en": "UV",
+      "es": "UV",
+      "fr": "UV",
+      "nl": "UV"
+    }
+  },
+  {
+    "code": "sublimation",
+    "i18n": {
+      "de": "Sublimation",
+      "en": "Sublimation",
+      "es": "Sublimación",
+      "fr": "Sublimation",
+      "nl": "Sublimatie"
+    }
+  },
+  {
+    "code": "foil",
+    "i18n": {
+      "de": "Folie",
+      "en": "Foil",
+      "es": "Lámina",
+      "fr": "Film",
+      "nl": "Folie"
+    }
+  },
+  {
+    "code": "sheet",
+    "i18n": {
+      "de": "Sheet",
+      "en": "Sheet",
+      "es": "Plancha",
+      "fr": "Sheet",
+      "nl": "Plaat"
+    }
+  },
+  {
+    "code": "expedition",
+    "i18n": {
+      "de": "Versand",
+      "en": "Expedition",
+      "es": "Expedición",
+      "fr": "Expédition",
+      "nl": "Expeditie"
+    }
+  },
+  {
+    "code": "canvas",
+    "i18n": {
+      "de": "Leinwand",
+      "en": "Canvas",
+      "es": "Lienzo",
+      "fr": "Toile",
+      "nl": "Canvas"
+    }
+  },
+  {
+    "code": "labels",
+    "i18n": {
+      "de": "Etiketten",
+      "en": "Labels",
+      "es": "Etiquetas",
+      "fr": "Étiquettes",
+      "nl": "Labels"
+    }
+  },
+  {
+    "code": "textile",
+    "i18n": {
+      "de": "Textil",
+      "en": "Textile",
+      "es": "Textil",
+      "fr": "Textile",
+      "nl": "Textiel"
+    }
+  },
+  {
+    "code": "auto-purchase",
+    "i18n": {
+      "de": "Automatischer Einkauf",
+      "en": "Auto purchase",
+      "es": "Compra automática",
+      "fr": "Achat automatique",
+      "nl": "Auto-inkoop"
+    }
+  },
+  {
+    "code": "paper",
+    "i18n": {
+      "de": "Papier",
+      "en": "Paper",
+      "es": "Papel",
+      "fr": "Papier",
+      "nl": "Papier"
+    }
+  },
+  {
+    "code": "supply",
+    "i18n": {
+      "de": "Supply",
+      "en": "Supply",
+      "es": "Suministro",
+      "fr": "Supply",
+      "nl": "Supply"
+    }
+  },
+  {
+    "code": "onb",
+    "i18n": {
+      "de": "ONB",
+      "en": "ONB",
+      "es": "ONB",
+      "fr": "ONB",
+      "nl": "ONB"
+    }
+  },
+  {
+    "code": "uv-bad-hersfeld",
+    "i18n": {
+      "de": "UV Bad Hersfeld",
+      "en": "UV Bad Hersfeld",
+      "es": "UV Bad Hersfeld",
+      "fr": "UV Bad Hersfeld",
+      "nl": "UV Bad Hersfeld"
+    }
+  },
+  {
+    "code": "expedition-bh",
+    "i18n": {
+      "de": "Versand BH",
+      "en": "Expedition BH",
+      "es": "Expedición BH",
+      "fr": "Expédition BH",
+      "nl": "Expeditie BH"
+    }
+  },
+  {
+    "code": "supplier",
+    "i18n": {
+      "de": "Lieferant",
+      "en": "Supplier",
+      "es": "Proveedor",
+      "fr": "Fournisseur",
+      "nl": "Leverancier"
+    }
+  },
+  {
+    "code": "not-applicable-bh",
+    "i18n": {
+      "de": "Nicht zutreffend BH",
+      "en": "Not applicable BH",
+      "es": "No aplicable BH",
+      "fr": "Non applicable BH",
+      "nl": "Niet van toepassing BH"
+    }
+  },
+  {
+    "code": "sublimation-bh",
+    "i18n": {
+      "de": "Sublimation BH",
+      "en": "Sublimation BH",
+      "es": "Sublimación BH",
+      "fr": "Sublimation BH",
+      "nl": "Sublimatie BH"
+    }
+  },
+  {
+    "code": "sheet-bad-hersfeld",
+    "i18n": {
+      "de": "Sheet Bad Hersfeld",
+      "en": "Sheet Bad Hersfeld",
+      "es": "Plancha Bad Hersfeld",
+      "fr": "Sheet Bad Hersfeld",
+      "nl": "Sheet Bad Hersfeld"
+    }
+  },
+  {
+    "code": "foil-bad-hersfeld",
+    "i18n": {
+      "de": "Folie Bad Hersfeld",
+      "en": "Foil Bad Hersfeld",
+      "es": "Lámina Bad Hersfeld",
+      "fr": "Film Bad Hersfeld",
+      "nl": "Folie Bad Hersfeld"
+    }
+  }
+]

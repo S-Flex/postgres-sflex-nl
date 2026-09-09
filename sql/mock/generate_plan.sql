@@ -1,13 +1,19 @@
 -- the output column follows the renamed table, so the old signature goes first
 drop function if exists mock.generate_plan(date, text, text);
 
+-- Stamps the day plan of a step from the weekly pattern (mock.material_impose_plan):
+-- the plan (type material-resource-plan), one material lane per pattern row
+-- with its pattern item, and one resource lane per machine the pattern rows
+-- name (resource_path), so the resource board reads the same items per
+-- machine (get_resource_plan, stap 7c). The material items stay on their
+-- material lanes; the resource lane carries no items of its own.
 create function mock.generate_plan(p_date date, p_step text, p_line_type text) returns TABLE(plan_id bigint, lane_id bigint, material_impose_plan_id bigint)
 	language sql
 as $$
     WITH pattern AS (
         SELECT DISTINCT ON (m.sort_order)
                m.material_impose_plan_id, m.sort_order, m.material_id,
-               m.start_offset_in_seconds, m.is_pinned
+               m.start_offset_in_seconds, m.is_pinned, m.resource_path
         FROM mock.material_impose_plan m
         WHERE m.weekday = extract(dow FROM p_date)::smallint + 1
           AND m.step = p_step
@@ -19,6 +25,25 @@ as $$
     ),
     numbered_pattern AS (
         SELECT p.*, row_number() OVER (ORDER BY p.sort_order) AS rn FROM pattern p
+    ),
+    -- the machines the pattern names: one resource lane each. One lane per
+    -- machine per day (resource_lane): a lane that already exists for the
+    -- date is reused, the others are made below
+    resource AS (
+        SELECT r.resource_path, rl.lane_id AS existing_lane_id
+        FROM (SELECT DISTINCT p.resource_path FROM pattern p WHERE p.resource_path IS NOT NULL) r
+        LEFT JOIN LATERAL (
+            SELECT rl.lane_id
+            FROM action.resource_lane rl
+            JOIN action.lane l ON l.lane_id = rl.lane_id
+            WHERE rl.resource_path = r.resource_path AND l.lane_date = p_date
+            ORDER BY rl.lane_id LIMIT 1
+        ) rl ON true
+    ),
+    numbered_resource AS (
+        SELECT r.resource_path, row_number() OVER (ORDER BY r.resource_path) AS rn
+        FROM resource r
+        WHERE r.existing_lane_id IS NULL
     ),
     new_plan AS (
         -- tenant_ids: the tenants that run this line_type
@@ -56,6 +81,38 @@ as $$
         JOIN numbered_pattern p USING (rn)
         CROSS JOIN new_plan np
         RETURNING plan_id, lane_id, sort_order
+    ),
+    -- resource lanes: one fresh lane per machine without one; in the plan's
+    -- order they follow the material lanes (plan_lane.sort_order is unique
+    -- per plan)
+    new_resource_lane_row AS (
+        INSERT INTO action.lane (lane_date)
+        SELECT p_date FROM numbered_resource
+        RETURNING lane_id
+    ),
+    numbered_resource_lane AS (
+        SELECT nl.lane_id, row_number() OVER (ORDER BY nl.lane_id) AS rn FROM new_resource_lane_row nl
+    ),
+    new_resource_lane AS (
+        INSERT INTO action.resource_lane (lane_id, resource_path)
+        SELECT nl.lane_id, r.resource_path
+        FROM numbered_resource_lane nl
+        JOIN numbered_resource r USING (rn)
+        RETURNING lane_id
+    ),
+    new_resource_plan_lane AS (
+        INSERT INTO action.plan_lane (plan_id, lane_id, sort_order)
+        SELECT np.plan_id, x.lane_id,
+               coalesce((SELECT max(p.sort_order) FROM pattern p), 0) + 1000 + row_number() OVER (ORDER BY x.resource_path)
+        FROM (SELECT nl.lane_id, r.resource_path
+              FROM numbered_resource_lane nl
+              JOIN numbered_resource r USING (rn)
+              UNION ALL
+              SELECT r.existing_lane_id, r.resource_path
+              FROM resource r
+              WHERE r.existing_lane_id IS NOT NULL) x
+        CROSS JOIN new_plan np
+        RETURNING lane_id
     ),
     -- one slot per lane, stamped from the pattern row: the planned moment
     -- the client moves, pins and copies. The pattern stays the template.

@@ -617,6 +617,7 @@
     "group": "actual",
     "order": 220,
     "class_name": "state-idle",
+    "counts_as": "not-producing",
     "fill": "var(--state-idle)",
     "color": "var(--state-idle-color)"
   },
@@ -645,6 +646,7 @@
     "group": "actual",
     "order": 230,
     "class_name": "state-starved",
+    "counts_as": "not-producing",
     "fill": "var(--state-starved)",
     "color": "var(--state-starved-color)"
   },
@@ -673,6 +675,7 @@
     "group": "actual",
     "order": 240,
     "class_name": "state-starved",
+    "counts_as": "not-producing",
     "alias_of": "starved",
     "fill": "var(--state-starved-operator)",
     "color": "var(--state-starved-operator-color)"
@@ -702,6 +705,7 @@
     "group": "actual",
     "order": 250,
     "class_name": "state-blocked",
+    "counts_as": "not-producing",
     "fill": "var(--state-blocked)",
     "color": "var(--state-blocked-color)"
   },
@@ -730,6 +734,7 @@
     "group": "actual",
     "order": 260,
     "class_name": "state-blocked",
+    "counts_as": "not-producing",
     "alias_of": "blocked",
     "fill": "var(--state-blocked-operator, var(--state-blocked))",
     "color": "var(--state-blocked-operator-color, var(--state-blocked-color))"

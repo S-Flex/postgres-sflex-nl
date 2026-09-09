@@ -254,7 +254,7 @@ De tabel en de set-bewuste default staan er al. Nog te draaien:
 
 1. `sql/legacy/create_imposition_unit_manifest.sql` — de herschreven functie
 2. `sql/legacy/crud_nest.sql` — de `PERFORM`-aanroep (repo-versie, live ontbreekt hij)
-3. `sql/backfill_imposition_unit_manifest.sql` — backfill 60 dagen als DO-blok,
+3. `archive/sql/migrations/backfill_imposition_unit_manifest.sql` — backfill 60 dagen als DO-blok,
    batches van 500 nesten, met de verificatie eronder
 
 De aftrekregels per print-method-code (`docs/formula-impact-per-step.md`) zijn
@@ -262,5 +262,5 @@ een formule-kwestie in `catalog.formula`; de fold in de functie draagt
 `print_impact`/`neon_impact` al mee, dus zodra de formules kloppen tellen
 meerdere gangen goed.
 
-Daarna verder met `get_impose_plan` en `get_plan_lanes`: `param_json` opruimen en
+Daarna verder met `get_impose_plan` en `get_plan_lanes_imposition_group`: `param_json` opruimen en
 de duur uit het manifest halen in plaats van uit de machineformule.

@@ -424,11 +424,38 @@
           "resource_uid"
         ],
         "set_order_field": "state.order",
-        "class_names_field": "state.class_name",
+        "set_class_names_field": "state.class_names",
+        "class_names_field": "state.class_names",
         "fill_field": "state.fill",
         "color_field": "state.color",
         "show_legend": true,
-        "set_title_field": "name"
+        "set_title_field": "name",
+        "connections": {
+          "match": [
+            "batch_id"
+          ],
+          "show_for": "filter",
+          "connectors": [
+            {
+              "code": "actual",
+              "kind": "pair",
+              "from_set": "plan",
+              "to_set": "actual",
+              "from_side": "left",
+              "to_side": "left",
+              "class_name": "connection-actual"
+            },
+            {
+              "code": "next",
+              "kind": "sequence",
+              "set": "plan",
+              "order_by": "offset_seconds",
+              "from_side": "right",
+              "to_side": "left",
+              "class_name": "connection-next"
+            }
+          ]
+        }
       }
     }
   ]

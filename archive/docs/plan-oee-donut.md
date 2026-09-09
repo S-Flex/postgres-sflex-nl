@@ -124,7 +124,7 @@ per datum en kost weinig). Tot die tijd loopt de donut achter op de log.
 
 Besloten 5 sep: de herbouw komt in de schrijfactie zelf (`crud_state_log`,
 `crud_data_log`) met een resource-bereik op de builder; zie
-`docs/handoff-state-refresh.md`.
+`archive/docs/handoff-state-refresh.md`.
 
 ### pagina en filter
 

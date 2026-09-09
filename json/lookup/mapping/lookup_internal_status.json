@@ -1,0 +1,1127 @@
+[
+  {
+    "i18n": {
+      "de": {
+        "text": "Bestellung erhalten"
+      },
+      "en": {
+        "text": "Order received"
+      },
+      "nl": {
+        "text": "Bestelling ontvangen"
+      }
+    },
+    "sequence": 100,
+    "class_name": "plan-dtp"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Datei-Preflight verschoben"
+      },
+      "en": {
+        "text": "File preflight postponed"
+      },
+      "nl": {
+        "text": "Bestand preflight uitgesteld"
+      }
+    },
+    "sequence": 150,
+    "class_name": "plan-dtp"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Datei-Preflight-Fehler"
+      },
+      "en": {
+        "text": "File preflight error"
+      },
+      "nl": {
+        "text": "Bestand preflight fout"
+      }
+    },
+    "sequence": 200,
+    "class_name": "plan-dtp"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Datei-Preflight ok"
+      },
+      "en": {
+        "text": "File preflight ok"
+      },
+      "nl": {
+        "text": "Bestand preflight ok"
+      }
+    },
+    "sequence": 210,
+    "class_name": "plan-dtp"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Dateivorbereitung verschoben"
+      },
+      "en": {
+        "text": "File preparation postponed"
+      },
+      "nl": {
+        "text": "Bestand voorbereiding uitgesteld"
+      }
+    },
+    "sequence": 225,
+    "class_name": "plan-dtp"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Lieferschein gedruckt"
+      },
+      "en": {
+        "text": "Printed slip"
+      },
+      "nl": {
+        "text": "Afdrukbon geprint"
+      }
+    },
+    "sequence": 250,
+    "class_name": "plan-dtp"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "DTP-Kontur"
+      },
+      "en": {
+        "text": "DTP contour"
+      },
+      "nl": {
+        "text": "DTP contour"
+      }
+    },
+    "sequence": 290,
+    "class_name": "plan-dtp"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Datei vorbereitet"
+      },
+      "en": {
+        "text": "File prepared"
+      },
+      "nl": {
+        "text": "Bestand voorbereid"
+      }
+    },
+    "sequence": 300,
+    "class_name": "plan-dtp"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "DTP"
+      },
+      "en": {
+        "text": "DTP"
+      },
+      "nl": {
+        "text": "DTP"
+      }
+    },
+    "sequence": 350,
+    "class_name": "plan-dtp"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "DTP fertig"
+      },
+      "en": {
+        "text": "DTP ready"
+      },
+      "nl": {
+        "text": "DTP gereed"
+      }
+    },
+    "sequence": 400,
+    "class_name": "plan-dtp"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Datei im Sammeldruck"
+      },
+      "en": {
+        "text": "File in gang run"
+      },
+      "nl": {
+        "text": "Bestand in gangrun"
+      }
+    },
+    "sequence": 450,
+    "class_name": "plan-file_in_gangrun"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Nicht auf Lager"
+      },
+      "en": {
+        "text": "Out of stock"
+      },
+      "nl": {
+        "text": "Niet op voorraad"
+      }
+    },
+    "sequence": 475,
+    "class_name": "plan-out_of_stock"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Bereit zum Einkauf"
+      },
+      "en": {
+        "text": "Ready to purchase"
+      },
+      "nl": {
+        "text": "Klaar om in te kopen"
+      }
+    },
+    "sequence": 480,
+    "class_name": "plan-ready_to_purchase"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Verschachtelung"
+      },
+      "en": {
+        "text": "Nesting"
+      },
+      "nl": {
+        "text": "Nesten"
+      }
+    },
+    "sequence": 495,
+    "class_name": "plan-nesting"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Verschachtelt"
+      },
+      "en": {
+        "text": "Nested"
+      },
+      "nl": {
+        "text": "Genest"
+      }
+    },
+    "sequence": 500,
+    "class_name": "plan-nested"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Gebündelt"
+      },
+      "en": {
+        "text": "Batched"
+      },
+      "nl": {
+        "text": "Gebundeld"
+      }
+    },
+    "sequence": 550,
+    "class_name": "plan-batched"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Geplant"
+      },
+      "en": {
+        "text": "Planned"
+      },
+      "nl": {
+        "text": "Gepland"
+      }
+    },
+    "sequence": 575,
+    "class_name": "plan-planned"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Rippen"
+      },
+      "en": {
+        "text": "Ripping"
+      },
+      "nl": {
+        "text": "Rippen"
+      }
+    },
+    "sequence": 590,
+    "class_name": "plan-ripping"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Gerippt"
+      },
+      "en": {
+        "text": "Ripped"
+      },
+      "nl": {
+        "text": "Geript"
+      }
+    },
+    "sequence": 600,
+    "class_name": "plan-ripped"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Eingekauft"
+      },
+      "en": {
+        "text": "Purchased"
+      },
+      "nl": {
+        "text": "Ingekocht"
+      }
+    },
+    "sequence": 615,
+    "class_name": "plan-purchased"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Einkauf erhalten"
+      },
+      "en": {
+        "text": "Purchase received"
+      },
+      "nl": {
+        "text": "Inkoop ontvangen"
+      }
+    },
+    "sequence": 625,
+    "class_name": "plan-purchase_received"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Technischer Fehler"
+      },
+      "en": {
+        "text": "Technical failure"
+      },
+      "nl": {
+        "text": "Technische storing"
+      }
+    },
+    "sequence": 650,
+    "class_name": "plan-technical_failure"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Veredelung nicht verfügbar"
+      },
+      "en": {
+        "text": "Finishing unavailable"
+      },
+      "nl": {
+        "text": "Afwerking niet beschikbaar"
+      }
+    },
+    "sequence": 660,
+    "class_name": "plan-finishing_unavailable"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Gedruckt"
+      },
+      "en": {
+        "text": "Printed"
+      },
+      "nl": {
+        "text": "Gedrukt"
+      }
+    },
+    "sequence": 700,
+    "class_name": "plan-printed"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Kalandrieren"
+      },
+      "en": {
+        "text": "Calendering"
+      },
+      "nl": {
+        "text": "Kalanderen"
+      }
+    },
+    "sequence": 710,
+    "class_name": "plan-calendering"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Trocknen"
+      },
+      "en": {
+        "text": "Drying"
+      },
+      "nl": {
+        "text": "Drogen"
+      }
+    },
+    "sequence": 715,
+    "class_name": "plan-drying"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Behandelt"
+      },
+      "en": {
+        "text": "Treated"
+      },
+      "nl": {
+        "text": "Behandeld"
+      }
+    },
+    "sequence": 720,
+    "class_name": "plan-treated"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Beschichtet"
+      },
+      "en": {
+        "text": "Coated"
+      },
+      "nl": {
+        "text": "Gecoat"
+      }
+    },
+    "sequence": 790,
+    "class_name": "plan-coated"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Laminiert"
+      },
+      "en": {
+        "text": "Laminated"
+      },
+      "nl": {
+        "text": "Gelamineerd"
+      }
+    },
+    "sequence": 795,
+    "class_name": "plan-laminated"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Angebracht"
+      },
+      "en": {
+        "text": "Applied"
+      },
+      "nl": {
+        "text": "Aangebracht"
+      }
+    },
+    "sequence": 797,
+    "class_name": "plan-applied"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Geschnitten"
+      },
+      "en": {
+        "text": "Cut"
+      },
+      "nl": {
+        "text": "Gesneden"
+      }
+    },
+    "sequence": 801,
+    "class_name": "plan-cut"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Gefaltet"
+      },
+      "en": {
+        "text": "Folded"
+      },
+      "nl": {
+        "text": "Gevouwen"
+      }
+    },
+    "sequence": 802,
+    "class_name": "plan-folded"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Gebündelt"
+      },
+      "en": {
+        "text": "Bundled"
+      },
+      "nl": {
+        "text": "Gebundeld"
+      }
+    },
+    "sequence": 803,
+    "class_name": "plan-bundled"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Geschlitzt und gerillt"
+      },
+      "en": {
+        "text": "Slitted and creased"
+      },
+      "nl": {
+        "text": "Gesneden en gebiesd"
+      }
+    },
+    "sequence": 804,
+    "class_name": "plan-slitted_and_creased"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Veredelung"
+      },
+      "en": {
+        "text": "Finishing"
+      },
+      "nl": {
+        "text": "Afwerking"
+      }
+    },
+    "sequence": 810,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Schweißen"
+      },
+      "en": {
+        "text": "Welding"
+      },
+      "nl": {
+        "text": "Lassen"
+      }
+    },
+    "sequence": 820,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Geschweißt"
+      },
+      "en": {
+        "text": "Welded"
+      },
+      "nl": {
+        "text": "Gelast"
+      }
+    },
+    "sequence": 822,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Nähen"
+      },
+      "en": {
+        "text": "Stitching"
+      },
+      "nl": {
+        "text": "Stikken"
+      }
+    },
+    "sequence": 828,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Genäht"
+      },
+      "en": {
+        "text": "Stitched"
+      },
+      "nl": {
+        "text": "Gestikt"
+      }
+    },
+    "sequence": 830,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Ösen anbringen"
+      },
+      "en": {
+        "text": "Grommets"
+      },
+      "nl": {
+        "text": "Ogen aanbrengen"
+      }
+    },
+    "sequence": 840,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Mit Ösen versehen"
+      },
+      "en": {
+        "text": "Grommeted"
+      },
+      "nl": {
+        "text": "Voorzien van ogen"
+      }
+    },
+    "sequence": 845,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Extern"
+      },
+      "en": {
+        "text": "External"
+      },
+      "nl": {
+        "text": "Extern"
+      }
+    },
+    "sequence": 850,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Einlagern"
+      },
+      "en": {
+        "text": "Binning"
+      },
+      "nl": {
+        "text": "Sorteren naar bak"
+      }
+    },
+    "sequence": 860,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Bereit zur Kommissionierung (Produktion)"
+      },
+      "en": {
+        "text": "Ready to pick (production)"
+      },
+      "nl": {
+        "text": "Klaar om te picken (productie)"
+      }
+    },
+    "sequence": 905,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Kommissioniert (Produktion)"
+      },
+      "en": {
+        "text": "Picked (production)"
+      },
+      "nl": {
+        "text": "Gepickt (productie)"
+      }
+    },
+    "sequence": 906,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Montiert (Produktion)"
+      },
+      "en": {
+        "text": "Assembled (production)"
+      },
+      "nl": {
+        "text": "Geassembleerd (productie)"
+      }
+    },
+    "sequence": 907,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Verarbeitet"
+      },
+      "en": {
+        "text": "Processed"
+      },
+      "nl": {
+        "text": "Verwerkt"
+      }
+    },
+    "sequence": 915,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Vorverpackt"
+      },
+      "en": {
+        "text": "Prepacked"
+      },
+      "nl": {
+        "text": "Voorverpakt"
+      }
+    },
+    "sequence": 917,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Interner Transport"
+      },
+      "en": {
+        "text": "Internal transport"
+      },
+      "nl": {
+        "text": "Intern transport"
+      }
+    },
+    "sequence": 920,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Externer Transport"
+      },
+      "en": {
+        "text": "External transport"
+      },
+      "nl": {
+        "text": "Extern transport"
+      }
+    },
+    "sequence": 922,
+    "class_name": "plan-finishing"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Logistik"
+      },
+      "en": {
+        "text": "Logistics"
+      },
+      "nl": {
+        "text": "Logistiek"
+      }
+    },
+    "sequence": 925,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Bereit zur Kommissionierung"
+      },
+      "en": {
+        "text": "Ready to pick"
+      },
+      "nl": {
+        "text": "Klaar om te picken"
+      }
+    },
+    "sequence": 950,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Kommissioniert"
+      },
+      "en": {
+        "text": "Picked"
+      },
+      "nl": {
+        "text": "Gepickt"
+      }
+    },
+    "sequence": 960,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Montiert"
+      },
+      "en": {
+        "text": "Assembled"
+      },
+      "nl": {
+        "text": "Geassembleerd"
+      }
+    },
+    "sequence": 975,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Kombiniert"
+      },
+      "en": {
+        "text": "Combined"
+      },
+      "nl": {
+        "text": "Gecombineerd"
+      }
+    },
+    "sequence": 980,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Karton erstellt"
+      },
+      "en": {
+        "text": "Box created"
+      },
+      "nl": {
+        "text": "Doos aangemaakt"
+      }
+    },
+    "sequence": 990,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Verpackt"
+      },
+      "en": {
+        "text": "Packed"
+      },
+      "nl": {
+        "text": "Verpakt"
+      }
+    },
+    "sequence": 992,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Verarbeitet (Projekt)"
+      },
+      "en": {
+        "text": "Processed (project)"
+      },
+      "nl": {
+        "text": "Verwerkt (project)"
+      }
+    },
+    "sequence": 995,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Storniert"
+      },
+      "en": {
+        "text": "Cancelled"
+      },
+      "nl": {
+        "text": "Geannuleerd"
+      }
+    },
+    "sequence": 1000,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Storniert, trotzdem berechnen"
+      },
+      "en": {
+        "text": "Cancelled, invoice anyway"
+      },
+      "nl": {
+        "text": "Geannuleerd, wel factureren"
+      }
+    },
+    "sequence": 1010,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Abgeschlossen"
+      },
+      "en": {
+        "text": "Completed"
+      },
+      "nl": {
+        "text": "Afgerond"
+      }
+    },
+    "sequence": 10000,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Paket erstellt"
+      },
+      "en": {
+        "text": "Package created"
+      },
+      "nl": {
+        "text": "Pakket aangemaakt"
+      }
+    },
+    "sequence": 20000,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Bereit zur Verteilung"
+      },
+      "en": {
+        "text": "Ready for distribution"
+      },
+      "nl": {
+        "text": "Klaar voor distributie"
+      }
+    },
+    "sequence": 20001,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Sendung erstellt"
+      },
+      "en": {
+        "text": "Shipment created"
+      },
+      "nl": {
+        "text": "Zending aangemaakt"
+      }
+    },
+    "sequence": 20002,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Gelagert"
+      },
+      "en": {
+        "text": "Stored"
+      },
+      "nl": {
+        "text": "Opgeslagen"
+      }
+    },
+    "sequence": 20005,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Sortiert"
+      },
+      "en": {
+        "text": "Sorted"
+      },
+      "nl": {
+        "text": "Gesorteerd"
+      }
+    },
+    "sequence": 20008,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Gescannt"
+      },
+      "en": {
+        "text": "Scanned"
+      },
+      "nl": {
+        "text": "Gescand"
+      }
+    },
+    "sequence": 20010,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Unterwegs"
+      },
+      "en": {
+        "text": "In transit"
+      },
+      "nl": {
+        "text": "Onderweg"
+      }
+    },
+    "sequence": 20020,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Sendung verzögert"
+      },
+      "en": {
+        "text": "Shipment delayed"
+      },
+      "nl": {
+        "text": "Zending vertraagd"
+      }
+    },
+    "sequence": 20030,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Rücksendung an Absender"
+      },
+      "en": {
+        "text": "Return to sender"
+      },
+      "nl": {
+        "text": "Retour afzender"
+      }
+    },
+    "sequence": 20040,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Nicht zu Hause"
+      },
+      "en": {
+        "text": "Not at home"
+      },
+      "nl": {
+        "text": "Niet thuis"
+      }
+    },
+    "sequence": 20050,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Sendungsausnahme"
+      },
+      "en": {
+        "text": "Shipment exception"
+      },
+      "nl": {
+        "text": "Uitzondering zending"
+      }
+    },
+    "sequence": 20060,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Verfügbar an Abholstelle"
+      },
+      "en": {
+        "text": "Available at pickup point"
+      },
+      "nl": {
+        "text": "Beschikbaar op ophaalpunt"
+      }
+    },
+    "sequence": 20070,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Abgeholt"
+      },
+      "en": {
+        "text": "Picked up"
+      },
+      "nl": {
+        "text": "Opgehaald"
+      }
+    },
+    "sequence": 20080,
+    "class_name": "plan-logistics"
+  },
+  {
+    "i18n": {
+      "de": {
+        "text": "Zugestellt"
+      },
+      "en": {
+        "text": "Delivered"
+      },
+      "nl": {
+        "text": "Afgeleverd"
+      }
+    },
+    "sequence": 20090,
+    "class_name": "plan-logistics"
+  }
+]

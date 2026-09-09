@@ -11,7 +11,7 @@ Scan of 56 files, 552 unique keys before, 538 after.
 ## Applied
 
 Run over all 56 files, plus a rebuilt `xfw3_site_data_group.json`. Old -> new is machine
-readable in `json/data_group/rename-map.json`; the database side is `sql/update_data_group.sql`.
+readable in `json/data_group/rename-map.json`; the database side is `scripts/build_update_data_group.js` -> `sql/update_data_group_inline.sql` (or `_partial.sql` with ids).
 
 ### Structural
 

@@ -1,0 +1,76 @@
+[
+  {
+    "code": "today",
+    "block": {
+      "i18n": {
+        "de": {
+          "title": "Heute"
+        },
+        "en": {
+          "title": "Today"
+        },
+        "es": {
+          "title": "Hoy"
+        },
+        "fr": {
+          "title": "Aujourd'hui"
+        },
+        "nl": {
+          "title": "Vandaag"
+        },
+        "uk": {
+          "title": "Сьогодні"
+        }
+      }
+    },
+    "order": 0,
+    "period": "today",
+    "conditional": {
+      "values": [
+        "#4CAF50",
+        "#FFA726",
+        "#ff5252"
+      ],
+      "formula": [
+        "result=(value < 25 ? 0 : (value < 50 ? 1 : 2))"
+      ]
+    }
+  },
+  {
+    "code": "week",
+    "block": {
+      "i18n": {
+        "de": {
+          "title": "Woche"
+        },
+        "en": {
+          "title": "Week"
+        },
+        "es": {
+          "title": "Semana"
+        },
+        "fr": {
+          "title": "Semaine"
+        },
+        "nl": {
+          "title": "Week"
+        },
+        "uk": {
+          "title": "Тиждень"
+        }
+      }
+    },
+    "order": 1,
+    "period": "week",
+    "conditional": {
+      "values": [
+        "#4CAF50",
+        "#FFA726",
+        "#ff5252"
+      ],
+      "formula": [
+        "result=(value < 100 ? 0 : (value < 200 ? 1 : 2))"
+      ]
+    }
+  }
+]

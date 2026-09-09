@@ -9,6 +9,7 @@
 -- per date serialises the two: a batch from Zünd and one from Durst, or a
 -- batch next to the daily run, never race on the same rows.
 drop function if exists log.upsert_state_shift_agg(date);
+drop function if exists log.upsert_state_shift_agg(date, text[]);
 
 create function log.upsert_state_shift_agg(p_date date DEFAULT (CURRENT_DATE - 1), p_resource_uids text[] DEFAULT NULL::text[])
  RETURNS integer
@@ -20,16 +21,14 @@ declare
   v_until timestamptz := (p_date + 1)::timestamp at time zone 'Europe/Amsterdam';
   v_count integer;
 begin
-  -- scan until the end of the last window: an overnight window
-  -- (end_time <= start_time, +1 day) runs past midnight, so events and
+  -- scan until the end of the last window: an overnight window (start
+  -- plus duration past midnight) runs into the next date, so events and
   -- production after 00:00 still belong to this date's windows.
   -- greatest() ignores the null that max() returns when the date has
   -- no shift_json, so v_until then simply stays at the day end
   select greatest(v_until, max(
-             (p_date + (sh.value ->> 'end_time')::time
-                     + case when (sh.value ->> 'end_time')::time
-                                 <= (sh.value ->> 'start_time')::time
-                            then interval '1 day' else interval '0' end)
+             (p_date::timestamp + make_interval(secs => (sh.value ->> 'start_offset_in_seconds')::integer
+                                                      + (sh.value ->> 'shift_duration')::integer))
                  at time zone 'Europe/Amsterdam'))
     into v_until
   from action.dates d
@@ -49,26 +48,39 @@ begin
   with
   -- ---------------------------------------------------------------
   -- SWAP POINT: the windows this date is bucketed into.
-  -- Today: action.dates.shift_json — one definition for every
-  -- resource. That column is already marked for removal (see
-  -- sql/migration_dates_tenants_day_off.sql section 3); a per-resource
+  -- Today: action.dates.shift_json — one array for the date, each shift
+  -- with the tenants it is a shift of (start_offset_in_seconds after
+  -- midnight, shift_duration seconds long). A machine belongs to the
+  -- tenant of its production line and is bucketed into the shifts that
+  -- name that tenant; a shift without tenants takes every machine.
+  -- That column is already marked for removal (see
+  -- archive/sql/migrations/migration_dates_tenants_day_off.sql section 3); a per-resource
   -- source (relation.shift_planning / relation.shift_registered_hours)
   -- replaces this CTE and nothing else in the function.
   -- ---------------------------------------------------------------
   window_def as (
       select sh.ordinality::integer as shift_index,
-             (p_date + (sh.value ->> 'start_time')::time)
+             (p_date::timestamp + make_interval(secs => (sh.value ->> 'start_offset_in_seconds')::integer))
                  at time zone 'Europe/Amsterdam' as shift_start,
-             (p_date + (sh.value ->> 'end_time')::time
-                     + case when (sh.value ->> 'end_time')::time
-                                 <= (sh.value ->> 'start_time')::time
-                            then interval '1 day' else interval '0' end)
-                 at time zone 'Europe/Amsterdam' as shift_end
+             (p_date::timestamp + make_interval(secs => (sh.value ->> 'start_offset_in_seconds')::integer
+                                                      + (sh.value ->> 'shift_duration')::integer))
+                 at time zone 'Europe/Amsterdam' as shift_end,
+             (select array_agg(t::integer) from jsonb_array_elements_text(sh.value -> 'tenants') t) as tenant_ids
       from action.dates d
       cross join lateral jsonb_array_elements(d.shift_json)
                          with ordinality as sh(value, ordinality)
       where d.date = p_date
         and d.shift_json is not null
+  ),
+  -- the windows per machine: the shifts that name the tenant of its
+  -- production line, or every shift when the shift names no tenant
+  window_res as (
+      select w.shift_index, w.shift_start, w.shift_end, res.resource_uid
+      from window_def w
+      join relation.resource res
+        on p_resource_uids is null or res.resource_uid = any (p_resource_uids)
+      left join relation.production_line pl on pl.line_id = res.line_id
+      where w.tenant_ids is null or pl.tenant_id = any (w.tenant_ids)
   ),
   events as (
       select s.resource_uid, s.state, s.start_at
@@ -79,20 +91,18 @@ begin
 
       union all
 
-      -- the state each resource was in when the window opened, so a
+      -- the state each resource was in when its window opened, so a
       -- window with no events of its own is still covered
-      select res.resource_uid, c.state, w.shift_start
-      from relation.resource res
-      cross join window_def w
+      select w.resource_uid, c.state, w.shift_start
+      from window_res w
       cross join lateral (
           select s.state
           from log.state s
-          where s.resource_uid = res.resource_uid
+          where s.resource_uid = w.resource_uid
             and s.start_at <= w.shift_start
           order by s.start_at desc
           limit 1
       ) c
-      where p_resource_uids is null or res.resource_uid = any (p_resource_uids)
   ),
   timeline as (
       select e.resource_uid,
@@ -112,8 +122,9 @@ begin
              sum(extract(epoch from (least(t.end_at, w.shift_end) - t.start_at)))::numeric
                  as duration_seconds
       from timeline t
-      join window_def w
-        on t.start_at >= w.shift_start
+      join window_res w
+        on w.resource_uid = t.resource_uid
+       and t.start_at >= w.shift_start
        and t.start_at <  w.shift_end
       group by w.shift_index, w.shift_start, w.shift_end, t.resource_uid, t.state
   ),
@@ -133,8 +144,9 @@ begin
                  - greatest(dl.start_at, w.shift_start)
              )))::numeric as produced_seconds
       from log.data dl
-      join window_def w
-        on dl.start_at < w.shift_end
+      join window_res w
+        on w.resource_uid = dl.resource_uid
+       and dl.start_at < w.shift_end
        and dl.start_at + dl.production_time_seconds * interval '1 second' > w.shift_start
       where dl.production_time_seconds > 0
         and (p_resource_uids is null or dl.resource_uid = any (p_resource_uids))
@@ -165,8 +177,9 @@ begin
                  least(p.end_at, w.shift_end) - greatest(p.start_at, w.shift_start)
              )))::numeric as duration_seconds
       from plan_items p
-      join window_def w
-        on p.start_at < w.shift_end
+      join window_res w
+        on w.resource_uid = p.resource_uid
+       and p.start_at < w.shift_end
        and p.end_at   > w.shift_start
       group by w.shift_index, w.shift_start, w.shift_end, p.resource_uid
   ),

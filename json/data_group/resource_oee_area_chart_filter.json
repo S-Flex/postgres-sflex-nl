@@ -31,7 +31,7 @@
         {
           "key": "include_weekends",
           "is_optional": true,
-          "default_value": false,
+          "default_value": true,
           "is_query_param": true
         },
         {
@@ -79,170 +79,11 @@
             "control": "multi-select",
             "class_name": "col-span-12 @2xl:col-span-2",
             "input_data": {
-              "data": [
-                {
-                  "code": "producing",
-                  "i18n": {
-                    "de": {
-                      "title": "Produziert"
-                    },
-                    "en": {
-                      "title": "Producing"
-                    },
-                    "es": {
-                      "title": "Produciendo"
-                    },
-                    "fr": {
-                      "title": "En production"
-                    },
-                    "nl": {
-                      "title": "Producing"
-                    },
-                    "uk": {
-                      "title": "Виробництво"
-                    }
-                  }
-                },
-                {
-                  "code": "breakdown",
-                  "i18n": {
-                    "de": {
-                      "title": "Störung"
-                    },
-                    "en": {
-                      "title": "Breakdown"
-                    },
-                    "es": {
-                      "title": "Avería"
-                    },
-                    "fr": {
-                      "title": "Panne"
-                    },
-                    "nl": {
-                      "title": "Breakdown"
-                    },
-                    "uk": {
-                      "title": "Поломка"
-                    }
-                  }
-                },
-                {
-                  "code": "offline",
-                  "i18n": {
-                    "de": {
-                      "title": "Offline"
-                    },
-                    "en": {
-                      "title": "Offline"
-                    },
-                    "es": {
-                      "title": "Sin conexión"
-                    },
-                    "fr": {
-                      "title": "Hors ligne"
-                    },
-                    "nl": {
-                      "title": "Offline"
-                    },
-                    "uk": {
-                      "title": "Офлайн"
-                    }
-                  }
-                },
-                {
-                  "code": "starved",
-                  "i18n": {
-                    "de": {
-                      "title": "Materialmangel"
-                    },
-                    "en": {
-                      "title": "Starved"
-                    },
-                    "es": {
-                      "title": "Sin material"
-                    },
-                    "fr": {
-                      "title": "Sous-alimenté"
-                    },
-                    "nl": {
-                      "title": "Starved"
-                    },
-                    "uk": {
-                      "title": "Голодування"
-                    }
-                  }
-                },
-                {
-                  "code": "setup",
-                  "i18n": {
-                    "de": {
-                      "title": "Rüsten"
-                    },
-                    "en": {
-                      "title": "Setup"
-                    },
-                    "es": {
-                      "title": "Configuración"
-                    },
-                    "fr": {
-                      "title": "Configuration"
-                    },
-                    "nl": {
-                      "title": "Setup"
-                    },
-                    "uk": {
-                      "title": "Налаштування"
-                    }
-                  }
-                },
-                {
-                  "code": "blocked",
-                  "i18n": {
-                    "de": {
-                      "title": "Blockiert"
-                    },
-                    "en": {
-                      "title": "Blocked"
-                    },
-                    "es": {
-                      "title": "Bloqueado"
-                    },
-                    "fr": {
-                      "title": "Bloqué"
-                    },
-                    "nl": {
-                      "title": "Blocked"
-                    },
-                    "uk": {
-                      "title": "Заблоковано"
-                    }
-                  }
-                },
-                {
-                  "code": "idle",
-                  "i18n": {
-                    "de": {
-                      "title": "Leerlauf"
-                    },
-                    "en": {
-                      "title": "Idle"
-                    },
-                    "es": {
-                      "title": "Inactivo"
-                    },
-                    "fr": {
-                      "title": "Inactif"
-                    },
-                    "nl": {
-                      "title": "Idle"
-                    },
-                    "uk": {
-                      "title": "Неактивний"
-                    }
-                  }
-                }
+              "src": [
+                "get_resource_states"
               ],
-              "title_field": "title",
+              "params": [],
+              "title_field": "i18n",
               "value_field": "code"
             }
           }

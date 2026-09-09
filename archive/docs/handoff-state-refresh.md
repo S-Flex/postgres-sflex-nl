@@ -1,6 +1,6 @@
 # log.state_shift_agg actueel na elke crud_state_log
 
-Datum: 2026-09-05. Hoort bij `docs/plan-oee-donut.md` §3 "actualiteit".
+Datum: 2026-09-05. Hoort bij `archive/docs/plan-oee-donut.md` §3 "actualiteit".
 Gebouwd aan de databasekant (zie "draaien" onderaan); de frontend hoeft
 niets te doen, dat deel staat er voor de volledigheid.
 
@@ -26,7 +26,7 @@ De herbouw hoort niet in de frontend. De bron van de wijziging is de
 crud-functie, dus die sluit af met het bijwerken van precies de slices die de
 batch raakt. De frontend hoeft daarvoor niets te doen en kan niets vergeten.
 
-Wat er aan de databasekant is gebouwd (`sql/update_state_refresh.sql`):
+Wat er aan de databasekant is gebouwd (`archive/sql/migrations/update_state_refresh.sql`):
 
 1. `log.upsert_state_shift_agg(p_date date, p_resource_uids text[] default null)`
    — de builder krijgt een resource-bereik. `null` blijft de hele dag (de
@@ -85,10 +85,10 @@ de voorkeur.
 
 ## draaien
 
-1. `sql/update_state_refresh.sql` — dropt en maakt de builder (nieuwe
+1. `archive/sql/migrations/update_state_refresh.sql` — dropt en maakt de builder (nieuwe
    signatuur), `crud_state_log`, `crud_data_log` en `refresh_derived_data`;
    met twee checks eronder (signatuur, en een scoped herbouw van één
    machine-dag die alleen die machine raakt).
 2. frontend: punten 3 en 4 hierboven nalopen; verder niets.
 3. daarna de donut: `sql/update_data_group_partial.sql` met 29, zodra de
-   widget de nieuwe config kent (`docs/handoff-oee-donut-frontend.md`).
+   widget de nieuwe config kent (`archive/docs/handoff-oee-donut-frontend.md`).
