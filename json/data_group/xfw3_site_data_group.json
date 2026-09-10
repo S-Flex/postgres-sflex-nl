@@ -20280,83 +20280,206 @@
         "flow_board_config": {
           "layout": "flow-grid",
           "group_by": [
-            "tenant_name"
+            {
+              "i18n": {
+                "de": {
+                  "title": "Dokkum"
+                },
+                "en": {
+                  "title": "Dokkum"
+                },
+                "es": {
+                  "title": "Dokkum"
+                },
+                "fr": {
+                  "title": "Dokkum"
+                },
+                "nl": {
+                  "title": "Dokkum"
+                },
+                "uk": {
+                  "title": "Dokkum"
+                }
+              },
+              "navs": [
+                {
+                  "data": [
+                    {
+                      "field": "tenant_id",
+                      "value": 2
+                    }
+                  ],
+                  "i18n": {
+                    "de": {
+                      "title": "Nach BH"
+                    },
+                    "en": {
+                      "title": "To BH"
+                    },
+                    "es": {
+                      "title": "A BH"
+                    },
+                    "fr": {
+                      "title": "Vers BH"
+                    },
+                    "nl": {
+                      "title": "Naar BH"
+                    },
+                    "uk": {
+                      "title": "До BH"
+                    }
+                  },
+                  "type": "button",
+                  "nav_item_id": "move-to-bh"
+                }
+              ],
+              "filter": [
+                [
+                  {
+                    "op": "==",
+                    "field": "tenant_id",
+                    "value": 1
+                  }
+                ]
+              ]
+            },
+            {
+              "i18n": {
+                "de": {
+                  "title": "Bad Hersfeld"
+                },
+                "en": {
+                  "title": "Bad Hersfeld"
+                },
+                "es": {
+                  "title": "Bad Hersfeld"
+                },
+                "fr": {
+                  "title": "Bad Hersfeld"
+                },
+                "nl": {
+                  "title": "Bad Hersfeld"
+                },
+                "uk": {
+                  "title": "Bad Hersfeld"
+                }
+              },
+              "navs": [
+                {
+                  "data": [
+                    {
+                      "field": "tenant_id",
+                      "value": 1
+                    }
+                  ],
+                  "i18n": {
+                    "de": {
+                      "title": "Nach DK"
+                    },
+                    "en": {
+                      "title": "To DK"
+                    },
+                    "es": {
+                      "title": "A DK"
+                    },
+                    "fr": {
+                      "title": "Vers DK"
+                    },
+                    "nl": {
+                      "title": "Naar DK"
+                    },
+                    "uk": {
+                      "title": "До DK"
+                    }
+                  },
+                  "type": "button",
+                  "nav_item_id": "move-to-dk"
+                }
+              ],
+              "filter": [
+                [
+                  {
+                    "op": "==",
+                    "field": "tenant_id",
+                    "value": 2
+                  }
+                ]
+              ]
+            }
           ],
           "row_options": {
             "colexp": false,
             "checkable": false,
             "selectable": false
           },
-          "field_config": {
-            "tenant_name": {
-              "ui": {
-                "i18n": {
-                  "de": {
-                    "title": "Standort"
-                  },
-                  "en": {
-                    "title": "Location"
-                  },
-                  "es": {
-                    "title": "Ubicación"
-                  },
-                  "fr": {
-                    "title": "Emplacement"
-                  },
-                  "nl": {
-                    "title": "Locatie"
-                  },
-                  "uk": {
-                    "title": "Місцезнаходження"
-                  }
-                },
-                "no_label": true,
-                "class_name": "col-span-1"
-              }
-            },
-            "impact_json.sqm": {
-              "ui": {
-                "i18n": {
-                  "de": {
-                    "title": "m²"
-                  },
-                  "en": {
-                    "title": "m²"
-                  },
-                  "es": {
-                    "title": "m²"
-                  },
-                  "fr": {
-                    "title": "m²"
-                  },
-                  "nl": {
-                    "title": "m²"
-                  },
-                  "uk": {
-                    "title": "м²"
-                  }
-                },
-                "order": 1,
-                "class_name": "col-span-1 text-right"
-              },
-              "scale": 0,
-              "aggregate_fn": "sum"
-            }
-          },
-          "column_min_width": 300,
-          "column_max_width": 400,
-          "fields_class_name": "grid grid-cols-2",
           "children": [
             {
               "layout": "flow-container",
               "group_by": [
-                "manifest_json.imposition"
+                "manifest_json.imposition.item_code_paths"
               ],
               "row_options": {
                 "colexp": true,
                 "checkable": false,
-                "selectable": false
+                "selectable": false,
+                "navs": [
+                  {
+                    "menu": [
+                      {
+                        "i18n": {
+                          "de": {
+                            "title": "Weiter zur Sammelform"
+                          },
+                          "en": {
+                            "title": "Continue to gangrun"
+                          },
+                          "es": {
+                            "title": "Continuar al gangrun"
+                          },
+                          "fr": {
+                            "title": "Continuer vers le gangrun"
+                          },
+                          "nl": {
+                            "title": "Doorzetten naar gangrun"
+                          },
+                          "uk": {
+                            "title": "Далі до ганграну"
+                          }
+                        },
+                        "type": "button",
+                        "path": "(detail:impose-plan-inflow)",
+                        "params": [
+                          {
+                            "key": "material_id",
+                            "is_query_param": true
+                          },
+                          {
+                            "key": "date",
+                            "is_query_param": true
+                          },
+                          {
+                            "key": "look_ahead_days",
+                            "is_query_param": true
+                          },
+                          {
+                            "key": "threshold",
+                            "is_query_param": true
+                          },
+                          {
+                            "key": "line_type",
+                            "is_query_param": true
+                          },
+                          {
+                            "key": "resource_uids",
+                            "is_query_param": true
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
               },
+              "fields_class_name": "@container grid grid-cols-6 gap-1",
               "field_config": {
                 "manifest_json.imposition.i18n": {
                   "ui": {
@@ -20386,60 +20509,84 @@
                     "class_name": "col-span-6 @md:col-span-2"
                   }
                 },
-                "impact_json.count": {
+                "resource_uids": {
                   "ui": {
                     "i18n": {
                       "de": {
-                        "title": "Auftragszeilen"
+                        "title": "Drucker"
                       },
                       "en": {
-                        "title": "Orderlines"
+                        "title": "Printer"
                       },
                       "es": {
-                        "title": "Líneas de pedido"
+                        "title": "Impresora"
                       },
                       "fr": {
-                        "title": "Lignes de commande"
+                        "title": "Imprimante"
                       },
                       "nl": {
-                        "title": "Orderregels"
+                        "title": "Printer"
                       },
                       "uk": {
-                        "title": "Рядки замовлення"
+                        "title": "Принтер"
                       }
                     },
                     "order": 1,
-                    "class_name": "col-span-2 @md:col-span-1 text-right"
-                  },
-                  "aggregate_fn": "sum"
+                    "control": "multi-select",
+                    "class_name": "col-span-6 @md:col-span-2",
+                    "input_data": {
+                      "src": [
+                        "get_resources"
+                      ],
+                      "params": [
+                        {
+                          "key": "line_type",
+                          "is_query_param": true
+                        },
+                        {
+                          "key": "step",
+                          "default_value": "print",
+                          "is_query_param": true
+                        }
+                      ],
+                      "title_field": "resource_name",
+                      "value_field": "resource_uid"
+                    }
+                  }
                 },
-                "impact_json.amount": {
+                "fill_percentage": {
                   "ui": {
                     "i18n": {
                       "de": {
-                        "title": "Einheiten"
+                        "title": "Füllung"
                       },
                       "en": {
-                        "title": "Units"
+                        "title": "Fill"
                       },
                       "es": {
-                        "title": "Unidades"
+                        "title": "Llenado"
                       },
                       "fr": {
-                        "title": "Unités"
+                        "title": "Remplissage"
                       },
                       "nl": {
-                        "title": "Units"
+                        "title": "Vulling"
                       },
                       "uk": {
-                        "title": "Одиниці"
+                        "title": "Заповнення"
                       }
                     },
                     "order": 2,
-                    "class_name": "col-span-2 @md:col-span-1 text-right"
+                    "control": "donut-chart",
+                    "class_name": "col-span-2 @md:col-span-1",
+                    "donut_chart_config": {
+                      "center": {
+                        "field": "fill_percentage",
+                        "type": "percent"
+                      }
+                    }
                   },
-                  "scale": 0,
-                  "aggregate_fn": "sum"
+                  "aggregate_fn": "min"
                 },
                 "impact_json.sqm": {
                   "ui": {
@@ -20466,7 +20613,63 @@
                     "order": 3,
                     "class_name": "col-span-2 @md:col-span-1 text-right"
                   },
-                  "scale": 1,
+                  "scale": 0,
+                  "aggregate_fn": "sum"
+                },
+                "impact_json.count": {
+                  "ui": {
+                    "i18n": {
+                      "de": {
+                        "title": "Auftragszeilen"
+                      },
+                      "en": {
+                        "title": "Orderlines"
+                      },
+                      "es": {
+                        "title": "Líneas de pedido"
+                      },
+                      "fr": {
+                        "title": "Lignes de commande"
+                      },
+                      "nl": {
+                        "title": "Orderregels"
+                      },
+                      "uk": {
+                        "title": "Рядки замовлення"
+                      }
+                    },
+                    "order": 4,
+                    "class_name": "col-span-2 @md:col-span-1 text-right"
+                  },
+                  "scale": 0,
+                  "aggregate_fn": "sum"
+                },
+                "impact_json.amount": {
+                  "ui": {
+                    "i18n": {
+                      "de": {
+                        "title": "Einheiten"
+                      },
+                      "en": {
+                        "title": "Units"
+                      },
+                      "es": {
+                        "title": "Unidades"
+                      },
+                      "fr": {
+                        "title": "Unités"
+                      },
+                      "nl": {
+                        "title": "Units"
+                      },
+                      "uk": {
+                        "title": "Одиниці"
+                      }
+                    },
+                    "order": 5,
+                    "class_name": "col-span-2 @md:col-span-1 text-right"
+                  },
+                  "scale": 0,
                   "aggregate_fn": "sum"
                 },
                 "impact_json.rework_count": {
@@ -20491,16 +20694,10 @@
                         "title": "Переробка"
                       }
                     },
-                    "order": 4,
-                    "class_name": "col-span-2 @md:col-span-1 text-right",
-                    "hidden_when": [
-                      {
-                        "field": "impact_json.rework_count",
-                        "op": "==",
-                        "value": 0
-                      }
-                    ]
+                    "order": 6,
+                    "class_name": "col-span-2 @md:col-span-1 text-right"
                   },
+                  "scale": 0,
                   "aggregate_fn": "sum"
                 },
                 "impact_json.rework_sqm": {
@@ -20525,34 +20722,25 @@
                         "title": "Пер. м²"
                       }
                     },
-                    "order": 5,
-                    "class_name": "col-span-2 @md:col-span-1 text-right",
-                    "hidden_when": [
-                      {
-                        "field": "impact_json.rework_count",
-                        "op": "==",
-                        "value": 0
-                      }
-                    ]
+                    "order": 7,
+                    "class_name": "col-span-2 @md:col-span-1 text-right"
                   },
-                  "scale": 1,
+                  "scale": 0,
                   "aggregate_fn": "sum"
                 }
               },
-              "fields_class_name": "@container grid grid-cols-6 gap-1",
               "children": [
                 {
-                  "layout": "flow-container",
+                  "layout": "flow-cards",
                   "group_by": [
-                    "nest_date",
-                    "queue_class_names"
+                    "nest_date"
                   ],
                   "row_options": {
                     "colexp": true,
-                    "checkable": false,
-                    "selectable": false,
-                    "class_names_field": "queue_class_names"
+                    "checkable": true,
+                    "selectable": true
                   },
+                  "fields_class_name": "@container grid grid-cols-6 gap-1",
                   "field_config": {
                     "nest_date": {
                       "ui": {
@@ -20606,6 +20794,7 @@
                         "order": 1,
                         "class_name": "col-span-2 @md:col-span-1 text-right"
                       },
+                      "scale": 0,
                       "aggregate_fn": "sum"
                     },
                     "impact_json.amount": {
@@ -20661,80 +20850,10 @@
                         "order": 3,
                         "class_name": "col-span-2 @md:col-span-1 text-right"
                       },
-                      "scale": 1,
-                      "aggregate_fn": "sum"
-                    },
-                    "impact_json.rework_count": {
-                      "ui": {
-                        "i18n": {
-                          "de": {
-                            "title": "Nacharbeit"
-                          },
-                          "en": {
-                            "title": "Rework"
-                          },
-                          "es": {
-                            "title": "Retrabajo"
-                          },
-                          "fr": {
-                            "title": "Reprise"
-                          },
-                          "nl": {
-                            "title": "Herstel"
-                          },
-                          "uk": {
-                            "title": "Переробка"
-                          }
-                        },
-                        "order": 4,
-                        "class_name": "col-span-2 @md:col-span-1 text-right",
-                        "hidden_when": [
-                          {
-                            "field": "impact_json.rework_count",
-                            "op": "==",
-                            "value": 0
-                          }
-                        ]
-                      },
-                      "aggregate_fn": "sum"
-                    },
-                    "impact_json.rework_sqm": {
-                      "ui": {
-                        "i18n": {
-                          "de": {
-                            "title": "H. m²"
-                          },
-                          "en": {
-                            "title": "Rw m²"
-                          },
-                          "es": {
-                            "title": "Retr. m²"
-                          },
-                          "fr": {
-                            "title": "Repr. m²"
-                          },
-                          "nl": {
-                            "title": "H. m²"
-                          },
-                          "uk": {
-                            "title": "Пер. м²"
-                          }
-                        },
-                        "order": 5,
-                        "class_name": "col-span-2 @md:col-span-1 text-right",
-                        "hidden_when": [
-                          {
-                            "field": "impact_json.rework_count",
-                            "op": "==",
-                            "value": 0
-                          }
-                        ]
-                      },
-                      "scale": 1,
+                      "scale": 0,
                       "aggregate_fn": "sum"
                     }
                   },
-                  "fields_class_name": "@container grid grid-cols-6 gap-1",
                   "children": [
                     {
                       "layout": "flow-table",
@@ -20951,146 +21070,7 @@
                 }
               ]
             }
-          ],
-          "header": {
-            "fields_class_name": "grid grid-cols-3 gap-2",
-            "field_config": {
-              "fill_percentage": {
-                "ui": {
-                  "i18n": {
-                    "de": {
-                      "title": "Füllung"
-                    },
-                    "en": {
-                      "title": "Fill"
-                    },
-                    "es": {
-                      "title": "Llenado"
-                    },
-                    "fr": {
-                      "title": "Remplissage"
-                    },
-                    "nl": {
-                      "title": "Vulling"
-                    },
-                    "uk": {
-                      "title": "Заповнення"
-                    }
-                  },
-                  "order": 0,
-                  "control": "donut-chart",
-                  "class_name": "col-span-1 row-span-2",
-                  "donut_chart_config": {
-                    "center": {
-                      "field": "fill_percentage",
-                      "type": "percent"
-                    }
-                  }
-                }
-              },
-              "resource_uids": {
-                "ui": {
-                  "i18n": {
-                    "de": {
-                      "title": "Drucker"
-                    },
-                    "en": {
-                      "title": "Printer"
-                    },
-                    "es": {
-                      "title": "Impresora"
-                    },
-                    "fr": {
-                      "title": "Imprimante"
-                    },
-                    "nl": {
-                      "title": "Printer"
-                    },
-                    "uk": {
-                      "title": "Принтер"
-                    }
-                  },
-                  "order": 1,
-                  "control": "multi-select",
-                  "class_name": "col-span-2",
-                  "input_data": {
-                    "src": [
-                      "get_resources"
-                    ],
-                    "params": [
-                      {
-                        "key": "line_type",
-                        "is_query_param": true
-                      },
-                      {
-                        "key": "step",
-                        "default_value": "print",
-                        "is_query_param": true
-                      }
-                    ],
-                    "title_field": "resource_name",
-                    "value_field": "resource_uid"
-                  }
-                }
-              }
-            },
-            "navs": [
-              {
-                "menu": [
-                  {
-                    "i18n": {
-                      "de": {
-                        "title": "Weiter zur Sammelform"
-                      },
-                      "en": {
-                        "title": "Continue to gangrun"
-                      },
-                      "es": {
-                        "title": "Continuar al gangrun"
-                      },
-                      "fr": {
-                        "title": "Continuer vers le gangrun"
-                      },
-                      "nl": {
-                        "title": "Doorzetten naar gangrun"
-                      },
-                      "uk": {
-                        "title": "Далі до ганграну"
-                      }
-                    },
-                    "type": "button",
-                    "path": "(detail:impose-plan-inflow)",
-                    "params": [
-                      {
-                        "key": "material_id",
-                        "is_query_param": true
-                      },
-                      {
-                        "key": "date",
-                        "is_query_param": true
-                      },
-                      {
-                        "key": "look_ahead_days",
-                        "is_query_param": true
-                      },
-                      {
-                        "key": "threshold",
-                        "is_query_param": true
-                      },
-                      {
-                        "key": "line_type",
-                        "is_query_param": true
-                      },
-                      {
-                        "key": "resource_uids",
-                        "is_query_param": true
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
+          ]
         },
         "window_class_name": "p-8"
       }

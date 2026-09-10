@@ -1,3 +1,13 @@
+-- The inflow sidebar (79) of a material whose imposition group has a parent
+-- (catalog.imposition_group.parent_imposition_group_id: 28 Dibond Digital 3mm
+-- under 300 Dilite 3mm, 29 under 369 for double sided) is the parent's
+-- queue: mapping.get_production_orderline_manifest resolves p_material_id to
+-- the parent, reads the orderlines of the parent and every child, and shows
+-- them with material_id = coalesce(parent_imposition_group_id, material_id).
+-- The fill and the interval are the parent's as well. Same signature.
+BEGIN;
+
+-- ============ sql/mapping/get_production_orderline_manifest.sql ============
 -- signature changes, so the old ones have to go first
 drop function if exists mapping.get_production_orderline_manifest(integer, date, text, integer);
 drop function if exists mapping.get_production_orderline_manifest(integer, timestamp with time zone, integer, text, integer, integer);
@@ -6,7 +16,7 @@ drop function if exists mapping.get_production_orderline_manifest(integer, date,
 -- same signature, dropped so the script re-runs
 drop function if exists mapping.get_production_orderline_manifest(integer, date, integer, integer, integer, integer[]);
 
-create function mapping.get_production_orderline_manifest(p_material_id integer, p_date date DEFAULT CURRENT_DATE, p_look_ahead_days integer DEFAULT '-1'::integer, p_threshold integer DEFAULT 1, p_domain_id integer DEFAULT 1, p_tenant_ids integer[] DEFAULT NULL::integer[]) returns TABLE(number text, order_sequence integer, order_id integer, production_order_id integer, production_orderline_id integer, sales_orderline_id integer, customer_json jsonb, material_id integer, material_name text, product_amount numeric, sqm numeric, product_width numeric, product_height numeric, ship_separately boolean, production_line_id integer, production_company_id integer, tenant_id integer, tenant_name text, internal_status_code text, status_sequence integer, status_level text, status_title text, part_amount integer, part_status_json jsonb, nest_date date, production_date date, logistics_date date, logistics_at timestamp without time zone, shipment_date date, dates_json jsonb, impact_json jsonb, rejected_amount numeric, produced_amount numeric, nest_json jsonb, nest_ids bigint[], delivery_class_names text[], class_names text[], unit_class_names text[], queue_class_names text[], manifest_json jsonb, fill_percentage numeric)
+create function mapping.get_production_orderline_manifest(p_material_id integer, p_date date DEFAULT CURRENT_DATE, p_look_ahead_days integer DEFAULT '-1'::integer, p_threshold integer DEFAULT 1, p_domain_id integer DEFAULT 1, p_tenant_ids integer[] DEFAULT NULL::integer[]) returns TABLE(number text, order_sequence integer, order_id integer, production_order_id integer, production_orderline_id integer, sales_orderline_id integer, customer_json jsonb, material_id integer, material_name text, product_amount numeric, sqm numeric, product_width numeric, product_height numeric, ship_separately boolean, production_line_id integer, production_company_id integer, tenant_name text, internal_status_code text, status_sequence integer, status_level text, status_title text, part_amount integer, part_status_json jsonb, nest_date date, production_date date, logistics_date date, logistics_at timestamp without time zone, shipment_date date, dates_json jsonb, impact_json jsonb, rejected_amount numeric, produced_amount numeric, nest_json jsonb, nest_ids bigint[], delivery_class_names text[], class_names text[], unit_class_names text[], queue_class_names text[], manifest_json jsonb, fill_percentage numeric)
 	stable
 	language plpgsql
 as $$
@@ -83,7 +93,6 @@ begin
     ),
     tenant as (
         select (v.value ->> 'production_company_id')::integer as production_company_id,
-               (v.value ->> 'tenant_id')::integer             as tenant_id,
                v.value ->> 'name'                             as tenant_name
         from relation.lookup lk
         cross join lateral jsonb_array_elements(lk.lookup_json) as v(value)
@@ -95,7 +104,7 @@ begin
            coalesce(g.parent_imposition_group_id, d.material_id),
            d.material_name, d.product_amount, d.sqm,
            d.product_width, d.product_height, d.ship_separately,
-           d.production_line_id, d.production_company_id, t.tenant_id, t.tenant_name,
+           d.production_line_id, d.production_company_id, t.tenant_name,
            d.internal_status_code, d.status_sequence, d.status_level, d.status_title,
            d.part_amount, d.part_status_json,
            d.nest_date, d.production_date, d.logistics_date, d.logistics_at,
@@ -118,3 +127,12 @@ end;
 $$;
 
 alter function mapping.get_production_orderline_manifest(integer, date, integer, integer, integer, integer[]) owner to xfw3;
+
+COMMIT;
+
+-- check: the queue of 300 shows every row under 300, and 28 opens the same queue
+SELECT material_id, count(*) AS rows, count(DISTINCT material_name) AS names
+FROM mapping.get_production_orderline_manifest(300)
+GROUP BY 1;
+SELECT (SELECT count(*) FROM mapping.get_production_orderline_manifest(28))  AS via_child,
+       (SELECT count(*) FROM mapping.get_production_orderline_manifest(300)) AS via_parent;

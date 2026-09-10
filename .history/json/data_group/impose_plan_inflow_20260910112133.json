@@ -825,7 +825,7 @@
                     }
                   },
                   "order": 3,
-                  "class_name": "col-span-2 @md:col-span-1 "
+                  "class_name": "col-span-2 @md:col-span-1 text-right"
                 },
                 "scale": 0,
                 "aggregate_fn": "sum"
@@ -853,7 +853,7 @@
                     }
                   },
                   "order": 4,
-                  "class_name": "col-span-2 @md:col-span-1 "
+                  "class_name": "col-span-2 @md:col-span-1 text-right"
                 },
                 "scale": 0,
                 "aggregate_fn": "sum"
@@ -881,7 +881,7 @@
                     }
                   },
                   "order": 5,
-                  "class_name": "col-span-2 @md:col-span-1 "
+                  "class_name": "col-span-2 @md:col-span-1 text-right"
                 },
                 "scale": 0,
                 "aggregate_fn": "sum"
@@ -909,7 +909,7 @@
                     }
                   },
                   "order": 6,
-                  "class_name": "col-span-2 @md:col-span-1 "
+                  "class_name": "col-span-2 @md:col-span-1 text-right"
                 },
                 "scale": 0,
                 "aggregate_fn": "sum"
@@ -937,7 +937,7 @@
                     }
                   },
                   "order": 7,
-                  "class_name": "col-span-2 @md:col-span-1 "
+                  "class_name": "col-span-2 @md:col-span-1 text-right"
                 },
                 "scale": 0,
                 "aggregate_fn": "sum"
@@ -1006,7 +1006,7 @@
                         }
                       },
                       "order": 1,
-                      "class_name": "col-span-2 @md:col-span-1"
+                      "class_name": "col-span-2 @md:col-span-1 text-right"
                     },
                     "scale": 0,
                     "aggregate_fn": "sum"
@@ -1034,7 +1034,7 @@
                         }
                       },
                       "order": 2,
-                      "class_name": "col-span-2 @md:col-span-1 "
+                      "class_name": "col-span-2 @md:col-span-1 text-right"
                     },
                     "scale": 0,
                     "aggregate_fn": "sum"
@@ -1062,7 +1062,7 @@
                         }
                       },
                       "order": 3,
-                      "class_name": "col-span-2 @md:col-span-1 "
+                      "class_name": "col-span-2 @md:col-span-1 text-right"
                     },
                     "scale": 0,
                     "aggregate_fn": "sum"
@@ -1133,7 +1133,7 @@
                             }
                           },
                           "order": 1,
-                          "class_name": "col-span-1 "
+                          "class_name": "col-span-1 text-right"
                         },
                         "scale": 0
                       },
@@ -1160,7 +1160,7 @@
                             }
                           },
                           "order": 2,
-                          "class_name": "col-span-1 "
+                          "class_name": "col-span-1 text-right"
                         },
                         "scale": 1
                       },
@@ -1187,7 +1187,7 @@
                             }
                           },
                           "order": 3,
-                          "class_name": "col-span-1 "
+                          "class_name": "col-span-1 text-right"
                         },
                         "scale": 0
                       },
@@ -1214,7 +1214,7 @@
                             }
                           },
                           "order": 4,
-                          "class_name": "col-span-1 "
+                          "class_name": "col-span-1 text-right"
                         },
                         "scale": 0
                       },
@@ -1241,7 +1241,7 @@
                             }
                           },
                           "order": 5,
-                          "class_name": "col-span-1 ",
+                          "class_name": "col-span-1 text-right",
                           "hidden_when": [
                             {
                               "field": "impact_json.rework_count",
@@ -1278,7 +1278,7 @@
                         }
                       }
                     },
-                    "fields_class_name": "grid grid-cols-7 gap-1"
+                    "fields_class_name": "grid grid-cols-8 gap-1"
                   }
                 ]
               }

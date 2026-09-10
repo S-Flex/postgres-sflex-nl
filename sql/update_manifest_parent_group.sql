@@ -1,3 +1,15 @@
+-- A material that nests with a parent (catalog.imposition_group
+-- .parent_imposition_group_id) takes the parent's nest group in
+-- component_specs.manifest_json: mapping.update_component_specs_manifest
+-- gives the material row of a child orderline the parent's item path and the
+-- parent's material abbreviation in its label, so the nesting queue (79)
+-- groups 28 Dibond Digital 3mm with 300 Dilite 3mm, and 29 with 369. Then
+-- the backfill: the orderlines of the child materials placed or changed in
+-- the last week (177 on 10 Sep 2026) get their manifest rebuilt; the other
+-- orderlines are untouched, their manifest does not change.
+BEGIN;
+
+-- ============ sql/mapping/update_component_specs_manifest.sql ============
 drop function if exists mapping.update_component_specs_manifest(integer[]);
 
 create function mapping.update_component_specs_manifest(p_production_orderline_ids integer[])
@@ -150,3 +162,34 @@ select count(distinct production_orderline_id)::integer from updated;
 $$;
 
 alter function mapping.update_component_specs_manifest(integer[]) owner to xfw3;
+
+-- ── backfill: the child orderlines of the last week ─────────────────────────
+DO $do$
+DECLARE
+    v_ids   integer[];
+    v_count integer;
+BEGIN
+    SELECT array_agg(cs.production_orderline_id)
+    INTO v_ids
+    FROM mapping.component_specs cs
+    WHERE cs.material_id IN (SELECT g.imposition_group_id
+                             FROM catalog.imposition_group g
+                             WHERE g.parent_imposition_group_id IS NOT NULL)
+      AND (cs.order_date >= current_date - 7 OR cs.orderline_updated_at >= current_date - 7);
+    v_count := mapping.update_component_specs_manifest(coalesce(v_ids, '{}'::integer[]));
+    RAISE NOTICE 'backfill: % child orderlines of the last week, % manifests changed',
+                 coalesce(cardinality(v_ids), 0), v_count;
+END
+$do$;
+
+COMMIT;
+
+-- ── checks (read-only) ──────────────────────────────────────────────────────
+-- the child rows of the queue of 300 now carry the parent's path and label
+SELECT material_name,
+       manifest_json -> 'imposition' -> 'item_code_paths'      AS paths,
+       manifest_json -> 'imposition' -> 'i18n' -> 'nl' ->> 'abb' AS abb_nl,
+       count(*)
+FROM mock.get_impose_plan_inflow(300)
+GROUP BY 1, 2, 3
+ORDER BY 1, 3;

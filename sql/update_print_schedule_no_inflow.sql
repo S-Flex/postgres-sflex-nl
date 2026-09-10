@@ -1,8 +1,9 @@
 -- Board 75: a nest moment without inflow is no card, and the inflow of a card
 -- is the m2 of the orderlines of its material in the delivery class of its
--- nest moment: the join on mapping.component_specs is on material_id AND
--- production_hours = the delivery_hours of the card's code in
--- lookup_nest_moments (added 10 Sep 2026). The forecast still comes from
+-- nest moment (production_hours = the delivery_hours of the card's code in
+-- lookup_nest_moments, added 10 Sep 2026) whose nest_date is the card date;
+-- the cards of the first production day of a material add the open backlog
+-- with an earlier nest date. The forecast still comes from
 -- get_production_forecast_material, per material. Same signature.
 BEGIN;
 
@@ -132,20 +133,26 @@ BEGIN
                      p_line_type) f
         ),
         inflow AS (
-            -- the m2 that came in for a material per delivery class: the
-            -- orderlines by production_hours, per production day and company;
-            -- a card takes the class of its nest moment (lookup_nest_moments
-            -- delivery_hours). The forecast above stays per material
+            -- the m2 that came in for a material per delivery class and nest
+            -- day: the orderlines by production_hours and nest_date, per
+            -- company. A card takes the class of its nest moment
+            -- (lookup_nest_moments delivery_hours) and the nest day of its own
+            -- date; the first card of a material adds the backlog, the open
+            -- lines with an earlier nest day (see row_base). The forecast above
+            -- stays per material
             SELECT cs.production_company_id,
                    cs.material_id,
-                   cs.production_hours              AS delivery_hours,
-                   cs.production_date::date         AS date,
-                   round(sum(cs.sqm), 1)            AS actual_sqm
+                   cs.production_hours                                            AS delivery_hours,
+                   (cs.nest_date AT TIME ZONE current_setting('TimeZone'))::date AS nest_day,
+                   sum(cs.sqm)                                                    AS sqm,
+                   sum(cs.sqm) FILTER (WHERE cs.is_open)                          AS open_sqm
             FROM mapping.component_specs cs
-            WHERE cs.production_date >= v_from
-              AND cs.production_date < v_last + 1
+            WHERE cs.nest_date IS NOT NULL
+              AND cs.nest_date < v_last + 1
               AND cs.internal_status_code <> 'cancelled'
-            GROUP BY cs.production_company_id, cs.material_id, cs.production_hours, cs.production_date::date
+              AND cs.material_id IN (SELECT m.material_id FROM material m)
+            GROUP BY cs.production_company_id, cs.material_id, cs.production_hours,
+                     (cs.nest_date AT TIME ZONE current_setting('TimeZone'))::date
         ),
         material AS (
             -- the effective interval and anchor are decided here, so nothing
@@ -257,6 +264,7 @@ BEGIN
                          p.interval_days,
                          p.production_date,
                          p.production_day_index,
+                         p.first_date,
                          nm.nest_moment_code,
                          nm.delivery_hours,
                          nm.day_offset,
@@ -295,13 +303,20 @@ BEGIN
                                ON f.production_company_id = t.production_company_id
                                    AND f.material_id = c.material_id
                                    AND f.date = c.date
-                     -- material AND delivery class: production_hours of the
-                     -- orderline is the delivery_hours of the card's nest moment
-                     LEFT JOIN inflow a
-                               ON a.production_company_id = t.production_company_id
-                                   AND a.material_id = c.material_id
-                                   AND a.delivery_hours = c.delivery_hours
-                                   AND a.date = c.date
+                     -- material AND delivery class (production_hours of the
+                     -- orderline is the delivery_hours of the card's nest
+                     -- moment) AND the nest day is the card date; the cards of
+                     -- the first production day of the material take the open
+                     -- backlog before their date as well
+                     LEFT JOIN LATERAL (
+                         SELECT round(sum(CASE WHEN i.nest_day = c.date THEN i.sqm ELSE i.open_sqm END), 1) AS actual_sqm
+                         FROM inflow i
+                         WHERE i.production_company_id = t.production_company_id
+                           AND i.material_id = c.material_id
+                           AND i.delivery_hours = c.delivery_hours
+                           AND (i.nest_day = c.date
+                                OR (c.production_date = c.first_date AND i.nest_day < c.date))
+                     ) a ON true
         ),
         -- one evaluation per distinct variable set, not per row: the moments
         -- that share a date and the days without a forecast share their

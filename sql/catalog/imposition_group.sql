@@ -13,8 +13,16 @@ create table catalog.imposition_group
 		primary key,
 	item_code_paths ltree[] not null
 		constraint imposition_group_item_code_paths_key
-			unique
+			unique,
+	-- the formats of the group: waste [{width, max_height, waste_factor, imposition_sqm}]
+	imposition_group_json jsonb,
+	-- a group nested together with another one (a variant of a material with
+	-- its own paths): the queue, the plan and the schedule are the parent's
+	parent_imposition_group_id integer
+		references catalog.imposition_group (imposition_group_id)
 );
+
+comment on column catalog.imposition_group.parent_imposition_group_id is 'The group this one is nested with: readers take coalesce(parent_imposition_group_id, imposition_group_id) as the material of an orderline (mapping.get_production_orderline_manifest), so a variant queues, plans and schedules under its parent.';
 
 alter table catalog.imposition_group owner to xfw3;
 
