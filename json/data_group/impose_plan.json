@@ -1172,13 +1172,13 @@
                   "data_field": "items",
                   "set_field": "set",
                   "set_order_field": "sort_order",
-                  "fields_class_name": "grid grid-cols-6 gap-1",
+                  "fields_class_name": "grid grid-cols-3 gap-1",
                   "field_config": {
                     "nest_date": {
                       "ui": {
                         "order": 0,
                         "no_label": true,
-                        "class_name": "col-span-2 font-semibold",
+                        "class_name": "font-semibold",
                         "type": "date"
                       }
                     },
@@ -1187,7 +1187,7 @@
                         "order": 1,
                         "no_label": true,
                         "control": "i18n-text",
-                        "class_name": "col-span-1 font-semibold"
+                        "class_name": "font-semibold"
                       }
                     },
                     "batch_id": {
@@ -1213,86 +1213,16 @@
                           }
                         },
                         "order": 0,
-                        "class_name": "col-span-3 font-semibold"
+                        "class_name": "col-span-2 font-semibold"
                       }
                     },
                     "sqm": {
                       "ui": {
                         "order": 2,
                         "no_label": true,
-                        "class_name": "col-span-3 font-semibold text-right",
+                        "class_name": "font-semibold text-right",
                         "suffix": "m²"
                       }
-                    },
-                    "step_json.print.seconds_min": {
-                      "ui": {
-                        "i18n": {
-                          "de": {
-                            "title": "Druck"
-                          },
-                          "en": {
-                            "title": "Print"
-                          },
-                          "es": {
-                            "title": "Impresión"
-                          },
-                          "fr": {
-                            "title": "Impression"
-                          },
-                          "nl": {
-                            "title": "Print"
-                          },
-                          "uk": {
-                            "title": "Друк"
-                          }
-                        },
-                        "order": 3,
-                        "class_name": "col-span-1"
-                      },
-                      "type": "duration"
-                    },
-                    "step_json.print.seconds_max": {
-                      "ui": {
-                        "order": 4,
-                        "no_label": true,
-                        "class_name": "col-span-1"
-                      },
-                      "type": "duration"
-                    },
-                    "step_json.cut.seconds_min": {
-                      "ui": {
-                        "i18n": {
-                          "de": {
-                            "title": "Schnitt"
-                          },
-                          "en": {
-                            "title": "Cut"
-                          },
-                          "es": {
-                            "title": "Corte"
-                          },
-                          "fr": {
-                            "title": "Coupe"
-                          },
-                          "nl": {
-                            "title": "Cut"
-                          },
-                          "uk": {
-                            "title": "Різання"
-                          }
-                        },
-                        "order": 5,
-                        "class_name": "col-span-1"
-                      },
-                      "type": "duration"
-                    },
-                    "step_json.cut.seconds_max": {
-                      "ui": {
-                        "order": 6,
-                        "no_label": true,
-                        "class_name": "col-span-1"
-                      },
-                      "type": "duration"
                     }
                   },
                   "set_overrides": {

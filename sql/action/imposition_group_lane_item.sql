@@ -1,6 +1,6 @@
 -- The imposition group of a planned slot. On the item, not on the lane: a
 -- copied slot takes its group along, and lane_item stays generic (pv2
--- machine items carry no group). Same shape as imposition_lane_item. The group
+-- machine items carry no group). Same shape as batch_lane_item. The group
 -- ids were seeded 1:1 from the material ids (planning moves from material
 -- to imposition group).
 create table action.imposition_group_lane_item

@@ -6,8 +6,8 @@
 -- for the steps asked (p_steps null = every step planned that day), in three
 -- kinds of rows, named by lane_item.type and action.lookup /
 -- lookup_lane_item_type:
---   * plan     — the item as planned (stored); its nests via
---                get_lane_item_impositions, the work of the set from the
+--   * plan     — the item as planned (stored); its nests from its batch rows
+--                (action.batch_lane_item), the work of the set from the
 --                orderline aggregate, whatever the status of the orderlines,
 --                with the forecast of its material (forecast_sqm next to sqm);
 --   * progress — what of that plan is still to do for the lane's step: the
@@ -165,18 +165,20 @@ begin
         where b.lane_id is not null
           and b.day_offset = 0
     ),
-    -- planned items with the nests hung on them: the items on the lane itself
-    -- (production plans), plus for an impose lane the items of every material
-    -- lane whose pattern names its resource — the pattern item with the class
-    -- time and fixed group of board 76, the batch items as fillers of the same
-    -- material (one batch per item)
+    -- planned items with the nests hung on them (their batch rows,
+    -- action.batch_lane_item): the items on the lane itself (production
+    -- plans), plus for an impose lane the items of every material lane whose
+    -- pattern names its resource — the pattern items with the class time and
+    -- fixed group of board 76, one per instance
     item as (
         select li.lane_item_id, li.lane_id, li.sort_order, li.is_pinned, li.no_split,
                li.fixed_group, li.start_offset_in_seconds, li.duration_in_seconds,
                null::integer as material_id, null::text as material_name, null::integer as production_line_id,
                '{}'::jsonb as param_json,
-               (select array_agg(distinct x.imposition_id)
-                from action.get_lane_item_impositions(li.lane_item_id) x) as nest_ids
+               (select array_agg(distinct x)
+                from action.batch_lane_item bl
+                cross join lateral unnest(bl.nest_ids) as x
+                where bl.lane_item_id = li.lane_item_id) as nest_ids
         from action.lane_item li
         join lane on lane.lane_id = li.lane_id
         where li.type = 'plan'
@@ -188,8 +190,10 @@ begin
                li.duration_in_seconds,
                ml.material_id, ml.material_name, ml.production_line_id,
                ml.param_json,
-               (select array_agg(distinct x.imposition_id)
-                from action.get_lane_item_impositions(li.lane_item_id) x)
+               (select array_agg(distinct x)
+                from action.batch_lane_item bl
+                cross join lateral unnest(bl.nest_ids) as x
+                where bl.lane_item_id = li.lane_item_id)
         from lane
         join material_lane ml on ml.resource_path = lane.resource_path
         join action.lane_item li on li.lane_id = ml.lane_id and li.type = 'plan'
@@ -205,8 +209,8 @@ begin
                    filter (where (n.nest_json ->> 'material_id') is not null)           as material_ids,
                (array_agg(n.nest_json ->> 'internal_status_code' order by ist.sequence nulls last))[1] as internal_status_code
         from item i
-        cross join lateral action.get_lane_item_impositions(i.lane_item_id) nli
-        join legacy.nest n on n.nest_id = nli.imposition_id
+        cross join lateral unnest(coalesce(i.nest_ids, '{}'::bigint[])) as nid
+        join legacy.nest n on n.nest_id = nid
         left join legacy.batch b on b.batch_id = n.batch_id
         left join mapping.internal_status ist on ist.code = n.nest_json ->> 'internal_status_code' and ist.domain_id = p_domain_id
         group by i.lane_item_id

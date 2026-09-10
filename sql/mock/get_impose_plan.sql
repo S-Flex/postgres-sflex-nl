@@ -7,6 +7,7 @@ drop function if exists mock.get_impose_plan(timestamp with time zone, text, tex
 drop function if exists mock.get_impose_plan(timestamp with time zone, text, text, integer[], integer, integer, integer);
 drop function if exists mock.get_impose_plan(timestamp with time zone, text, text, integer[], integer, integer, integer, text);
 drop function if exists mock.get_impose_plan(timestamp with time zone, text, text, integer[], integer, text, text);
+-- the return type grows (instance, status), so the current one goes first
 drop function if exists mock.get_impose_plan(timestamp with time zone, text, text, integer[], integer, integer, text, text);
 
 -- The rows of the days in view. The time scale decides which days those are:
@@ -26,7 +27,7 @@ drop function if exists mock.get_impose_plan(timestamp with time zone, text, tex
 -- lookup_lane_item_type, with sort_order, placement and formula) ride along as
 -- on get_resource_plan, so the board reads the kind of row the same way. The
 -- non-working time is the time scale's (get_timeline_view_segments), no rows.
-create function mock.get_impose_plan(p_until timestamp with time zone DEFAULT now(), p_step text DEFAULT 'impose'::text, p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_threshold integer DEFAULT 1, p_domain_id integer DEFAULT 1, p_date_type text DEFAULT 'nest'::text, p_view_code text DEFAULT 'nest-time-scale'::text) returns TABLE(material_id integer, material_name text, production_line_id integer, tenant_id integer, tenant_name text, production_company_id integer, resource_uid text, resource_name text, resource_path ltree, delivery_hours integer, min_delivery_hours integer, sort_order numeric, param_json jsonb, formula jsonb, data jsonb, fixed_group text, is_pinned boolean, start_offset_in_seconds integer, next_start_offset_in_seconds integer, duration_in_seconds integer, nest_date date, orderline_count integer, product_amount numeric, part_amount integer, amount numeric, sqm numeric, forecast_sqm numeric, rework_count integer, rework_sqm numeric, impact_json jsonb, gross_sqm numeric, part_status_json jsonb, nest_ids bigint[], nest_count integer, seconds_to_logistics_date integer, class_names text[], unit_class_names text[], lane_item_id bigint, lane_id bigint, day_offset integer, type text, type_json jsonb, start_at timestamp with time zone, production_seconds_min integer, production_seconds_max integer, batch_count integer, delivery_hours_json jsonb, step_json jsonb, set_json jsonb, manifest_json jsonb)
+create function mock.get_impose_plan(p_until timestamp with time zone DEFAULT now(), p_step text DEFAULT 'impose'::text, p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_threshold integer DEFAULT 1, p_domain_id integer DEFAULT 1, p_date_type text DEFAULT 'nest'::text, p_view_code text DEFAULT 'nest-time-scale'::text) returns TABLE(material_id integer, material_name text, production_line_id integer, tenant_id integer, tenant_name text, production_company_id integer, resource_uid text, resource_name text, resource_path ltree, delivery_hours integer, min_delivery_hours integer, sort_order numeric, param_json jsonb, formula jsonb, data jsonb, fixed_group text, is_pinned boolean, start_offset_in_seconds integer, next_start_offset_in_seconds integer, duration_in_seconds integer, nest_date date, orderline_count integer, product_amount numeric, part_amount integer, amount numeric, sqm numeric, forecast_sqm numeric, rework_count integer, rework_sqm numeric, impact_json jsonb, gross_sqm numeric, part_status_json jsonb, nest_ids bigint[], nest_count integer, seconds_to_logistics_date integer, class_names text[], unit_class_names text[], lane_item_id bigint, lane_id bigint, day_offset integer, type text, type_json jsonb, start_at timestamp with time zone, production_seconds_min integer, production_seconds_max integer, batch_count integer, delivery_hours_json jsonb, step_json jsonb, set_json jsonb, manifest_json jsonb, instance integer, status text)
 	stable
 	language plpgsql
 as $$
@@ -85,7 +86,7 @@ begin
                b.delivery_hours, b.min_delivery_hours, b.sort_order,
                b.param_json, b.formula, b.data, b.fixed_group, b.is_pinned,
                b.start_offset_in_seconds, b.next_start_offset_in_seconds,
-               b.lane_item_id, b.lane_id
+               b.lane_item_id, b.lane_id, b.instance, b.status
         -- The days in view, each with the plan of its own date; day_offset says
         -- which day a row comes from, plan_date the working day behind it (the
         -- day before a Monday is the Friday before it). The axis of the time
@@ -99,14 +100,13 @@ begin
                  p_view_code => p_view_code) b
     ),
     lane_nest as (
-        -- the nests hung on the lane of this row: the sets of all its plan
-        -- items together (the pattern item and the batch items, one batch per
-        -- item), keyed on the row's item. The reader gives the current set of
-        -- every item, inherited or own
-        select b2.lane_item_id, array_agg(distinct x.imposition_id) as nest_ids
-        from (select distinct lane_item_id, lane_id from base where lane_item_id is not null) b2
-        join action.lane_item li on li.lane_id = b2.lane_id and li.type = 'plan'
-        cross join lateral action.get_lane_item_impositions(li.lane_item_id) x
+        -- the nests of the row's own item: its batch rows together
+        -- (action.batch_lane_item, one per batch, the null row for the nests
+        -- not batched yet)
+        select b2.lane_item_id, array_agg(distinct x) as nest_ids
+        from (select distinct lane_item_id from base where lane_item_id is not null) b2
+        join action.batch_lane_item bl on bl.lane_item_id = b2.lane_item_id
+        cross join lateral unnest(bl.nest_ids) as x
         group by b2.lane_item_id
     ),
     -- One read for the work of every row: action.get_lane_item_work takes the
@@ -241,7 +241,9 @@ begin
            coalesce(r.delivery_hours_json, '{}'::jsonb),
            coalesce(r.step_json, '{}'::jsonb),
            coalesce(r.set_json, '[]'::jsonb),
-           coalesce(r.manifest_json, '[]'::jsonb)
+           coalesce(r.manifest_json, '[]'::jsonb),
+           -- the instance of the moment and the last status of the item
+           r.instance, r.status
     from row_data r
     left join site.tenant t on t.tenant_id = r.tenant_id
     -- tenant first, then the day: sort_order starts over per plan, so without

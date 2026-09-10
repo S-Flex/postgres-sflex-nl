@@ -14,7 +14,8 @@
         }
       }
     ],
-    "fixed_group": "30"
+    "fixed_group": "30",
+    "delivery_hours": 30
   },
   {
     "code": "24",
@@ -31,7 +32,8 @@
         }
       }
     ],
-    "fixed_group": "24"
+    "fixed_group": "24",
+    "delivery_hours": 24
   },
   {
     "code": "18",
@@ -48,7 +50,8 @@
         }
       }
     ],
-    "fixed_group": "18"
+    "fixed_group": "18",
+    "delivery_hours": 18
   },
   {
     "code": "48",
@@ -64,7 +67,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 48
   },
   {
     "code": "48+",
@@ -80,7 +84,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 48
   },
   {
     "code": "72",
@@ -96,7 +101,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 72
   },
   {
     "code": "72+",
@@ -112,7 +118,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 72
   },
   {
     "code": "96+",
@@ -128,7 +135,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 96
   },
   {
     "code": "96",
@@ -144,7 +152,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 96
   },
   {
     "code": "120",
@@ -160,7 +169,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 120
   },
   {
     "code": "144",
@@ -176,7 +186,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 144
   },
   {
     "code": "168",
@@ -192,7 +203,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 168
   },
   {
     "code": "192",
@@ -208,7 +220,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 192
   },
   {
     "code": "216",
@@ -224,7 +237,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 216
   },
   {
     "code": "240",
@@ -240,7 +254,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 240
   },
   {
     "code": "264",
@@ -256,7 +271,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 264
   },
   {
     "code": "288",
@@ -272,7 +288,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 288
   },
   {
     "code": "312",
@@ -288,7 +305,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 312
   },
   {
     "code": "336",
@@ -304,7 +322,8 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 336
   },
   {
     "code": "360",
@@ -320,6 +339,7 @@
           "start_offset_in_seconds": 79200
         }
       }
-    ]
+    ],
+    "delivery_hours": 360
   }
 ]

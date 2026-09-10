@@ -3,18 +3,17 @@
 --
 --   plan            -> action.plan (newest of the day, type material-resource-plan)
 --   lane_item       -> action.plan_lane + action.lane_item (source 'material-plan')
---   source_ref      -> mock.material_impose_plan (the weekly pattern)
---   schedule        -> mock.material_print_schedule (delivery class + interval)
+--   source_ref      -> mock.material_print_schedule (<material_print_schedule_id>:<date>:<instance>)
+--   schedule        -> the interval, the nest moments, the impose path and the rank
 --   get_plan_lanes_imposition_group -> the label read
 --   get_impose_plan -> the board read (adds the orderline aggregate)
 
--- 1. the weekly pattern: is there a row for today's weekday?
-SELECT material_id, weekday, step, production_line_id, tenant_id, sort_order,
-       resource_path::text, start_offset_in_seconds, is_pinned
-FROM mock.material_impose_plan
+-- 1. the schedule: an impose path (else no lane) and nest moments (else no items)
+SELECT material_print_schedule_id, material_id, material_name, line, tenant_id, production_line_id,
+       resource_path::text, sort_order, nest_moment_codes
+FROM mock.material_print_schedule
 WHERE material_id IN (480, 481)
-  AND weekday = extract(dow FROM current_date)::smallint + 1
-ORDER BY material_id;
+ORDER BY material_id, tenant_id;
 
 -- 2. delivery class and interval. delivery_hours must match a "code" in
 --    production.lookup_nest_moments to become a fixed group.
@@ -36,8 +35,8 @@ FROM the_plan tp
 JOIN action.plan_lane pl USING (plan_id)
 JOIN action.lane_item li ON li.lane_id = pl.lane_id AND li.type = 'plan'
 LEFT JOIN action.imposition_group_lane_item igli ON igli.lane_item_id = li.lane_item_id
-LEFT JOIN mock.material_impose_plan m
-       ON m.material_impose_plan_id = nullif(split_part(li.source_ref, ':', 1), '')::bigint
+LEFT JOIN mock.material_print_schedule m
+       ON m.material_print_schedule_id = nullif(split_part(li.source_ref, ':', 1), '')::bigint
 WHERE li.source = 'material-plan' AND m.material_id IN (480, 481)
 ORDER BY m.material_id;
 

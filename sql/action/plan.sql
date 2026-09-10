@@ -14,7 +14,7 @@ create table plan
 );
 
 comment on column plan.steps is 'The planning steps this plan covers (nest, rip, print, coat, laminate, embellish, route, cut, package, ship, mount, ...); vocabulary in relation.lookup lookup_step_category. A board asks for one step: p_step = any (steps).';
-comment on column plan.type is 'material-resource-plan: the nest boards (lanes are materials/impose resources of mock.material_impose_plan); production-plan: the production schedule (lanes are resources, lane.resource_path).';
+comment on column plan.type is 'material-resource-plan: the nest boards (lanes are the materials of mock.material_print_schedule and their impose resources); production-plan: the production schedule (lanes are resources, lane.resource_path).';
 
 alter table plan owner to xfw3;
 

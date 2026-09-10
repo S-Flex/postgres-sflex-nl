@@ -1,10 +1,11 @@
 -- One read for the imposition-group lanes (labels) of the nest boards:
--- print_schedule (75), impose_plan (76) and whatever follows. One row per lane
--- (its pattern item) of the newest material plan of a day, reached through
--- lane_item.source_ref (<material_impose_plan_id>:<date>). The batch items of a
--- lane (source 'nest', one per extra batch) are not rows here: the boards
--- aggregate the lane and read the nests of all its items together
--- (mock.get_impose_plan); the batch items exist for the resource side. No noop
+-- print_schedule (75), impose_plan (76) and whatever follows. One row per
+-- pattern item (source material-plan) of the newest material plan of a day:
+-- one per nest moment of a material (lane_item.instance, in moment order),
+-- the schedule row through lane_item.source_ref
+-- (<material_print_schedule_id>:<date>:<instance>). The nests of a row are its own batch
+-- rows (action.batch_lane_item, docs/plan-batch-lane-item.md); the instance
+-- and the last status (action.lane_item_event) ride along. No noop
 -- windows any more: the non-working time is the time scale's
 -- (production.get_timeline_view_segments), not a row. imposition_group_id is
 -- the material_id alias until the xbom groups arrive.
@@ -12,6 +13,15 @@
 -- The resource lanes are action.get_plan_lanes_resource. p_step here names the
 -- step of the plan to read (the plan whose steps carry it); p_steps there names
 -- the steps whose resources are lanes -- two different questions, so two reads.
+--
+-- The nest moment of a row is on the item (lane_item.nest_moment_code, stamped
+-- by mock.generate_plan: one item per code of material_print_schedule.nest_moment_codes,
+-- instance in moment order). The lookup (lookup_nest_moments) gives the class
+-- of that code: its fixed group, the moment it starts at -- on the day the code
+-- is offset to, a 48+ item of plan day D nests on D+1 -- and the nest and
+-- print time (nest_time, print_time: the third label level of board 75). The
+-- material, line, tenant and impose path of a row come from the schedule row
+-- named in source_ref; the item's own time is a time on the day of its moment.
 --
 -- The days in view are the days the time scale of p_view_code has segments for
 -- (production.get_timeline_view_segments; with nest-time-scale the day before
@@ -47,20 +57,21 @@
 -- (next_start_offset_in_seconds) belongs to the resource:
 -- resource_json.next_start_lag_in_seconds; the connector mechanism replaces
 -- this column later.
--- the return type changes (plan_date), so the old one has to go first
+-- the return type changes (plan_date, then the nest moment), so the old one has to go first
 drop function if exists action.get_plan_lanes_imposition_group(timestamp with time zone, text, text, integer[], boolean, integer, integer, text);
 -- the version before the days came from the view
 drop function if exists action.get_plan_lanes_imposition_group(timestamp with time zone, text, text, integer[], boolean, text);
 
-create function action.get_plan_lanes_imposition_group(p_until timestamp with time zone DEFAULT now(), p_step text DEFAULT 'impose'::text, p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_only_starting_today boolean DEFAULT true, p_view_code text DEFAULT 'nest-time-scale'::text) returns TABLE(imposition_group_id integer, material_id integer, material_name text, production_line_id integer, tenant_id integer, tenant_name text, resource_path ltree, resource_uid text, resource_name text, delivery_hours integer, min_delivery_hours integer, day_offset integer, plan_date date, sort_order numeric, param_json jsonb, formula jsonb, data jsonb, fixed_group text, is_pinned boolean, start_offset_in_seconds integer, next_start_offset_in_seconds integer, lane_item_id bigint, lane_id bigint)
+create function action.get_plan_lanes_imposition_group(p_until timestamp with time zone DEFAULT now(), p_step text DEFAULT 'impose'::text, p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_only_starting_today boolean DEFAULT true, p_view_code text DEFAULT 'nest-time-scale'::text) returns TABLE(imposition_group_id integer, material_id integer, material_name text, production_line_id integer, tenant_id integer, tenant_name text, resource_path ltree, resource_uid text, resource_name text, delivery_hours integer, min_delivery_hours integer, day_offset integer, plan_date date, sort_order numeric, param_json jsonb, formula jsonb, data jsonb, fixed_group text, is_pinned boolean, start_offset_in_seconds integer, next_start_offset_in_seconds integer, lane_item_id bigint, lane_id bigint, instance integer, status text, nest_moment_code text, nest_time time, print_time time)
 	stable
 	language plpgsql
 as $$
 #variable_conflict use_column
 DECLARE
     v_date   date;
-    v_group  jsonb;    -- delivery class -> its fixed group
-    v_offset jsonb;    -- delivery class -> the moment the class starts at
+    v_group  jsonb;    -- nest moment code -> its fixed group
+    v_offset jsonb;    -- nest moment code -> the moment the class starts at, on its own day
+    v_moment jsonb;    -- nest moment code -> its lookup element (day_offset, nest and print time)
     v_from   integer;  -- the span the board draws, from midnight of day 0
     v_to     integer;  -- the end of the last segment, so exclusive
     v_look_back_days  integer;  -- the days the view reaches before day 0 ...
@@ -68,8 +79,9 @@ DECLARE
 BEGIN
     v_date := (p_until AT TIME ZONE current_setting('TimeZone'))::date;
 
-    -- The default schedule per delivery class (production.lookup,
-    -- lookup_nest_moments). A schedule is a template, so this is where a lane
+    -- The classes per nest moment code (production.lookup,
+    -- lookup_nest_moments): the fixed group, the moment the class starts at
+    -- and the element itself. A class is a template, so this is where a lane
     -- item gets its first time; once the planner moves the item, the item wins
     -- (see the coalesce below).
     SELECT coalesce(jsonb_object_agg(v.value ->> 'code', v.value -> 'fixed_group')
@@ -77,8 +89,9 @@ BEGIN
            coalesce(jsonb_object_agg(v.value ->> 'code',
                                      v.value #> '{nest_moments,0,nest_time,start_offset_in_seconds}')
                     FILTER (WHERE v.value #>> '{nest_moments,0,nest_time,start_offset_in_seconds}' IS NOT NULL),
-                    '{}'::jsonb)
-    INTO v_group, v_offset
+                    '{}'::jsonb),
+           coalesce(jsonb_object_agg(v.value ->> 'code', v.value), '{}'::jsonb)
+    INTO v_group, v_offset, v_moment
     FROM production.lookup l
     CROSS JOIN LATERAL jsonb_array_elements(l.lookup_json) AS v(value)
     WHERE l.lookup = 'lookup_nest_moments';
@@ -142,15 +155,17 @@ BEGIN
         WHERE a.day_number <= v_look_ahead_days
     ),
     item AS (
-        -- one row per lane of that day's plan: its pattern item
+        -- one row per material item of that day's plan: one per nest moment
         SELECT d.day_offset, d.plan_date, li.lane_id, li.lane_item_id, li.sort_order, li.is_pinned,
-               li.start_offset_in_seconds,
+               li.start_offset_in_seconds, li.nest_moment_code,
                igli.imposition_group_id,
-               nullif(split_part(li.source_ref, ':', 1), '')::bigint AS material_impose_plan_id,
-               -- the nests on the lane (all its plan items together, as the
-               -- boards aggregate them) and the moment the first one was made
+               nullif(split_part(li.source_ref, ':', 1), '')::bigint AS material_print_schedule_id,
+               -- the nests of the item itself and the moment the first one was made
                nst.first_nest_at IS NOT NULL AS has_nests,
-               nst.first_nest_at
+               nst.first_nest_at,
+               li.instance,
+               -- the last status of the item: plan until it is released
+               coalesce(ev.status, 'plan') AS status
         FROM plan_day d
         CROSS JOIN LATERAL (
             -- the newest material plan of that date, step and line type
@@ -169,11 +184,17 @@ BEGIN
         LEFT JOIN action.imposition_group_lane_item igli ON igli.lane_item_id = li.lane_item_id
         LEFT JOIN LATERAL (
             SELECT min(n.nested_at) AS first_nest_at
-            FROM action.lane_item x
-            CROSS JOIN LATERAL action.get_lane_item_impositions(x.lane_item_id) imp
-            JOIN legacy.nest n ON n.nest_id = imp.imposition_id
-            WHERE x.lane_id = li.lane_id AND x.type = 'plan'
+            FROM action.batch_lane_item b
+            JOIN legacy.nest n ON n.nest_id = ANY (b.nest_ids)
+            WHERE b.lane_item_id = li.lane_item_id
         ) nst ON true
+        LEFT JOIN LATERAL (
+            SELECT e.status
+            FROM action.lane_item_event e
+            WHERE e.lane_item_id = li.lane_item_id
+            ORDER BY e.moved_at DESC, e.lane_item_event_id DESC
+            LIMIT 1
+        ) ev ON true
     ),
     -- one interval check per distinct (start, days) pair of the plan's own
     -- materials and per day in view, instead of one per row: a check costs
@@ -194,10 +215,7 @@ BEGIN
         FROM (SELECT DISTINCT mps.interval_start_date,
                      coalesce(nullif(mps.interval_days, 0), 1) AS interval_days
               FROM item i
-              JOIN mock.material_impose_plan m ON m.material_impose_plan_id = i.material_impose_plan_id
-              JOIN mock.material_print_schedule mps
-                   ON (mps.material_id, mps.production_line_id, mps.tenant_id)
-                    = (m.material_id, m.production_line_id, m.tenant_id)
+              JOIN mock.material_print_schedule mps ON mps.material_print_schedule_id = i.material_print_schedule_id
               UNION
               SELECT NULL::date, 1) s
         CROSS JOIN plan_day w
@@ -216,10 +234,10 @@ BEGIN
     )
     SELECT i.imposition_group_id,
            -- alias: the group id is the material id until the xbom groups arrive
-           coalesce(m.material_id, i.imposition_group_id),
-           mps.material_name, m.production_line_id,
-           m.tenant_id, t.name,
-           m.resource_path, r.resource_uid, r.resource_name,
+           coalesce(mps.material_id, i.imposition_group_id),
+           mps.material_name, mps.production_line_id,
+           mps.tenant_id, t.name,
+           mps.resource_path, r.resource_uid, r.resource_name,
            mps.delivery_hours, mps.min_delivery_hours,
            i.day_offset, i.plan_date, i.sort_order,
            -- the variables the board evaluates with: the resource constants,
@@ -239,19 +257,21 @@ BEGIN
            i.is_pinned OR i.day_offset < 0 OR i.has_nests,
            c.start_offset_in_seconds,
            (r.resource_json ->> 'next_start_lag_in_seconds')::integer,
-           i.lane_item_id, i.lane_id
+           i.lane_item_id, i.lane_id, i.instance, i.status,
+           -- the nest moment of the row and the nest and print time of that
+           -- moment (see the head of the file)
+           i.nest_moment_code,
+           (v_moment #>> ARRAY[i.nest_moment_code, 'nest_moments', '0', 'nest_time', 'time'])::time,
+           (v_moment #>> ARRAY[i.nest_moment_code, 'nest_moments', '0', 'print_time', 'time'])::time
     FROM item i
-    LEFT JOIN mock.material_impose_plan m ON m.material_impose_plan_id = i.material_impose_plan_id
-    LEFT JOIN mock.material_print_schedule mps
-           ON (mps.material_id, mps.production_line_id, mps.tenant_id)
-            = (m.material_id, m.production_line_id, m.tenant_id)
+    LEFT JOIN mock.material_print_schedule mps ON mps.material_print_schedule_id = i.material_print_schedule_id
     LEFT JOIN mapping.material_production_line mpl
-           ON (mpl.material_id, mpl.production_line_id) = (m.material_id, m.production_line_id)
-    LEFT JOIN relation.resource r ON r.resource_path = m.resource_path
-    LEFT JOIN site.tenant t ON t.tenant_id = m.tenant_id
+           ON (mpl.material_id, mpl.production_line_id) = (mps.material_id, mps.production_line_id)
+    LEFT JOIN relation.resource r ON r.resource_path = mps.resource_path
+    LEFT JOIN site.tenant t ON t.tenant_id = mps.tenant_id
     -- the speed setting of that resource for that group
     CROSS JOIN LATERAL (
-        SELECT production.get_resource_setting(m.resource_path, i.imposition_group_id) AS setting_json
+        SELECT production.get_resource_setting(mps.resource_path, i.imposition_group_id) AS setting_json
     ) rs
     -- the format of the group: waste and imposition size, first entry that
     -- matches the material width of the resource path
@@ -275,12 +295,18 @@ BEGIN
                          ORDER BY vr.resource_path) AS resources
         FROM relation.resource vr
         WHERE vr.resource_path ~ '*.impose.*'
-          AND subpath(vr.resource_path, 0, 2) = subpath(m.resource_path, 0, 2)
+          AND subpath(vr.resource_path, 0, 2) = subpath(mps.resource_path, 0, 2)
     ) vres ON true
-    -- the class of the row: its fixed group and the moment the class starts at
+    -- the class of the row is its nest moment code: the fixed group, the moment
+    -- the class starts at -- on the day the code is offset to, so a 48+ item of
+    -- plan day D lands on D+1 -- and the item's own time, a time on that same day
     CROSS JOIN LATERAL (
-        SELECT v_group  ->> mps.delivery_hours::text            AS fixed_group,
-               (v_offset ->> mps.delivery_hours::text)::integer AS class_offset
+        SELECT coalesce((v_moment #>> ARRAY[i.nest_moment_code, 'day_offset'])::integer, 0) AS moment_day_offset
+    ) md
+    CROSS JOIN LATERAL (
+        SELECT v_group ->> i.nest_moment_code AS fixed_group,
+               (v_offset ->> i.nest_moment_code)::integer + md.moment_day_offset * 86400 AS class_offset,
+               i.start_offset_in_seconds + md.moment_day_offset * 86400 AS own_offset
     ) cls
     -- only a fixed group (its own time, else the class moment), an item of a
     -- past day, a pinned item or an item with nests (its own time, else the
@@ -289,15 +315,15 @@ BEGIN
     -- itself. The day of the row moves the offset to midnight of day 0
     CROSS JOIN LATERAL (
         SELECT CASE WHEN cls.fixed_group IS NOT NULL OR i.day_offset < 0
-                    THEN coalesce(i.start_offset_in_seconds, cls.class_offset)
-                    WHEN i.is_pinned THEN i.start_offset_in_seconds
+                    THEN coalesce(cls.own_offset, cls.class_offset)
+                    WHEN i.is_pinned THEN cls.own_offset
                     WHEN i.has_nests
-                    THEN coalesce(i.start_offset_in_seconds,
+                    THEN coalesce(cls.own_offset,
                                   extract(epoch FROM (i.first_nest_at AT TIME ZONE 'Europe/Amsterdam')
                                                      - i.plan_date::timestamp)::integer)
                END + i.day_offset * 86400 AS start_offset_in_seconds
     ) c
-    WHERE (p_tenant_ids IS NULL OR m.tenant_id = ANY (p_tenant_ids))
+    WHERE (p_tenant_ids IS NULL OR mps.tenant_id = ANY (p_tenant_ids))
       -- only materials whose interval says the day of the row is a production day
       AND (NOT p_only_starting_today OR EXISTS (
                SELECT 1 FROM allowed_interval ai
@@ -317,7 +343,7 @@ BEGIN
                              cls.class_offset + i.day_offset * 86400)
                     BETWEEN v_from AND v_to - 1
           END
-    ORDER BY i.day_offset, m.tenant_id, i.sort_order;
+    ORDER BY i.day_offset, mps.tenant_id, i.sort_order;
 END;
 $$;
 

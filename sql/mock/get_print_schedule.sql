@@ -95,7 +95,10 @@ BEGIN
             -- the offset moves the date, the code keeps two moments that share
             -- an offset apart
             SELECT v.value ->> 'code'                               AS nest_moment_code,
-                   coalesce((v.value ->> 'day_offset')::integer, 0) AS day_offset
+                   coalesce((v.value ->> 'day_offset')::integer, 0) AS day_offset,
+                   -- the delivery class the moment serves: production_hours of
+                   -- the orderlines that belong to it
+                   (v.value ->> 'delivery_hours')::integer            AS delivery_hours
             FROM production.lookup l
                      CROSS JOIN LATERAL jsonb_array_elements(l.lookup_json) AS v(value)
             WHERE l.lookup = 'lookup_nest_moments'
@@ -118,6 +121,22 @@ BEGIN
                      v_from,
                      (v_last - v_from) + 1,
                      p_line_type) f
+        ),
+        inflow AS (
+            -- the m2 that came in for a material per delivery class: the
+            -- orderlines by production_hours, per production day and company;
+            -- a card takes the class of its nest moment (lookup_nest_moments
+            -- delivery_hours). The forecast above stays per material
+            SELECT cs.production_company_id,
+                   cs.material_id,
+                   cs.production_hours              AS delivery_hours,
+                   cs.production_date::date         AS date,
+                   round(sum(cs.sqm), 1)            AS actual_sqm
+            FROM mapping.component_specs cs
+            WHERE cs.production_date >= v_from
+              AND cs.production_date < v_last + 1
+              AND cs.internal_status_code <> 'cancelled'
+            GROUP BY cs.production_company_id, cs.material_id, cs.production_hours, cs.production_date::date
         ),
         material AS (
             -- the effective interval and anchor are decided here, so nothing
@@ -230,6 +249,7 @@ BEGIN
                          p.production_date,
                          p.production_day_index,
                          nm.nest_moment_code,
+                         nm.delivery_hours,
                          nm.day_offset,
                          w.date
                   FROM production_day p
@@ -241,7 +261,7 @@ BEGIN
         row_base AS (
             SELECT c.*,
                    t.tenant_name,
-                   f.actual_sqm,
+                   a.actual_sqm,
                    f.forecast_sqm,
                    mv.spec_vars,
                    -- everything the formulas need except the panel size itself
@@ -251,12 +271,12 @@ BEGIN
                        || mv.line_vars
                        || jsonb_build_object(
                               'forecast_sqm', coalesce(f.forecast_sqm, 0),
-                              'actual_sqm', coalesce(f.actual_sqm, 0)) AS vars,
+                              'actual_sqm', coalesce(a.actual_sqm, 0)) AS vars,
                    -- the key calc is joined back on: one text per distinct
                    -- variable set, so the join can hash instead of comparing
                    -- jsonb row by row
                    md5(coalesce(mv.line_vars::text, '') || '|' || coalesce(mv.spec_vars::text, '')
-                       || '|' || coalesce(f.forecast_sqm, 0)::text || '|' || coalesce(f.actual_sqm, 0)::text) AS calc_key
+                       || '|' || coalesce(f.forecast_sqm, 0)::text || '|' || coalesce(a.actual_sqm, 0)::text) AS calc_key
             FROM card c
                      LEFT JOIN tenant t ON t.tenant_id = c.tenant_id
                      LEFT JOIN material_vars mv
@@ -266,6 +286,13 @@ BEGIN
                                ON f.production_company_id = t.production_company_id
                                    AND f.material_id = c.material_id
                                    AND f.date = c.date
+                     -- material AND delivery class: production_hours of the
+                     -- orderline is the delivery_hours of the card's nest moment
+                     LEFT JOIN inflow a
+                               ON a.production_company_id = t.production_company_id
+                                   AND a.material_id = c.material_id
+                                   AND a.delivery_hours = c.delivery_hours
+                                   AND a.date = c.date
         ),
         -- one evaluation per distinct variable set, not per row: the moments
         -- that share a date and the days without a forecast share their
@@ -302,15 +329,14 @@ BEGIN
                -- shares this value and only the date moves
                r.production_day_index * 86400,
                86400,
-               -- plan-na marks a date that is not the production day itself,
-               -- plan-initiated a slot beyond the material's own interval
+               -- plan-na marks a date that is not a production day of its own:
+               -- a moment offset from the production day, or a slot beyond the
+               -- material's own interval (was plan-initiated)
                array_remove(array [
-                   CASE WHEN r.day_offset > 0 THEN 'plan-na' END,
-                   CASE
-                       WHEN r.production_day_index > 2
-                           AND r.production_day_index > r.interval_days
-                           THEN 'plan-initiated'
-                       END
+                   CASE WHEN r.day_offset > 0
+                          OR (r.production_day_index > 2
+                              AND r.production_day_index > r.interval_days)
+                        THEN 'plan-na' END
                    ], null),
                r.actual_sqm,
                r.forecast_sqm,
@@ -320,6 +346,8 @@ BEGIN
                        'fast_production_impact_in_seconds', c.fast_impact)
         FROM row_base r
                  LEFT JOIN calc c ON c.calc_key = r.calc_key
+        -- a moment without inflow (actual_sqm, the m2 that came in) is no card
+        WHERE coalesce(r.actual_sqm, 0) > 0
         ORDER BY r.tenant_name, r.material_name, r.production_day_index, r.date, r.nest_moment_code;
 END;
 $$;

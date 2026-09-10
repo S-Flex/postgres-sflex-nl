@@ -181,16 +181,17 @@ BEGIN
         ) tp ON true
         LEFT JOIN LATERAL (
             -- the lane of the nest material on that plan; the line of a lane
-            -- sits on the pattern row its pattern item was stamped from
+            -- sits on the schedule row its items were stamped from
+            -- (source_ref <material_print_schedule_id>:<date>:<instance>)
             SELECT igl.lane_id
             FROM action.plan_lane apl
             JOIN action.imposition_group_lane igl ON igl.lane_id = apl.lane_id
             JOIN action.lane_item li2 ON li2.lane_id = igl.lane_id AND li2.source = 'material-plan'
-            JOIN mock.material_impose_plan mip
-              ON mip.material_impose_plan_id = nullif(split_part(li2.source_ref, ':', 1), '')::bigint
+            JOIN mock.material_print_schedule mps
+              ON mps.material_print_schedule_id = nullif(split_part(li2.source_ref, ':', 1), '')::bigint
             WHERE apl.plan_id = tp.plan_id
               AND igl.imposition_group_id = p.material_id
-              AND mip.production_line_id = p.production_line_id
+              AND mps.production_line_id = p.production_line_id
             ORDER BY apl.sort_order
             LIMIT 1
         ) lane ON true
@@ -219,7 +220,9 @@ BEGIN
         JOIN action.lane_item li ON li.lane_item_id = e.lane_item_id
         WHERE li.lane_id = pl.lane_id AND li.type = 'plan'
           AND e.status = 'released' AND e.moved_at <= pl.nested_at
-        ORDER BY e.moved_at DESC, e.lane_item_event_id DESC
+        -- items released at the same moment (the midnight release of the
+        -- testing phase): the first moment of the day takes the nests
+        ORDER BY e.moved_at DESC, li.instance, e.lane_item_event_id DESC
         LIMIT 1
     ) rel ON true;
 

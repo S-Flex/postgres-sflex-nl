@@ -1,6 +1,6 @@
 drop function if exists action.crud_lane_item(jsonb, boolean);
 
-create function action.crud_lane_item(p_param_json jsonb, p_no_results boolean DEFAULT false) returns TABLE(param_id integer, track_by integer, crud text, lane_item_id bigint, lane_id bigint, material_impose_plan_id bigint)
+create function action.crud_lane_item(p_param_json jsonb, p_no_results boolean DEFAULT false) returns TABLE(param_id integer, track_by integer, crud text, lane_item_id bigint, lane_id bigint, material_print_schedule_id bigint)
 	language sql
 as $$
     -- The client mutations of the planning boards, on lane_item level: the
@@ -16,13 +16,13 @@ as $$
     -- plan_id, imposition_group_id and, for a copy that needs a fresh lane,
     -- resource_path (the impose path of the lane, site.line.impose.width; a
     -- copy on an existing lane takes the lane's). A property left out of
-    -- data keeps its value. A copy is the next instance of the moment on its
-    -- lane (lane_item.instance). Every mutation writes through to mock.material_impose_plan, so
-    -- re-stamping a plan reproduces what the planner did:
-    --   update — move/pin/sort: the item and its pattern row
-    --   create — an extra moment: a new pattern row with the next instance,
-    --            plus the lane and the item it stamps to
-    --   delete — the moment, its impositions and its pattern row
+    -- data keeps its value. A copy is one more moment of the source item's
+    -- nest moment (nest_moment_code), the next instance on its lane. The
+    -- stamped day is the truth: nothing writes through to the schedule
+    -- (mock.material_print_schedule), a move stays on the item.
+    --   update — move/pin/sort the item
+    --   create — an extra moment: the lane (a fresh one when asked) and the item
+    --   delete — the moment; its batch rows, events and links cascade
     --
     -- Set-based throughout: ids are drawn from the sequences up front, so a
     -- created row can be paired back to its payload row without a temp table.
@@ -40,16 +40,16 @@ as $$
             is_pinned boolean, imposition_group_id integer, resource_path ltree)
     ),
     -- what an update or a copy starts from: the item, its lane and the
-    -- pattern row it was stamped from (source_ref is <mrp_id>:<date>)
+    -- schedule row it was stamped from (source_ref is
+    -- <material_print_schedule_id>:<date>:<instance>)
     source AS (
         SELECT p.param_id,
                li.lane_item_id, li.lane_id, li.sort_order, li.start_offset_in_seconds,
-               li.is_pinned, li.duration_in_seconds,
+               li.is_pinned, li.duration_in_seconds, li.nest_moment_code,
                l.lane_date, l.resource_path,
-               -- only a pattern item has a pattern row; a batch item (source
-               -- 'nest', source_ref <lane_id>:<batch>) writes nothing through
+               -- only a material item names a schedule row
                CASE WHEN li.source = 'material-plan'
-                    THEN nullif(split_part(li.source_ref, ':', 1), '')::bigint END AS material_impose_plan_id,
+                    THEN nullif(split_part(li.source_ref, ':', 1), '')::bigint END AS material_print_schedule_id,
                igli.imposition_group_id
         FROM payload p
         JOIN action.lane_item li ON li.lane_item_id = p.lane_item_id
@@ -66,32 +66,19 @@ as $$
         WHERE p.crud = 'update' AND li.lane_item_id = p.lane_item_id
         RETURNING li.lane_item_id, li.lane_id
     ),
-    updated_pattern AS (
-        -- the write-through: the same move on the template
-        UPDATE mock.material_impose_plan m
-        SET sort_order              = coalesce(p.sort_order, m.sort_order),
-            start_offset_in_seconds = coalesce(p.start_offset_in_seconds, m.start_offset_in_seconds),
-            is_pinned               = coalesce(p.is_pinned, m.is_pinned),
-            moved_at                = now()
-        FROM payload p
-        JOIN source s ON s.param_id = p.param_id
-        WHERE p.crud = 'update' AND m.material_impose_plan_id = s.material_impose_plan_id
-        RETURNING m.material_impose_plan_id
-    ),
     -- ── create ────────────────────────────────────────────────────────────
-    -- ids up front: the pattern row, the lane (only for a copy that needs its
-    -- own lane) and the item itself
+    -- ids up front: the lane (only for a copy that needs its own lane) and
+    -- the item itself
     new_id AS (
         SELECT p.param_id, p.track_by, p.plan_id, p.sort_order, p.is_pinned,
                p.start_offset_in_seconds, p.lane_id AS given_lane_id,
                coalesce(p.imposition_group_id, s.imposition_group_id) AS imposition_group_id,
                coalesce(p.resource_path, s.resource_path)             AS resource_path,
-               s.material_impose_plan_id AS from_pattern_id,
-               s.lane_id                 AS from_lane_id,
-               nextval('mock.material_resource_plan_material_resource_plan_id_seq') AS new_pattern_id,
-               nextval('action.lane_item_lane_item_id_seq')                          AS new_lane_item_id,
+               s.material_print_schedule_id, s.nest_moment_code,
+               s.lane_id AS from_lane_id,
+               nextval('action.lane_item_lane_item_id_seq') AS new_lane_item_id,
                CASE WHEN p.lane_id IS NULL AND s.lane_id IS NULL
-                    THEN nextval('action.lane_lane_id_seq') END                      AS new_lane_id
+                    THEN nextval('action.lane_lane_id_seq') END AS new_lane_id
         FROM payload p
         LEFT JOIN source s ON s.param_id = p.param_id
         WHERE p.crud = 'create'
@@ -128,51 +115,35 @@ as $$
         FROM target t WHERE t.new_lane_id IS NOT NULL AND t.plan_id IS NOT NULL
         RETURNING lane_id
     ),
-    -- the new pattern row: the copy of the source row with the next instance
-    new_pattern AS (
-        INSERT INTO mock.material_impose_plan
-            (material_impose_plan_id, weekday, step, resource_path, sort_order,
-             material_id, instance, production_line_id, tenant_id,
-             start_offset_in_seconds, is_pinned)
-        OVERRIDING SYSTEM VALUE
-        SELECT t.new_pattern_id, m.weekday, m.step, m.resource_path,
-               coalesce(t.sort_order, m.sort_order), m.material_id,
-               -- the next repeat of this moment in its own lane
-               (SELECT coalesce(max(m2.instance), 0) + 1
-                FROM mock.material_impose_plan m2
-                WHERE m2.weekday = m.weekday AND m2.step = m.step
-                  AND m2.resource_path IS NOT DISTINCT FROM m.resource_path
-                  AND m2.material_id IS NOT DISTINCT FROM m.material_id),
-               m.production_line_id, m.tenant_id,
-               coalesce(t.start_offset_in_seconds, m.start_offset_in_seconds),
-               coalesce(t.is_pinned, m.is_pinned)
+    -- the place of the new item on its lane: the next instance, and without a
+    -- rank from the client a rank behind the lane, spread so a batch never
+    -- collides on the unique (lane_id, sort_order)
+    placed AS (
+        SELECT t.*,
+               ((SELECT coalesce(max(li3.instance), -1)
+                 FROM action.lane_item li3 WHERE li3.lane_id = t.lane_id AND li3.type = 'plan')
+                + row_number() OVER (PARTITION BY t.lane_id ORDER BY t.param_id))::integer AS instance,
+               coalesce(t.sort_order,
+                        (SELECT coalesce(max(li2.sort_order), 0)
+                         FROM action.lane_item li2 WHERE li2.lane_id = t.lane_id)
+                        + 1000 * row_number() OVER (ORDER BY t.param_id)) AS item_sort_order
         FROM target t
-        JOIN mock.material_impose_plan m ON m.material_impose_plan_id = t.from_pattern_id
-        RETURNING material_impose_plan_id
+        WHERE t.lane_id IS NOT NULL
     ),
     new_item AS (
         INSERT INTO action.lane_item
             (lane_item_id, lane_id, sort_order, start_offset_in_seconds,
-             duration_in_seconds, is_pinned, no_split, type, source, source_ref, instance)
+             duration_in_seconds, is_pinned, no_split, type, source, source_ref,
+             instance, nest_moment_code)
         OVERRIDING SYSTEM VALUE
-        SELECT t.new_lane_item_id, t.lane_id,
-               -- no rank from the client: append behind the lane, spread so a
-               -- batch never collides on the unique (lane_id, sort_order)
-               coalesce(t.sort_order,
-                        (SELECT coalesce(max(li2.sort_order), 0)
-                         FROM action.lane_item li2 WHERE li2.lane_id = t.lane_id)
-                        + 1000 * row_number() OVER (ORDER BY t.param_id)),
-               coalesce(t.start_offset_in_seconds, 0), 0,
-               coalesce(t.is_pinned, false), true, 'plan',
-               'material-plan',
-               -- same shape generate_plan stamps, so the item stays idempotent
-               t.new_pattern_id || ':' || t.lane_date,
-               -- the next repeat of the moment on its lane
-               (SELECT coalesce(max(li3.instance), -1)
-                FROM action.lane_item li3 WHERE li3.lane_id = t.lane_id AND li3.type = 'plan')
-               + row_number() OVER (PARTITION BY t.lane_id ORDER BY t.param_id)
-        FROM target t
-        WHERE t.lane_id IS NOT NULL
+        SELECT pl.new_lane_item_id, pl.lane_id, pl.item_sort_order,
+               coalesce(pl.start_offset_in_seconds, 0), 0,
+               coalesce(pl.is_pinned, false), true, 'plan', 'material-plan',
+               -- the shape generate_plan stamps; a create without a source
+               -- item names no schedule row and gets no ref
+               pl.material_print_schedule_id || ':' || pl.lane_date || ':' || pl.instance,
+               pl.instance, pl.nest_moment_code
+        FROM placed pl
         RETURNING lane_item_id, lane_id
     ),
     new_group_link AS (
@@ -184,30 +155,16 @@ as $$
         RETURNING lane_item_id
     ),
     -- ── delete ────────────────────────────────────────────────────────────
-    deleted_link AS (
-        DELETE FROM action.imposition_lane_item x
-        USING payload p
-        WHERE p.crud = 'delete' AND x.lane_item_id = p.lane_item_id
-        RETURNING x.lane_item_id
-    ),
     deleted_item AS (
         DELETE FROM action.lane_item li
         USING payload p
         WHERE p.crud = 'delete' AND li.lane_item_id = p.lane_item_id
         RETURNING li.lane_item_id
-    ),
-    deleted_pattern AS (
-        -- without this the moment returns at the next stamp
-        DELETE FROM mock.material_impose_plan m
-        USING payload p
-        JOIN source s ON s.param_id = p.param_id
-        WHERE p.crud = 'delete' AND m.material_impose_plan_id = s.material_impose_plan_id
-        RETURNING m.material_impose_plan_id
     )
     SELECT p.param_id, p.track_by, p.crud,
            coalesce(t.new_lane_item_id, p.lane_item_id),
            coalesce(t.lane_id, p.lane_id),
-           coalesce(t.new_pattern_id, s.material_impose_plan_id)
+           s.material_print_schedule_id
     FROM payload p
     LEFT JOIN target t ON t.param_id = p.param_id
     LEFT JOIN source s ON s.param_id = p.param_id

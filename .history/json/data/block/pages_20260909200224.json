@@ -1,0 +1,730 @@
+[
+  {
+    "code": "nesting-queue",
+    "sidebar_width": "30%",
+    "main": {
+      "sections": [
+        {
+          "data_group": "nesting_queue"
+        }
+      ]
+    }
+  },
+  {
+    "code": "rework-trend",
+    "main": {
+      "grid": {
+        "rows": "auto 1fr",
+        "gap": "1rem"
+      },
+      "sections": [
+        {
+          "data_group": "internal_rework_trend"
+        },
+        {
+          "data_group": "ticket_trend"
+        }
+      ]
+    }
+  },
+  {
+    "code": "nest-detail",
+    "main": {
+      "sections": [
+        {
+          "data_group": "nest_detail"
+        }
+      ]
+    }
+  },
+  {
+    "code": "nest-schedule-queue",
+    "main": {
+      "sections": [
+        {
+          "data_group": "nest_schedule_queue"
+        }
+      ]
+    }
+  },
+  {
+    "code": "orderinfo",
+    "main": {
+      "sections": [
+        {
+          "data_group": "orderinfo"
+        }
+      ]
+    }
+  },
+  {
+    "code": "impose-plan-inflow",
+    "main": {
+      "sections": [
+        {
+          "data_group": "impose_plan_inflow"
+        }
+      ]
+    }
+  },
+  {
+    "code": "sitrep-detail",
+    "main": {
+      "sections": [
+        {
+          "data_group": "sitrep_detail"
+        }
+      ]
+    }
+  },
+  {
+    "code": "shift",
+    "main": {
+      "sections": [
+        {
+          "data_group": "resource_shift_employees"
+        }
+      ]
+    }
+  },
+  {
+    "code": "info",
+    "main": {
+      "sections": [
+        {
+          "data_group": "resource_info"
+        }
+      ]
+    }
+  },
+  {
+    "code": "oee",
+    "main": {
+      "sections": [
+        {
+          "data_group": "resource_oee_timeline"
+        },
+        {
+          "data_group": "resource_oee_chart"
+        }
+      ]
+    }
+  },
+  {
+    "code": "resource-oee-area-chart",
+    "main": {
+      "sections": [
+        {
+          "data_group": "resource_oee_area_chart_filter"
+        },
+        {
+          "data_group": "resource_oee_area_chart"
+        }
+      ]
+    }
+  },
+  {
+    "code": "capacity",
+    "main": {
+      "sections": [
+        {
+          "data_group": "resource_capacity"
+        }
+      ]
+    }
+  },
+  {
+    "code": "production",
+    "main": {
+      "sections": [
+        {
+          "data_group": "resource_production_materials"
+        }
+      ]
+    }
+  },
+  {
+    "code": "ink-heads",
+    "main": {
+      "sections": [
+        {
+          "data_group": "resource_ink"
+        },
+        {
+          "data_group": "resource_ink_heads"
+        }
+      ]
+    }
+  },
+  {
+    "code": "quality-management",
+    "main": {
+      "sections": [
+        {
+          "data_group": "resource_quality_management"
+        }
+      ]
+    }
+  },
+  {
+    "code": "maintenance-tickets",
+    "main": {
+      "sections": [
+        {
+          "data_group": "resource_maintenance_tickets"
+        }
+      ]
+    }
+  },
+  {
+    "code": "tooling-wear",
+    "main": {
+      "sections": [
+        {
+          "data_group": "resource_tooling_wear"
+        }
+      ]
+    }
+  },
+  {
+    "code": "consumption-waste",
+    "main": {
+      "sections": [
+        {
+          "data_group": "resource_consumption_waste"
+        }
+      ]
+    }
+  },
+  {
+    "code": "material-specs",
+    "main": {
+      "sections": [
+        {
+          "data_group": "resource_material_specs"
+        }
+      ]
+    }
+  },
+  {
+    "code": "nester",
+    "main": {
+      "sections": [
+        {
+          "data_group": "nesting_queue"
+        }
+      ]
+    }
+  },
+  {
+    "code": "batch",
+    "main": {
+      "sections": [
+        {
+          "data_group": "batch"
+        }
+      ]
+    }
+  },
+  {
+    "code": "time-on-status",
+    "main": {
+      "sections": [
+        {
+          "data_group": "time_on_status"
+        }
+      ]
+    }
+  },
+  {
+    "code": "orderlines",
+    "main": {
+      "sections": [
+        {
+          "data_group": "orderline_list"
+        }
+      ]
+    }
+  },
+  {
+    "code": "plan-batch-orderline",
+    "main": {
+      "sections": [
+        {
+          "data_group": "plan_batch_orderline"
+        }
+      ]
+    }
+  },
+  {
+    "code": "plan-batch-nests",
+    "main": {
+      "sections": [
+        {
+          "data_group": "plan_batch_nests"
+        }
+      ]
+    }
+  },
+  {
+    "code": "planning-info",
+    "main": {
+      "sections": [
+        {
+          "data_group": "planning_info"
+        }
+      ]
+    }
+  },
+  {
+    "code": "nest-buckets",
+    "main": {
+      "sections": [
+        {
+          "data_group": "nest_buckets"
+        }
+      ]
+    }
+  },
+  {
+    "code": "uploader-data",
+    "main": {
+      "grid": {
+        "rows": "auto 1fr",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "uploader_data_list"
+        }
+      ]
+    }
+  },
+  {
+    "code": "status-log-duration",
+    "main": {
+      "grid": {
+        "rows": "auto 1fr",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "status_log_duration"
+        }
+      ]
+    }
+  },
+  {
+    "code": "intermediate-stock",
+    "main": {
+      "sections": [
+        {
+          "data_group": "intermediate_stock"
+        }
+      ]
+    }
+  },
+  {
+    "code": "impose-plan",
+    "header": {
+      "grid": {
+        "columns": "auto 1fr",
+        "align_items": "center",
+        "areas": [
+          "breadcrumb controls"
+        ]
+      },
+      "sections": [
+        {
+          "area": "breadcrumb"
+        },
+        {
+          "area": "controls",
+          "data_group": "header_data_groups/timeline-controls.json"
+        }
+      ]
+    },
+    "main": {
+      "grid": {
+        "rows": "auto 1fr",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "impose_plan_filter"
+        },
+        {
+          "data_group": "impose_plan"
+        }
+      ]
+    },
+    "footer": {
+      "grid": {
+        "rows": "auto",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "status_bar"
+        }
+      ]
+    }
+  },
+  {
+    "code": "nest-resource-plan",
+    "header": {
+      "grid": {
+        "columns": "auto 1fr",
+        "align_items": "center",
+        "areas": [
+          "breadcrumb controls"
+        ]
+      },
+      "sections": [
+        {
+          "area": "breadcrumb"
+        },
+        {
+          "area": "controls",
+          "data_group": "header_data_groups/timeline-controls.json"
+        }
+      ]
+    },
+    "main": {
+      "grid": {
+        "rows": "auto 1fr",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "resource_plan_filter",
+          "params": [
+            {
+              "key": "steps",
+              "default_value": [
+                "impose"
+              ]
+            }
+          ]
+        },
+        {
+          "data_group": "resource_plan",
+          "params": [
+            {
+              "key": "steps",
+              "default_value": [
+                "impose"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "footer": {
+      "grid": {
+        "rows": "auto",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "status_bar"
+        }
+      ]
+    }
+  },
+  {
+    "code": "production-resource-plan",
+    "header": {
+      "grid": {
+        "columns": "auto 1fr",
+        "align_items": "center",
+        "areas": [
+          "breadcrumb controls"
+        ]
+      },
+      "sections": [
+        {
+          "area": "breadcrumb"
+        },
+        {
+          "area": "controls",
+          "data_group": "header_data_groups/timeline-controls.json"
+        }
+      ]
+    },
+    "main": {
+      "grid": {
+        "rows": "auto 1fr",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "resource_plan_filter",
+          "params": [
+            {
+              "key": "steps",
+              "default_value": [
+                "print",
+                "coat",
+                "laminate",
+                "route",
+                "cut"
+              ]
+            }
+          ]
+        },
+        {
+          "data_group": "resource_plan",
+          "params": [
+            {
+              "key": "steps",
+              "default_value": [
+                "print",
+                "coat",
+                "laminate",
+                "route",
+                "cut"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "footer": {
+      "grid": {
+        "rows": "auto",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "status_bar"
+        }
+      ]
+    }
+  },
+  {
+    "code": "print-schedule",
+    "header": {
+      "grid": {
+        "columns": "auto 1fr",
+        "align_items": "center",
+        "areas": [
+          "breadcrumb controls"
+        ]
+      },
+      "sections": [
+        {
+          "area": "breadcrumb"
+        },
+        {
+          "area": "controls",
+          "data_group": "header_data_groups/timeline-controls.json"
+        }
+      ]
+    },
+    "main": {
+      "grid": {
+        "rows": "auto 1fr",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "print_schedule_filter"
+        },
+        {
+          "data_group": "print_schedule"
+        }
+      ]
+    },
+    "footer": {
+      "grid": {
+        "rows": "auto",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "status_bar"
+        }
+      ]
+    }
+  },
+  {
+    "code": "material-forecast",
+    "main": {
+      "sections": [
+        {
+          "data_group": "material_forecast_chart"
+        },
+        {
+          "data_group": "material_forecast"
+        }
+      ]
+    }
+  },
+  {
+    "code": "production-board",
+    "main": {
+      "grid": {
+        "rows": "auto 1fr",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "production_board_filter"
+        },
+        {
+          "data_group": "production_board"
+        }
+      ]
+    },
+    "footer": {
+      "grid": {
+        "rows": "1fr auto",
+        "gap": "1rem"
+      },
+      "sections": [
+        {
+          "data_group": "production_board_graph"
+        },
+        {
+          "data_group": "status_bar"
+        }
+      ]
+    }
+  },
+  {
+    "code": "production-lines",
+    "main": {
+      "grid": {
+        "columns": "1fr",
+        "areas": [
+          "flow-board"
+        ]
+      },
+      "sections": [
+        {
+          "area": "flow-board",
+          "data_group": "production_board"
+        }
+      ]
+    },
+    "footer": {
+      "grid": {
+        "columns": "auto 1fr",
+        "areas": [
+          "sitrep status-bar"
+        ]
+      },
+      "sections": [
+        {
+          "area": "sitrep",
+          "data_group": "sitrep"
+        },
+        {
+          "area": "status-bar",
+          "data_group": "status_bar"
+        }
+      ]
+    }
+  },
+  {
+    "code": "production-line-overview",
+    "main": {
+      "sections": [
+        {
+          "data_group": "production_line_overview"
+        }
+      ]
+    }
+  },
+  {
+    "code": "production-planning",
+    "main": {
+      "grid": {
+        "columns": "1fr",
+        "areas": [
+          "production-timeline"
+        ]
+      },
+      "sections": [
+        {
+          "area": "production-timeline",
+          "data_group": "plan_timeline"
+        }
+      ]
+    },
+    "footer": {
+      "grid": {
+        "rows": "1fr auto",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "production_forecast"
+        },
+        {
+          "data_group": "status_bar"
+        }
+      ]
+    }
+  },
+  {
+    "code": "file-inflow",
+    "main": {
+      "sections": [
+        {
+          "data_group": "file_inflow"
+        }
+      ]
+    }
+  },
+  {
+    "code": "batch-nests",
+    "header": {
+      "grid": {
+        "columns": "auto 1fr",
+        "align_items": "center",
+        "areas": [
+          "breadcrumb filter"
+        ]
+      },
+      "sections": [
+        {
+          "area": "breadcrumb"
+        },
+        {
+          "area": "filter",
+          "data_group": "nest_filter"
+        }
+      ]
+    },
+    "main": {
+      "grid": {
+        "rows": "1fr",
+        "areas": [
+          "flow-board"
+        ]
+      },
+      "sections": [
+        {
+          "area": "flow-board",
+          "data_group": "nest_detail"
+        }
+      ]
+    },
+    "footer": {
+      "grid": {
+        "columns": "1fr",
+        "areas": [
+          "status-bar"
+        ]
+      },
+      "sections": [
+        {
+          "area": "status-bar",
+          "data_group": "status_bar"
+        }
+      ]
+    }
+  }
+]

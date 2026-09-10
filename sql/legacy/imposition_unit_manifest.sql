@@ -2,7 +2,7 @@
 -- what each costs. Modelled on production.imposition_unit_manifest; the legacy
 -- twin exists because imposition_id is still an alias of legacy.nest.nest_id,
 -- the way imposition_group_id is an alias of material_id (see
--- sql/action/imposition_lane_item.sql).
+-- sql/action/batch_lane_item.sql).
 --
 -- Source: catalog.xbom, scope 'imposition', version_status 'active' — the xbom
 -- itself, not mapping.spec_unit_manifest. An imposition is a sheet, not a

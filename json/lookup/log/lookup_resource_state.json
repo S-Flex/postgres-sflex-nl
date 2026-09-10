@@ -1,6 +1,7 @@
 [
   {
     "code": "not_released",
+    "fill": "var(--plan-not_released)",
     "i18n": {
       "de": {
         "title": "Nicht freigegeben"
@@ -21,14 +22,14 @@
         "title": "Не випущено"
       }
     },
+    "color": "var(--plan-not_released-color)",
     "group": "plan",
     "order": 10,
-    "class_name": "plan-not-released",
-    "fill": "var(--plan-not_released)",
-    "color": "var(--plan-not_released-color)"
+    "class_name": "plan-not-released"
   },
   {
     "code": "nesting",
+    "fill": "var(--plan-nesting)",
     "i18n": {
       "de": {
         "title": "Verschachtelung"
@@ -49,14 +50,14 @@
         "title": "Вкладання"
       }
     },
+    "color": "var(--plan-nesting-color)",
     "group": "plan",
     "order": 20,
-    "class_name": "plan-nesting",
-    "fill": "var(--plan-nesting)",
-    "color": "var(--plan-nesting-color)"
+    "class_name": "plan-nesting"
   },
   {
     "code": "nested",
+    "fill": "var(--plan-nested)",
     "i18n": {
       "de": {
         "title": "Verschachtelt"
@@ -77,14 +78,14 @@
         "title": "Вкладено"
       }
     },
+    "color": "var(--plan-nested-color)",
     "group": "plan",
     "order": 30,
-    "class_name": "plan-nested",
-    "fill": "var(--plan-nested)",
-    "color": "var(--plan-nested-color)"
+    "class_name": "plan-nested"
   },
   {
     "code": "ripping",
+    "fill": "var(--plan-ripping)",
     "i18n": {
       "de": {
         "title": "Verarbeitet"
@@ -105,14 +106,14 @@
         "title": "Оброблено"
       }
     },
+    "color": "var(--plan-ripping-color)",
     "group": "plan",
     "order": 40,
-    "class_name": "plan-ripping",
-    "fill": "var(--plan-ripping)",
-    "color": "var(--plan-ripping-color)"
+    "class_name": "plan-ripping"
   },
   {
     "code": "ripped",
+    "fill": "var(--plan-ripped)",
     "i18n": {
       "de": {
         "title": "Verarbeitet"
@@ -133,14 +134,14 @@
         "title": "Оброблено"
       }
     },
+    "color": "var(--plan-ripped-color)",
     "group": "plan",
     "order": 50,
-    "class_name": "plan-ripped",
-    "fill": "var(--plan-ripped)",
-    "color": "var(--plan-ripped-color)"
+    "class_name": "plan-ripped"
   },
   {
     "code": "cut",
+    "fill": "var(--plan-cut)",
     "i18n": {
       "de": {
         "title": "Geschnitten"
@@ -161,14 +162,14 @@
         "title": "Розрізано"
       }
     },
+    "color": "var(--plan-cut-color)",
     "group": "plan",
     "order": 60,
-    "class_name": "plan-cut",
-    "fill": "var(--plan-cut)",
-    "color": "var(--plan-cut-color)"
+    "class_name": "plan-cut"
   },
   {
     "code": "printed",
+    "fill": "var(--plan-printed)",
     "i18n": {
       "de": {
         "title": "Gedruckt"
@@ -189,14 +190,14 @@
         "title": "Надруковано"
       }
     },
+    "color": "var(--plan-printed-color)",
     "group": "plan",
     "order": 70,
-    "class_name": "plan-printed",
-    "fill": "var(--plan-printed)",
-    "color": "var(--plan-printed-color)"
+    "class_name": "plan-printed"
   },
   {
     "code": "laminated",
+    "fill": "var(--plan-laminated)",
     "i18n": {
       "de": {
         "title": "Laminiert"
@@ -217,14 +218,14 @@
         "title": "Ламіновано"
       }
     },
+    "color": "var(--plan-laminated-color)",
     "group": "plan",
     "order": 80,
-    "class_name": "plan-laminated",
-    "fill": "var(--plan-laminated)",
-    "color": "var(--plan-laminated-color)"
+    "class_name": "plan-laminated"
   },
   {
     "code": "batch-reserved",
+    "fill": "var(--plan-batch-reserved)",
     "i18n": {
       "de": {
         "title": "Stapel reserviert"
@@ -245,14 +246,14 @@
         "title": "Партію зарезервовано"
       }
     },
+    "color": "var(--plan-batch-reserved-color)",
     "group": "plan",
     "order": 90,
-    "class_name": "plan-batch-reserved",
-    "fill": "var(--plan-batch-reserved)",
-    "color": "var(--plan-batch-reserved-color)"
+    "class_name": "plan-batch-reserved"
   },
   {
     "code": "batch-initiated",
+    "fill": "var(--plan-batch-initiated)",
     "i18n": {
       "de": {
         "title": "Stapel initiiert"
@@ -273,14 +274,14 @@
         "title": "Партію ініційовано"
       }
     },
+    "color": "var(--plan-batch-initiated-color)",
     "group": "plan",
     "order": 100,
-    "class_name": "plan-batch-initiated",
-    "fill": "var(--plan-batch-initiated)",
-    "color": "var(--plan-batch-initiated-color)"
+    "class_name": "plan-batch-initiated"
   },
   {
     "code": "batch",
+    "fill": "var(--plan-batch)",
     "i18n": {
       "de": {
         "title": "Stapel"
@@ -301,14 +302,14 @@
         "title": "Партія"
       }
     },
+    "color": "var(--plan-batch-color)",
     "group": "plan",
     "order": 110,
-    "class_name": "plan-batch",
-    "fill": "var(--plan-batch)",
-    "color": "var(--plan-batch-color)"
+    "class_name": "plan-batch"
   },
   {
     "code": "impact",
+    "fill": "var(--plan-impact)",
     "i18n": {
       "de": {
         "title": "Produktionsauswirkung"
@@ -329,14 +330,14 @@
         "title": "Вплив на виробництво"
       }
     },
+    "color": "var(--plan-impact-color)",
     "group": "plan",
     "order": 120,
-    "class_name": "plan-impact",
-    "fill": "var(--plan-impact)",
-    "color": "var(--plan-impact-color)"
+    "class_name": "plan-impact"
   },
   {
     "code": "planned",
+    "fill": "var(--plan)",
     "i18n": {
       "de": {
         "title": "Geplant"
@@ -357,15 +358,15 @@
         "title": "Заплановано"
       }
     },
+    "color": "var(--plan-color)",
     "group": "actual",
     "order": 130,
-    "class_name": "plan",
     "counts_as": "planned",
-    "fill": "var(--plan)",
-    "color": "var(--plan-color)"
+    "class_name": "plan"
   },
   {
     "code": "breaks",
+    "fill": "var(--plan-breaks)",
     "i18n": {
       "de": {
         "title": "Pause"
@@ -386,14 +387,14 @@
         "title": "Перерва"
       }
     },
+    "color": "var(--plan-breaks-color)",
     "group": "plan",
     "order": 140,
-    "class_name": "plan-breaks",
-    "fill": "var(--plan-breaks)",
-    "color": "var(--plan-breaks-color)"
+    "class_name": "plan-breaks"
   },
   {
     "code": "changeovertime",
+    "fill": "var(--plan-changeovertime)",
     "i18n": {
       "de": {
         "title": "Umrüstzeit"
@@ -414,14 +415,14 @@
         "title": "Час переналагодження"
       }
     },
+    "color": "var(--plan-changeovertime-color)",
     "group": "plan",
     "order": 150,
-    "class_name": "plan-changeovertime",
-    "fill": "var(--plan-changeovertime)",
-    "color": "var(--plan-changeovertime-color)"
+    "class_name": "plan-changeovertime"
   },
   {
     "code": "ticket",
+    "fill": "var(--plan-ticket)",
     "i18n": {
       "de": {
         "title": "Ticket"
@@ -442,14 +443,14 @@
         "title": "Заявка"
       }
     },
+    "color": "var(--plan-ticket-color)",
     "group": "plan",
     "order": 160,
-    "class_name": "plan-ticket",
-    "fill": "var(--plan-ticket)",
-    "color": "var(--plan-ticket-color)"
+    "class_name": "plan-ticket"
   },
   {
     "code": "maintenance",
+    "fill": "var(--plan-maintenance)",
     "i18n": {
       "de": {
         "title": "Wartung"
@@ -470,15 +471,15 @@
         "title": "Обслуговування"
       }
     },
+    "color": "var(--plan-maintenance-color)",
     "group": "plan",
     "order": 170,
-    "class_name": "plan-maintenance",
-    "counts_as": "breakdown",
-    "fill": "var(--plan-maintenance)",
-    "color": "var(--plan-maintenance-color)"
+    "counts_as": "unavailable",
+    "class_name": "plan-maintenance"
   },
   {
     "code": "interruption",
+    "fill": "var(--plan-interruption)",
     "i18n": {
       "de": {
         "title": "Unterbrechung"
@@ -499,15 +500,15 @@
         "title": "Перерва у роботі"
       }
     },
+    "color": "var(--plan-interruption-color)",
     "group": "plan",
     "order": 180,
-    "class_name": "plan-interruption",
-    "counts_as": "breakdown",
-    "fill": "var(--plan-interruption)",
-    "color": "var(--plan-interruption-color)"
+    "counts_as": "unavailable",
+    "class_name": "plan-interruption"
   },
   {
     "code": "producing",
+    "fill": "var(--state-producing)",
     "i18n": {
       "de": {
         "title": "Produziert"
@@ -528,15 +529,15 @@
         "title": "Виробництво"
       }
     },
+    "color": "var(--state-producing-color)",
     "group": "actual",
     "order": 190,
-    "class_name": "state-producing",
     "counts_as": "producing",
-    "fill": "var(--state-producing)",
-    "color": "var(--state-producing-color)"
+    "class_name": "state-producing"
   },
   {
     "code": "setup",
+    "fill": "var(--state-setup)",
     "i18n": {
       "de": {
         "title": "Rüsten"
@@ -557,15 +558,15 @@
         "title": "Налаштування"
       }
     },
+    "color": "var(--state-setup-color)",
     "group": "actual",
     "order": 200,
-    "class_name": "state-setup",
     "counts_as": "producing",
-    "fill": "var(--state-setup)",
-    "color": "var(--state-setup-color)"
+    "class_name": "state-setup"
   },
   {
     "code": "running",
+    "fill": "var(--state-running)",
     "i18n": {
       "de": {
         "title": "Läuft"
@@ -586,14 +587,14 @@
         "title": "В роботі"
       }
     },
+    "color": "var(--state-running-color)",
     "group": "actual",
     "order": 210,
-    "class_name": "state-running",
-    "fill": "var(--state-running)",
-    "color": "var(--state-running-color)"
+    "class_name": "state-running"
   },
   {
     "code": "idle",
+    "fill": "var(--state-idle)",
     "i18n": {
       "de": {
         "title": "Leerlauf"
@@ -614,15 +615,15 @@
         "title": "Неактивний"
       }
     },
+    "color": "var(--state-idle-color)",
     "group": "actual",
     "order": 220,
-    "class_name": "state-idle",
-    "counts_as": "not-producing",
-    "fill": "var(--state-idle)",
-    "color": "var(--state-idle-color)"
+    "counts_as": "available",
+    "class_name": "state-idle"
   },
   {
     "code": "starved",
+    "fill": "var(--state-starved)",
     "i18n": {
       "de": {
         "title": "Materialmangel"
@@ -643,15 +644,15 @@
         "title": "Голодування"
       }
     },
+    "color": "var(--state-starved-color)",
     "group": "actual",
     "order": 230,
-    "class_name": "state-starved",
-    "counts_as": "not-producing",
-    "fill": "var(--state-starved)",
-    "color": "var(--state-starved-color)"
+    "counts_as": "available",
+    "class_name": "state-starved"
   },
   {
     "code": "starved.operator",
+    "fill": "var(--state-starved-operator)",
     "i18n": {
       "de": {
         "title": "Materialmangel"
@@ -672,16 +673,16 @@
         "title": "Голодування"
       }
     },
+    "color": "var(--state-starved-operator-color)",
     "group": "actual",
     "order": 240,
-    "class_name": "state-starved",
-    "counts_as": "not-producing",
     "alias_of": "starved",
-    "fill": "var(--state-starved-operator)",
-    "color": "var(--state-starved-operator-color)"
+    "counts_as": "available",
+    "class_name": "state-starved"
   },
   {
     "code": "blocked",
+    "fill": "var(--state-blocked)",
     "i18n": {
       "de": {
         "title": "Blockiert"
@@ -702,15 +703,15 @@
         "title": "Заблоковано"
       }
     },
+    "color": "var(--state-blocked-color)",
     "group": "actual",
     "order": 250,
-    "class_name": "state-blocked",
-    "counts_as": "not-producing",
-    "fill": "var(--state-blocked)",
-    "color": "var(--state-blocked-color)"
+    "counts_as": "available",
+    "class_name": "state-blocked"
   },
   {
     "code": "blocked.operator",
+    "fill": "var(--state-blocked-operator, var(--state-blocked))",
     "i18n": {
       "de": {
         "title": "Blockiert"
@@ -731,16 +732,16 @@
         "title": "Заблоковано"
       }
     },
+    "color": "var(--state-blocked-operator-color, var(--state-blocked-color))",
     "group": "actual",
     "order": 260,
-    "class_name": "state-blocked",
-    "counts_as": "not-producing",
     "alias_of": "blocked",
-    "fill": "var(--state-blocked-operator, var(--state-blocked))",
-    "color": "var(--state-blocked-operator-color, var(--state-blocked-color))"
+    "counts_as": "available",
+    "class_name": "state-blocked"
   },
   {
     "code": "starved.running",
+    "fill": "var(--state-starved-running, var(--state-starved))",
     "i18n": {
       "de": {
         "title": "Materialmangel"
@@ -761,15 +762,15 @@
         "title": "Голодування"
       }
     },
+    "color": "var(--state-starved-running-color, var(--state-starved-color))",
     "group": "actual",
     "order": 270,
-    "class_name": "state-starved",
     "alias_of": "starved",
-    "fill": "var(--state-starved-running, var(--state-starved))",
-    "color": "var(--state-starved-running-color, var(--state-starved-color))"
+    "class_name": "state-starved"
   },
   {
     "code": "available",
+    "fill": "var(--state-available, transparent)",
     "i18n": {
       "de": {
         "title": "Verfügbar"
@@ -790,14 +791,14 @@
         "title": "Доступно"
       }
     },
+    "color": "var(--state-available-color, #111111)",
     "group": "actual",
     "order": 275,
-    "class_name": "state-available",
-    "fill": "var(--state-available, transparent)",
-    "color": "var(--state-available-color, #111111)"
+    "class_name": "state-available"
   },
   {
     "code": "breakdown",
+    "fill": "var(--state-breakdown)",
     "i18n": {
       "de": {
         "title": "Störung"
@@ -818,15 +819,15 @@
         "title": "Поломка"
       }
     },
+    "color": "var(--state-breakdown-color)",
     "group": "actual",
     "order": 280,
-    "class_name": "state-breakdown",
-    "counts_as": "breakdown",
-    "fill": "var(--state-breakdown)",
-    "color": "var(--state-breakdown-color)"
+    "counts_as": "unavailable",
+    "class_name": "state-breakdown"
   },
   {
     "code": "missingdata",
+    "fill": "var(--state-missingdata)",
     "i18n": {
       "de": {
         "title": "Fehlende Daten"
@@ -847,15 +848,15 @@
         "title": "Відсутні дані"
       }
     },
+    "color": "var(--state-missingdata-color)",
     "group": "actual",
     "order": 290,
-    "class_name": "state-missingdata",
-    "counts_as": "offline",
-    "fill": "var(--state-missingdata)",
-    "color": "var(--state-missingdata-color)"
+    "counts_as": "unavailable",
+    "class_name": "state-missingdata"
   },
   {
     "code": "offline",
+    "fill": "var(--state-offline)",
     "i18n": {
       "de": {
         "title": "Offline"
@@ -876,15 +877,15 @@
         "title": "Офлайн"
       }
     },
+    "color": "var(--state-offline-color)",
     "group": "actual",
     "order": 300,
-    "class_name": "state-offline",
     "counts_as": "offline",
-    "fill": "var(--state-offline)",
-    "color": "var(--state-offline-color)"
+    "class_name": "state-offline"
   },
   {
     "code": "installation",
+    "fill": "var(--state-installation)",
     "i18n": {
       "de": {
         "title": "Installation"
@@ -905,15 +906,15 @@
         "title": "Інсталяція"
       }
     },
+    "color": "var(--state-installation-color)",
     "group": "actual",
     "order": 310,
-    "class_name": "state-installation",
-    "counts_as": "offline",
-    "fill": "var(--state-installation)",
-    "color": "var(--state-installation-color)"
+    "counts_as": "unavailable",
+    "class_name": "state-installation"
   },
   {
     "code": "unavailable",
+    "fill": "var(--state-unavailable, var(--state-offline))",
     "i18n": {
       "de": {
         "title": "Nicht verfügbar"
@@ -934,10 +935,9 @@
         "title": "Недоступно"
       }
     },
+    "color": "var(--state-unavailable-color, var(--state-offline-color))",
     "group": "actual",
     "order": 320,
-    "class_name": "state-unavailable",
-    "fill": "var(--state-unavailable, var(--state-offline))",
-    "color": "var(--state-unavailable-color, var(--state-offline-color))"
+    "class_name": "state-unavailable"
   }
 ]

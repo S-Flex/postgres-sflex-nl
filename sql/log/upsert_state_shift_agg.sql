@@ -136,6 +136,8 @@ begin
   -- end_at is not used: 2.172 of 44.595 rows have production_time_seconds
   -- beyond their wall time.
   produced as (
+      -- production time per shift: the log.data jobs (print and cut) that
+      -- overlap the window, clipped to it
       select w.shift_index,
              dl.resource_uid,
              sum(extract(epoch from (
@@ -152,19 +154,44 @@ begin
         and (p_resource_uids is null or dl.resource_uid = any (p_resource_uids))
       group by w.shift_index, dl.resource_uid
   ),
-  -- planning: estimated production time. Printers only, matched on
-  -- pv2_id; a plan item that crosses a window boundary is clipped so
-  -- each window gets its own share
+  -- the sheet area produced per shift: every job counts in the shift it
+  -- starts in, amount x the nest size (legacy.nest width x height, cm)
+  output as (
+      select w.shift_index,
+             dl.resource_uid,
+             sum(dl.amount * n.width * n.height / 10000)::numeric as actual_output_sqm
+      from log.data dl
+      -- the size of the nest by name; the newest one when a name was reused
+      join lateral (select n0.width, n0.height
+                    from legacy.nest n0
+                    where n0.nest_name = dl.nest_name
+                    order by n0.nest_id desc
+                    limit 1) n on true
+      join window_res w
+        on w.resource_uid = dl.resource_uid
+       and dl.start_at >= w.shift_start
+       and dl.start_at <  w.shift_end
+      where dl.nest_name is not null
+        and dl.amount is not null
+        and (p_resource_uids is null or dl.resource_uid = any (p_resource_uids))
+      group by w.shift_index, dl.resource_uid
+  ),
+  -- the pv2 items of the printers and cutters: their window on the machine
+  -- and the sheet area they plan (batched_amounts x nest size)
   plan_items as (
       select r.resource_uid,
              ao.start_at,
-             ao.start_at + (ao.action_json ->> 'duration')::numeric * interval '1 minute' as end_at
+             ao.start_at + (ao.action_json ->> 'duration')::numeric * interval '1 minute' as end_at,
+             (select sum((ba.value ->> 'amount')::numeric * n.width * n.height / 10000)
+              from jsonb_array_elements(coalesce(ao.action_json -> 'data' -> 'batched_amounts', '[]'::jsonb)) as ba(value)
+              join legacy.nest n on n.nest_id = (ba.value ->> 'nest_id')::bigint
+              where (ba.value ->> 'nest_id') is not null) as planned_output_sqm
       from action.object ao
       join relation.resource r
         on r.resource_json ->> 'pv2_id' = ao.action_json ->> 'resource_id'
       where ao.start_at >= v_from
         and ao.start_at <  v_until
-        and ao.action_json ->> 'machine_type' = 'printer'
+        and ao.action_json ->> 'machine_type' in ('printer', 'cutter')
         and (ao.action_json ->> 'type') <> 'interruption'
         and (p_resource_uids is null or r.resource_uid = any (p_resource_uids))
   ),
@@ -175,7 +202,10 @@ begin
              p.resource_uid,
              sum(extract(epoch from (
                  least(p.end_at, w.shift_end) - greatest(p.start_at, w.shift_start)
-             )))::numeric as duration_seconds
+             )))::numeric as duration_seconds,
+             -- an item's area counts in the shift it starts in
+             sum(p.planned_output_sqm) filter (where p.start_at >= w.shift_start
+                                                 and p.start_at <  w.shift_end) as planned_output_sqm
       from plan_items p
       join window_res w
         on w.resource_uid = p.resource_uid
@@ -183,57 +213,74 @@ begin
        and p.end_at   > w.shift_start
       group by w.shift_index, w.shift_start, w.shift_end, p.resource_uid
   ),
+  -- the rows of the date. planned_output_sqm sits on the planned row,
+  -- actual_output_sqm on the producing row; every other row carries null.
+  -- Producing is the produced time inside the logged running state; a
+  -- machine that produced without a running state in the shift still gets
+  -- its producing row, with 0 seconds and the area it produced
   all_rows as (
-      select shift_index, shift_start, shift_end, resource_uid, state, duration_seconds
+      select shift_index, shift_start, shift_end, resource_uid, state, duration_seconds,
+             null::numeric as planned_output_sqm, null::numeric as actual_output_sqm
       from logged
-
       union all
-
-      -- producing: the measured part of the running envelope
       select l.shift_index, l.shift_start, l.shift_end, l.resource_uid,
              'producing',
-             least(coalesce(p.produced_seconds, 0), l.duration_seconds)
+             least(coalesce(p.produced_seconds, 0), l.duration_seconds),
+             null, o.actual_output_sqm
       from logged l
       left join produced p
         on p.shift_index   = l.shift_index
        and p.resource_uid  = l.resource_uid
+      left join output o
+        on o.shift_index   = l.shift_index
+       and o.resource_uid  = l.resource_uid
       where l.state = 'running'
-
       union all
-
-      -- starved.running: the machine reports running but nothing is
-      -- produced behind it — waiting (for an operator). Its own code so
-      -- producing + starved.running = running stays verifiable; the
-      -- lookup aliases it to starved for display and counting.
-      -- LEFT join: running with zero log.data rows must become
-      -- starved.running in full — an inner join would leave that time
-      -- in no bucket at all
+      select w.shift_index, w.shift_start, w.shift_end, o.resource_uid,
+             'producing', 0, null, o.actual_output_sqm
+      from output o
+      join window_res w
+        on w.shift_index = o.shift_index and w.resource_uid = o.resource_uid
+      where not exists (select 1 from logged l
+                        where l.shift_index = o.shift_index
+                          and l.resource_uid = o.resource_uid
+                          and l.state = 'running')
+      union all
+      -- starved.running: the machine reports running but nothing is produced
+      -- behind it (waiting for an operator). Its own code, so producing +
+      -- starved.running = running stays verifiable; the lookup aliases it to
+      -- starved for display and counting
       select l.shift_index, l.shift_start, l.shift_end, l.resource_uid,
              'starved.running',
-             greatest(l.duration_seconds - coalesce(p.produced_seconds, 0), 0)
+             greatest(l.duration_seconds - coalesce(p.produced_seconds, 0), 0),
+             null, null
       from logged l
       left join produced p
         on p.shift_index   = l.shift_index
        and p.resource_uid  = l.resource_uid
       where l.state = 'running'
-
       union all
-
-      select shift_index, shift_start, shift_end, resource_uid, 'planned', duration_seconds
+      select shift_index, shift_start, shift_end, resource_uid, 'planned', duration_seconds,
+             planned_output_sqm, null
       from plan_windowed
   )
   insert into log.state_shift_agg
-      (shift_date, shift_index, resource_uid, state, shift_start, shift_end, duration_seconds)
+      (shift_date, shift_index, resource_uid, state, shift_start, shift_end, duration_seconds,
+       planned_output_sqm, actual_output_sqm)
   select p_date,
          a.shift_index,
          a.resource_uid,
          a.state,
          a.shift_start,
          a.shift_end,
-         sum(a.duration_seconds)
+         sum(a.duration_seconds),
+         sum(a.planned_output_sqm),
+         sum(a.actual_output_sqm)
   from all_rows a
   group by a.shift_index, a.resource_uid, a.state, a.shift_start, a.shift_end
-  having sum(a.duration_seconds) > 0;
+  having sum(a.duration_seconds) > 0
+      or sum(a.planned_output_sqm) > 0
+      or sum(a.actual_output_sqm) > 0;
 
   get diagnostics v_count = row_count;
   return v_count;

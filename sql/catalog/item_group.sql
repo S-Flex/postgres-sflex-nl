@@ -7,8 +7,13 @@ create table item_group
 	item_group_json jsonb not null,
 	possible_status_sequence jsonb default '[]'::jsonb not null,
 	created_at timestamp with time zone default now() not null,
-	updated_at timestamp with time zone default now() not null
+	updated_at timestamp with time zone default now() not null,
+	-- the order the config_json of the xbom rows of a scope is merged in
+	-- (mapping.update_component_specs_manifest): a higher level overrides a
+	-- lower one, key by key; null merges last of all
+	level integer
 );
 
-alter table item_group owner to xfw3;
+comment on column item_group.level is 'The merge order of the xbom config_json within a scope (manifest_json.<scope>.config): rows of a group with a higher level override the keys of a lower level; null last. Independent of item_group_json.sort_order, the path order of the imposition group.';
 
+alter table item_group owner to xfw3;

@@ -1461,39 +1461,38 @@ WITH payload AS (
               {
                 "i18n": {
                   "de": {
-                    "title": "Auftragspositionen"
+                    "title": "Zufluss"
                   },
                   "en": {
-                    "title": "Orderlines"
+                    "title": "Inflow"
                   },
                   "es": {
-                    "title": "Líneas de pedido"
+                    "title": "Entrada"
                   },
                   "fr": {
-                    "title": "Lignes de commande"
+                    "title": "Entrée"
                   },
                   "nl": {
-                    "title": "Orderlijnen"
+                    "title": "Inflow"
                   },
                   "uk": {
-                    "title": "Рядки замовлення"
+                    "title": "Надходження"
                   }
                 },
-                "icon": "List",
-                "path": "(sidebar:orderinfo)",
+                "icon": "ArrowCircleDown",
+                "path": "(sidebar:impose_plan_inflow)",
                 "params": [
                   {
+                    "key": "material_id",
+                    "is_query_param": true
+                  },
+                  {
                     "key": "date",
+                    "value_from": "date",
                     "is_query_param": true
                   },
                   {
-                    "key": "production_line_ids",
-                    "value_from": "production_line_id",
-                    "is_query_param": true
-                  },
-                  {
-                    "key": "material_ids",
-                    "value_from": "material_id",
+                    "key": "line_type",
                     "is_query_param": true
                   }
                 ]
@@ -1532,48 +1531,6 @@ WITH payload AS (
                     "is_query_param": true
                   }
                 ]
-              },
-              {
-                "i18n": {
-                  "de": {
-                    "title": "Materialprognose"
-                  },
-                  "en": {
-                    "title": "Material forecast"
-                  },
-                  "es": {
-                    "title": "Previsión de material"
-                  },
-                  "fr": {
-                    "title": "Prévision matériau"
-                  },
-                  "nl": {
-                    "title": "Materiaalforecast"
-                  },
-                  "uk": {
-                    "title": "Прогноз матеріалу"
-                  }
-                },
-                "icon": "TrendUp01",
-                "path": "(sidebar:material-forecast)",
-                "params": [
-                  {
-                    "key": "material_id",
-                    "is_query_param": true
-                  },
-                  {
-                    "key": "from",
-                    "value_from": "date",
-                    "is_query_param": true
-                  }
-                ],
-                "hidden_when": [
-                  {
-                    "op": "==",
-                    "value": null,
-                    "field": "forecast_sqm"
-                  }
-                ]
               }
             ]
           },
@@ -1603,8 +1560,9 @@ WITH payload AS (
                 }
               },
               "order": 0,
-              "class_name": "col-span-4",
-              "type": "date"
+              "class_name": "col-span-8",
+              "type": "date",
+              "no_label": true
             }
           },
           "tenant_id": {
@@ -1635,9 +1593,10 @@ WITH payload AS (
                 }
               },
               "order": 1,
-              "class_name": "col-span-2"
+              "class_name": "col-span-4",
+              "suffix": "m²"
             },
-            "scale": 0
+            "scale": 1
           },
           "max_panels": {
             "ui": {
@@ -1760,9 +1719,10 @@ WITH payload AS (
                 }
               },
               "order": 2,
-              "class_name": "col-span-2"
+              "class_name": "col-span-4",
+              "suffix": "m²"
             },
-            "scale": 0
+            "scale": 1
           },
           "material_name": {
             "ui": {
@@ -1812,8 +1772,7 @@ WITH payload AS (
                   "title": "Ст. доставка"
                 }
               },
-              "hidden": true,
-              "suffix": "h"
+              "hidden": true
             }
           },
           "non_working_json": {
@@ -1869,7 +1828,6 @@ WITH payload AS (
                 }
               },
               "hidden": true,
-              "suffix": "h",
               "hidden_when": [
                 {
                   "op": "==",
@@ -2082,6 +2040,32 @@ WITH payload AS (
               "hidden": true,
               "class_name": "col-span-3",
               "type": "duration"
+            }
+          },
+          "nest_moment_code": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Nestmoment"
+                },
+                "en": {
+                  "title": "Nest moment"
+                },
+                "es": {
+                  "title": "Momento de anidado"
+                },
+                "fr": {
+                  "title": "Moment d'imbrication"
+                },
+                "nl": {
+                  "title": "Nestmoment"
+                },
+                "uk": {
+                  "title": "Момент нестингу"
+                }
+              },
+              "no_label": true,
+              "hidden": true
             }
           }
         },
@@ -2319,7 +2303,8 @@ WITH payload AS (
               "group_by": [
                 "tenant_id",
                 "material_id",
-                "production_line_id"
+                "production_line_id",
+                "nest_moment_code"
               ]
             },
             "selectable": true,
@@ -2392,9 +2377,8 @@ WITH payload AS (
                       "title": "Матеріал"
                     }
                   },
-                  "order": 0,
                   "no_label": true,
-                  "class_name": "text-xs col-span-4"
+                  "hidden": true
                 }
               },
               "resource_name": {
@@ -2445,8 +2429,7 @@ WITH payload AS (
                       "title": "Ст. доставка"
                     }
                   },
-                  "order": 1,
-                  "class_name": "text-xs col-span-2"
+                  "hidden": true
                 }
               },
               "fixed_group": {
@@ -2501,15 +2484,7 @@ WITH payload AS (
                       "title": "Друкарський план"
                     }
                   },
-                  "order": 2,
-                  "class_name": "text-xs col-span-2",
-                  "hidden_when": [
-                    {
-                      "op": "==",
-                      "value": null,
-                      "field": "min_delivery_hours"
-                    }
-                  ]
+                  "hidden": true
                 }
               },
               "production_line_id": {
@@ -2591,6 +2566,89 @@ WITH payload AS (
                 "ui": {
                   "hidden": true
                 }
+              },
+              "nest_moment_code": {
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Nestmoment"
+                    },
+                    "en": {
+                      "title": "Nest moment"
+                    },
+                    "es": {
+                      "title": "Momento de anidado"
+                    },
+                    "fr": {
+                      "title": "Moment d'imbrication"
+                    },
+                    "nl": {
+                      "title": "Nestmoment"
+                    },
+                    "uk": {
+                      "title": "Момент нестингу"
+                    }
+                  },
+                  "order": 0,
+                  "no_label": true,
+                  "class_name": "text-xs col-span-4 font-semibold"
+                }
+              },
+              "nest_time": {
+                "type": "time",
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Nestzeit"
+                    },
+                    "en": {
+                      "title": "Nest time"
+                    },
+                    "es": {
+                      "title": "Hora de anidado"
+                    },
+                    "fr": {
+                      "title": "Heure d'imbrication"
+                    },
+                    "nl": {
+                      "title": "Nesttijd"
+                    },
+                    "uk": {
+                      "title": "Час нестингу"
+                    }
+                  },
+                  "order": 1,
+                  "class_name": "text-xs col-span-2",
+                  "format": "hh:mm"
+                }
+              },
+              "print_time": {
+                "type": "time",
+                "ui": {
+                  "i18n": {
+                    "de": {
+                      "title": "Druckzeit"
+                    },
+                    "en": {
+                      "title": "Print time"
+                    },
+                    "es": {
+                      "title": "Hora de impresión"
+                    },
+                    "fr": {
+                      "title": "Heure d'impression"
+                    },
+                    "nl": {
+                      "title": "Printtijd"
+                    },
+                    "uk": {
+                      "title": "Час друку"
+                    }
+                  },
+                  "order": 2,
+                  "class_name": "text-xs col-span-2",
+                  "format": "hh:mm"
+                }
               }
             },
             "column_min_width": 200,
@@ -2598,12 +2656,214 @@ WITH payload AS (
             "next_start_offset_field": "next_start_offset_in_seconds",
             "fields_class_name": "grid grid-cols-4 gap-1",
             "group_by": [
-              "tenant_id"
+              {
+                "field": "tenant_id",
+                "title_field": "tenant_name",
+                "width": 96
+              },
+              {
+                "field": "material_id",
+                "width": 140,
+                "fields_class_name": "grid grid-cols-4 gap-1",
+                "field_config": {
+                  "material_name": {
+                    "ui": {
+                      "i18n": {
+                        "de": {
+                          "title": "Material"
+                        },
+                        "en": {
+                          "title": "Material"
+                        },
+                        "es": {
+                          "title": "Material"
+                        },
+                        "fr": {
+                          "title": "Matériau"
+                        },
+                        "nl": {
+                          "title": "Materiaal"
+                        },
+                        "uk": {
+                          "title": "Матеріал"
+                        }
+                      },
+                      "order": 0,
+                      "no_label": true,
+                      "class_name": "text-xs col-span-4",
+                      "hidden": false
+                    }
+                  },
+                  "delivery_hours": {
+                    "ui": {
+                      "i18n": {
+                        "de": {
+                          "title": "St. lieferzeit"
+                        },
+                        "en": {
+                          "title": "Std. delivery"
+                        },
+                        "es": {
+                          "title": "Entrega est."
+                        },
+                        "fr": {
+                          "title": "Délai std."
+                        },
+                        "nl": {
+                          "title": "St. levertijd"
+                        },
+                        "uk": {
+                          "title": "Ст. доставка"
+                        }
+                      },
+                      "order": 1,
+                      "class_name": "text-xs col-span-2"
+                    }
+                  },
+                  "min_delivery_hours": {
+                    "ui": {
+                      "i18n": {
+                        "de": {
+                          "title": "Druckplan"
+                        },
+                        "en": {
+                          "title": "Print agenda"
+                        },
+                        "es": {
+                          "title": "Agenda de impresión"
+                        },
+                        "fr": {
+                          "title": "Agenda d'impression"
+                        },
+                        "nl": {
+                          "title": "Print agenda"
+                        },
+                        "uk": {
+                          "title": "Друкарський план"
+                        }
+                      },
+                      "order": 2,
+                      "class_name": "text-xs col-span-2",
+                      "hidden_when": [
+                        {
+                          "op": "==",
+                          "value": null,
+                          "field": "min_delivery_hours"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
             ],
-            "group_title_fields": [
-              "tenant_name"
-            ],
-            "deselectable": true
+            "deselectable": true,
+            "nav": {
+              "menu": [
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "Einstellungen"
+                    },
+                    "en": {
+                      "title": "Settings"
+                    },
+                    "es": {
+                      "title": "Ajustes"
+                    },
+                    "fr": {
+                      "title": "Paramètres"
+                    },
+                    "nl": {
+                      "title": "Instellingen"
+                    },
+                    "uk": {
+                      "title": "Налаштування"
+                    }
+                  },
+                  "icon": "Settings01",
+                  "path": "(sidebar:print-schedule-settings)",
+                  "params": [
+                    {
+                      "key": "material_id",
+                      "value_from": "material_id",
+                      "is_query_param": true
+                    },
+                    {
+                      "key": "production_line_id",
+                      "value_from": "production_line_id",
+                      "is_query_param": true
+                    },
+                    {
+                      "key": "tenant_id",
+                      "value_from": "tenant_id",
+                      "is_query_param": true
+                    }
+                  ]
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "Varianten"
+                    },
+                    "en": {
+                      "title": "Variants"
+                    },
+                    "es": {
+                      "title": "Variantes"
+                    },
+                    "fr": {
+                      "title": "Variantes"
+                    },
+                    "nl": {
+                      "title": "Varianten"
+                    },
+                    "uk": {
+                      "title": "Варіанти"
+                    }
+                  },
+                  "icon": "LayersTwo01",
+                  "path": "(sidebar:material-variants)",
+                  "params": [
+                    {
+                      "key": "material_id",
+                      "value_from": "material_id",
+                      "is_query_param": true
+                    }
+                  ]
+                },
+                {
+                  "i18n": {
+                    "de": {
+                      "title": "Materialprognose"
+                    },
+                    "en": {
+                      "title": "Material forecast"
+                    },
+                    "es": {
+                      "title": "Previsión de material"
+                    },
+                    "fr": {
+                      "title": "Prévision matériau"
+                    },
+                    "nl": {
+                      "title": "Materiaalforecast"
+                    },
+                    "uk": {
+                      "title": "Прогноз матеріалу"
+                    }
+                  },
+                  "icon": "TrendUp01",
+                  "path": "(sidebar:material-forecast)",
+                  "params": [
+                    {
+                      "key": "material_id",
+                      "value_from": "material_id",
+                      "is_query_param": true
+                    }
+                  ]
+                }
+              ]
+            }
           },
           "duration_field": "duration_in_seconds",
           "set_date_field": "date",
@@ -2613,7 +2873,8 @@ WITH payload AS (
           "set_group_fields": [
             "tenant_id",
             "material_id",
-            "production_line_id"
+            "production_line_id",
+            "nest_moment_code"
           ],
           "timeline_seconds": 864000,
           "class_names_field": "class_names",
@@ -3846,13 +4107,13 @@ WITH payload AS (
                     "data_field": "items",
                     "set_field": "set",
                     "set_order_field": "sort_order",
-                    "fields_class_name": "grid grid-cols-6 gap-1",
+                    "fields_class_name": "grid grid-cols-3 gap-1",
                     "field_config": {
                       "nest_date": {
                         "ui": {
                           "order": 0,
                           "no_label": true,
-                          "class_name": "col-span-2 font-semibold",
+                          "class_name": "font-semibold",
                           "type": "date"
                         }
                       },
@@ -3861,7 +4122,7 @@ WITH payload AS (
                           "order": 1,
                           "no_label": true,
                           "control": "i18n-text",
-                          "class_name": "col-span-1 font-semibold"
+                          "class_name": "font-semibold"
                         }
                       },
                       "batch_id": {
@@ -3887,86 +4148,16 @@ WITH payload AS (
                             }
                           },
                           "order": 0,
-                          "class_name": "col-span-3 font-semibold"
+                          "class_name": "col-span-2 font-semibold"
                         }
                       },
                       "sqm": {
                         "ui": {
                           "order": 2,
                           "no_label": true,
-                          "class_name": "col-span-3 font-semibold text-right",
+                          "class_name": "font-semibold text-right",
                           "suffix": "m²"
                         }
-                      },
-                      "step_json.print.seconds_min": {
-                        "ui": {
-                          "i18n": {
-                            "de": {
-                              "title": "Druck"
-                            },
-                            "en": {
-                              "title": "Print"
-                            },
-                            "es": {
-                              "title": "Impresión"
-                            },
-                            "fr": {
-                              "title": "Impression"
-                            },
-                            "nl": {
-                              "title": "Print"
-                            },
-                            "uk": {
-                              "title": "Друк"
-                            }
-                          },
-                          "order": 3,
-                          "class_name": "col-span-1"
-                        },
-                        "type": "duration"
-                      },
-                      "step_json.print.seconds_max": {
-                        "ui": {
-                          "order": 4,
-                          "no_label": true,
-                          "class_name": "col-span-1"
-                        },
-                        "type": "duration"
-                      },
-                      "step_json.cut.seconds_min": {
-                        "ui": {
-                          "i18n": {
-                            "de": {
-                              "title": "Schnitt"
-                            },
-                            "en": {
-                              "title": "Cut"
-                            },
-                            "es": {
-                              "title": "Corte"
-                            },
-                            "fr": {
-                              "title": "Coupe"
-                            },
-                            "nl": {
-                              "title": "Cut"
-                            },
-                            "uk": {
-                              "title": "Різання"
-                            }
-                          },
-                          "order": 5,
-                          "class_name": "col-span-1"
-                        },
-                        "type": "duration"
-                      },
-                      "step_json.cut.seconds_max": {
-                        "ui": {
-                          "order": 6,
-                          "no_label": true,
-                          "class_name": "col-span-1"
-                        },
-                        "type": "duration"
                       }
                     },
                     "set_overrides": {
@@ -4737,7 +4928,7 @@ WITH payload AS (
     "data_group_json": [
       {
         "src": [
-          "get_production_orderline_manifest"
+          "get_impose_plan_inflow"
         ],
         "layout": "flow-board",
         "params": [
@@ -8864,13 +9055,13 @@ WITH payload AS (
                     "data_field": "items",
                     "set_field": "set",
                     "set_order_field": "sort_order",
-                    "fields_class_name": "grid grid-cols-6 gap-1",
+                    "fields_class_name": "grid grid-cols-3 gap-1",
                     "field_config": {
                       "nest_date": {
                         "ui": {
                           "order": 0,
                           "no_label": true,
-                          "class_name": "col-span-2 font-semibold",
+                          "class_name": "font-semibold",
                           "type": "date"
                         }
                       },
@@ -8879,7 +9070,7 @@ WITH payload AS (
                           "order": 1,
                           "no_label": true,
                           "control": "i18n-text",
-                          "class_name": "col-span-1 font-semibold"
+                          "class_name": "font-semibold"
                         }
                       },
                       "batch_id": {
@@ -8905,86 +9096,16 @@ WITH payload AS (
                             }
                           },
                           "order": 0,
-                          "class_name": "col-span-3 font-semibold"
+                          "class_name": "col-span-2 font-semibold"
                         }
                       },
                       "sqm": {
                         "ui": {
                           "order": 2,
                           "no_label": true,
-                          "class_name": "col-span-3 font-semibold text-right",
+                          "class_name": "font-semibold text-right",
                           "suffix": "m²"
                         }
-                      },
-                      "step_json.print.seconds_min": {
-                        "ui": {
-                          "i18n": {
-                            "de": {
-                              "title": "Druck"
-                            },
-                            "en": {
-                              "title": "Print"
-                            },
-                            "es": {
-                              "title": "Impresión"
-                            },
-                            "fr": {
-                              "title": "Impression"
-                            },
-                            "nl": {
-                              "title": "Print"
-                            },
-                            "uk": {
-                              "title": "Друк"
-                            }
-                          },
-                          "order": 3,
-                          "class_name": "col-span-1"
-                        },
-                        "type": "duration"
-                      },
-                      "step_json.print.seconds_max": {
-                        "ui": {
-                          "order": 4,
-                          "no_label": true,
-                          "class_name": "col-span-1"
-                        },
-                        "type": "duration"
-                      },
-                      "step_json.cut.seconds_min": {
-                        "ui": {
-                          "i18n": {
-                            "de": {
-                              "title": "Schnitt"
-                            },
-                            "en": {
-                              "title": "Cut"
-                            },
-                            "es": {
-                              "title": "Corte"
-                            },
-                            "fr": {
-                              "title": "Coupe"
-                            },
-                            "nl": {
-                              "title": "Cut"
-                            },
-                            "uk": {
-                              "title": "Різання"
-                            }
-                          },
-                          "order": 5,
-                          "class_name": "col-span-1"
-                        },
-                        "type": "duration"
-                      },
-                      "step_json.cut.seconds_max": {
-                        "ui": {
-                          "order": 6,
-                          "no_label": true,
-                          "class_name": "col-span-1"
-                        },
-                        "type": "duration"
                       }
                     },
                     "set_overrides": {

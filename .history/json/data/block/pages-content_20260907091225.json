@@ -1,0 +1,1008 @@
+[
+  {
+    "code": "plan-batch-orderline",
+    "block": {
+      "title": "Orderlijnen",
+      "i18n": {
+        "de": {
+          "title": "Auftragspositionen"
+        },
+        "en": {
+          "title": "Orderlines"
+        },
+        "es": {
+          "title": "Líneas de pedido"
+        },
+        "fr": {
+          "title": "Lignes de commande"
+        },
+        "nl": {
+          "title": "Orderlijnen"
+        },
+        "uk": {
+          "title": "Рядки замовлення"
+        }
+      }
+    }
+  },
+  {
+    "code": "plan-batch-nests",
+    "block": {
+      "title": "Nesting wachtrij",
+      "i18n": {
+        "de": {
+          "title": "Nest-Informationen"
+        },
+        "en": {
+          "title": "Nest info"
+        },
+        "es": {
+          "title": "Información de nesting"
+        },
+        "fr": {
+          "title": "Informations de nesting"
+        },
+        "nl": {
+          "title": "Nest informatie"
+        },
+        "uk": {
+          "title": "Інформація про нестинг"
+        }
+      }
+    }
+  },
+  {
+    "code": "nesting-queue",
+    "block": {
+      "title": "Nesting wachtrij",
+      "i18n": {
+        "de": {
+          "title": "Nesting-Warteschlange"
+        },
+        "en": {
+          "title": "Nesting queue"
+        },
+        "es": {
+          "title": "Cola de anidado"
+        },
+        "fr": {
+          "title": "File d'imbrication"
+        },
+        "nl": {
+          "title": "Nesting wachtrij"
+        },
+        "uk": {
+          "title": "Черга вкладення"
+        }
+      }
+    }
+  },
+  {
+    "code": "planning-info",
+    "block": {
+      "title": "Print planning info",
+      "i18n": {
+        "de": {
+          "title": "Planungsinformationen"
+        },
+        "en": {
+          "title": "Print planning info"
+        },
+        "es": {
+          "title": "Información de planificación"
+        },
+        "fr": {
+          "title": "Informations sur la planification"
+        },
+        "nl": {
+          "title": "Printplanning info"
+        },
+        "uk": {
+          "title": "Інформація про планування"
+        }
+      }
+    }
+  },
+  {
+    "code": "nest-buckets",
+    "block": {
+      "title": "Nest buckets",
+      "i18n": {
+        "de": {
+          "title": "Nest-Buckets"
+        },
+        "en": {
+          "title": "Nest buckets"
+        },
+        "es": {
+          "title": "Buckets de nesting"
+        },
+        "fr": {
+          "title": "Buckets de nesting"
+        },
+        "nl": {
+          "title": "Nest buckets"
+        },
+        "uk": {
+          "title": "Nest-бакети"
+        }
+      }
+    }
+  },
+  {
+    "code": "rework-trend",
+    "block": {
+      "title": "Intern en extern herstel",
+      "i18n": {
+        "de": {
+          "title": "Interne und externe Nacharbeit"
+        },
+        "en": {
+          "title": "Internal and external rework"
+        },
+        "es": {
+          "title": "Reproceso interno y externo"
+        },
+        "fr": {
+          "title": "Reprises internes et externes"
+        },
+        "nl": {
+          "title": "Intern en extern herstel"
+        },
+        "uk": {
+          "title": "Внутрішнє та зовнішнє доопрацювання"
+        }
+      }
+    }
+  },
+  {
+    "code": "nest-detail",
+    "block": {
+      "title": "Nest detail",
+      "i18n": {
+        "de": {
+          "title": "Nest detail"
+        },
+        "en": {
+          "title": "Nest detail"
+        },
+        "es": {
+          "title": "Detalle del nido"
+        },
+        "fr": {
+          "title": "Détail du nid"
+        },
+        "nl": {
+          "title": "Nest detail"
+        },
+        "uk": {
+          "title": "Деталі гнізда"
+        }
+      }
+    }
+  },
+  {
+    "code": "orderinfo",
+    "block": {
+      "title": "Order info",
+      "i18n": {
+        "de": {
+          "title": "Auftragsinfo"
+        },
+        "en": {
+          "title": "Order info"
+        },
+        "es": {
+          "title": "Información del pedido"
+        },
+        "fr": {
+          "title": "Infos commande"
+        },
+        "nl": {
+          "title": "Orderinfo"
+        },
+        "uk": {
+          "title": "Інформація про замовлення"
+        }
+      }
+    }
+  },
+  {
+    "code": "time-on-status",
+    "block": {
+      "title": "Time on status",
+      "i18n": {
+        "de": {
+          "title": "Zeit im Status"
+        },
+        "en": {
+          "title": "Time on status"
+        },
+        "es": {
+          "title": "Tiempo en estado"
+        },
+        "fr": {
+          "title": "Temps sur statut"
+        },
+        "nl": {
+          "title": "Tijd op status"
+        },
+        "uk": {
+          "title": "Час у статусі"
+        }
+      }
+    }
+  },
+  {
+    "code": "sitrep-detail",
+    "block": {
+      "title": "Sitrep detail",
+      "i18n": {
+        "en": {
+          "title": "Sitrep detail"
+        },
+        "nl": {
+          "title": "Sitrep detail"
+        },
+        "de": {
+          "title": "Sitrep detail"
+        },
+        "uk": {
+          "title": "Sitrep detail"
+        },
+        "es": {
+          "title": "Sitrep detail"
+        }
+      }
+    }
+  },
+  {
+    "code": "batch-nests",
+    "block": {
+      "title": "Batch",
+      "i18n": {
+        "en": {
+          "title": "Batch"
+        },
+        "nl": {
+          "title": "Batch"
+        },
+        "de": {
+          "title": "Batch"
+        },
+        "uk": {
+          "title": "Батч"
+        },
+        "es": {
+          "title": "Lote"
+        }
+      }
+    }
+  },
+  {
+    "code": "oee",
+    "block": {
+      "title": "Productivity",
+      "i18n": {
+        "en": {
+          "title": "Productivity"
+        },
+        "nl": {
+          "title": "Productiviteit"
+        },
+        "de": {
+          "title": "Produktivität"
+        },
+        "uk": {
+          "title": "Продуктивність"
+        },
+        "es": {
+          "title": "Productividad"
+        }
+      }
+    }
+  },
+  {
+    "code": "file-inflow",
+    "block": {
+      "title": "File inflow",
+      "i18n": {
+        "en": {
+          "title": "File inflow"
+        },
+        "nl": {
+          "title": "Bestandsinstroom"
+        },
+        "de": {
+          "title": "Datei-Eingang"
+        },
+        "uk": {
+          "title": "Вхід файлів"
+        },
+        "es": {
+          "title": "Entrada de archivos"
+        },
+        "fr": {
+          "title": "Entrée de fichiers"
+        }
+      }
+    }
+  },
+  {
+    "code": "resource-oee-area-chart",
+    "block": {
+      "title": "OEE",
+      "i18n": {
+        "en": {
+          "title": "OEE"
+        },
+        "nl": {
+          "title": "OEE"
+        },
+        "de": {
+          "title": "OEE"
+        },
+        "uk": {
+          "title": "OEE"
+        },
+        "es": {
+          "title": "OEE"
+        },
+        "fr": {
+          "title": "OEE"
+        }
+      }
+    }
+  },
+  {
+    "code": "production",
+    "block": {
+      "title": "Production",
+      "i18n": {
+        "en": {
+          "title": "Production"
+        },
+        "nl": {
+          "title": "Productie"
+        },
+        "de": {
+          "title": "Produktion"
+        },
+        "uk": {
+          "title": "Виробництво"
+        },
+        "es": {
+          "title": "Producción"
+        }
+      }
+    }
+  },
+  {
+    "code": "ink-heads",
+    "block": {
+      "title": "Ink & Heads",
+      "i18n": {
+        "en": {
+          "title": "Ink & Heads"
+        },
+        "nl": {
+          "title": "Inkt & Koppen"
+        },
+        "de": {
+          "title": "Tinte & Köpfe"
+        },
+        "uk": {
+          "title": "Чорнила та головки"
+        },
+        "es": {
+          "title": "Tintas y cabezales"
+        }
+      }
+    }
+  },
+  {
+    "code": "quality-management",
+    "block": {
+      "title": "Quality management",
+      "i18n": {
+        "en": {
+          "title": "Quality management"
+        },
+        "nl": {
+          "title": "Kwaliteitsbeheer"
+        },
+        "de": {
+          "title": "Qualitätsmanagement"
+        },
+        "uk": {
+          "title": "Управління якістю"
+        },
+        "es": {
+          "title": "Gestión de calidad"
+        }
+      }
+    }
+  },
+  {
+    "code": "maintenance-tickets",
+    "block": {
+      "title": "Overview",
+      "i18n": {
+        "en": {
+          "title": "Overview"
+        },
+        "nl": {
+          "title": "Overzicht"
+        },
+        "de": {
+          "title": "Übersicht"
+        },
+        "uk": {
+          "title": "Огляд"
+        },
+        "es": {
+          "title": "Resumen"
+        }
+      }
+    }
+  },
+  {
+    "code": "tooling-wear",
+    "block": {
+      "title": "Tooling & wear",
+      "i18n": {
+        "en": {
+          "title": "Tooling & wear"
+        },
+        "nl": {
+          "title": "Gereedschap & slijtage"
+        },
+        "de": {
+          "title": "Werkzeug & Verschleiß"
+        },
+        "uk": {
+          "title": "Інструмент та знос"
+        },
+        "es": {
+          "title": "Herramientas y desgaste"
+        }
+      }
+    }
+  },
+  {
+    "code": "consumption-waste",
+    "block": {
+      "title": "Consumption & waste",
+      "i18n": {
+        "en": {
+          "title": "Consumption & waste"
+        },
+        "nl": {
+          "title": "Verbruik & afval"
+        },
+        "de": {
+          "title": "Verbrauch & Abfall"
+        },
+        "uk": {
+          "title": "Споживання та відходи"
+        },
+        "es": {
+          "title": "Consumo y desperdicio"
+        }
+      }
+    }
+  },
+  {
+    "code": "material-specs",
+    "block": {
+      "title": "Material specifications",
+      "i18n": {
+        "en": {
+          "title": "Material specifications"
+        },
+        "nl": {
+          "title": "Materiaalspecificaties"
+        },
+        "de": {
+          "title": "Materialspezifikationen"
+        },
+        "uk": {
+          "title": "Специфікації матеріалів"
+        },
+        "es": {
+          "title": "Especificaciones del material"
+        }
+      }
+    }
+  },
+  {
+    "code": "nester",
+    "block": {
+      "title": "Nesting queue",
+      "i18n": {
+        "en": {
+          "title": "Nesting queue"
+        },
+        "nl": {
+          "title": "Nestwachtrij"
+        },
+        "de": {
+          "title": "Nesting-Warteschlange"
+        },
+        "uk": {
+          "title": "Черга нестингу"
+        },
+        "es": {
+          "title": "Cola de anidado"
+        }
+      }
+    }
+  },
+  {
+    "code": "intermediate-stock",
+    "block": {
+      "title": "Intermediate stock",
+      "i18n": {
+        "en": {
+          "title": "Intermediate stock"
+        },
+        "nl": {
+          "title": "Tussenvoorraad"
+        },
+        "de": {
+          "title": "Zwischenlager"
+        },
+        "uk": {
+          "title": "Проміжний запас"
+        },
+        "es": {
+          "title": "Stock intermedio"
+        }
+      }
+    }
+  },
+  {
+    "code": "info",
+    "block": {
+      "title": "Info",
+      "i18n": {
+        "en": {
+          "title": "Info"
+        },
+        "nl": {
+          "title": "Info"
+        },
+        "de": {
+          "title": "Info"
+        },
+        "uk": {
+          "title": "Інфо"
+        },
+        "es": {
+          "title": "Información"
+        }
+      }
+    }
+  },
+  {
+    "code": "capacity",
+    "block": {
+      "title": "Capacity",
+      "i18n": {
+        "de": {
+          "title": "Kapazität"
+        },
+        "en": {
+          "title": "Capacity"
+        },
+        "es": {
+          "title": "Capacidad"
+        },
+        "fr": {
+          "title": "Capacité"
+        },
+        "nl": {
+          "title": "Capaciteit"
+        },
+        "uk": {
+          "title": "Потужність"
+        }
+      }
+    }
+  },
+  {
+    "code": "shift",
+    "block": {
+      "title": "Shifts",
+      "i18n": {
+        "en": {
+          "title": "Shifts"
+        },
+        "nl": {
+          "title": "Shifts"
+        },
+        "de": {
+          "title": "Shifts"
+        },
+        "uk": {
+          "title": "Shifts"
+        },
+        "es": {
+          "title": "Turnos"
+        }
+      }
+    }
+  },
+  {
+    "code": "orderlines",
+    "block": {
+      "title": "Order lines",
+      "i18n": {
+        "en": {
+          "title": "Order lines"
+        },
+        "nl": {
+          "title": "Orderregels"
+        },
+        "de": {
+          "title": "Auftragszeilen"
+        },
+        "uk": {
+          "title": "Рядки замовлення"
+        },
+        "es": {
+          "title": "Líneas de pedido"
+        }
+      }
+    }
+  },
+  {
+    "code": "uploader-data",
+    "block": {
+      "title": "Files",
+      "i18n": {
+        "en": {
+          "title": "Files"
+        },
+        "nl": {
+          "title": "Bestanden"
+        },
+        "de": {
+          "title": "Dateien"
+        },
+        "uk": {
+          "title": "Дані завантажувача"
+        },
+        "es": {
+          "title": "Datos del cargador"
+        }
+      }
+    }
+  },
+  {
+    "code": "status-log-duration",
+    "block": {
+      "title": "Status log duration",
+      "i18n": {
+        "en": {
+          "title": "Status log duration"
+        },
+        "nl": {
+          "title": "Status log duur"
+        },
+        "de": {
+          "title": "Statusprotokolldauer"
+        },
+        "uk": {
+          "title": "Тривалість журналу стану"
+        },
+        "es": {
+          "title": "Duración del registro de estado"
+        }
+      }
+    }
+  },
+  {
+    "code": "impose-plan",
+    "block": {
+      "title": "Nest schedule",
+      "i18n": {
+        "en": {
+          "title": "Nest schedule"
+        },
+        "nl": {
+          "title": "Nest agenda"
+        },
+        "de": {
+          "title": "Nest Zeitplan"
+        },
+        "uk": {
+          "title": "Графік гнізд"
+        },
+        "es": {
+          "title": "Agenda de nidos"
+        }
+      }
+    }
+  },
+  {
+    "code": "nest-resource-plan",
+    "block": {
+      "title": "Nest plan",
+      "i18n": {
+        "en": {
+          "title": "Nest plan"
+        },
+        "nl": {
+          "title": "Nest plan"
+        },
+        "de": {
+          "title": "Nest-Plan"
+        },
+        "fr": {
+          "title": "Plan de nesting"
+        },
+        "es": {
+          "title": "Plan de nesting"
+        },
+        "uk": {
+          "title": "План нестингу"
+        }
+      }
+    }
+  },
+  {
+    "code": "production-resource-plan",
+    "block": {
+      "title": "Production plan",
+      "i18n": {
+        "en": {
+          "title": "Production plan"
+        },
+        "nl": {
+          "title": "Productie plan"
+        },
+        "de": {
+          "title": "Produktionsplan"
+        },
+        "fr": {
+          "title": "Plan de production"
+        },
+        "es": {
+          "title": "Plan de producción"
+        },
+        "uk": {
+          "title": "План виробництва"
+        }
+      }
+    }
+  },
+  {
+    "code": "print-schedule",
+    "block": {
+      "title": "Print schedule",
+      "i18n": {
+        "en": {
+          "title": "Print schedule"
+        },
+        "nl": {
+          "title": "Print agenda"
+        },
+        "de": {
+          "title": "Druck Zeitplan"
+        },
+        "uk": {
+          "title": "Графік друку"
+        },
+        "es": {
+          "title": "Agenda de impresión"
+        }
+      }
+    }
+  },
+  {
+    "code": "production-board",
+    "block": {
+      "title": "Production board",
+      "i18n": {
+        "en": {
+          "title": "Production board"
+        },
+        "nl": {
+          "title": "Productiebord"
+        },
+        "de": {
+          "title": "Produktionstafel"
+        },
+        "uk": {
+          "title": "Виробнича дошка"
+        },
+        "es": {
+          "title": "Tablero de producción"
+        }
+      }
+    }
+  },
+  {
+    "code": "control-room",
+    "block": {
+      "title": "Control room",
+      "i18n": {
+        "en": {
+          "title": "Control room"
+        },
+        "nl": {
+          "title": "Control room"
+        },
+        "de": {
+          "title": "Leitstand"
+        },
+        "fr": {
+          "title": "Salle de contrôle"
+        },
+        "es": {
+          "title": "Sala de control"
+        },
+        "uk": {
+          "title": "Диспетчерська"
+        }
+      }
+    }
+  },
+  {
+    "code": "production-lines",
+    "block": {
+      "title": "Production lines",
+      "i18n": {
+        "en": {
+          "title": "Production lines"
+        },
+        "nl": {
+          "title": "Productielijnen"
+        },
+        "de": {
+          "title": "Produktionslinien"
+        },
+        "fr": {
+          "title": "Lignes de production"
+        },
+        "es": {
+          "title": "Líneas de producción"
+        },
+        "uk": {
+          "title": "Виробничі лінії"
+        }
+      }
+    }
+  },
+  {
+    "code": "production-line-overview",
+    "block": {
+      "title": "Resources",
+      "i18n": {
+        "de": {
+          "title": "Ressourcen"
+        },
+        "en": {
+          "title": "Resources"
+        },
+        "es": {
+          "title": "Recursos"
+        },
+        "fr": {
+          "title": "Ressources"
+        },
+        "nl": {
+          "title": "Resources"
+        },
+        "uk": {
+          "title": "Ресурси"
+        }
+      }
+    }
+  },
+  {
+    "code": "production-planning",
+    "block": {
+      "title": "Production planning",
+      "i18n": {
+        "en": {
+          "title": "Production planning"
+        },
+        "nl": {
+          "title": "Productieplanning"
+        },
+        "de": {
+          "title": "Produktionsplanung"
+        },
+        "fr": {
+          "title": "Planification de la production"
+        },
+        "es": {
+          "title": "Planificación de la producción"
+        },
+        "uk": {
+          "title": "Планування виробництва"
+        }
+      }
+    }
+  },
+  {
+    "code": "material-forecast",
+    "block": {
+      "title": "Material forecast",
+      "i18n": {
+        "de": {
+          "title": "Materialprognose"
+        },
+        "en": {
+          "title": "Material forecast"
+        },
+        "es": {
+          "title": "Previsión de material"
+        },
+        "fr": {
+          "title": "Prévision matériau"
+        },
+        "nl": {
+          "title": "Materiaalforecast"
+        },
+        "uk": {
+          "title": "Прогноз матеріалу"
+        }
+      }
+    }
+  },
+  {
+    "code": "nest-schedule-queue",
+    "block": {
+      "title": "Orderlines",
+      "i18n": {
+        "en": {
+          "title": "Orderlines"
+        },
+        "nl": {
+          "title": "Orderregels"
+        },
+        "de": {
+          "title": "Auftragspositionen"
+        },
+        "fr": {
+          "title": "Lignes de commande"
+        },
+        "es": {
+          "title": "Líneas de pedido"
+        },
+        "uk": {
+          "title": "Рядки замовлення"
+        }
+      }
+    }
+  },
+  {
+    "code": "batch",
+    "block": {
+      "title": "Batch",
+      "i18n": {
+        "en": {
+          "title": "Batch"
+        },
+        "nl": {
+          "title": "Batch"
+        },
+        "de": {
+          "title": "Charge"
+        },
+        "fr": {
+          "title": "Lot"
+        },
+        "es": {
+          "title": "Lote"
+        },
+        "uk": {
+          "title": "Партія"
+        }
+      }
+    }
+  }
+]

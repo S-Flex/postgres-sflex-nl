@@ -26,6 +26,8 @@ create table lane_item
 	source_ref text,
 	-- the repeat of a material moment on its lane: 0 the first moment of the day
 	instance integer default 0 not null,
+	-- the nest moment of a material item: a code of lookup_nest_moments
+	nest_moment_code text,
 	-- backs the composite foreign key of batch_lane_item
 	unique (lane_item_id, lane_id),
 	-- the order within a lane is unique, as the lane order is within a plan
@@ -35,7 +37,8 @@ create table lane_item
 );
 
 comment on column lane_item.source is 'Who wrote the item: pv2 (crud_object), planner, log (type actual). Together with source_ref the upsert key.';
-comment on column lane_item.source_ref is 'The id of the item at its source: pv2 plannable_item_id, ...';
+comment on column lane_item.source_ref is 'The id of the item at its source: pv2 plannable_item_id; material-plan <material_print_schedule_id>:<date>:<instance>.';
+comment on column lane_item.nest_moment_code is 'The nest moment of a material item: a code of production.lookup lookup_nest_moments (30, 24, 18, 48, 48+, ...), stamped by mock.generate_plan from material_print_schedule.nest_moment_codes; the class of the item on the boards. Null for every other item.';
 
 comment on column lane_item.type is 'The kind of row, from action.lookup / lookup_lane_item_type: plan = the planning (written by the boards, pv2 and crud_nest); actual = what the machine did, folded in from log.data / log.state (later). progress is derived at read time and never stored. Same lane, same axis; the board renders the kinds apart.';
 

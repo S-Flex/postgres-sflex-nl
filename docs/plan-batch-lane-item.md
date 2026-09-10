@@ -104,6 +104,31 @@ Each step is one script in `sql/`, run in this order.
    handoff for 75, 76, 78, 79, 81 (rows per instance, `batch` set per row, the release
    button, the `instance` param).
 
+## step 5 decisions (10 sep 2026)
+
+- The nest moment is a column on the item, `lane_item.nest_moment_code`, not derived from
+  the instance: a copy (crud_lane_item create) is one more moment of the same code, so the
+  code has to travel with the item. `instance` stays the counter on the lane, numbered in
+  moment order at the stamp (`production.get_nest_moment_instances`: day offset, nest
+  time, code).
+- `source_ref` of a material item: `<material_print_schedule_id>:<date>:<instance>`. The
+  schedule got its key for this, plus `resource_path` (the impose path) and `sort_order`
+  (the rank) from the pattern, which was constant per material.
+- The class of a row is the code of the item, not the delivery class of the material. Its
+  moment is on the day the code is offset to (a `48+` item of plan day D lands on D+1), so
+  the label rows of 75 line up with the cards of `get_print_schedule`. An item's own time
+  is a time on the day of its moment.
+- No write-through to the schedule: the stamped day is the truth, the schedule the
+  template. A move on the board changes the item only.
+- Lanes exist on the interval dates of a material only (as the plan says); a row without
+  an impose path has no lane yet (Forex 5mm DZ, every non-adhesive and textile row).
+- Migration: today and before in place (ref rewritten, the existing item is instance 0 of
+  its material; today gets its other moments as new items), the days after today
+  re-stamped -- they carried no nests and no planner moves.
+- With the midnight release of the testing phase every moment of a day is released at the
+  same instant; `crud_nest` then puts the nests on the lowest instance. The inflow sidebar
+  (79) keeps its rule (first unreleased instance, else the last one).
+
 ## checks after step 4
 
 - no nest in two rows of the same plan date
@@ -130,7 +155,7 @@ Each step is one script in `sql/`, run in this order.
 | 1 schema | `sql/update_batch_lane_item_schema.sql` | run 9 sep |
 | 1a data_table 79 | `sql/update_data_table_orderline_manifest.sql` | written 9 sep: row get_production_orderline_manifest, step 3 swaps the query |
 | 2 writers | `sql/update_batch_lane_item_writers.sql` | written 9 sep: crud_lane_item_event (+ data_table row), crud_nest, sync_pv2_batch_items, crud_object, crud_lane_item, generate_plan, generate_production_plan |
-| 3 readers | | |
+| 3 readers | `sql/update_batch_lane_item_readers.sql` | written 9 sep: lanes read per instance (+ instance, status), get_impose_plan and get_resource_plan on batch rows, crud_lane_item, get_impose_plan_inflow + data_table, nest items and the old set table dropped |
 | 4 backfill | | |
-| 5 pattern | | |
+| 5 pattern | `sql/update_plan_per_nest_moment.sql` | written 10 sep: schedule takes over the pattern (key, impose path, rank), `lane_item.nest_moment_code`, generate_plan per nest moment on interval days, lanes/crud_nest/inflow/crud_lane_item on the schedule row, today migrated in place, later days re-stamped, pattern dropped |
 | 6 docs | | |
