@@ -45,7 +45,7 @@ action.lane
   + step text not null                     -- vocabulary lookup_step_category
   + resource_path ltree not null           -- the machine, or site.line.impose.width for a group lane
   + unique (lane_id, step)                 -- backs the composite key below
-action.resource_lane                       -- dropped after its paths moved to lane
+action.resource_lane                       -- dropped 11 sep (sql/update_drop_resource_lane.sql): a machine lane is a lane without imposition_group_lane row
 action.imposition_group_lane               -- stays: imposition_group_id (material alias) per lane
 
 action.lane_item

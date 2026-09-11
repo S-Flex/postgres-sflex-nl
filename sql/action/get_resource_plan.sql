@@ -131,22 +131,23 @@ begin
           and (p_line_type is null or p.line_type = p_line_type)
         order by ws.step, p.type, p.plan_id desc
     ),
-    -- one lane = one machine's day, the machine's step names the lane's step;
-    -- the tenant through the first label of the path (the site abb)
+    -- one lane = one machine's day (the lane's path, no imposition group on
+    -- it), the machine's step names the lane's step; the tenant through the
+    -- first label of the path (the site abb)
     lane as (
         select distinct on (l.lane_id)
-               l.lane_id, pl_l.sort_order, rl.resource_path,
+               l.lane_id, pl_l.sort_order, l.resource_path,
                r.resource_uid, r.resource_name, r.step,
                t.tenant_id, t.tenant_name, t.production_company_id,
                sd.done_sequence
         from the_plan tp
         join action.plan_lane pl_l on pl_l.plan_id = tp.plan_id
         join action.lane l on l.lane_id = pl_l.lane_id
-        join action.resource_lane rl on rl.lane_id = l.lane_id
-        join relation.resource r on r.resource_path = rl.resource_path and r.step = tp.step
+        join relation.resource r on r.resource_path = l.resource_path and r.step = tp.step
         left join step_done sd on sd.step = r.step
-        left join tenant t on t.abb = ltree2text(subpath(rl.resource_path, 0, 1))
-        where (p_tenant_ids is null or t.tenant_id = any (p_tenant_ids))
+        left join tenant t on t.abb = ltree2text(subpath(l.resource_path, 0, 1))
+        where not exists (select 1 from action.imposition_group_lane gl where gl.lane_id = l.lane_id)
+          and (p_tenant_ids is null or t.tenant_id = any (p_tenant_ids))
         order by l.lane_id, tp.plan_id desc
     ),
     -- the material lanes of the impose plan, with the resource their pattern

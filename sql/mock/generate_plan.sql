@@ -44,19 +44,19 @@ as $$
                          false, false, 0, array[mps.tenant_id]) AS i(interval_date)
                 WHERE i.interval_date = p_date)
     ),
-    -- the machines the rows name: one resource lane each. One lane per
-    -- machine per day (resource_lane): a lane that already exists for the
-    -- date is reused, the others are made below
+    -- the machines the rows name: one machine lane each. One lane per
+    -- machine per day: a lane of the date with the machine's path and no
+    -- imposition group is reused, the others are made below
     resource AS (
-        SELECT r.resource_path, rl.lane_id AS existing_lane_id
+        SELECT r.resource_path, ml.lane_id AS existing_lane_id
         FROM (SELECT DISTINCT s.resource_path FROM schedule s) r
         LEFT JOIN LATERAL (
-            SELECT rl.lane_id
-            FROM action.resource_lane rl
-            JOIN action.lane l ON l.lane_id = rl.lane_id
-            WHERE rl.resource_path = r.resource_path AND l.lane_date = p_date
-            ORDER BY rl.lane_id LIMIT 1
-        ) rl ON true
+            SELECT l.lane_id
+            FROM action.lane l
+            WHERE l.resource_path = r.resource_path AND l.lane_date = p_date
+              AND NOT EXISTS (SELECT 1 FROM action.imposition_group_lane gl WHERE gl.lane_id = l.lane_id)
+            ORDER BY l.lane_id LIMIT 1
+        ) ml ON true
     ),
     numbered_resource AS (
         SELECT r.resource_path, row_number() OVER (ORDER BY r.resource_path) AS rn
@@ -103,33 +103,22 @@ as $$
         CROSS JOIN new_plan np
         RETURNING plan_id, lane_id, sort_order
     ),
-    -- resource lanes: one fresh lane per machine without one; in the plan's
+    -- machine lanes: one fresh lane per machine without one; in the plan's
     -- order they follow the material lanes (plan_lane.sort_order is unique
     -- per plan)
-    new_resource_lane_row AS (
+    new_resource_lane AS (
         INSERT INTO action.lane (lane_date, step, resource_path)
         SELECT p_date, p_step, r.resource_path
         FROM numbered_resource r
         ORDER BY r.rn
-        RETURNING lane_id
-    ),
-    numbered_resource_lane AS (
-        SELECT nl.lane_id, row_number() OVER (ORDER BY nl.lane_id) AS rn FROM new_resource_lane_row nl
-    ),
-    new_resource_lane AS (
-        INSERT INTO action.resource_lane (lane_id, resource_path)
-        SELECT nl.lane_id, r.resource_path
-        FROM numbered_resource_lane nl
-        JOIN numbered_resource r USING (rn)
-        RETURNING lane_id
+        RETURNING lane_id, resource_path
     ),
     new_resource_plan_lane AS (
         INSERT INTO action.plan_lane (plan_id, lane_id, sort_order)
         SELECT np.plan_id, x.lane_id,
                coalesce((SELECT max(s.sort_order) FROM schedule s), 0) + 1000 + row_number() OVER (ORDER BY x.resource_path)
-        FROM (SELECT nl.lane_id, r.resource_path
-              FROM numbered_resource_lane nl
-              JOIN numbered_resource r USING (rn)
+        FROM (SELECT nl.lane_id, nl.resource_path
+              FROM new_resource_lane nl
               UNION ALL
               SELECT r.existing_lane_id, r.resource_path
               FROM resource r

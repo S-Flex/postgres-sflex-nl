@@ -236,9 +236,24 @@ BEGIN
                        ORDER BY p2.plan_id DESC LIMIT 1)
       AND NOT (p.steps @> x.steps);
 
-    -- the plan of every item, resolved once
+    -- the machine-day lane of every item, created once: a lane is the
+    -- machine's day when it carries the machine's path and no imposition
+    -- group (a group lane can carry the path of the impose machine)
+    INSERT INTO action.lane (lane_date, step, resource_path)
+    SELECT DISTINCT ni.plan_date, ni.step, ni.resource_path
+    FROM new_item ni
+    WHERE NOT EXISTS (SELECT 1
+                      FROM action.lane l
+                      WHERE l.lane_date = ni.plan_date AND l.resource_path = ni.resource_path
+                        AND NOT EXISTS (SELECT 1 FROM action.imposition_group_lane gl WHERE gl.lane_id = l.lane_id));
+
+    -- the plan and the lane of every item, resolved once
     CREATE TEMP TABLE item_plan ON COMMIT DROP AS
     SELECT d.*,
+           (SELECT l.lane_id FROM action.lane l
+            WHERE l.lane_date = d.plan_date AND l.resource_path = d.resource_path
+              AND NOT EXISTS (SELECT 1 FROM action.imposition_group_lane gl WHERE gl.lane_id = l.lane_id)
+            ORDER BY l.lane_id LIMIT 1) AS lane_id,
            (SELECT p.plan_id FROM action.plan p
             WHERE p.plan_date = d.plan_date AND p.type = 'production-plan'
               AND p.line_type IS NOT DISTINCT FROM d.line_type
@@ -250,43 +265,16 @@ BEGIN
             ORDER BY p.plan_id DESC LIMIT 1) END AS physical_plan_id
     FROM new_item d;
 
-    -- the machine-day lane of every item, created once, then hung under
-    -- the order's plan AND the physical department's plan, so both boards
-    -- see the machine's full occupation
-    WITH missing AS (
-        SELECT DISTINCT ip.plan_date, ip.resource_path, ip.step
-        FROM item_plan ip
-        WHERE NOT EXISTS (SELECT 1
-                          FROM action.lane l
-                          JOIN action.resource_lane rl ON rl.lane_id = l.lane_id
-                          WHERE l.lane_date = ip.plan_date AND rl.resource_path = ip.resource_path)
-    ),
-    with_id AS (
-        SELECT m.plan_date, m.resource_path, m.step,
-               nextval(pg_get_serial_sequence('action.lane', 'lane_id')) AS lane_id
-        FROM missing m
-    ),
-    -- a lane is one resource on one day: its step and path live on the lane
-    new_lane AS (
-        INSERT INTO action.lane (lane_id, lane_date, step, resource_path)
-        OVERRIDING SYSTEM VALUE
-        SELECT w.lane_id, w.plan_date, w.step, w.resource_path FROM with_id w
-        RETURNING lane_id
-    )
-    INSERT INTO action.resource_lane (lane_id, resource_path)
-    SELECT w.lane_id, w.resource_path FROM with_id w;
-
+    -- the lane hung under the order's plan AND the physical department's
+    -- plan, so both boards see the machine's full occupation
     INSERT INTO action.plan_lane (plan_id, lane_id, sort_order)
     SELECT x.plan_id, x.lane_id,
            COALESCE((SELECT max(pl2.sort_order) FROM action.plan_lane pl2 WHERE pl2.plan_id = x.plan_id), 0)
              + row_number() OVER (PARTITION BY x.plan_id ORDER BY x.lane_id)
-    FROM (SELECT DISTINCT pp.plan_id, l.lane_id
-          FROM (SELECT ip.plan_id, ip.plan_date, ip.resource_path FROM item_plan ip
-                UNION
-                SELECT ip.physical_plan_id, ip.plan_date, ip.resource_path FROM item_plan ip
-                WHERE ip.physical_plan_id IS NOT NULL) pp
-          JOIN action.resource_lane rl ON rl.resource_path = pp.resource_path
-          JOIN action.lane l ON l.lane_id = rl.lane_id AND l.lane_date = pp.plan_date) x
+    FROM (SELECT ip.plan_id, ip.lane_id FROM item_plan ip
+          UNION
+          SELECT ip.physical_plan_id, ip.lane_id FROM item_plan ip
+          WHERE ip.physical_plan_id IS NOT NULL) x
     WHERE NOT EXISTS (SELECT 1 FROM action.plan_lane pl3
                       WHERE pl3.plan_id = x.plan_id AND pl3.lane_id = x.lane_id);
 
@@ -307,14 +295,12 @@ BEGIN
     INSERT INTO action.lane_item AS li
         (lane_id, sort_order, start_offset_in_seconds, duration_in_seconds,
          is_pinned, no_split, type, source, source_ref)
-    SELECT l.lane_id,
+    SELECT ip.lane_id,
            -1 * ip.plannable_item_id,
            EXTRACT(EPOCH FROM (ip.start_local - ip.plan_date::timestamp))::integer,
            GREATEST(COALESCE(EXTRACT(EPOCH FROM (ip.end_local - ip.start_local))::integer, 0), 0),
            ip.is_fixed_offset, true, 'plan', 'pv2', ip.source_ref
     FROM item_plan ip
-    JOIN action.resource_lane rl ON rl.resource_path = ip.resource_path
-    JOIN action.lane l ON l.lane_id = rl.lane_id AND l.lane_date = ip.plan_date
     ON CONFLICT (source, source_ref) DO UPDATE SET
         lane_id                 = EXCLUDED.lane_id,
         sort_order              = EXCLUDED.sort_order,
@@ -327,9 +313,7 @@ BEGIN
     UPDATE action.lane_item li
     SET sort_order = -1 * li.lane_item_id
     WHERE li.type = 'plan'
-      AND li.lane_id IN (SELECT DISTINCT l.lane_id FROM item_plan ip
-                         JOIN action.resource_lane rl ON rl.resource_path = ip.resource_path
-    JOIN action.lane l ON l.lane_id = rl.lane_id AND l.lane_date = ip.plan_date);
+      AND li.lane_id IN (SELECT DISTINCT ip.lane_id FROM item_plan ip);
 
     UPDATE action.lane_item li
     SET sort_order = x.rank * 1000
@@ -338,9 +322,7 @@ BEGIN
                                     ORDER BY li2.start_offset_in_seconds, li2.lane_item_id) AS rank
           FROM action.lane_item li2
           WHERE li2.type = 'plan'
-            AND li2.lane_id IN (SELECT DISTINCT l.lane_id FROM item_plan ip
-                                JOIN action.resource_lane rl ON rl.resource_path = ip.resource_path
-    JOIN action.lane l ON l.lane_id = rl.lane_id AND l.lane_date = ip.plan_date)) x
+            AND li2.lane_id IN (SELECT DISTINCT ip.lane_id FROM item_plan ip)) x
     WHERE li.lane_item_id = x.lane_item_id;
 
     -- the batch row and the chain of the items: one row per item with a

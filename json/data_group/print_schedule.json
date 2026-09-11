@@ -698,7 +698,8 @@
             },
             "order": 1,
             "no_label": true,
-            "class_name": "col-span-2 text-right font-semibold"
+            "class_name": "col-span-2 text-right font-semibold",
+            "hidden": true
           }
         }
       },
@@ -931,6 +932,11 @@
                 "is_optional": true,
                 "default_value": false,
                 "is_query_param": true
+              },
+              {
+                "key": "view_code",
+                "default_value": "print-day-scale",
+                "is_query_param": false
               }
             ],
             "group_by": [
@@ -1326,6 +1332,45 @@
                     "order": 1,
                     "no_label": true,
                     "class_name": "text-xs col-span-2"
+                  }
+                }
+              }
+            },
+            {
+              "group_type": "row",
+              "fields_class_name": "grid grid-cols-4 gap-1",
+              "field_config": {
+                "resource_uid": {
+                  "ui": {
+                    "key": true,
+                    "hidden": true
+                  }
+                },
+                "resource_name": {
+                  "ui": {
+                    "i18n": {
+                      "de": {
+                        "title": "Ressource"
+                      },
+                      "en": {
+                        "title": "Resource"
+                      },
+                      "es": {
+                        "title": "Recurso"
+                      },
+                      "fr": {
+                        "title": "Ressource"
+                      },
+                      "nl": {
+                        "title": "Resource"
+                      },
+                      "uk": {
+                        "title": "Ресурс"
+                      }
+                    },
+                    "order": 0,
+                    "no_label": true,
+                    "class_name": "text-xs col-span-4"
                   }
                 }
               }

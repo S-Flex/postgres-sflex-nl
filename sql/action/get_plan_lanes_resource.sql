@@ -1,9 +1,9 @@
 -- One read for the resource lanes (labels) of the plan boards: resource_plan
 -- (81) and whatever follows. One row per lane of a plan of the day, so one row
--- per machine that is planned: the lane names the resource
--- (action.resource_lane) and the step of that resource has to be a step planned
--- that day. A group lane has no row in resource_lane and is therefore no row
--- here.
+-- per machine that is planned: the lane carries the resource's path and the
+-- step of that resource has to be a step planned that day. A group lane
+-- (action.imposition_group_lane) is no row here, also when it carries the path
+-- of the impose machine.
 --
 -- p_steps null = every step planned that day, whatever the type of the plan:
 -- the production plans and the impose plan (material-resource-plan) both name
@@ -39,11 +39,12 @@ BEGIN
     lane AS (
         -- the machine lanes of those plans; a lane two plans share counts once,
         -- with the sort order of the newest
-        SELECT DISTINCT ON (rl.lane_id) rl.lane_id, rl.resource_path, pl.sort_order
+        SELECT DISTINCT ON (l.lane_id) l.lane_id, l.resource_path, pl.sort_order
         FROM the_plan tp
         JOIN action.plan_lane pl ON pl.plan_id = tp.plan_id
-        JOIN action.resource_lane rl ON rl.lane_id = pl.lane_id
-        ORDER BY rl.lane_id, tp.plan_id DESC
+        JOIN action.lane l ON l.lane_id = pl.lane_id
+        WHERE NOT EXISTS (SELECT 1 FROM action.imposition_group_lane gl WHERE gl.lane_id = l.lane_id)
+        ORDER BY l.lane_id, tp.plan_id DESC
     )
     SELECT t.tenant_id, t.name, r.step,
            r.resource_path, r.resource_uid, r.resource_name,

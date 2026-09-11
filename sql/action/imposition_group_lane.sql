@@ -11,7 +11,7 @@ create table imposition_group_lane
 	imposition_group_id integer not null
 );
 
-comment on table imposition_group_lane is 'The imposition group of a lane. A lane has this row or a resource_lane row, never both.';
+comment on table imposition_group_lane is 'The imposition group of a lane. A lane with this row is a group-day; a lane without it is a machine-day (its resource_path is the machine).';
 
 alter table imposition_group_lane owner to xfw3;
 
