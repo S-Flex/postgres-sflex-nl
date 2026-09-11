@@ -737,5 +737,21 @@
         }
       ]
     }
+  },
+  {
+    "code": "nest-waste",
+    "main": {
+      "sections": [
+        {
+          "data_group": "nest_waste_ranges_filter"
+        },
+        {
+          "data_group": "nest_waste_ranges_chart"
+        },
+        {
+          "data_group": "nest_waste_ranges"
+        }
+      ]
+    }
   }
 ]

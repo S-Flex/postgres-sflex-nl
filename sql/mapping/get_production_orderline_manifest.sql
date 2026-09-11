@@ -82,12 +82,8 @@ begin
             p_domain_id               => p_domain_id)
     ),
     tenant as (
-        select (v.value ->> 'production_company_id')::integer as production_company_id,
-               (v.value ->> 'tenant_id')::integer             as tenant_id,
-               v.value ->> 'name'                             as tenant_name
-        from relation.lookup lk
-        cross join lateral jsonb_array_elements(lk.lookup_json) as v(value)
-        where lk.lookup = 'lookup_tenants'
+        select t.production_company_id, t.tenant_id, t.name as tenant_name
+        from site.tenant t
     )
     select d.number, d.order_sequence, d.order_id, d.production_order_id,
            d.production_orderline_id, d.sales_orderline_id, d.customer_json,

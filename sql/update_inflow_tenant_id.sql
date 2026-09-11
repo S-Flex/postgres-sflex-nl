@@ -1,6 +1,6 @@
 -- Board 79 groups its rows per tenant on tenant_id (the fixed groups Dokkum
 -- and Bad Hersfeld): the orderline manifest read gets the tenant_id of the
--- row from lookup_tenants, next to tenant_name, and the inflow read passes it
+-- row from site.tenant, next to tenant_name, and the inflow read passes it
 -- on. Both return types change, so both are dropped and created.
 BEGIN;
 
@@ -89,12 +89,8 @@ begin
             p_domain_id               => p_domain_id)
     ),
     tenant as (
-        select (v.value ->> 'production_company_id')::integer as production_company_id,
-               (v.value ->> 'tenant_id')::integer             as tenant_id,
-               v.value ->> 'name'                             as tenant_name
-        from relation.lookup lk
-        cross join lateral jsonb_array_elements(lk.lookup_json) as v(value)
-        where lk.lookup = 'lookup_tenants'
+        select t.production_company_id, t.tenant_id, t.name as tenant_name
+        from site.tenant t
     )
     select d.number, d.order_sequence, d.order_id, d.production_order_id,
            d.production_orderline_id, d.sales_orderline_id, d.customer_json,

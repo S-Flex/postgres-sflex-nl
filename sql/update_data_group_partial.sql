@@ -2,7 +2,7 @@
 -- do not edit by hand, rebuild after every change to the json.
 -- Runs from SQLTools or DataGrip: the json is inline, so there is no psql
 -- \set and nothing asks for a parameter.
--- ONLY data groups 19 resource_oee_timeline, 29 resource_oee_chart, 62 resource_oee_area_chart, 64 resource_oee_area_chart_filter, 75 print_schedule, 76 impose_plan, 79 impose_plan_inflow, 81 resource_plan, 78 impose_resource_plan
+-- ONLY data groups 19 resource_oee_timeline, 29 resource_oee_chart, 62 resource_oee_area_chart, 64 resource_oee_area_chart_filter, 75 print_schedule, 76 impose_plan, 79 impose_plan_inflow, 81 resource_plan, 78 impose_resource_plan, 96 nest_waste_ranges, 97 nest_waste_ranges_filter, 98 nest_waste_ranges_chart
 --
 
 BEGIN;
@@ -1430,6 +1430,12 @@ WITH payload AS (
             "is_query_param": true
           },
           {
+            "key": "lookback_days",
+            "is_optional": true,
+            "default_value": 2,
+            "is_query_param": true
+          },
+          {
             "key": "date",
             "is_optional": true,
             "is_ident_only": true,
@@ -1560,7 +1566,7 @@ WITH payload AS (
                 }
               },
               "order": 0,
-              "class_name": "col-span-8",
+              "class_name": "col-span-6",
               "type": "date",
               "no_label": true
             }
@@ -1592,7 +1598,7 @@ WITH payload AS (
                   "title": "Надходження"
                 }
               },
-              "order": 1,
+              "order": 2,
               "class_name": "col-span-4",
               "suffix": "m²"
             },
@@ -1718,7 +1724,7 @@ WITH payload AS (
                   "title": "Прогноз"
                 }
               },
-              "order": 2,
+              "order": 3,
               "class_name": "col-span-4",
               "suffix": "m²"
             },
@@ -2066,6 +2072,33 @@ WITH payload AS (
               },
               "no_label": true,
               "hidden": true
+            }
+          },
+          "hours_to_production": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Stunden bis Produktion"
+                },
+                "en": {
+                  "title": "Hours to production"
+                },
+                "es": {
+                  "title": "Horas hasta producción"
+                },
+                "fr": {
+                  "title": "Heures avant production"
+                },
+                "nl": {
+                  "title": "Uren tot productie"
+                },
+                "uk": {
+                  "title": "Годин до виробництва"
+                }
+              },
+              "order": 1,
+              "no_label": true,
+              "class_name": "col-span-2 text-right font-semibold"
             }
           }
         },
@@ -2619,7 +2652,8 @@ WITH payload AS (
                   },
                   "order": 1,
                   "class_name": "text-xs col-span-2",
-                  "format": "hh:mm"
+                  "format": "hh:mm",
+                  "control": "time"
                 }
               },
               "print_time": {
@@ -2647,7 +2681,8 @@ WITH payload AS (
                   },
                   "order": 2,
                   "class_name": "text-xs col-span-2",
-                  "format": "hh:mm"
+                  "format": "hh:mm",
+                  "control": "time"
                 }
               }
             },
@@ -2657,15 +2692,54 @@ WITH payload AS (
             "fields_class_name": "grid grid-cols-4 gap-1",
             "group_by": [
               {
-                "field": "tenant_id",
-                "title_field": "tenant_name",
-                "width": 96
-              },
-              {
-                "field": "material_id",
-                "width": 140,
+                "group_type": "row",
                 "fields_class_name": "grid grid-cols-4 gap-1",
                 "field_config": {
+                  "tenant_id": {
+                    "ui": {
+                      "key": true,
+                      "hidden": true
+                    }
+                  },
+                  "tenant_name": {
+                    "ui": {
+                      "i18n": {
+                        "de": {
+                          "title": "Mietername"
+                        },
+                        "en": {
+                          "title": "Tenant name"
+                        },
+                        "es": {
+                          "title": "Nombre del inquilino"
+                        },
+                        "fr": {
+                          "title": "Nom du locataire"
+                        },
+                        "nl": {
+                          "title": "Naam huurder"
+                        },
+                        "uk": {
+                          "title": "Назва орендаря"
+                        }
+                      },
+                      "order": 1,
+                      "no_label": true,
+                      "class_name": "text-xs col-span-2"
+                    }
+                  }
+                }
+              },
+              {
+                "group_type": "column",
+                "fields_class_name": "grid grid-cols-4 gap-1",
+                "field_config": {
+                  "material_id": {
+                    "ui": {
+                      "key": true,
+                      "hidden": true
+                    }
+                  },
                   "material_name": {
                     "ui": {
                       "i18n": {
@@ -9801,6 +9875,1132 @@ WITH payload AS (
           }
         },
         "fields_class_name": "@container grid grid-cols-6 gap-1"
+      }
+    ]
+  },
+  {
+    "data_group_id": 96,
+    "data_group": "nest_waste_ranges",
+    "data_group_json": [
+      {
+        "src": [
+          "get_nest_waste_ranges"
+        ],
+        "layout": "flow-board",
+        "params": [
+          {
+            "key": "dates",
+            "is_optional": true,
+            "is_query_param": true
+          },
+          {
+            "key": "material_ids",
+            "is_optional": true,
+            "is_query_param": true
+          }
+        ],
+        "children": [],
+        "widget_id": "nest_waste_ranges",
+        "window_class_name": "p-8",
+        "field_config": {
+          "material_id": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "material_name": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Material"
+                },
+                "en": {
+                  "title": "Material"
+                },
+                "es": {
+                  "title": "Material"
+                },
+                "fr": {
+                  "title": "Matériau"
+                },
+                "nl": {
+                  "title": "Materiaal"
+                },
+                "uk": {
+                  "title": "Матеріал"
+                }
+              }
+            }
+          },
+          "nest_date": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Nestdatum"
+                },
+                "en": {
+                  "title": "Nest date"
+                },
+                "es": {
+                  "title": "Fecha de anidado"
+                },
+                "fr": {
+                  "title": "Date d'imbrication"
+                },
+                "nl": {
+                  "title": "Nestdatum"
+                },
+                "uk": {
+                  "title": "Дата нестингу"
+                }
+              },
+              "type": "date"
+            }
+          },
+          "range_min": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "range_max": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "waste_range": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Abfall"
+                },
+                "en": {
+                  "title": "Waste"
+                },
+                "es": {
+                  "title": "Desperdicio"
+                },
+                "fr": {
+                  "title": "Déchet"
+                },
+                "nl": {
+                  "title": "Afval"
+                },
+                "uk": {
+                  "title": "Відходи"
+                }
+              },
+              "suffix": "%"
+            }
+          },
+          "nest_count": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Nester"
+                },
+                "en": {
+                  "title": "Nests"
+                },
+                "es": {
+                  "title": "Nidos"
+                },
+                "fr": {
+                  "title": "Imbrications"
+                },
+                "nl": {
+                  "title": "Nesten"
+                },
+                "uk": {
+                  "title": "Нести"
+                }
+              }
+            },
+            "scale": 0
+          },
+          "sqm": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Fläche"
+                },
+                "en": {
+                  "title": "Area"
+                },
+                "es": {
+                  "title": "Superficie"
+                },
+                "fr": {
+                  "title": "Surface"
+                },
+                "nl": {
+                  "title": "Oppervlak"
+                },
+                "uk": {
+                  "title": "Площа"
+                }
+              },
+              "suffix": "m²"
+            },
+            "scale": 1
+          },
+          "avg_waste_percentage": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Gem. Abfall"
+                },
+                "en": {
+                  "title": "Avg. waste"
+                },
+                "es": {
+                  "title": "Desperdicio medio"
+                },
+                "fr": {
+                  "title": "Déchet moyen"
+                },
+                "nl": {
+                  "title": "Gem. afval"
+                },
+                "uk": {
+                  "title": "Сер. відходи"
+                }
+              },
+              "suffix": "%"
+            },
+            "scale": 1
+          },
+          "waste_sqm": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Abfallfläche"
+                },
+                "en": {
+                  "title": "Waste area"
+                },
+                "es": {
+                  "title": "Superficie de desperdicio"
+                },
+                "fr": {
+                  "title": "Surface de déchet"
+                },
+                "nl": {
+                  "title": "Afvaloppervlak"
+                },
+                "uk": {
+                  "title": "Площа відходів"
+                }
+              },
+              "suffix": "m²"
+            },
+            "scale": 1
+          },
+          "purchase_price_per_sqm": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "waste_cost": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Abfallkosten"
+                },
+                "en": {
+                  "title": "Waste cost"
+                },
+                "es": {
+                  "title": "Coste del desperdicio"
+                },
+                "fr": {
+                  "title": "Coût du déchet"
+                },
+                "nl": {
+                  "title": "Afvalkosten"
+                },
+                "uk": {
+                  "title": "Вартість відходів"
+                }
+              },
+              "prefix": "€"
+            },
+            "scale": 2
+          },
+          "is_total": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "sort_order": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "class_names": {
+            "ui": {
+              "hidden": true
+            }
+          }
+        },
+        "flow_board_config": {
+          "layout": "flow-container",
+          "group_by": [
+            "material_id"
+          ],
+          "row_options": {
+            "colexp": true,
+            "checkable": false,
+            "selectable": false
+          },
+          "fields_class_name": "@container grid grid-cols-5 gap-1",
+          "field_config": {
+            "material_name": {
+              "ui": {
+                "order": 0,
+                "no_label": true,
+                "class_name": "col-span-1"
+              }
+            },
+            "nest_count": {
+              "ui": {
+                "order": 1,
+                "class_name": "col-span-1"
+              },
+              "scale": 0,
+              "aggregate_fn": "sum"
+            },
+            "sqm": {
+              "ui": {
+                "order": 2,
+                "class_name": "col-span-1",
+                "suffix": "m²"
+              },
+              "scale": 0,
+              "aggregate_fn": "sum"
+            },
+            "waste_sqm": {
+              "ui": {
+                "order": 3,
+                "class_name": "col-span-1",
+                "suffix": "m²"
+              },
+              "scale": 0,
+              "aggregate_fn": "sum"
+            },
+            "waste_cost": {
+              "ui": {
+                "order": 4,
+                "class_name": "col-span-1",
+                "prefix": "€"
+              },
+              "scale": 0,
+              "aggregate_fn": "sum"
+            }
+          },
+          "children": [
+            {
+              "layout": "flow-table",
+              "group_by": [
+                "sort_order"
+              ],
+              "row_options": {
+                "colexp": true,
+                "checkable": false,
+                "selectable": false,
+                "class_names_field": "class_names"
+              },
+              "fields_class_name": "grid grid-cols-6 gap-1",
+              "field_config": {
+                "waste_range": {
+                  "ui": {
+                    "order": 0,
+                    "class_name": "col-span-1",
+                    "i18n": {
+                      "de": {
+                        "title": "Abfall"
+                      },
+                      "en": {
+                        "title": "Waste"
+                      },
+                      "es": {
+                        "title": "Desperdicio"
+                      },
+                      "fr": {
+                        "title": "Déchet"
+                      },
+                      "nl": {
+                        "title": "Afval"
+                      },
+                      "uk": {
+                        "title": "Відходи"
+                      }
+                    },
+                    "suffix": "%"
+                  }
+                },
+                "nest_count": {
+                  "ui": {
+                    "order": 1,
+                    "class_name": "col-span-1",
+                    "i18n": {
+                      "de": {
+                        "title": "Nester"
+                      },
+                      "en": {
+                        "title": "Nests"
+                      },
+                      "es": {
+                        "title": "Nidos"
+                      },
+                      "fr": {
+                        "title": "Imbrications"
+                      },
+                      "nl": {
+                        "title": "Nesten"
+                      },
+                      "uk": {
+                        "title": "Нести"
+                      }
+                    }
+                  },
+                  "scale": 0,
+                  "aggregate_fn": "sum"
+                },
+                "sqm": {
+                  "ui": {
+                    "order": 2,
+                    "class_name": "col-span-1",
+                    "i18n": {
+                      "de": {
+                        "title": "Fläche"
+                      },
+                      "en": {
+                        "title": "Area"
+                      },
+                      "es": {
+                        "title": "Superficie"
+                      },
+                      "fr": {
+                        "title": "Surface"
+                      },
+                      "nl": {
+                        "title": "Oppervlak"
+                      },
+                      "uk": {
+                        "title": "Площа"
+                      }
+                    },
+                    "suffix": "m²"
+                  },
+                  "scale": 1,
+                  "aggregate_fn": "sum"
+                },
+                "avg_waste_percentage": {
+                  "ui": {
+                    "order": 3,
+                    "class_name": "col-span-1",
+                    "i18n": {
+                      "de": {
+                        "title": "Gem. Abfall"
+                      },
+                      "en": {
+                        "title": "Avg. waste"
+                      },
+                      "es": {
+                        "title": "Desperdicio medio"
+                      },
+                      "fr": {
+                        "title": "Déchet moyen"
+                      },
+                      "nl": {
+                        "title": "Gem. afval"
+                      },
+                      "uk": {
+                        "title": "Сер. відходи"
+                      }
+                    },
+                    "suffix": "%"
+                  },
+                  "scale": 1,
+                  "aggregate_fn": "avg"
+                },
+                "waste_sqm": {
+                  "ui": {
+                    "order": 4,
+                    "class_name": "col-span-1",
+                    "i18n": {
+                      "de": {
+                        "title": "Abfallfläche"
+                      },
+                      "en": {
+                        "title": "Waste area"
+                      },
+                      "es": {
+                        "title": "Superficie de desperdicio"
+                      },
+                      "fr": {
+                        "title": "Surface de déchet"
+                      },
+                      "nl": {
+                        "title": "Afvaloppervlak"
+                      },
+                      "uk": {
+                        "title": "Площа відходів"
+                      }
+                    },
+                    "suffix": "m²"
+                  },
+                  "scale": 1,
+                  "aggregate_fn": "sum"
+                },
+                "waste_cost": {
+                  "ui": {
+                    "order": 5,
+                    "class_name": "col-span-1",
+                    "i18n": {
+                      "de": {
+                        "title": "Abfallkosten"
+                      },
+                      "en": {
+                        "title": "Waste cost"
+                      },
+                      "es": {
+                        "title": "Coste del desperdicio"
+                      },
+                      "fr": {
+                        "title": "Coût du déchet"
+                      },
+                      "nl": {
+                        "title": "Afvalkosten"
+                      },
+                      "uk": {
+                        "title": "Вартість відходів"
+                      }
+                    },
+                    "prefix": "€"
+                  },
+                  "scale": 2,
+                  "aggregate_fn": "sum"
+                }
+              },
+              "children": [
+                {
+                  "layout": "flow-table",
+                  "group_by": [
+                    "nest_date"
+                  ],
+                  "row_options": {
+                    "colexp": false,
+                    "checkable": false,
+                    "selectable": false,
+                    "class_names_field": "class_names"
+                  },
+                  "fields_class_name": "grid grid-cols-6 gap-1",
+                  "field_config": {
+                    "nest_date": {
+                      "ui": {
+                        "order": 0,
+                        "class_name": "col-span-1",
+                        "i18n": {
+                          "de": {
+                            "title": "Nestdatum"
+                          },
+                          "en": {
+                            "title": "Nest date"
+                          },
+                          "es": {
+                            "title": "Fecha de anidado"
+                          },
+                          "fr": {
+                            "title": "Date d'imbrication"
+                          },
+                          "nl": {
+                            "title": "Nestdatum"
+                          },
+                          "uk": {
+                            "title": "Дата нестингу"
+                          }
+                        },
+                        "type": "date"
+                      }
+                    },
+                    "nest_count": {
+                      "ui": {
+                        "order": 1,
+                        "class_name": "col-span-1",
+                        "i18n": {
+                          "de": {
+                            "title": "Nester"
+                          },
+                          "en": {
+                            "title": "Nests"
+                          },
+                          "es": {
+                            "title": "Nidos"
+                          },
+                          "fr": {
+                            "title": "Imbrications"
+                          },
+                          "nl": {
+                            "title": "Nesten"
+                          },
+                          "uk": {
+                            "title": "Нести"
+                          }
+                        }
+                      },
+                      "scale": 0
+                    },
+                    "sqm": {
+                      "ui": {
+                        "order": 2,
+                        "class_name": "col-span-1",
+                        "i18n": {
+                          "de": {
+                            "title": "Fläche"
+                          },
+                          "en": {
+                            "title": "Area"
+                          },
+                          "es": {
+                            "title": "Superficie"
+                          },
+                          "fr": {
+                            "title": "Surface"
+                          },
+                          "nl": {
+                            "title": "Oppervlak"
+                          },
+                          "uk": {
+                            "title": "Площа"
+                          }
+                        },
+                        "suffix": "m²"
+                      },
+                      "scale": 1
+                    },
+                    "avg_waste_percentage": {
+                      "ui": {
+                        "order": 3,
+                        "class_name": "col-span-1",
+                        "i18n": {
+                          "de": {
+                            "title": "Gem. Abfall"
+                          },
+                          "en": {
+                            "title": "Avg. waste"
+                          },
+                          "es": {
+                            "title": "Desperdicio medio"
+                          },
+                          "fr": {
+                            "title": "Déchet moyen"
+                          },
+                          "nl": {
+                            "title": "Gem. afval"
+                          },
+                          "uk": {
+                            "title": "Сер. відходи"
+                          }
+                        },
+                        "suffix": "%"
+                      },
+                      "scale": 1
+                    },
+                    "waste_sqm": {
+                      "ui": {
+                        "order": 4,
+                        "class_name": "col-span-1",
+                        "i18n": {
+                          "de": {
+                            "title": "Abfallfläche"
+                          },
+                          "en": {
+                            "title": "Waste area"
+                          },
+                          "es": {
+                            "title": "Superficie de desperdicio"
+                          },
+                          "fr": {
+                            "title": "Surface de déchet"
+                          },
+                          "nl": {
+                            "title": "Afvaloppervlak"
+                          },
+                          "uk": {
+                            "title": "Площа відходів"
+                          }
+                        },
+                        "suffix": "m²"
+                      },
+                      "scale": 1
+                    },
+                    "waste_cost": {
+                      "ui": {
+                        "order": 5,
+                        "class_name": "col-span-1",
+                        "i18n": {
+                          "de": {
+                            "title": "Abfallkosten"
+                          },
+                          "en": {
+                            "title": "Waste cost"
+                          },
+                          "es": {
+                            "title": "Coste del desperdicio"
+                          },
+                          "fr": {
+                            "title": "Coût du déchet"
+                          },
+                          "nl": {
+                            "title": "Afvalkosten"
+                          },
+                          "uk": {
+                            "title": "Вартість відходів"
+                          }
+                        },
+                        "prefix": "€"
+                      },
+                      "scale": 2
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "data_group_id": 97,
+    "data_group": "nest_waste_ranges_filter",
+    "data_group_json": [
+      {
+        "layout": "filter",
+        "params": [
+          {
+            "key": "dates",
+            "is_optional": true,
+            "is_query_param": true
+          },
+          {
+            "key": "material_ids",
+            "is_optional": true,
+            "is_query_param": true
+          },
+          {
+            "key": "production_line_ids",
+            "is_optional": true,
+            "is_query_param": true
+          }
+        ],
+        "children": [],
+        "widget_id": "nest_waste_ranges_filter",
+        "row_options": {
+          "class_name": "@container grid grid-cols-12 gap-1"
+        },
+        "field_config": {
+          "dates": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Nesttage"
+                },
+                "en": {
+                  "title": "Nest days"
+                },
+                "es": {
+                  "title": "Días de anidado"
+                },
+                "fr": {
+                  "title": "Jours d'imbrication"
+                },
+                "nl": {
+                  "title": "Nestdagen"
+                },
+                "uk": {
+                  "title": "Дні нестингу"
+                }
+              },
+              "order": 0,
+              "control": "multi-date-picker",
+              "type": "datemultirange",
+              "class_name": "col-span-12 @2xl:col-span-4"
+            }
+          },
+          "material_ids": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Materialien"
+                },
+                "en": {
+                  "title": "Materials"
+                },
+                "es": {
+                  "title": "Materiales"
+                },
+                "fr": {
+                  "title": "Matériaux"
+                },
+                "nl": {
+                  "title": "Materialen"
+                },
+                "uk": {
+                  "title": "Матеріали"
+                }
+              },
+              "order": 1,
+              "control": "multi-select",
+              "class_name": "col-span-12 @2xl:col-span-4",
+              "input_data": {
+                "src": [
+                  "get_materials"
+                ],
+                "params": [
+                  {
+                    "key": "production_line_ids",
+                    "is_optional": true,
+                    "is_query_param": true
+                  }
+                ],
+                "title_field": "material_name",
+                "value_field": "material_id"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "data_group_id": 98,
+    "data_group": "nest_waste_ranges_chart",
+    "data_group_json": [
+      {
+        "src": [
+          "get_nest_waste_ranges"
+        ],
+        "layout": "stacked-bar-chart",
+        "params": [
+          {
+            "key": "dates",
+            "is_optional": true,
+            "is_query_param": true
+          },
+          {
+            "key": "material_ids",
+            "is_optional": true,
+            "is_query_param": true
+          }
+        ],
+        "widget_id": "nest_waste_ranges_chart",
+        "field_config": {
+          "material_name": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Material"
+                },
+                "en": {
+                  "title": "Material"
+                },
+                "es": {
+                  "title": "Material"
+                },
+                "fr": {
+                  "title": "Matériau"
+                },
+                "nl": {
+                  "title": "Materiaal"
+                },
+                "uk": {
+                  "title": "Матеріал"
+                }
+              }
+            }
+          },
+          "waste_range": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Abfall"
+                },
+                "en": {
+                  "title": "Waste"
+                },
+                "es": {
+                  "title": "Desperdicio"
+                },
+                "fr": {
+                  "title": "Déchet"
+                },
+                "nl": {
+                  "title": "Afval"
+                },
+                "uk": {
+                  "title": "Відходи"
+                }
+              },
+              "suffix": "%"
+            }
+          },
+          "nest_count": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Nester"
+                },
+                "en": {
+                  "title": "Nests"
+                },
+                "es": {
+                  "title": "Nidos"
+                },
+                "fr": {
+                  "title": "Imbrications"
+                },
+                "nl": {
+                  "title": "Nesten"
+                },
+                "uk": {
+                  "title": "Нести"
+                }
+              }
+            },
+            "scale": 0
+          },
+          "sqm": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Fläche"
+                },
+                "en": {
+                  "title": "Area"
+                },
+                "es": {
+                  "title": "Superficie"
+                },
+                "fr": {
+                  "title": "Surface"
+                },
+                "nl": {
+                  "title": "Oppervlak"
+                },
+                "uk": {
+                  "title": "Площа"
+                }
+              },
+              "suffix": "m²"
+            },
+            "scale": 1
+          },
+          "avg_waste_percentage": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Gem. Abfall"
+                },
+                "en": {
+                  "title": "Avg. waste"
+                },
+                "es": {
+                  "title": "Desperdicio medio"
+                },
+                "fr": {
+                  "title": "Déchet moyen"
+                },
+                "nl": {
+                  "title": "Gem. afval"
+                },
+                "uk": {
+                  "title": "Сер. відходи"
+                }
+              },
+              "suffix": "%"
+            },
+            "scale": 1
+          },
+          "waste_sqm": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Abfallfläche"
+                },
+                "en": {
+                  "title": "Waste area"
+                },
+                "es": {
+                  "title": "Superficie de desperdicio"
+                },
+                "fr": {
+                  "title": "Surface de déchet"
+                },
+                "nl": {
+                  "title": "Afvaloppervlak"
+                },
+                "uk": {
+                  "title": "Площа відходів"
+                }
+              },
+              "suffix": "m²"
+            },
+            "scale": 1
+          },
+          "waste_cost": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Abfallkosten"
+                },
+                "en": {
+                  "title": "Waste cost"
+                },
+                "es": {
+                  "title": "Coste del desperdicio"
+                },
+                "fr": {
+                  "title": "Coût du déchet"
+                },
+                "nl": {
+                  "title": "Afvalkosten"
+                },
+                "uk": {
+                  "title": "Вартість відходів"
+                }
+              },
+              "prefix": "€"
+            },
+            "scale": 2
+          }
+        },
+        "stacked_bar_chart_config": {
+          "height": 360,
+          "stacked": true,
+          "x_field": "waste_range",
+          "y_field": "sqm",
+          "group_by": [
+            "material_id"
+          ],
+          "template": "${material_name}",
+          "show_grid": true,
+          "show_legend": true,
+          "filter": [
+            [
+              {
+                "op": "==",
+                "field": "is_total",
+                "value": false
+              }
+            ]
+          ],
+          "tooltip": {
+            "fields_class_name": "grid grid-cols-6 gap-1",
+            "field_config": {},
+            "groups": [
+              {
+                "title": {
+                  "i18n": {
+                    "de": {
+                      "title": "Material"
+                    },
+                    "en": {
+                      "title": "Material"
+                    },
+                    "es": {
+                      "title": "Material"
+                    },
+                    "fr": {
+                      "title": "Matériau"
+                    },
+                    "nl": {
+                      "title": "Materiaal"
+                    },
+                    "uk": {
+                      "title": "Матеріал"
+                    }
+                  }
+                },
+                "fields": {
+                  "material_name": {
+                    "ui": {
+                      "order": 0,
+                      "class_name": "col-span-4"
+                    }
+                  },
+                  "waste_range": {
+                    "ui": {
+                      "order": 1,
+                      "class_name": "col-span-2"
+                    }
+                  }
+                }
+              },
+              {
+                "title": {
+                  "i18n": {
+                    "de": {
+                      "title": "Nester"
+                    },
+                    "en": {
+                      "title": "Nests"
+                    },
+                    "es": {
+                      "title": "Nidos"
+                    },
+                    "fr": {
+                      "title": "Imbrications"
+                    },
+                    "nl": {
+                      "title": "Nesten"
+                    },
+                    "uk": {
+                      "title": "Нести"
+                    }
+                  }
+                },
+                "fields": {
+                  "nest_count": {
+                    "ui": {
+                      "order": 0,
+                      "class_name": "col-span-2"
+                    }
+                  },
+                  "sqm": {
+                    "ui": {
+                      "order": 1,
+                      "class_name": "col-span-2"
+                    }
+                  },
+                  "avg_waste_percentage": {
+                    "ui": {
+                      "order": 2,
+                      "class_name": "col-span-2"
+                    }
+                  },
+                  "waste_sqm": {
+                    "ui": {
+                      "order": 3,
+                      "class_name": "col-span-3"
+                    }
+                  },
+                  "waste_cost": {
+                    "ui": {
+                      "order": 4,
+                      "class_name": "col-span-3"
+                    }
+                  }
+                }
+              }
+            ],
+            "sort": {
+              "field": "sqm",
+              "direction": "desc"
+            }
+          }
+        }
       }
     ]
   }

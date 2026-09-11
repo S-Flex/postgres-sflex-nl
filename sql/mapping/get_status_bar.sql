@@ -1,4 +1,4 @@
-create function mapping.get_status_bar(p_model text DEFAULT NULL::text, p_until timestamp with time zone DEFAULT (CURRENT_DATE)::timestamp with time zone, p_production_line_id integer DEFAULT NULL::integer) returns TABLE(status_json jsonb)
+create or replace function mapping.get_status_bar(p_model text DEFAULT NULL::text, p_until timestamp with time zone DEFAULT (CURRENT_DATE)::timestamp with time zone, p_production_line_id integer DEFAULT NULL::integer) returns TABLE(status_json jsonb)
 	language plpgsql
 as $$
 #variable_conflict use_column
@@ -34,6 +34,8 @@ BEGIN
                             WHEN 'time_on_status' THEN mapping.get_status_bar_time_on_status(p_model, p_until, v_line.line_id)
                             WHEN 'capacity'       THEN mapping.get_status_bar_capacity(p_model, p_until, v_line.line_id, grp->'steps')
                             WHEN 'rework'         THEN mapping.get_status_bar_rework(v_line.line_id)
+                            WHEN 'file_inflow'    THEN mapping.get_status_bar_file_inflow(v_line.line_id)
+                            WHEN 'nests'          THEN mapping.get_status_bar_nests(v_line.line_id)
                         END
                     )
                 )

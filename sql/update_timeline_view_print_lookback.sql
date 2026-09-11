@@ -1,3 +1,13 @@
+-- The print-day-scale view (board 75) gets two workdays before the day of
+-- p_until: a second segment of two days at day_offset -2, optional -- the board
+-- shows it only when it has data -- so the overdue work of
+-- mock.get_print_schedule (class state-delayed) stands on its own deadline
+-- day. production.get_timeline_view_segments passes is_optional through per
+-- segment (return type change: drop and create). Mirror:
+-- json/lookup/production/lookup_timeline_views.json.
+BEGIN;
+
+-- ============ sql/production/get_timeline_view_segments.sql ============
 -- the return type gained is_optional, so the old one goes first
 drop function if exists production.get_timeline_view_segments(text, timestamp with time zone, integer, integer, integer[]);
 
@@ -129,3 +139,17 @@ $$;
 
 alter function production.get_timeline_view_segments(text, timestamp with time zone, integer, integer, integer[]) owner to xfw3;
 
+UPDATE production.lookup l
+SET lookup_json = (SELECT jsonb_agg(CASE WHEN e.value ->> 'code' = 'print-day-scale'
+                                         THEN jsonb_set(e.value, '{segments}',
+                                                        '[{"time":"00:00:00","day_offset":-2,"duration_in_seconds":172800,"is_optional":true},{"time":"00:00:00","day_offset":0,"duration_in_seconds":864000}]'::jsonb)
+                                         ELSE e.value END ORDER BY e.ord)
+                   FROM jsonb_array_elements(l.lookup_json) WITH ORDINALITY AS e(value, ord))
+WHERE l.lookup = 'lookup_timeline_views';
+
+COMMIT;
+
+-- check: days -2 .. 9, the first two optional
+SELECT day_offset, date, is_optional
+FROM production.get_timeline_view_segments(p_code => 'print-day-scale', p_look_back => -1, p_look_ahead => -1)
+ORDER BY day_offset;

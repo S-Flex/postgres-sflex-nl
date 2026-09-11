@@ -1,3 +1,12 @@
+-- Board 75: the items of the codes without a fixed group (48+, 72, 96+) came
+-- without a time -- fillers for the client to chain, the rule of the time
+-- scale of board 76 -- so on the day scale the cards of those items had no
+-- place (207 of 250 cards on 10 Sep 2026). On a day scale (a view whose
+-- segments are a day) every item now carries its class moment unless the
+-- planner moved it; a time scale keeps its fillers. Same signature.
+BEGIN;
+
+-- ============ sql/action/get_plan_lanes_imposition_group.sql ============
 -- One read for the imposition-group lanes (labels) of the nest boards:
 -- print_schedule (75), impose_plan (76) and whatever follows. One row per
 -- pattern item (source material-plan) of the newest material plan of a day:
@@ -364,3 +373,10 @@ END;
 $$;
 
 alter function action.get_plan_lanes_imposition_group(timestamp with time zone, text, text, integer[], boolean, text) owner to xfw3;
+
+COMMIT;
+
+-- check: every item of the day scale has a time
+SELECT count(*) AS items, count(start_offset_in_seconds) AS with_time
+FROM action.get_plan_lanes_imposition_group(p_line_type => 'sheet', p_view_code => 'print-day-scale', p_only_starting_today => false)
+WHERE day_offset >= 0;

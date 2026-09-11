@@ -1,0 +1,60 @@
+[
+  {
+    "code": "0-10",
+    "range_min": 0,
+    "range_max": 10,
+    "sort_order": 0
+  },
+  {
+    "code": "10-20",
+    "range_min": 10,
+    "range_max": 20,
+    "sort_order": 1
+  },
+  {
+    "code": "20-30",
+    "range_min": 20,
+    "range_max": 30,
+    "sort_order": 2
+  },
+  {
+    "code": "30-40",
+    "range_min": 30,
+    "range_max": 40,
+    "sort_order": 3
+  },
+  {
+    "code": "40-50",
+    "range_min": 40,
+    "range_max": 50,
+    "sort_order": 4
+  },
+  {
+    "code": "50-60",
+    "range_min": 50,
+    "range_max": 60,
+    "sort_order": 5
+  },
+  {
+    "code": "60-70",
+    "range_min": 60,
+    "range_max": 70,
+    "sort_order": 6
+  },
+  {
+    "code": "70-100",
+    "range_max": 100,
+    "range_min": 70,
+    "sort_order": 7
+  },
+  {
+    "code": "0-100",
+    "range_max": 100,
+    "range_min": 0,
+    "sort_order": 8,
+    "is_total": true,
+    "class_names": [
+      "aggregate"
+    ]
+  }
+]

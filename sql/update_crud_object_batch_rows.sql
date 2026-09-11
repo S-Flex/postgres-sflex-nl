@@ -1,3 +1,14 @@
+-- action.crud_object failed since the batch rows exist (step 2, 9 Sep 2026)
+-- whenever a plannable item moved to another lane: the upsert of the lane
+-- item sets its lane_id, but batch_lane_item references (lane_item_id,
+-- lane_id) and refused the move ("violates foreign key constraint
+-- batch_lane_item_lane_item_id_lane_id_fkey"), so the plannable item sync
+-- rolled back on every run from 10 Sep on. The batch rows of the payload's
+-- items are replaced as a whole by sync_pv2_batch_items right after the
+-- upsert; they are now deleted before it. Same signature.
+BEGIN;
+
+-- ============ sql/action/crud_object.sql ============
 create or replace function action.crud_object(p_param_json jsonb, p_no_results boolean DEFAULT false) returns jsonb
 	language plpgsql
 as $$
@@ -389,3 +400,10 @@ $$;
 
 alter function action.crud_object(jsonb, boolean) owner to xfw3;
 
+COMMIT;
+
+-- check: no pv2 item whose batch rows sit on another lane than the item
+SELECT count(*) AS batch_rows_off_lane
+FROM action.batch_lane_item b
+JOIN action.lane_item li ON li.lane_item_id = b.lane_item_id
+WHERE li.source = 'pv2' AND b.lane_id <> li.lane_id;

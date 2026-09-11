@@ -1030,5 +1030,31 @@
         }
       }
     }
+  },
+  {
+    "code": "nest-waste",
+    "block": {
+      "title": "Nest waste",
+      "i18n": {
+        "en": {
+          "title": "Nest waste"
+        },
+        "nl": {
+          "title": "Nestafval"
+        },
+        "de": {
+          "title": "Nest-Abfall"
+        },
+        "uk": {
+          "title": "Відходи нестингу"
+        },
+        "es": {
+          "title": "Desperdicio de anidado"
+        },
+        "fr": {
+          "title": "Déchet d'imbrication"
+        }
+      }
+    }
   }
 ]

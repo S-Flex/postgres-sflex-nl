@@ -1,0 +1,102 @@
+{
+  "data_group_id": 97,
+  "data_group": "nest_waste_ranges_filter",
+  "data_group_json": [
+    {
+      "layout": "filter",
+      "params": [
+        {
+          "key": "dates",
+          "is_optional": true,
+          "is_query_param": true
+        },
+        {
+          "key": "material_ids",
+          "is_optional": true,
+          "is_query_param": true
+        },
+        {
+          "key": "production_line_ids",
+          "is_optional": true,
+          "is_query_param": true
+        }
+      ],
+      "children": [],
+      "widget_id": "nest_waste_ranges_filter",
+      "row_options": {
+        "class_name": "@container grid grid-cols-12 gap-1"
+      },
+      "field_config": {
+        "dates": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Nesttage"
+              },
+              "en": {
+                "title": "Nest days"
+              },
+              "es": {
+                "title": "Días de anidado"
+              },
+              "fr": {
+                "title": "Jours d'imbrication"
+              },
+              "nl": {
+                "title": "Nestdagen"
+              },
+              "uk": {
+                "title": "Дні нестингу"
+              }
+            },
+            "order": 0,
+            "control": "multi-date-picker",
+            "type": "datemultirange",
+            "class_name": "col-span-12 @2xl:col-span-4"
+          }
+        },
+        "material_ids": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Materialien"
+              },
+              "en": {
+                "title": "Materials"
+              },
+              "es": {
+                "title": "Materiales"
+              },
+              "fr": {
+                "title": "Matériaux"
+              },
+              "nl": {
+                "title": "Materialen"
+              },
+              "uk": {
+                "title": "Матеріали"
+              }
+            },
+            "order": 1,
+            "control": "multi-select",
+            "class_name": "col-span-12 @2xl:col-span-4",
+            "input_data": {
+              "src": [
+                "get_materials"
+              ],
+              "params": [
+                {
+                  "key": "production_line_ids",
+                  "is_optional": true,
+                  "is_query_param": true
+                }
+              ],
+              "title_field": "material_name",
+              "value_field": "material_id"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

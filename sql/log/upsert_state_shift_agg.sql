@@ -55,7 +55,7 @@ begin
   -- name that tenant; a shift without tenants takes every machine.
   -- That column is already marked for removal (see
   -- archive/sql/migrations/migration_dates_tenants_day_off.sql section 3); a per-resource
-  -- source (relation.shift_planning / relation.shift_registered_hours)
+  -- source (log.hr_shift_planning / relation.shift_registered_hours)
   -- replaces this CTE and nothing else in the function.
   -- ---------------------------------------------------------------
   window_def as (

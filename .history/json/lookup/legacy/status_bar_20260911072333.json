@@ -225,38 +225,5 @@
         "title": "Надходження файлів"
       }
     }
-  },
-  {
-    "nav": {
-      "path": "(window:nest-waste)",
-      "params": [
-        {
-          "key": "model",
-          "is_query_param": true
-        }
-      ]
-    },
-    "src": "nests",
-    "code": "nests",
-    "i18n": {
-      "de": {
-        "title": "Nester"
-      },
-      "en": {
-        "title": "Nests"
-      },
-      "es": {
-        "title": "Nidos"
-      },
-      "fr": {
-        "title": "Imbrications"
-      },
-      "nl": {
-        "title": "Nesten"
-      },
-      "uk": {
-        "title": "Нести"
-      }
-    }
   }
 ]

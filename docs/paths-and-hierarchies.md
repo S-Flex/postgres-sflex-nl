@@ -126,7 +126,7 @@ Voor mensen bestaat **geen** `*_path`. De hiërarchie loopt langs twee lijnen:
 die is **nergens gevuld**: alle teams staan plat naast elkaar.
 `action.week_team` (795 rijen) koppelt een team aan een week.
 
-**2. Shifts via de resource-boom** — `relation.shift_planning.resource_uid`
+**2. Shifts via de resource-boom** — `log.hr_shift_planning.shift_json ->> 'resource_uid'` (was `relation.shift_planning.resource_uid`)
 wijst naar **department-resources** (`department-108`, `department-162`), en die
 staan gewoon in `relation.resource` met een kort pad (`dk`, `bh.non_adhesive`).
 Een ploegendienst hangt dus aan een afdeling in de resource-boom, niet aan een
