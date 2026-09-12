@@ -1,34 +1,39 @@
 -- The items of the schedule boards (docs/plan-planning-schema.md §4): one row
--- per plan item on the lanes whose day is in view. Step 1 serves the stored
--- plan rows; the derived progress and actual rows follow when the boards move
--- over (step 3), p_types is in place for them.
+-- per item on the lanes whose day is in view. The kind of an item (plan,
+-- progress, actual) is the lane_type of its lane; step 1 stores plan lanes
+-- only, the progress and actual lanes follow when the boards move over
+-- (step 3), p_types is in place for them.
 --
 -- Per row:
---   data_json    the item's own data_json, or the one it inherits from its
---                predecessors (schedule.get_lane_item_data); is_inherited says
---                which
---   status       the status of the newest event of the item (lane_item_event),
---                'plan' when it has none yet, and the moment of that event
---   summary      the work of the item, computed here and never stale: the
---                nests in data_json.batches when there are any, else the open
---                work of data_json.selection (material and line) on the lane
---                day -- one action.get_lane_item_work call per day in view,
---                the fold board 76 uses. count, amount, sqm, rework_count,
---                rework_sqm, production_impact (seconds). Null for an item
---                without batches and without selection.
---   class_names  the type's classes (lookup_lane_item_type), then the item's
---                (data_json.class_names), then the work's
---   lag_formula  the active action.formula of 'lag-<p_view_code>': the rules
---                the board chains items with, yielding lag (seconds); [] when
---                no version applies
+--   data_json        the item's own data_json, or the one it inherits from its
+--                    predecessors (schedule.get_lane_item_data); is_inherited
+--                    says which
+--   status           the status of the newest event of the item
+--                    (lane_item_event), 'plan' when it has none yet, and the
+--                    moment of that event
+--   summary          the work of the item, computed here and never stale: the
+--                    nests in data_json.batches when there are any, else the
+--                    open work of data_json.selection (material and line) on
+--                    the lane day -- one action.get_lane_item_work call per day
+--                    in view, the fold board 76 uses. count, amount, sqm,
+--                    rework_count, rework_sqm, production_impact (seconds).
+--                    Null for an item without batches and without selection
+--   class_names      the type's classes (lookup_lane_item_type), then the
+--                    item's (data_json.class_names), then the work's
+--   duration_formula the active action.formula of 'duration-<p_view_code>':
+--                    the rules the board computes the duration of an item with
+--                    (from start_offset, end_offset, summary, param_json),
+--                    yielding duration (seconds); [] when no version applies
+--   lag_formula      the active action.formula of 'lag-<p_view_code>': the
+--                    rules the board chains items with, yielding lag (seconds)
 --
 -- p_from and p_until are the days in view, both included; inside they are one
 -- datemultirange, so a p_dates datemultirange can replace the pair without a
 -- change below. Timing is in seconds, no unit in a key.
-drop function if exists schedule.get_lane_items(date, date, text, integer[], text[], text[], text, integer);
+drop function if exists schedule.get_schedule_lane_items(date, date, text, integer[], text[], text[], text, integer);
 
-create function schedule.get_lane_items(p_from date DEFAULT current_date, p_until date DEFAULT current_date, p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_steps text[] DEFAULT NULL::text[], p_types text[] DEFAULT NULL::text[], p_view_code text DEFAULT 'nest-time-scale'::text, p_domain_id integer DEFAULT 1)
-    returns TABLE(plan_id bigint, lane_id bigint, lane_date date, step text, resource_path ltree, lane_item_id bigint, lane_item_type text, type_json jsonb, sort_order numeric, start_offset integer, duration integer, production_impact_per_unit numeric, status text, status_at timestamp with time zone, is_inherited boolean, data_json jsonb, class_names text[], summary jsonb, lag_formula jsonb)
+create function schedule.get_schedule_lane_items(p_from date DEFAULT current_date, p_until date DEFAULT current_date, p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_steps text[] DEFAULT NULL::text[], p_types text[] DEFAULT NULL::text[], p_view_code text DEFAULT 'nest-time-scale'::text, p_domain_id integer DEFAULT 1)
+    returns TABLE(plan_id bigint, lane_id bigint, lane_date date, step text, resource_path ltree, lane_type text, type_json jsonb, lane_item_id bigint, sort_order numeric, start_offset integer, end_offset integer, production_impact_per_unit numeric, status text, status_at timestamp with time zone, is_inherited boolean, data_json jsonb, class_names text[], summary jsonb, duration_formula jsonb, lag_formula jsonb)
     stable
     language plpgsql
 as $$
@@ -36,43 +41,47 @@ as $$
 DECLARE
     v_zone constant text := 'Europe/Amsterdam';
     v_dates      datemultirange;
+    v_duration   jsonb;
     v_lag        jsonb;
 BEGIN
     v_dates := datemultirange(daterange(least(p_from, p_until), greatest(p_from, p_until), '[]'));
 
-    -- the lag rules of this view, the version that applies now
+    -- the duration and lag rules of this view, the versions that apply now
+    SELECT gf.formula_json INTO v_duration
+    FROM action.get_formula(array['duration-' || p_view_code]) gf
+    LIMIT 1;
     SELECT gf.formula_json INTO v_lag
     FROM action.get_formula(array['lag-' || p_view_code]) gf
     LIMIT 1;
-    v_lag := coalesce(v_lag, '[]'::jsonb);
+    v_duration := coalesce(v_duration, '[]'::jsonb);
+    v_lag      := coalesce(v_lag, '[]'::jsonb);
 
     RETURN QUERY
     WITH lane AS (
-        SELECT p.plan_id, l.lane_id, l.lane_date, l.step, l.resource_path
+        SELECT p.plan_id, l.lane_id, l.lane_date, l.step, l.resource_path, l.lane_type
         FROM schedule.lane l
         JOIN schedule.plan p ON p.plan_id = l.plan_id
         LEFT JOIN site.tenant t ON t.abb = ltree2text(subpath(l.resource_path, 0, 1))
         WHERE l.lane_date <@ v_dates
           AND (p_line_type IS NULL OR p.line_type = p_line_type)
           AND (p_steps IS NULL OR l.step = ANY (p_steps))
+          AND (p_types IS NULL OR l.lane_type = ANY (p_types))
           AND (p_tenant_ids IS NULL OR t.tenant_id = ANY (p_tenant_ids))
     ),
     type_row AS (
-        SELECT e.value ->> 'type' AS lane_item_type, e.value AS type_json
+        SELECT e.value ->> 'type' AS lane_type, e.value AS type_json
         FROM action.lookup lk
         CROSS JOIN LATERAL jsonb_array_elements(lk.lookup_json) AS e(value)
         WHERE lk.lookup = 'lookup_lane_item_type'
     ),
     item AS (
-        SELECT ln.plan_id, ln.lane_id, ln.lane_date, ln.step, ln.resource_path,
-               li.lane_item_id, li.lane_item_type, li.sort_order,
-               li.start_offset, li.duration, li.production_impact_per_unit,
+        SELECT ln.plan_id, ln.lane_id, ln.lane_date, ln.step, ln.resource_path, ln.lane_type,
+               li.lane_item_id, li.sort_order,
+               li.start_offset, li.end_offset, li.production_impact_per_unit,
                li.data_json IS NULL AS is_inherited,
                coalesce(li.data_json, schedule.get_lane_item_data(li.lane_item_id)) AS data_json
         FROM schedule.lane_item li
         JOIN lane ln ON ln.lane_id = li.lane_id
-        WHERE li.lane_item_type = 'plan'
-          AND (p_types IS NULL OR li.lane_item_type = ANY (p_types))
     ),
     -- the nests of an item: every nest_id of every batch object
     item_nests AS (
@@ -113,8 +122,8 @@ BEGIN
             p_domain_id  := p_domain_id) w
     )
     SELECT i.plan_id, i.lane_id, i.lane_date, i.step, i.resource_path,
-           i.lane_item_id, i.lane_item_type, tr.type_json,
-           i.sort_order, i.start_offset, i.duration, i.production_impact_per_unit,
+           i.lane_type, tr.type_json,
+           i.lane_item_id, i.sort_order, i.start_offset, i.end_offset, i.production_impact_per_unit,
            coalesce(ev.status, 'plan'), ev.moved_at,
            i.is_inherited, i.data_json,
            (SELECT array_agg(c) FROM (
@@ -131,9 +140,10 @@ BEGIN
                                    'rework_sqm',        w.rework_sqm,
                                    'production_impact', w.production_impact_in_seconds)
            END,
+           v_duration,
            v_lag
     FROM item i
-    LEFT JOIN type_row tr ON tr.lane_item_type = i.lane_item_type
+    LEFT JOIN type_row tr ON tr.lane_type = i.lane_type
     LEFT JOIN LATERAL (
         SELECT e.status, e.moved_at
         FROM schedule.lane_item_event e
@@ -146,4 +156,4 @@ BEGIN
 END;
 $$;
 
-alter function schedule.get_lane_items(date, date, text, integer[], text[], text[], text, integer) owner to xfw3;
+alter function schedule.get_schedule_lane_items(date, date, text, integer[], text[], text[], text, integer) owner to xfw3;

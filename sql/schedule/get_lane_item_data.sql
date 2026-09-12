@@ -6,7 +6,7 @@
 -- merge): the nearest one is the base, its batches and production_orderlines
 -- become the union over all sources, and the stored summary is dropped, since
 -- it belongs to one source only (the read computes it anyway). Helper of
--- schedule.get_lane_items; not a board read of its own.
+-- schedule.get_schedule_lane_items; not a board read of its own.
 drop function if exists schedule.get_lane_item_data(bigint);
 
 create function schedule.get_lane_item_data(p_lane_item_id bigint) returns jsonb

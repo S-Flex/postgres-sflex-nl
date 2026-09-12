@@ -1,19 +1,75 @@
 -- Step 0 of docs/plan-planning-schema.md: the nest manifest.
---   1. legacy.nest.manifest_json: the imposition group, item code paths and
---      production steps of a sheet, with the candidate machines per step.
---   2. legacy.create_imposition_unit_manifest writes it after its rows.
---   3. Backfill: the nests nested in the last 30 days, 500 at a time.
--- Before running: fill option_codes per step in relation.lookup
--- lookup_step_category (e.g. "option_codes": ["print-method"] on print); a
--- step without option_codes gets no rows, and a nest whose codes match no
--- step gets an empty steps[]. The lag rows in action.formula
--- ('lag-<view_code>') are yours as well; they are read in step 1.
--- Rollback: sql/update_schedule_00_nest_manifest_down.sql.
+--   1. catalog.item_group_resource: which machines (resource paths) can do
+--      the work of an item group; the third label of a path is the step.
+--      Created when missing; when it exists it has to carry item_group_code,
+--      resource_path and step, or the script stops. Its rows are data: one
+--      row per item group and machine or branch (site.line.step...).
+--   2. legacy.nest.manifest_json: the imposition group, item code paths and
+--      production steps of a sheet, with the candidate machines per step,
+--      from that table.
+--   3. legacy.create_imposition_unit_manifest writes it after its rows.
+--   4. Backfill: the nests nested in the last 30 days, 500 at a time. A nest
+--      whose item groups have no rows in item_group_resource yet gets an
+--      empty steps[]; rerun the backfill block after filling the table.
+-- The lag rows in action.formula ('lag-<view_code>') are read in step 1.
+-- Rollback: sql/update_schedule_00_nest_manifest_down.sql (keeps the table).
 BEGIN;
 
+-- ============ sql/catalog/item_group_resource.sql ============
+DO $guard$
+BEGIN
+    IF to_regclass('catalog.item_group_resource') IS NOT NULL THEN
+        IF (SELECT count(*) FROM information_schema.columns
+            WHERE table_schema = 'catalog' AND table_name = 'item_group_resource'
+              AND column_name IN ('item_group_code', 'resource_path', 'step')) < 3 THEN
+            RAISE EXCEPTION 'catalog.item_group_resource exists without item_group_code, resource_path and step; align it with sql/catalog/item_group_resource.sql first';
+        END IF;
+        RAISE NOTICE 'catalog.item_group_resource exists, kept as is';
+    END IF;
+END
+$guard$;
+
+-- Which machines can do the work of an item group: one row per item group
+-- and resource path. The path is a machine or a branch of the resource tree
+-- (docs/resource-path.md, site.line.step.…), so one row can cover every
+-- machine of a step on a line. The step is the third label of the path,
+-- stored as a generated column so it can be indexed and joined without
+-- relation.resource.
+--
+-- Read by legacy.create_imposition_unit_manifest: the item groups of the xbom
+-- rows of a sheet say which steps the sheet goes through and on which
+-- machines (legacy.nest.manifest_json steps[]); the planning makes the step
+-- items from that (docs/plan-planning-schema.md §3.2).
+create table if not exists catalog.item_group_resource
+(
+	item_group_resource_id bigint generated always as identity
+		primary key,
+	item_group_code text not null
+		references catalog.item_group (item_group_code),
+	-- a machine or a branch: at least site.line.step
+	resource_path ltree not null
+		constraint item_group_resource_path_check
+			check (nlevel(resource_path) >= 3),
+	-- the third label of the path, the step of the work
+	step text generated always as (ltree2text(subpath(resource_path, 2, 1))) stored,
+	created_at timestamp with time zone default now() not null,
+	unique (item_group_code, resource_path)
+);
+
+comment on table catalog.item_group_resource is 'The machines (or branches of the resource tree) that can do the work of an item group. step is the third label of resource_path. Source of the steps and candidate machines in legacy.nest.manifest_json.';
+
+alter table catalog.item_group_resource owner to xfw3;
+
+create index if not exists idx_item_group_resource_step
+	on catalog.item_group_resource (step);
+
+create index if not exists idx_item_group_resource_path
+	on catalog.item_group_resource using gist (resource_path);
+
+-- ============ legacy.nest.manifest_json ============
 ALTER TABLE legacy.nest ADD COLUMN IF NOT EXISTS manifest_json jsonb;
 
-COMMENT ON COLUMN legacy.nest.manifest_json IS 'The manifest of the sheet: its imposition group and item code paths, and per production step the option codes, the candidate machines (resource_paths, same site and line as the nest) and the seconds per sheet. Written by legacy.create_imposition_unit_manifest; the planning (schedule.crud_lane_item) makes the step items and their dependencies from steps[].';
+COMMENT ON COLUMN legacy.nest.manifest_json IS 'The manifest of the sheet: its imposition group and item code paths, and per production step the option codes, the candidate machines (resource_paths from catalog.item_group_resource, same site and line as the nest) and the seconds per sheet. Written by legacy.create_imposition_unit_manifest; the planning (schedule.crud_lane_item) makes the step items and their dependencies from steps[].';
 
 -- ============ sql/legacy/create_imposition_unit_manifest.sql ============
 -- Rebuild the manifest of the given impositions. Same delete-insert shape as
@@ -41,15 +97,17 @@ COMMENT ON COLUMN legacy.nest.manifest_json IS 'The manifest of the sheet: its i
 --   4. (12 Sep 2026) the rows are folded into legacy.nest.manifest_json: the
 --      imposition group of the sheet (legacy.get_imposition_group over its
 --      option codes), its item code paths, and one entry per production
---      step. A row belongs to the step of relation.lookup lookup_step_category
---      whose option_codes prefix matches its option_code (the longest prefix
---      wins; print-method.* -> print, and so on — data, not code); rows that
---      match no step are the sheet itself and stay out of steps[]. Per step
---      the candidate machines: the active resources of that step under the
---      same site and line as the nest's production line (site.tenant.abb,
---      relation.production_line.line_type), every active resource of the
---      step when the line is unknown. The planning reads steps[] to make
---      the step items and their dependencies (docs/plan-planning-schema.md).
+--      step. The step and the machines of a row come from
+--      catalog.item_group_resource: the item of the xbom row belongs to an
+--      item group, the group names the machines (resource paths) that can do
+--      its work, and the third label of such a path is the step. A row whose
+--      item group names no machine is the sheet itself (or has no capability
+--      mapping yet) and stays out of steps[]. The candidate machines of a step
+--      are the paths of that step under the same site and line as the nest's
+--      production line (site.tenant.abb, relation.production_line.line_type),
+--      every path of the step when the line is unknown. The planning reads
+--      steps[] to make the step items and their dependencies
+--      (docs/plan-planning-schema.md §3.2).
 --
 -- print-method and cutting-method are multi_select in catalog.library_option,
 -- so one imposition can legitimately carry several method lines — each is a
@@ -203,14 +261,11 @@ BEGIN
     -- ── the fold into legacy.nest.manifest_json ───────────────────────────
     -- Every requested nest is written, also one without rows: its manifest
     -- becomes null, so a stale manifest never survives a re-nest.
-    WITH step_prefix AS (
-        -- the option code prefixes per step; data in the lookup, not here
-        SELECT s.value ->> 'step' AS step,
-               (s.value ->> 'order')::integer AS step_order,
-               p.prefix
+    WITH step_order AS (
+        -- the order of the steps, for the order of steps[]
+        SELECT s.value ->> 'step' AS step, (s.value ->> 'order')::integer AS step_order
         FROM relation.lookup lk
         CROSS JOIN LATERAL jsonb_array_elements(lk.lookup_json) AS s(value)
-        CROSS JOIN LATERAL jsonb_array_elements_text(coalesce(s.value -> 'option_codes', '[]'::jsonb)) AS p(prefix)
         WHERE lk.lookup = 'lookup_step_category'
     ),
     nest_line AS (
@@ -225,17 +280,20 @@ BEGIN
         WHERE n.nest_id = ANY (p_imposition_ids)
     ),
     row_step AS (
-        -- the step of each row: the longest matching prefix
+        -- the steps of each row: the item of the row belongs to an item group,
+        -- the group names its machines (catalog.item_group_resource), the
+        -- third label of a machine path is the step. Only the machines on the
+        -- nest's site and line count when the line is known. A row can name
+        -- several steps (a group with print and cut machines); a row without
+        -- a mapping names none
         SELECT m.imposition_id, m.option_code, m.production_impact_per_unit, m.config_json,
-               sp.step, sp.step_order
+               igr.step, igr.resource_path
         FROM legacy.imposition_unit_manifest m
-        LEFT JOIN LATERAL (
-            SELECT sp.step, sp.step_order
-            FROM step_prefix sp
-            WHERE m.option_code = sp.prefix OR m.option_code LIKE sp.prefix || '.%'
-            ORDER BY length(sp.prefix) DESC
-            LIMIT 1
-        ) sp ON true
+        JOIN nest_line nl ON nl.nest_id = m.imposition_id
+        LEFT JOIN catalog.item i ON i.item_code = m.item_code
+        LEFT JOIN catalog.item_group_resource igr
+               ON igr.item_group_code = i.item_group_code
+              AND (nl.site_line IS NULL OR subpath(igr.resource_path, 0, 2) = nl.site_line)
         WHERE m.imposition_id = ANY (p_imposition_ids)
     ),
     step_agg AS (
@@ -245,33 +303,32 @@ BEGIN
                    'option_codes',               rs.option_codes,
                    'production_impact_per_unit', rs.production_impact_per_unit,
                    'config',                     rs.config,
-                   'resource_paths',             coalesce(rp.resource_paths, '[]'::jsonb))
-                   ORDER BY rs.step_order) AS steps
-        FROM (SELECT r.imposition_id, r.step, r.step_order,
-                     jsonb_agg(r.option_code ORDER BY r.option_code) AS option_codes,
-                     sum(r.production_impact_per_unit) AS production_impact_per_unit,
-                     -- the settings of the step: every config key, the last row wins
-                     coalesce(jsonb_object_agg(c.key, c.value) FILTER (WHERE c.key IS NOT NULL), '{}'::jsonb) AS config
+                   'resource_paths',             rs.resource_paths)
+                   ORDER BY so.step_order NULLS LAST, rs.step) AS steps
+        FROM (SELECT r.imposition_id, r.step,
+                     (SELECT jsonb_agg(DISTINCT x.option_code) FROM (SELECT r2.option_code FROM row_step r2
+                       WHERE r2.imposition_id = r.imposition_id AND r2.step = r.step) x) AS option_codes,
+                     (SELECT sum(x.production_impact_per_unit) FROM (SELECT DISTINCT r2.option_code, r2.production_impact_per_unit
+                       FROM row_step r2 WHERE r2.imposition_id = r.imposition_id AND r2.step = r.step) x) AS production_impact_per_unit,
+                     -- the settings of the step: every config key of its rows
+                     coalesce((SELECT jsonb_object_agg(c.key, c.value)
+                               FROM (SELECT DISTINCT r2.option_code, r2.config_json FROM row_step r2
+                                     WHERE r2.imposition_id = r.imposition_id AND r2.step = r.step) x
+                               CROSS JOIN LATERAL jsonb_each(x.config_json) AS c(key, value)), '{}'::jsonb) AS config,
+                     -- the machines of the step: the union over the item groups of its rows
+                     jsonb_agg(DISTINCT ltree2text(r.resource_path)) AS resource_paths
               FROM row_step r
-              LEFT JOIN LATERAL jsonb_each(r.config_json) AS c(key, value) ON true
               WHERE r.step IS NOT NULL
-              GROUP BY r.imposition_id, r.step, r.step_order) rs
-        JOIN nest_line nl ON nl.nest_id = rs.imposition_id
-        LEFT JOIN LATERAL (
-            SELECT jsonb_agg(ltree2text(r.resource_path) ORDER BY r.resource_path) AS resource_paths
-            FROM relation.resource r
-            WHERE r.active
-              AND r.resource_path IS NOT NULL
-              AND r.step = rs.step
-              AND (nl.site_line IS NULL OR subpath(r.resource_path, 0, 2) = nl.site_line)
-        ) rp ON true
+              GROUP BY r.imposition_id, r.step) rs
+        LEFT JOIN step_order so ON so.step = rs.step
         GROUP BY rs.imposition_id
     ),
     group_of AS (
-        SELECT rs.imposition_id,
-               legacy.get_imposition_group(array_agg(DISTINCT rs.option_code)) AS imposition_group_id
-        FROM row_step rs
-        GROUP BY rs.imposition_id
+        SELECT m.imposition_id,
+               legacy.get_imposition_group(array_agg(DISTINCT m.option_code)) AS imposition_group_id
+        FROM legacy.imposition_unit_manifest m
+        WHERE m.imposition_id = ANY (p_imposition_ids)
+        GROUP BY m.imposition_id
     )
     UPDATE legacy.nest n
     SET manifest_json = CASE WHEN g.imposition_id IS NULL THEN NULL
@@ -323,8 +380,8 @@ END
 $backfill$;
 
 -- ============ check ============
--- expected: manifests > 0, with_steps close to manifests once option_codes
--- are filled per step; steps_without_resource is the number of (nest, step)
+-- expected: manifests > 0, with_steps close to manifests once item_group_resource
+-- has rows for the item groups; steps_without_resource is the number of (nest, step)
 -- pairs with no active machine of that step on the nest's site and line
 SELECT count(*) FILTER (WHERE n.manifest_json IS NOT NULL)                              AS manifests,
        count(*) FILTER (WHERE jsonb_array_length(n.manifest_json -> 'steps') > 0)       AS with_steps,

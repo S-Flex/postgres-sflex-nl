@@ -4,7 +4,7 @@
 BEGIN;
 
 DELETE FROM site.data_table
-WHERE data_table IN ('get_lanes', 'get_lane_items')
+WHERE data_table IN ('get_schedule_lane', 'get_schedule_lane_items')
   AND coalesce(query, stored_proc) LIKE 'schedule.%';
 
 DELETE FROM action.lookup WHERE lookup = 'lookup_lane_item_event_type';

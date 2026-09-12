@@ -2,7 +2,7 @@
 -- active or archived row created at or before that moment (the rule of
 -- catalog.get_formula, on the action twin). Draft and pending-approval never
 -- apply. One row per code, none when no version applied yet. First reader:
--- schedule.get_lane_items, for the lag formula of a view code
+-- schedule.get_schedule_lane_items, for the lag formula of a view code
 -- (formula_code 'lag-<view_code>', docs/plan-planning-schema.md §7.2).
 drop function if exists action.get_formula(text[], timestamp with time zone);
 
