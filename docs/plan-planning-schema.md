@@ -47,6 +47,7 @@ schedule.lane_item              the block of work on a lane
   start_offset                integer                        -- seconds from the start of the lane day
   duration                    integer not null default 0     -- seconds
   production_impact_per_unit  numeric                        -- seconds per unit of the work
+  status                      text not null default 'plan'   -- current status, lookup_lane_item_status
   data_json                   jsonb                          -- null: inherited, see §3.3
   unique (lane_id, sort_order)
 
@@ -55,13 +56,22 @@ schedule.lane_item_dependency   many-to-many, from = predecessor
   to_lane_item_id   bigint not null references schedule.lane_item on delete cascade
   primary key (from_lane_item_id, to_lane_item_id), index (to_lane_item_id)
 
-schedule.lane_item_event        append-only status moves: plan -> released -> nested
+schedule.lane_item_event        append-only: one row per change of an item (§3.4)
   lane_item_event_id bigint identity pk
   lane_item_id       bigint not null references schedule.lane_item on delete cascade
-  status             text not null            -- lookup_lane_item_status
-  moved_by           integer
+  event_type         text not null            -- what happened: lookup_lane_item_event_type
+  status             text not null            -- the status after the event: lookup_lane_item_status
+  event_json         jsonb not null default '{}'  -- the changed keys, old and new value
+  moved_by           integer                  -- contact, null for the system
   moved_at           timestamptz not null default now()
+  index (lane_item_id, moved_at desc), index (moved_at)
 ```
+
+`lane_item` is the current state, `lane_item_event` is the history. Two vocabularies, both
+in `action.lookup`: `lookup_lane_item_status` (plan, released, nested: where the item is) and
+the new `lookup_lane_item_event_type` (created, moved, resized, split, copied, selected,
+placed, released, deleted: what was done to it). The `released` event sets status `released`;
+`placed` (nests placed) sets `nested`.
 
 `action.formula`, `action.lookup`, `action.dates`, `action.non_working_times`,
 `action.cutoff_time`, `action.week_team` stay where they are.
@@ -114,7 +124,7 @@ Two writers only.
 | writer | writes |
 |---|---|
 | `schedule.generate_day(p_date, p_line_type)` | the plan row when missing; the lanes of the day (every step, every active machine of the line, `lookup_step_category` × `relation.resource`); one `plan` item per schedule row × nest moment code on the impose lane the row names, with `material_id`, `imposition_group_id`, `nest_moment_code`, `fixed_group`, `no_split`, `class_names`, `i18n`, `selection`. Re-run completes a day, touches nothing stamped |
-| `schedule.crud_lane_item(p_param_json)` | everything else, set-based over `jsonb_array_elements`: board moves (`sort_order`, `start_offset`, `duration`, lane), copy, split, orderline selection, delete; **nest placement** (called by `legacy.crud_nest` with the nests as payload); **status moves** into `lane_item_event` (`released` when the payload carries `status`, `nested` at placement); and after every write the `summary` of the items it touched |
+| `schedule.crud_lane_item(p_param_json)` | everything else, set-based over `jsonb_array_elements`: board moves (`sort_order`, `start_offset`, `duration`, lane), copy, split, orderline selection, release, delete; **nest placement** (called by `legacy.crud_nest` with the nests as payload); the `summary` of the items it touched; and **one `lane_item_event` row per change**, written in the same statement (§3.4) |
 
 There is no `schedule.crud_lane_item_event`: the board's release button posts to
 `crud_lane_item` with `{"crud": "update", "data": {"lane_item_id": …, "status": "released"}}`.
@@ -143,6 +153,30 @@ used only inside `get_lane_items`, walks `lane_item_dependency` from `to` to `fr
 (recursive CTE) until it meets an item with `data_json`; a merge returns the union of the
 `batches`. A split writes an own `data_json` on the item that deviates; from then on that
 item is the source for its successors.
+
+### 3.4 events: the day as it happened
+
+Decided 12 Sep: `lane_item` stays a current-state row (stable `lane_item_id` for the
+dependencies, the board and the nest placement; no newest-version filter in the reads; no
+row copy per arriving nest). `lane_item_event` records every change, one small row each,
+written by `crud_lane_item` in the same statement as the change.
+
+| event_type | by | event_json |
+|---|---|---|
+| `created` | generate_day, copy, split | `{}` |
+| `moved` | planner | `{"lane_id": {"from", "to"}, "sort_order": {"from", "to"}, "start_offset": {"from", "to"}}` — only the keys that changed |
+| `resized` | planner | `{"duration": {"from", "to"}}` |
+| `split` | planner | `{"duration": {"from", "to"}, "to_lane_item_id": …, "nest_ids_moved": [...]}` |
+| `copied` | planner | `{"from_lane_item_id": …}` on the new item |
+| `selected` | planner | `{"production_orderline_ids": {"from": [...], "to": [...]}}` |
+| `placed` | crud_nest | `{"nest_ids": [...], "batch_id": …, "duration": {"from", "to"}}` |
+| `released` | planner | `{}` |
+| `deleted` | planner | the last `data_json` |
+
+`status` on the event is the item's status after it; `lane_item.status` carries the same
+value as current state, so a read never joins the events. Replaying the events of an item
+backwards from its row gives its state at any moment of the day. A full snapshot, if ever
+needed, is a nightly insert-select of `lane_item` into a history table; not part of this plan.
 
 ## 4. reads
 
@@ -189,7 +223,7 @@ Each step: `sql/schedule/<nn>_<name>.sql` and `<nn>_<name>_down.sql`. Nothing to
 | step | what | rollback | done when |
 |---|---|---|---|
 | 0 | `alter table legacy.nest add column manifest_json jsonb`; `legacy.create_imposition_unit_manifest` writes it per scope: `item_code_paths`, `step`, `resource_paths`, `production_impact_per_unit`, `config`; backfill the nest window; your lag rows in `action.formula` per view code | drop the column, redeploy the function | every nest of the window has `step` and `resource_paths` per scope |
-| 1 | schema `schedule`, the five tables of §2; the two reads of §4 and `get_lane_item_data`; `site.data_table` rows | `drop schema schedule cascade`, delete the data_table rows | reads run on the empty schema without error |
+| 1 | schema `schedule`, the five tables of §2; lookup `lookup_lane_item_event_type` in `action.lookup` (`json/lookup/action/lookup_lane_item_event_type.json`, i18n titles by Cees); the two reads of §4 and `get_lane_item_data`; `site.data_table` rows | `drop schema schedule cascade`, delete the lookup and the data_table rows | reads run on the empty schema without error |
 | 2 | `generate_day` and `crud_lane_item`; backfill today + 14 days per line type in a DO block; `site.refresh_derived_data` calls `generate_day` **next to** `mock.generate_plan`; `legacy.crud_nest` calls `crud_lane_item` **next to** its `batch_lane_item` block; backfill the nests of the window | remove both calls, drop the functions, truncate the schema | per day, line type and step: the same items as `action`; every `batch_lane_item.nest_ids` of the window is in exactly one `batches[].nest_ids`; step items and edges per manifest step |
 | 3 | new data_groups next to the old ones: `schedule_lane_items` (76 and 81 as one board, steps per page as section `params`), `schedule_lane_items_filter` (82), `schedule_print_schedule` (75), 79 on the new `src`; pages `nest-schedule` and `production-schedule` next to the current pages; handoff §7. Then a week of parallel run with the read-only compare script `sql/schedule/check_parallel.sql` | delete the new data_groups and pages | the new pages show the same labels and items as 76 and 81; differences explained |
 | 4 | switch: nav and pages to the new data_groups; `crud_nest` drops the `batch_lane_item` block; `refresh_derived_data` drops `mock.generate_plan`; old data_groups to `archive/data_group/` | the mirrored script; the schema keeps running meanwhile | a week on the new boards |
