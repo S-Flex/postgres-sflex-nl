@@ -47,7 +47,6 @@ schedule.lane_item              the block of work on a lane
   start_offset                integer                        -- seconds from the start of the lane day
   duration                    integer not null default 0     -- seconds
   production_impact_per_unit  numeric                        -- seconds per unit of the work
-  status                      text not null default 'plan'   -- current status, lookup_lane_item_status
   data_json                   jsonb                          -- null: inherited, see §3.3
   unique (lane_id, sort_order)
 
@@ -67,11 +66,14 @@ schedule.lane_item_event        append-only: one row per change of an item (§3.
   index (lane_item_id, moved_at desc), index (moved_at)
 ```
 
-`lane_item` is the current state, `lane_item_event` is the history. Two vocabularies, both
-in `action.lookup`: `lookup_lane_item_status` (plan, released, nested: where the item is) and
-the new `lookup_lane_item_event_type` (created, moved, resized, split, copied, selected,
-placed, released, deleted: what was done to it). The `released` event sets status `released`;
-`placed` (nests placed) sets `nested`.
+`lane_item` is the current state of what is planned, `lane_item_event` is the history and
+the only place a status lives: the item's status is the `status` of its newest event, its
+status at a moment is the `status` of its newest event before that moment. No status column
+on `lane_item`. Two vocabularies, both in `action.lookup`: `lookup_lane_item_status` (plan,
+released, nested: where the item is) and the new `lookup_lane_item_event_type` (created,
+moved, resized, split, copied, selected, placed, status-changed, deleted: what was done to
+it). Every event carries the status after it; `placed` (nests placed) sets `nested`, the
+release button writes `status-changed` with status `released`.
 
 `action.formula`, `action.lookup`, `action.dates`, `action.non_working_times`,
 `action.cutoff_time`, `action.week_team` stay where they are.
@@ -170,12 +172,14 @@ written by `crud_lane_item` in the same statement as the change.
 | `copied` | planner | `{"from_lane_item_id": …}` on the new item |
 | `selected` | planner | `{"production_orderline_ids": {"from": [...], "to": [...]}}` |
 | `placed` | crud_nest | `{"nest_ids": [...], "batch_id": …, "duration": {"from", "to"}}` |
-| `released` | planner | `{}` |
+| `status-changed` | planner | `{}`: the `status` column says it all (the release button) |
 | `deleted` | planner | the last `data_json` |
 
-`status` on the event is the item's status after it; `lane_item.status` carries the same
-value as current state, so a read never joins the events. Replaying the events of an item
-backwards from its row gives its state at any moment of the day. A full snapshot, if ever
+`status` on every event is the item's status after it. The reads take the status from the
+newest event per item (lateral on the `(lane_item_id, moved_at desc)` index, as
+`get_plan_lanes` does today); a `status-changed` row is how a status moves without anything
+else changing. Replaying the events of an item backwards from its row gives its state at any
+moment of the day. A full snapshot, if ever
 needed, is a nightly insert-select of `lane_item` into a history table; not part of this plan.
 
 ## 4. reads
