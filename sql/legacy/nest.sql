@@ -22,8 +22,17 @@ create table nest
 	nested_at timestamp with time zone,
 	updated_at timestamp with time zone,
 	batch_id integer generated always as (((nest_json ->> 'batch_id'::text))::integer) stored,
-	bucket_name text generated always as (substr((nest_json ->> 'printfile_name'::text), (strpos((nest_json ->> 'printfile_name'::text), '_'::text) + 1))) stored
+	bucket_name text generated always as (substr((nest_json ->> 'printfile_name'::text), (strpos((nest_json ->> 'printfile_name'::text), '_'::text) + 1))) stored,
+	-- what the sheet is made of and which steps it still has to go through,
+	-- folded from legacy.imposition_unit_manifest by
+	-- legacy.create_imposition_unit_manifest (docs/plan-planning-schema.md §3):
+	--   {"imposition_group_id": 12, "item_code_paths": ["dk.roll.banner-510", ...],
+	--    "steps": [{"step": "print", "option_codes": [...], "resource_paths": [...],
+	--               "production_impact_per_unit": 440, "config": {...}}, ...]}
+	manifest_json jsonb
 );
+
+comment on column nest.manifest_json is 'The manifest of the sheet: its imposition group and item code paths, and per production step the option codes, the candidate machines (resource_paths, same site and line as the nest) and the seconds per sheet. Written by legacy.create_imposition_unit_manifest; the planning (schedule.crud_lane_item) makes the step items and their dependencies from steps[].';
 
 alter table nest owner to xfw3;
 
@@ -46,4 +55,3 @@ create index idx_nest_batch_id_int
 
 create index idx_nest_material_id
 	on nest (((nest_json ->> 'material_id'::text)::integer));
-

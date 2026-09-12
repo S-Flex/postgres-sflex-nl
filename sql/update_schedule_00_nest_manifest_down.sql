@@ -1,3 +1,10 @@
+-- Rollback of sql/update_schedule_00_nest_manifest.sql: the column goes, the
+-- function is the version before step 0 (repo HEAD of 12 Sep 2026).
+BEGIN;
+
+ALTER TABLE legacy.nest DROP COLUMN IF EXISTS manifest_json;
+
+-- ============ sql/legacy/create_imposition_unit_manifest.sql (before step 0) ============
 -- Rebuild the manifest of the given impositions. Same delete-insert shape as
 -- mapping.create_spec_unit_manifest, so calling it twice is calling it once.
 -- Set-based, no loop.
@@ -20,18 +27,6 @@
 --      that is where standard_print_speed_cm2_sec lives) and of the xbom row
 --      underneath. Every left-hand name of every formula starts at 0, because
 --      the evaluator raises on an unknown variable instead of reading 0
---   4. (12 Sep 2026) the rows are folded into legacy.nest.manifest_json: the
---      imposition group of the sheet (legacy.get_imposition_group over its
---      option codes), its item code paths, and one entry per production
---      step. A row belongs to the step of relation.lookup lookup_step_category
---      whose option_codes prefix matches its option_code (the longest prefix
---      wins; print-method.* -> print, and so on — data, not code); rows that
---      match no step are the sheet itself and stay out of steps[]. Per step
---      the candidate machines: the active resources of that step under the
---      same site and line as the nest's production line (site.tenant.abb,
---      relation.production_line.line_type), every active resource of the
---      step when the line is unknown. The planning reads steps[] to make
---      the step items and their dependencies (docs/plan-planning-schema.md).
 --
 -- print-method and cutting-method are multi_select in catalog.library_option,
 -- so one imposition can legitimately carry several method lines — each is a
@@ -181,93 +176,9 @@ BEGIN
     SELECT i.imposition_id, count(*) AS row_count
     FROM inserted i
     GROUP BY i.imposition_id;
-
-    -- ── the fold into legacy.nest.manifest_json ───────────────────────────
-    -- Every requested nest is written, also one without rows: its manifest
-    -- becomes null, so a stale manifest never survives a re-nest.
-    WITH step_prefix AS (
-        -- the option code prefixes per step; data in the lookup, not here
-        SELECT s.value ->> 'step' AS step,
-               (s.value ->> 'order')::integer AS step_order,
-               p.prefix
-        FROM relation.lookup lk
-        CROSS JOIN LATERAL jsonb_array_elements(lk.lookup_json) AS s(value)
-        CROSS JOIN LATERAL jsonb_array_elements_text(coalesce(s.value -> 'option_codes', '[]'::jsonb)) AS p(prefix)
-        WHERE lk.lookup = 'lookup_step_category'
-    ),
-    nest_line AS (
-        -- the site and line of the nest: site.tenant.abb of the production
-        -- line's tenant plus the line type, the first two labels of a path
-        SELECT n.nest_id,
-               CASE WHEN t.abb IS NOT NULL AND pl.line_type IS NOT NULL
-                    THEN text2ltree(t.abb || '.' || pl.line_type) END AS site_line
-        FROM legacy.nest n
-        LEFT JOIN relation.production_line pl ON pl.line_id = (n.nest_json ->> 'production_line_id')::integer
-        LEFT JOIN site.tenant t ON t.tenant_id = pl.tenant_id
-        WHERE n.nest_id = ANY (p_imposition_ids)
-    ),
-    row_step AS (
-        -- the step of each row: the longest matching prefix
-        SELECT m.imposition_id, m.option_code, m.production_impact_per_unit, m.config_json,
-               sp.step, sp.step_order
-        FROM legacy.imposition_unit_manifest m
-        LEFT JOIN LATERAL (
-            SELECT sp.step, sp.step_order
-            FROM step_prefix sp
-            WHERE m.option_code = sp.prefix OR m.option_code LIKE sp.prefix || '.%'
-            ORDER BY length(sp.prefix) DESC
-            LIMIT 1
-        ) sp ON true
-        WHERE m.imposition_id = ANY (p_imposition_ids)
-    ),
-    step_agg AS (
-        SELECT rs.imposition_id,
-               jsonb_agg(jsonb_build_object(
-                   'step',                       rs.step,
-                   'option_codes',               rs.option_codes,
-                   'production_impact_per_unit', rs.production_impact_per_unit,
-                   'config',                     rs.config,
-                   'resource_paths',             coalesce(rp.resource_paths, '[]'::jsonb))
-                   ORDER BY rs.step_order) AS steps
-        FROM (SELECT r.imposition_id, r.step, r.step_order,
-                     jsonb_agg(r.option_code ORDER BY r.option_code) AS option_codes,
-                     sum(r.production_impact_per_unit) AS production_impact_per_unit,
-                     -- the settings of the step: every config key, the last row wins
-                     coalesce(jsonb_object_agg(c.key, c.value) FILTER (WHERE c.key IS NOT NULL), '{}'::jsonb) AS config
-              FROM row_step r
-              LEFT JOIN LATERAL jsonb_each(r.config_json) AS c(key, value) ON true
-              WHERE r.step IS NOT NULL
-              GROUP BY r.imposition_id, r.step, r.step_order) rs
-        JOIN nest_line nl ON nl.nest_id = rs.imposition_id
-        LEFT JOIN LATERAL (
-            SELECT jsonb_agg(ltree2text(r.resource_path) ORDER BY r.resource_path) AS resource_paths
-            FROM relation.resource r
-            WHERE r.active
-              AND r.resource_path IS NOT NULL
-              AND r.step = rs.step
-              AND (nl.site_line IS NULL OR subpath(r.resource_path, 0, 2) = nl.site_line)
-        ) rp ON true
-        GROUP BY rs.imposition_id
-    ),
-    group_of AS (
-        SELECT rs.imposition_id,
-               legacy.get_imposition_group(array_agg(DISTINCT rs.option_code)) AS imposition_group_id
-        FROM row_step rs
-        GROUP BY rs.imposition_id
-    )
-    UPDATE legacy.nest n
-    SET manifest_json = CASE WHEN g.imposition_id IS NULL THEN NULL
-                             ELSE jsonb_build_object(
-                                 'imposition_group_id', g.imposition_group_id,
-                                 'item_code_paths',     coalesce((SELECT jsonb_agg(ltree2text(p)) FROM unnest(ig.item_code_paths) AS p), '[]'::jsonb),
-                                 'steps',               coalesce(sa.steps, '[]'::jsonb))
-                        END
-    FROM nest_line nl
-    LEFT JOIN group_of g ON g.imposition_id = nl.nest_id
-    LEFT JOIN legacy.imposition_group ig ON ig.imposition_group_id = g.imposition_group_id
-    LEFT JOIN step_agg sa ON sa.imposition_id = nl.nest_id
-    WHERE n.nest_id = nl.nest_id;
 END;
 $$;
 
 alter function legacy.create_imposition_unit_manifest(bigint[]) owner to xfw3;
+
+COMMIT;

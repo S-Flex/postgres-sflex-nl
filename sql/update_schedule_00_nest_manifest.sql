@@ -1,3 +1,21 @@
+-- Step 0 of docs/plan-planning-schema.md: the nest manifest.
+--   1. legacy.nest.manifest_json: the imposition group, item code paths and
+--      production steps of a sheet, with the candidate machines per step.
+--   2. legacy.create_imposition_unit_manifest writes it after its rows.
+--   3. Backfill: the nests nested in the last 30 days, 500 at a time.
+-- Before running: fill option_codes per step in relation.lookup
+-- lookup_step_category (e.g. "option_codes": ["print-method"] on print); a
+-- step without option_codes gets no rows, and a nest whose codes match no
+-- step gets an empty steps[]. The lag rows in action.formula
+-- ('lag-<view_code>') are yours as well; they are read in step 1.
+-- Rollback: sql/update_schedule_00_nest_manifest_down.sql.
+BEGIN;
+
+ALTER TABLE legacy.nest ADD COLUMN IF NOT EXISTS manifest_json jsonb;
+
+COMMENT ON COLUMN legacy.nest.manifest_json IS 'The manifest of the sheet: its imposition group and item code paths, and per production step the option codes, the candidate machines (resource_paths, same site and line as the nest) and the seconds per sheet. Written by legacy.create_imposition_unit_manifest; the planning (schedule.crud_lane_item) makes the step items and their dependencies from steps[].';
+
+-- ============ sql/legacy/create_imposition_unit_manifest.sql ============
 -- Rebuild the manifest of the given impositions. Same delete-insert shape as
 -- mapping.create_spec_unit_manifest, so calling it twice is calling it once.
 -- Set-based, no loop.
@@ -271,3 +289,57 @@ END;
 $$;
 
 alter function legacy.create_imposition_unit_manifest(bigint[]) owner to xfw3;
+
+COMMIT;
+
+-- ============ backfill: nests of the last 30 days ============
+DO $backfill$
+DECLARE
+    v_ids    bigint[];
+    v_offset integer := 0;
+    v_total  integer;
+    v_done   integer := 0;
+BEGIN
+    SELECT count(*) INTO v_total
+    FROM legacy.nest n
+    WHERE n.nested_at >= current_date - 30;
+    RAISE NOTICE 'nest manifest backfill: % nests', v_total;
+
+    LOOP
+        SELECT array_agg(x.nest_id) INTO v_ids
+        FROM (SELECT n.nest_id
+              FROM legacy.nest n
+              WHERE n.nested_at >= current_date - 30
+              ORDER BY n.nest_id
+              OFFSET v_offset LIMIT 500) x;
+        EXIT WHEN v_ids IS NULL;
+
+        PERFORM legacy.create_imposition_unit_manifest(v_ids);
+        v_done   := v_done + cardinality(v_ids);
+        v_offset := v_offset + 500;
+        RAISE NOTICE 'nest manifest backfill: % of %', v_done, v_total;
+    END LOOP;
+END
+$backfill$;
+
+-- ============ check ============
+-- expected: manifests > 0, with_steps close to manifests once option_codes
+-- are filled per step; steps_without_resource is the number of (nest, step)
+-- pairs with no active machine of that step on the nest's site and line
+SELECT count(*) FILTER (WHERE n.manifest_json IS NOT NULL)                              AS manifests,
+       count(*) FILTER (WHERE jsonb_array_length(n.manifest_json -> 'steps') > 0)       AS with_steps,
+       count(*)                                                                          AS nests,
+       (SELECT count(*)
+        FROM legacy.nest n2
+        CROSS JOIN LATERAL jsonb_array_elements(n2.manifest_json -> 'steps') s
+        WHERE n2.nested_at >= current_date - 30
+          AND jsonb_array_length(s -> 'resource_paths') = 0)                            AS steps_without_resource
+FROM legacy.nest n
+WHERE n.nested_at >= current_date - 30;
+
+-- one recent manifest to look at
+SELECT n.nest_id, n.nested_at, jsonb_pretty(n.manifest_json)
+FROM legacy.nest n
+WHERE n.manifest_json IS NOT NULL AND jsonb_array_length(n.manifest_json -> 'steps') > 0
+ORDER BY n.nested_at DESC
+LIMIT 1;

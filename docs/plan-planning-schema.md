@@ -221,8 +221,16 @@ recompute every unreleased item, and the board would still be hours behind on ne
 
 ## 6. steps
 
-Each step: `sql/schedule/<nn>_<name>.sql` and `<nn>_<name>_down.sql`. Nothing touches
-`action.*` before step 4. I deliver, you run, I wait.
+Each step: `sql/update_schedule_<nn>_<name>.sql` and `..._down.sql`, assembled from the
+object files in `sql/schedule/` (one file per table and function, as everywhere in the repo).
+Nothing touches `action.*` before step 4. I deliver, you run, I wait.
+
+**Delivered 12 Sep, waiting to be run:** step 0 (`update_schedule_00_nest_manifest.sql`) and
+step 1 (`update_schedule_01_schema.sql`). Step 0 needs `option_codes` per step in
+`lookup_step_category` first (the prefixes of the option codes that belong to a step, e.g.
+`["print-method"]` on print); without it every manifest has an empty `steps[]`. Step 1's
+`get_lane_items` serves the plan rows; progress and actual rows come with step 3. The lag
+rows go in `action.formula` as `formula_code = 'lag-<view_code>'`, `formula_json` the rule list.
 
 | step | what | rollback | done when |
 |---|---|---|---|
