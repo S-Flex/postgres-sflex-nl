@@ -46,7 +46,7 @@ Stack: PostgreSQL (owner `xfw3`), React 19.2, Tailwind 4.2, UntitledUI/react, Fi
   met de set-waarde als key; een formule rekent via `evaluate {formula_field, params_field}`;
   het subniveau van een rij heet `items` met `data_field` voor de array
 - een key die een veld aanwijst eindigt op `_field` en draagt geen eenheid
-  (`duration_field: "duration_in_seconds"`, niet `duration_in_seconds_field`);
+  (`duration_field: "duration"`, `hours_field: "delivery_hours"`, niet `delivery_hours_field`);
   het tekst-slot heet overal `title_field` (ook als de waarde `i18n` is); de titel van
   een set heet `set_title_field` (naast de globale `title_field`); de x-as van een chart
   `x_field`; een string met `${...}` heet `template`, geen `field`
@@ -74,7 +74,10 @@ zie `docs/data-group-governance.md` voor de volledige analyse
 - `title` is het standaard tekst-slot in `i18n` (niet `text` of `label`); andere slots
   (`subtitle`, `abb`, ...) alleen als het echt iets anders is dan de titel
 - `<naam>_field` betekent "de naam van een veld", zonder suffix is het de waarde zelf
-- eenheid in de key, niet in een aparte property: `duration_in_seconds`, niet `duration` + `unit`
+- standaard-eenheden zijn het contract en staan niet in de key: tijd in seconden
+  (`duration`, `start_offset`, `lag`), afmetingen in cm (`width`, `height`);
+  alleen een afwijkende eenheid staat in de key (`delivery_hours`, `sqm`),
+  nooit in een aparte `unit`-property
 - percentages altijd `_percentage` (niet `_perc`, `_pct`, `_percent`)
 - één conditie-vorm: `{field, op, value}`, vergelijk je twee velden dan `value_field`
 - sorteren: `sort: {field, direction}`; groeperen: `group_by`, altijd een array van id-kolommen;

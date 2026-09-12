@@ -114,7 +114,10 @@ Two writers only.
 | writer | writes |
 |---|---|
 | `schedule.generate_day(p_date, p_line_type)` | the plan row when missing; the lanes of the day (every step, every active machine of the line, `lookup_step_category` × `relation.resource`); one `plan` item per schedule row × nest moment code on the impose lane the row names, with `material_id`, `imposition_group_id`, `nest_moment_code`, `fixed_group`, `no_split`, `class_names`, `i18n`, `selection`. Re-run completes a day, touches nothing stamped |
-| `schedule.crud_lane_item(p_param_json)` | everything else, set-based over `jsonb_array_elements`: board moves (`sort_order`, `start_offset`, `duration`, lane), copy, split, orderline selection, delete; **nest placement** (called by `legacy.crud_nest` with the nests as payload); and after every write the `summary` of the items it touched |
+| `schedule.crud_lane_item(p_param_json)` | everything else, set-based over `jsonb_array_elements`: board moves (`sort_order`, `start_offset`, `duration`, lane), copy, split, orderline selection, delete; **nest placement** (called by `legacy.crud_nest` with the nests as payload); **status moves** into `lane_item_event` (`released` when the payload carries `status`, `nested` at placement); and after every write the `summary` of the items it touched |
+
+There is no `schedule.crud_lane_item_event`: the board's release button posts to
+`crud_lane_item` with `{"crud": "update", "data": {"lane_item_id": …, "status": "released"}}`.
 
 Nest placement inside `crud_lane_item`: the nest lands on the impose item of its material,
 moment and day (released item, first moment at or after `nested_at`); it is merged into the
@@ -156,7 +159,8 @@ Both `stable`, `#variable_conflict use_column`.
 `schedule.lane_item` instead of `action.lane_item`: a `src` change, no new function.
 
 Not ported: `crud_object`, `sync_pv2_batch_items`, `get_plan_timeline`,
-`crud_material_impose_plan`, `generate_production_plan`. The log readers of `action.object`
+`crud_material_impose_plan`, `generate_production_plan`, `crud_lane_item_event` (folded
+into `crud_lane_item`). The log readers of `action.object`
 stay as they are; the new schedule is not logged for now.
 
 ## 5. open: orderlines on an item
@@ -218,5 +222,7 @@ Each step: `sql/schedule/<nn>_<name>.sql` and `<nn>_<name>_down.sql`. Nothing to
 - `drop`: `order_field sort_order`, `no_split_field data_json.no_split`; `is_pinned_field` gone;
   mutation to `schedule.crud_lane_item`, plus `crud: split` with the new `duration` and
   `crud: create` for a copy
+- release button: data_table `crud_lane_item_event` → `crud_lane_item` with `status: released`
+  in `data`
 - pages `nest-schedule` (`steps [impose]`) and `production-schedule`
   (`steps [print, coat, laminate, route, cut]`) as section `params`
