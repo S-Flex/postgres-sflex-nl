@@ -296,8 +296,10 @@ BEGIN
                    'waste_factor',   (f.value ->> 'waste_factor')::numeric,
                    'imposition_sqm', (f.value ->> 'imposition_sqm')::numeric) AS format_json
         FROM legacy.imposition_group g
-        CROSS JOIN LATERAL jsonb_array_elements(coalesce(g.imposition_group_json -> 'waste', '[]'::jsonb)) f
+        CROSS JOIN LATERAL jsonb_array_elements(coalesce(g.rules_json -> 'waste', '[]'::jsonb)) f
         WHERE g.imposition_group_id = i.imposition_group_id
+          -- the group of the row's tenant; a row without one is Dokkum's (1)
+          AND g.tenant_id = coalesce(mps.tenant_id, 1)
         ORDER BY (f.value ->> 'width')::numeric DESC
         LIMIT 1
     ) w ON true

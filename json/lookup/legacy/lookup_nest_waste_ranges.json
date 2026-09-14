@@ -46,15 +46,5 @@
     "range_max": 100,
     "range_min": 70,
     "sort_order": 7
-  },
-  {
-    "code": "0-100",
-    "range_max": 100,
-    "range_min": 0,
-    "sort_order": 8,
-    "is_total": true,
-    "class_names": [
-      "aggregate"
-    ]
   }
 ]

@@ -26570,12 +26570,46 @@
             "key": "material_ids",
             "is_optional": true,
             "is_query_param": true
+          },
+          {
+            "key": "line_type",
+            "is_query_param": true
           }
         ],
         "children": [],
         "widget_id": "nest_waste_ranges",
         "window_class_name": "p-8",
         "field_config": {
+          "tenant_id": {
+            "ui": {
+              "hidden": true
+            }
+          },
+          "tenant_name": {
+            "ui": {
+              "i18n": {
+                "de": {
+                  "title": "Produktionsstandort"
+                },
+                "en": {
+                  "title": "Production location"
+                },
+                "es": {
+                  "title": "Ubicación de producción"
+                },
+                "fr": {
+                  "title": "Site de production"
+                },
+                "nl": {
+                  "title": "Productielocatie"
+                },
+                "uk": {
+                  "title": "Виробнича локація"
+                }
+              },
+              "hidden": true
+            }
+          },
           "material_id": {
             "ui": {
               "hidden": true
@@ -26799,11 +26833,6 @@
             },
             "scale": 2
           },
-          "is_total": {
-            "ui": {
-              "hidden": true
-            }
-          },
           "sort_order": {
             "ui": {
               "hidden": true
@@ -26825,18 +26854,82 @@
             "checkable": false,
             "selectable": false
           },
-          "fields_class_name": "@container grid grid-cols-5 gap-1",
+          "fields_class_name": "@container grid grid-cols-7 gap-1",
           "field_config": {
             "material_name": {
               "ui": {
                 "order": 0,
-                "no_label": true,
                 "class_name": "col-span-1"
+              }
+            },
+            "nest_date_from": {
+              "field": "nest_date",
+              "aggregate_fn": "min",
+              "ui": {
+                "order": 1,
+                "type": "date",
+                "class_name": "col-span-1",
+                "i18n": {
+                  "nl": {
+                    "title": "Van"
+                  },
+                  "en": {
+                    "title": "From"
+                  },
+                  "de": {
+                    "title": "Von"
+                  },
+                  "fr": {
+                    "title": "Du"
+                  },
+                  "es": {
+                    "title": "Desde"
+                  },
+                  "uk": {
+                    "title": "З"
+                  }
+                }
+              }
+            },
+            "nest_date_until": {
+              "field": "nest_date",
+              "aggregate_fn": "max",
+              "ui": {
+                "order": 2,
+                "type": "date",
+                "class_name": "col-span-1",
+                "hidden_when": [
+                  {
+                    "field": "nest_date_until",
+                    "op": "==",
+                    "value_field": "nest_date_from"
+                  }
+                ],
+                "i18n": {
+                  "nl": {
+                    "title": "Tot"
+                  },
+                  "en": {
+                    "title": "Until"
+                  },
+                  "de": {
+                    "title": "Bis"
+                  },
+                  "fr": {
+                    "title": "Au"
+                  },
+                  "es": {
+                    "title": "Hasta"
+                  },
+                  "uk": {
+                    "title": "До"
+                  }
+                }
               }
             },
             "nest_count": {
               "ui": {
-                "order": 1,
+                "order": 3,
                 "class_name": "col-span-1"
               },
               "scale": 0,
@@ -26844,29 +26937,29 @@
             },
             "sqm": {
               "ui": {
-                "order": 2,
+                "order": 4,
                 "class_name": "col-span-1",
                 "suffix": "m²"
               },
-              "scale": 0,
+              "scale": 1,
               "aggregate_fn": "sum"
             },
             "waste_sqm": {
               "ui": {
-                "order": 3,
+                "order": 5,
                 "class_name": "col-span-1",
                 "suffix": "m²"
               },
-              "scale": 0,
+              "scale": 1,
               "aggregate_fn": "sum"
             },
             "waste_cost": {
               "ui": {
-                "order": 4,
+                "order": 6,
                 "class_name": "col-span-1",
                 "prefix": "€"
               },
-              "scale": 0,
+              "scale": 2,
               "aggregate_fn": "sum"
             }
           },
@@ -26880,7 +26973,8 @@
                 "colexp": true,
                 "checkable": false,
                 "selectable": false,
-                "class_names_field": "class_names"
+                "class_names_field": "class_names",
+                "summary": true
               },
               "fields_class_name": "grid grid-cols-6 gap-1",
               "field_config": {
@@ -26909,6 +27003,28 @@
                       }
                     },
                     "suffix": "%"
+                  },
+                  "summary": {
+                    "i18n": {
+                      "de": {
+                        "title": "0-100%"
+                      },
+                      "en": {
+                        "title": "0-100%"
+                      },
+                      "es": {
+                        "title": "0-100%"
+                      },
+                      "fr": {
+                        "title": "0-100%"
+                      },
+                      "nl": {
+                        "title": "0-100%"
+                      },
+                      "uk": {
+                        "title": "0-100%"
+                      }
+                    }
                   }
                 },
                 "nest_count": {
@@ -26937,7 +27053,10 @@
                     }
                   },
                   "scale": 0,
-                  "aggregate_fn": "sum"
+                  "aggregate_fn": "sum",
+                  "summary": {
+                    "aggregate_fn": "sum"
+                  }
                 },
                 "sqm": {
                   "ui": {
@@ -26966,7 +27085,10 @@
                     "suffix": "m²"
                   },
                   "scale": 1,
-                  "aggregate_fn": "sum"
+                  "aggregate_fn": "sum",
+                  "summary": {
+                    "aggregate_fn": "sum"
+                  }
                 },
                 "avg_waste_percentage": {
                   "ui": {
@@ -26995,7 +27117,10 @@
                     "suffix": "%"
                   },
                   "scale": 1,
-                  "aggregate_fn": "avg"
+                  "aggregate_fn": "avg",
+                  "summary": {
+                    "aggregate_fn": "avg"
+                  }
                 },
                 "waste_sqm": {
                   "ui": {
@@ -27024,12 +27149,15 @@
                     "suffix": "m²"
                   },
                   "scale": 1,
-                  "aggregate_fn": "sum"
+                  "aggregate_fn": "sum",
+                  "summary": {
+                    "aggregate_fn": "sum"
+                  }
                 },
                 "waste_cost": {
                   "ui": {
                     "order": 5,
-                    "class_name": "col-span-1",
+                    "class_name": "col-span-1 text-right",
                     "i18n": {
                       "de": {
                         "title": "Abfallkosten"
@@ -27053,7 +27181,10 @@
                     "prefix": "€"
                   },
                   "scale": 2,
-                  "aggregate_fn": "sum"
+                  "aggregate_fn": "sum",
+                  "summary": {
+                    "aggregate_fn": "sum"
+                  }
                 }
               },
               "children": [
@@ -27211,7 +27342,7 @@
                     "waste_cost": {
                       "ui": {
                         "order": 5,
-                        "class_name": "col-span-1",
+                        "class_name": "col-span-1 text-right",
                         "i18n": {
                           "de": {
                             "title": "Abfallkosten"
@@ -27365,6 +27496,10 @@
           {
             "key": "material_ids",
             "is_optional": true,
+            "is_query_param": true
+          },
+          {
+            "key": "line_type",
             "is_query_param": true
           }
         ],
@@ -27560,15 +27695,6 @@
           "template": "${material_name}",
           "show_grid": true,
           "show_legend": true,
-          "filter": [
-            [
-              {
-                "op": "==",
-                "field": "is_total",
-                "value": false
-              }
-            ]
-          ],
           "tooltip": {
             "fields_class_name": "grid grid-cols-6 gap-1",
             "field_config": {},

@@ -215,15 +215,6 @@
         "template": "${material_name}",
         "show_grid": true,
         "show_legend": true,
-        "filter": [
-          [
-            {
-              "op": "==",
-              "field": "is_total",
-              "value": false
-            }
-          ]
-        ],
         "tooltip": {
           "fields_class_name": "grid grid-cols-6 gap-1",
           "field_config": {},

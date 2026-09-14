@@ -15,7 +15,11 @@ ranges of waste percentage, and what that waste costs.
 
 The ranges are the lookup `lookup_nest_waste_ranges` in `legacy.lookup` (file
 `json/lookup/legacy/lookup_nest_waste_ranges.json`): per range `code`, `range_min`,
-`range_max` and `sort_order`; a range takes min <= waste < max, and ranges may overlap (the row `0-100` is the total).
+`range_max` and `sort_order`; a range takes min <= waste < max. The row `0-100` (the total) is gone
+since 14 Sep 2026: the ranges flow-table sums its rows itself (`row_options.summary: true`, per field a
+`summary` with `aggregate_fn` sum for nests, sqm, waste sqm and waste cost, avg for the waste
+percentage, and an `i18n` label `0-100%` on the range column). The rows carry `tenant_id` and
+`tenant_name` (the tenant of the nest's production line), and the imposition group is joined per tenant.
 Changing the ranges is a change in the lookup, not in code.
 
 A nest of a child material (imposition group with a parent, 28 under 300) counts

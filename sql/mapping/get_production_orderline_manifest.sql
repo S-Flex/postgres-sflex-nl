@@ -28,25 +28,28 @@ declare
     -- reads it from any row. imposition_group_id is the material_id alias
     -- until the xbom groups arrive
     v_fill_percentage numeric;
+    -- the tenant of the queue: the one tenant asked, else Dokkum (1); the
+    -- groups are per tenant (legacy.imposition_group, 14 Sep 2026)
+    v_tenant_id integer := case when cardinality(p_tenant_ids) = 1 then p_tenant_ids[1] else 1 end;
     -- the group of the queue: a material whose imposition group has a parent
     -- (legacy.imposition_group.parent_imposition_group_id) is nested with
     -- its parent, so the queue is the parent's -- with the orderlines of
     -- every child, shown under the parent's material_id
     v_material_id integer := (select coalesce(g.parent_imposition_group_id, g.imposition_group_id)
                               from legacy.imposition_group g
-                              where g.imposition_group_id = p_material_id);
+                              where g.imposition_group_id = p_material_id and g.tenant_id = v_tenant_id);
     v_material_ids integer[];
 begin
     v_material_id := coalesce(v_material_id, p_material_id);
     select array_agg(g.imposition_group_id) || v_material_id into v_material_ids
     from legacy.imposition_group g
-    where g.parent_imposition_group_id = v_material_id;
+    where g.parent_imposition_group_id = v_material_id and g.tenant_id = v_tenant_id;
     v_material_ids := coalesce(v_material_ids, array[v_material_id]);
 
     select round((1 - (f.value ->> 'waste_factor')::numeric) * 100, 0) into v_fill_percentage
     from legacy.imposition_group g
-    cross join lateral jsonb_array_elements(coalesce(g.imposition_group_json -> 'waste', '[]'::jsonb)) f
-    where g.imposition_group_id = v_material_id
+    cross join lateral jsonb_array_elements(coalesce(g.rules_json -> 'waste', '[]'::jsonb)) f
+    where g.imposition_group_id = v_material_id and g.tenant_id = v_tenant_id
     order by (f.value ->> 'width')::numeric desc, (f.value ->> 'waste_factor')::numeric
     limit 1;
 
@@ -106,7 +109,7 @@ begin
            v_fill_percentage
     from detail d
     left join tenant t on t.production_company_id = d.production_company_id
-    left join legacy.imposition_group g on g.imposition_group_id = d.material_id
+    left join legacy.imposition_group g on g.imposition_group_id = d.material_id and g.tenant_id = v_tenant_id
     -- biggest first, the order the nesting queue wants its rows in
     order by d.sqm desc, d.product_width desc, d.product_height desc,
              d.production_orderline_id;

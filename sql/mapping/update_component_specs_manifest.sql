@@ -9,14 +9,16 @@ as $$
 -- an aggregate of the row labels, the item code paths and the settings
 --   { "<scope>": { "i18n": { "<lang>": { "abb": "a, b" } },
 --                  "item_code_paths": ["dk.roll.banner-510", ...],
---                  "config": { "units_threshold": 1, "nest_time": "12:00:00", ... } } }
+--                  "config": { "nest_time": "12:00:00", "print_time": "12:30:00", ... } } }
 -- config is the config_json of the rows of the scope merged key by key: the
 -- row whose item group has the highest catalog.item_group.level wins a key
 -- (null level loses to every level), then the row's sort_order. The label
 -- (i18n) is the row's own and stays out of it. For scope imposition this is
--- where the nester reads its settings (units_threshold, nest_time,
--- print_time) -- put them in catalog.xbom.config_json of the rows that carry
--- them, give their item groups a level, and the merge does the rest.
+-- where the nester reads its settings (nest_time, print_time) -- put them
+-- in catalog.xbom.config_json of the rows that carry them, give their item
+-- groups a level, and the merge does the rest. units_threshold and
+-- delivery_hours left the xbom on 14 Sep 2026: they live in
+-- legacy.imposition_group.rules_json (unit_threshold, delivery_hours).
 --
 -- A material that nests with a parent (legacy.imposition_group
 -- .parent_imposition_group_id: 28 Dibond Digital 3mm under 300 Dilite 3mm)
@@ -42,9 +44,14 @@ parent_material as (
            lp.option_json -> 'i18n' as parent_i18n
     from target t
     join mapping.component_specs cs using (production_orderline_id)
+    -- the tenant of the orderline through its production company; the
+    -- groups are per tenant, an unknown company is Dokkum (1)
+    left join site.tenant tn on tn.production_company_id = cs.production_company_id
     join legacy.imposition_group g on g.imposition_group_id = cs.material_id
+                                   and g.tenant_id = coalesce(tn.tenant_id, 1)
                                    and g.parent_imposition_group_id is not null
     join legacy.imposition_group pg on pg.imposition_group_id = g.parent_imposition_group_id
+                                    and pg.tenant_id = g.tenant_id
     join catalog.item ci on ci.item_code_path = any (g.item_code_paths)  and ci.item_group_code = 'material'
     join catalog.item pi on pi.item_code_path = any (pg.item_code_paths) and pi.item_group_code = 'material'
     left join lateral (

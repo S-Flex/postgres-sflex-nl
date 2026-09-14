@@ -85,11 +85,14 @@ step_agg AS (
     GROUP BY rs.imposition_id
 ),
 group_of AS (
+    -- the group of the nest for its tenant; a nest without a line is Dokkum's (1)
     SELECT m.imposition_id,
-           legacy.get_imposition_group(array_agg(DISTINCT m.option_code)) AS imposition_group_id
+           coalesce(nl.tenant_id, 1) AS tenant_id,
+           legacy.get_imposition_group(array_agg(DISTINCT m.option_code), coalesce(nl.tenant_id, 1)) AS imposition_group_id
     FROM legacy.imposition_unit_manifest m
+    JOIN nest_line nl ON nl.nest_id = m.imposition_id
     WHERE m.imposition_id = ANY (p_nest_ids)
-    GROUP BY m.imposition_id
+    GROUP BY m.imposition_id, nl.tenant_id
 )
 UPDATE legacy.nest n
 SET manifest_json = CASE WHEN g.imposition_id IS NULL THEN NULL
@@ -100,7 +103,7 @@ SET manifest_json = CASE WHEN g.imposition_id IS NULL THEN NULL
                     END
 FROM nest_line nl
 LEFT JOIN group_of g ON g.imposition_id = nl.nest_id
-LEFT JOIN legacy.imposition_group ig ON ig.imposition_group_id = g.imposition_group_id
+LEFT JOIN legacy.imposition_group ig ON ig.imposition_group_id = g.imposition_group_id AND ig.tenant_id = g.tenant_id
 LEFT JOIN step_agg sa ON sa.imposition_id = nl.nest_id
 WHERE n.nest_id = nl.nest_id;
 $$;

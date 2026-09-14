@@ -3,7 +3,7 @@
 -- (dk.sheet.impose.320) or one machine; the longest matching path wins, and a
 -- row naming the group beats a row with imposition_group_id null.
 -- Waste is not here: that depends on format and group, not on the machine —
--- it lives in legacy.imposition_group.imposition_group_json.
+-- it lives in legacy.imposition_group.rules_json (waste).
 create table resource_setting
 (
 	resource_setting_id bigint generated always as identity

@@ -47,7 +47,9 @@ declare
                              union
                              select g.imposition_group_id
                              from legacy.imposition_group g
-                             where g.parent_imposition_group_id = any (p_material_ids)) x),
+                             where g.parent_imposition_group_id = any (p_material_ids)
+                               -- the groups of the tenants asked; none asked is Dokkum (1)
+                               and g.tenant_id = any (coalesce(p_tenant_ids, array[1]))) x),
                       '{}'::integer[]) end;
 begin
     -- the next working day after the viewed day, for the tenants asked
