@@ -27686,97 +27686,97 @@
         },
         "stacked_bar_chart_config": {
           "height": 360,
-          "stacked": true,
           "x_field": "waste_range",
-          "y_field": "sqm",
           "group_by": [
-            "material_id"
+            "waste_range"
           ],
-          "template": "${material_name}",
+          "sort": {
+            "field": "sort_order",
+            "direction": "asc"
+          },
           "show_grid": true,
           "show_legend": true,
-          "tooltip": {
-            "fields_class_name": "grid grid-cols-6 gap-1",
-            "field_config": {},
-            "groups": [
-              {
-                "title": {
-                  "i18n": {
-                    "de": {
-                      "title": "Material"
-                    },
-                    "en": {
-                      "title": "Material"
-                    },
-                    "es": {
-                      "title": "Material"
-                    },
-                    "fr": {
-                      "title": "Matériau"
-                    },
-                    "nl": {
-                      "title": "Materiaal"
-                    },
-                    "uk": {
-                      "title": "Матеріал"
-                    }
-                  }
+          "groups": [
+            {
+              "i18n": {
+                "de": {
+                  "title": "Fläche"
                 },
-                "fields": {
-                  "material_name": {
-                    "ui": {
-                      "order": 0,
-                      "class_name": "col-span-4"
-                    }
-                  },
-                  "waste_range": {
-                    "ui": {
-                      "order": 1,
-                      "class_name": "col-span-2"
-                    }
-                  }
+                "en": {
+                  "title": "Area"
+                },
+                "es": {
+                  "title": "Superficie"
+                },
+                "fr": {
+                  "title": "Surface"
+                },
+                "nl": {
+                  "title": "Oppervlak"
+                },
+                "uk": {
+                  "title": "Площа"
                 }
               },
-              {
-                "title": {
-                  "i18n": {
-                    "de": {
-                      "title": "Nester"
-                    },
-                    "en": {
-                      "title": "Nests"
-                    },
-                    "es": {
-                      "title": "Nidos"
-                    },
-                    "fr": {
-                      "title": "Imbrications"
-                    },
-                    "nl": {
-                      "title": "Nesten"
-                    },
-                    "uk": {
-                      "title": "Нести"
-                    }
-                  }
+              "segments": [
+                {
+                  "field": "sqm",
+                  "aggregate_fn": "sum",
+                  "class_names_field": "class_names"
+                }
+              ]
+            },
+            {
+              "i18n": {
+                "de": {
+                  "title": "Abfallfläche"
                 },
-                "fields": {
-                  "nest_count": {
+                "en": {
+                  "title": "Waste area"
+                },
+                "es": {
+                  "title": "Superficie de desperdicio"
+                },
+                "fr": {
+                  "title": "Surface de déchet"
+                },
+                "nl": {
+                  "title": "Afvaloppervlak"
+                },
+                "uk": {
+                  "title": "Площа відходів"
+                }
+              },
+              "segments": [
+                {
+                  "field": "waste_sqm",
+                  "aggregate_fn": "sum",
+                  "class_names_field": "class_names"
+                }
+              ]
+            }
+          ],
+          "tooltip": {
+            "sections": [
+              {
+                "fields_class_name": "grid grid-cols-6 gap-1",
+                "field_config": {
+                  "waste_range": {
                     "ui": {
                       "order": 0,
-                      "class_name": "col-span-2"
+                      "class_name": "col-span-3"
+                    }
+                  },
+                  "nest_count": {
+                    "ui": {
+                      "order": 1,
+                      "class_name": "col-span-3"
                     }
                   },
                   "sqm": {
                     "ui": {
-                      "order": 1,
-                      "class_name": "col-span-2"
-                    }
-                  },
-                  "avg_waste_percentage": {
-                    "ui": {
                       "order": 2,
-                      "class_name": "col-span-2"
+                      "class_name": "col-span-3"
                     }
                   },
                   "waste_sqm": {
@@ -27785,19 +27785,21 @@
                       "class_name": "col-span-3"
                     }
                   },
-                  "waste_cost": {
+                  "avg_waste_percentage": {
                     "ui": {
                       "order": 4,
+                      "class_name": "col-span-3"
+                    }
+                  },
+                  "waste_cost": {
+                    "ui": {
+                      "order": 5,
                       "class_name": "col-span-3"
                     }
                   }
                 }
               }
-            ],
-            "sort": {
-              "field": "sqm",
-              "direction": "desc"
-            }
+            ]
           }
         }
       }
