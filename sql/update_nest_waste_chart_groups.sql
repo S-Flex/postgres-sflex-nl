@@ -4,9 +4,9 @@
 -- template are not part of it, and the tooltip is the sections form. Now: one x
 -- position per waste bucket in lookup order, two bars: the area with the waste
 -- area stacked on it, and the waste cost; a tooltip with the bucket's figures;
--- window_class_name p-8 like the table (revised the same day). No filter: the 0-100 total row is gone
--- from the lookup and the function. Bars paint in the neutral fill until the
--- rows carry class names.
+-- window_class_name p-8 like the table; every segment carries its fill and
+-- color as css variables (revised the same day). No filter: the 0-100 total
+-- row is gone from the lookup and the function.
 -- Content of json/data_group/nest_waste_ranges_chart.json (the file is the source).
 -- Rollback: sql/update_nest_waste_chart_groups_down.sql.
 BEGIN;
@@ -252,12 +252,14 @@ UPDATE site.data_group SET data_group_json = $json$
             {
               "field": "sqm",
               "aggregate_fn": "sum",
-              "class_names_field": "class_names"
+              "fill": "var(--state-producing)",
+              "color": "var(--state-producing-color)"
             },
             {
               "field": "waste_sqm",
               "aggregate_fn": "sum",
-              "class_names_field": "class_names"
+              "fill": "var(--state-breakdown)",
+              "color": "var(--state-breakdown-color)"
             }
           ]
         },
@@ -286,7 +288,8 @@ UPDATE site.data_group SET data_group_json = $json$
             {
               "field": "waste_cost",
               "aggregate_fn": "sum",
-              "class_names_field": "class_names"
+              "fill": "var(--state-starved)",
+              "color": "var(--state-starved-color)"
             }
           ]
         }

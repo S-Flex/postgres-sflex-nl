@@ -27722,12 +27722,14 @@
                 {
                   "field": "sqm",
                   "aggregate_fn": "sum",
-                  "class_names_field": "class_names"
+                  "fill": "var(--state-producing)",
+                  "color": "var(--state-producing-color)"
                 },
                 {
                   "field": "waste_sqm",
                   "aggregate_fn": "sum",
-                  "class_names_field": "class_names"
+                  "fill": "var(--state-breakdown)",
+                  "color": "var(--state-breakdown-color)"
                 }
               ]
             },
@@ -27756,7 +27758,8 @@
                 {
                   "field": "waste_cost",
                   "aggregate_fn": "sum",
-                  "class_names_field": "class_names"
+                  "fill": "var(--state-starved)",
+                  "color": "var(--state-starved-color)"
                 }
               ]
             }
