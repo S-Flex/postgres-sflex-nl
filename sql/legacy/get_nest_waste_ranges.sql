@@ -4,7 +4,7 @@
 -- costs, over the nests nested on the days of p_dates (a datemultirange; the
 -- day of nested_at in Amsterdam time). A nest of a material whose imposition
 -- group has a parent counts with the parent
--- (catalog.imposition_group.parent_imposition_group_id), as the queue and the
+-- (legacy.imposition_group.parent_imposition_group_id), as the queue and the
 -- print schedule do. The ranges are legacy.lookup lookup_nest_waste_ranges
 -- (json/lookup/legacy/lookup_nest_waste_ranges.json): code, range_min,
 -- range_max and sort_order, is_total on the row that spans everything (the
@@ -18,12 +18,15 @@
 -- row of the material item for the tenant of the nest's production line (the
 -- newest version), the first price tier (price_tiers_json -> 0 ->>
 -- 'purchase_price'). Null when the material has no price for that tenant.
+-- p_line_type keeps to the nests of the production lines of that type
+-- (relation.production_line.line_type of the nest's line); null is every line.
 -- Set-based, one statement.
 drop function if exists legacy.get_nest_waste_percentiles(datemultirange, integer[], numeric[]);
 drop function if exists legacy.get_nest_waste_ranges(datemultirange, integer[], numeric[]);
 drop function if exists legacy.get_nest_waste_ranges(datemultirange, integer[]);
+drop function if exists legacy.get_nest_waste_ranges(datemultirange, integer[], text);
 
-create function legacy.get_nest_waste_ranges(p_dates datemultirange DEFAULT datemultirange(daterange(current_date, current_date, '[]')), p_material_ids integer[] DEFAULT NULL::integer[]) returns TABLE(material_id integer, material_name text, nest_date date, range_min numeric, range_max numeric, waste_range text, is_total boolean, sort_order integer, class_names text[], nest_count integer, sqm numeric, avg_waste_percentage numeric, waste_sqm numeric, purchase_price_per_sqm numeric, waste_cost numeric)
+create function legacy.get_nest_waste_ranges(p_dates datemultirange DEFAULT datemultirange(daterange(current_date, current_date, '[]')), p_material_ids integer[] DEFAULT NULL::integer[], p_line_type text DEFAULT NULL::text) returns TABLE(material_id integer, material_name text, nest_date date, range_min numeric, range_max numeric, waste_range text, is_total boolean, sort_order integer, class_names text[], nest_count integer, sqm numeric, avg_waste_percentage numeric, waste_sqm numeric, purchase_price_per_sqm numeric, waste_cost numeric)
 	stable
 	language sql
 as $$
@@ -37,10 +40,11 @@ as $$
                coalesce(n.amount, 1)                                  AS amount,
                n.width * n.height / 10000 * coalesce(n.amount, 1)     AS sqm
         FROM legacy.nest n
-        LEFT JOIN catalog.imposition_group g ON g.imposition_group_id = (n.nest_json ->> 'material_id')::integer
+        LEFT JOIN legacy.imposition_group g ON g.imposition_group_id = (n.nest_json ->> 'material_id')::integer
         LEFT JOIN relation.production_line pl ON pl.line_id = (n.nest_json ->> 'production_line_id')::integer
         WHERE (n.nested_at AT TIME ZONE 'Europe/Amsterdam')::date <@ p_dates
           AND n.nest_json ? 'waste_percentage'
+          AND (p_line_type IS NULL OR pl.line_type = p_line_type)
           AND (p_material_ids IS NULL
                OR coalesce(g.parent_imposition_group_id, (n.nest_json ->> 'material_id')::integer) = ANY (p_material_ids))
     ),
@@ -63,7 +67,7 @@ as $$
     material_item AS (
         -- the material item of the group: the path in item group material
         SELECT g.imposition_group_id AS material_id, i.item_code
-        FROM catalog.imposition_group g
+        FROM legacy.imposition_group g
         JOIN catalog.item i ON i.item_code_path = ANY (g.item_code_paths) AND i.item_group_code = 'material'
         WHERE g.imposition_group_id IN (SELECT m.material_id FROM material m)
     ),
@@ -79,10 +83,12 @@ as $$
         ORDER BY bp.tenant_id, mi.material_id, bp.created_at DESC, bp.version DESC
     )
     SELECT m.material_id,
+           -- the name on a line of the type in view first
            (SELECT mpl.material_name
             FROM mapping.material_production_line mpl
+            LEFT JOIN relation.production_line pl ON pl.line_id = mpl.production_line_id
             WHERE mpl.material_id = m.material_id
-            ORDER BY mpl.production_line_id
+            ORDER BY (pl.line_type = p_line_type) DESC NULLS LAST, mpl.production_line_id
             LIMIT 1) AS material_name,
            m.nest_date,
            r.range_min,
@@ -108,4 +114,4 @@ as $$
     ORDER BY m.material_id, m.nest_date, r.sort_order;
 $$;
 
-alter function legacy.get_nest_waste_ranges(datemultirange, integer[]) owner to xfw3;
+alter function legacy.get_nest_waste_ranges(datemultirange, integer[], text) owner to xfw3;

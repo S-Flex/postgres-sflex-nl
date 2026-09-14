@@ -21,7 +21,7 @@ as $$
         ) p
     ),
     ins as (
-        insert into catalog.imposition_group (item_code_paths)
+        insert into legacy.imposition_group (item_code_paths)
         select w.item_code_paths
         from wanted w
         where w.item_code_paths is not null
@@ -31,7 +31,7 @@ as $$
     select coalesce(
         (select ins.imposition_group_id from ins),
         (select g.imposition_group_id
-         from catalog.imposition_group g
+         from legacy.imposition_group g
          join wanted w on g.item_code_paths = w.item_code_paths));
 $$;
 

@@ -16,8 +16,7 @@
           "is_query_param": true
         },
         {
-          "key": "production_line_ids",
-          "is_optional": true,
+          "key": "line_type",
           "is_query_param": true
         }
       ],
@@ -86,8 +85,7 @@
               ],
               "params": [
                 {
-                  "key": "production_line_ids",
-                  "is_optional": true,
+                  "key": "line_type",
                   "is_query_param": true
                 }
               ],

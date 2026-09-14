@@ -38,7 +38,7 @@ declare
                          when p_nest_ids  is not null then 'nest'
                          else 'window' end;
     -- the materials asked plus the groups planned under them: a group whose
-    -- parent (catalog.imposition_group.parent_imposition_group_id; the group
+    -- parent (legacy.imposition_group.parent_imposition_group_id; the group
     -- ids are the material ids) is asked counts as that material. Null stays
     -- null (every material), an empty array stays empty (none)
     v_material_ids integer[] := case when p_material_ids is null then null
@@ -46,7 +46,7 @@ declare
                        from (select unnest(p_material_ids) as m
                              union
                              select g.imposition_group_id
-                             from catalog.imposition_group g
+                             from legacy.imposition_group g
                              where g.parent_imposition_group_id = any (p_material_ids)) x),
                       '{}'::integer[]) end;
 begin

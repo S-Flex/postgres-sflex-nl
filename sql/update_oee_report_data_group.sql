@@ -7,6 +7,11 @@
 -- Rollback: DELETE FROM site.data_group WHERE data_group IN ('oee_report', 'oee_report_filter');
 BEGIN;
 
+-- the id sequence lags behind the rows (data groups were inserted with their own
+-- ids, the first run failed on id 97): put it at the highest id first
+SELECT setval(pg_get_serial_sequence('site.data_group', 'data_group_id'),
+              (SELECT max(data_group_id) FROM site.data_group));
+
 INSERT INTO site.data_group (data_group, data_group_json)
 VALUES ('oee_report_filter', $json$
 [

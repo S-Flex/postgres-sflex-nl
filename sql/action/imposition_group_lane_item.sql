@@ -6,7 +6,7 @@
 create table action.imposition_group_lane_item
 (
 	imposition_group_id integer not null
-		references catalog.imposition_group,
+		references legacy.imposition_group,
 	lane_item_id bigint not null
 		references action.lane_item
 			on delete cascade,

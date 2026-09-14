@@ -233,6 +233,11 @@
         {
           "key": "model",
           "is_query_param": true
+        },
+        {
+          "key": "line_type",
+          "is_optional": true,
+          "is_query_param": true
         }
       ]
     },

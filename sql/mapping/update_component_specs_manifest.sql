@@ -18,7 +18,7 @@ as $$
 -- print_time) -- put them in catalog.xbom.config_json of the rows that carry
 -- them, give their item groups a level, and the merge does the rest.
 --
--- A material that nests with a parent (catalog.imposition_group
+-- A material that nests with a parent (legacy.imposition_group
 -- .parent_imposition_group_id: 28 Dibond Digital 3mm under 300 Dilite 3mm)
 -- takes the parent's nest group: its material row carries the parent's
 -- item path, and the material abbreviation in its label is the parent's
@@ -42,9 +42,9 @@ parent_material as (
            lp.option_json -> 'i18n' as parent_i18n
     from target t
     join mapping.component_specs cs using (production_orderline_id)
-    join catalog.imposition_group g on g.imposition_group_id = cs.material_id
+    join legacy.imposition_group g on g.imposition_group_id = cs.material_id
                                    and g.parent_imposition_group_id is not null
-    join catalog.imposition_group pg on pg.imposition_group_id = g.parent_imposition_group_id
+    join legacy.imposition_group pg on pg.imposition_group_id = g.parent_imposition_group_id
     join catalog.item ci on ci.item_code_path = any (g.item_code_paths)  and ci.item_group_code = 'material'
     join catalog.item pi on pi.item_code_path = any (pg.item_code_paths) and pi.item_group_code = 'material'
     left join lateral (

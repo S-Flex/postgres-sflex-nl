@@ -17,6 +17,10 @@
           "key": "material_ids",
           "is_optional": true,
           "is_query_param": true
+        },
+        {
+          "key": "line_type",
+          "is_query_param": true
         }
       ],
       "widget_id": "nest_waste_ranges_chart",

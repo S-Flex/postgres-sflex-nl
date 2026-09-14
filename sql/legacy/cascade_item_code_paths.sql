@@ -6,7 +6,7 @@ begin
     -- itself to xbom and item_base_price through their FKs (their generated
     -- path columns recompute on their own); this trigger rewrites the
     -- derived path inside every imposition group array, which no FK can do.
-    update catalog.imposition_group g
+    update legacy.imposition_group g
     set item_code_paths = array_replace(
             g.item_code_paths,
             text2ltree(replace(lower(old.item_code), '-', '.')),

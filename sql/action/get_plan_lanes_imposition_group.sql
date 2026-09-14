@@ -295,7 +295,7 @@ BEGIN
         SELECT jsonb_build_object(
                    'waste_factor',   (f.value ->> 'waste_factor')::numeric,
                    'imposition_sqm', (f.value ->> 'imposition_sqm')::numeric) AS format_json
-        FROM catalog.imposition_group g
+        FROM legacy.imposition_group g
         CROSS JOIN LATERAL jsonb_array_elements(coalesce(g.imposition_group_json -> 'waste', '[]'::jsonb)) f
         WHERE g.imposition_group_id = i.imposition_group_id
         ORDER BY (f.value ->> 'width')::numeric DESC
