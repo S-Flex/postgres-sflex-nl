@@ -243,33 +243,38 @@
                 "field": "sqm",
                 "aggregate_fn": "sum",
                 "class_names_field": "class_names"
+              },
+              {
+                "field": "waste_sqm",
+                "aggregate_fn": "sum",
+                "class_names_field": "class_names"
               }
             ]
           },
           {
             "i18n": {
               "de": {
-                "title": "Abfallfläche"
+                "title": "Abfallkosten"
               },
               "en": {
-                "title": "Waste area"
+                "title": "Waste cost"
               },
               "es": {
-                "title": "Superficie de desperdicio"
+                "title": "Coste del desperdicio"
               },
               "fr": {
-                "title": "Surface de déchet"
+                "title": "Coût du déchet"
               },
               "nl": {
-                "title": "Afvaloppervlak"
+                "title": "Afvalkosten"
               },
               "uk": {
-                "title": "Площа відходів"
+                "title": "Вартість відходів"
               }
             },
             "segments": [
               {
-                "field": "waste_sqm",
+                "field": "waste_cost",
                 "aggregate_fn": "sum",
                 "class_names_field": "class_names"
               }
@@ -321,7 +326,8 @@
             }
           ]
         }
-      }
+      },
+      "window_class_name": "p-8"
     }
   ]
 }

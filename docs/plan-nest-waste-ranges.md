@@ -50,8 +50,9 @@ same figures per day. The rows colour on `class_names` (the total row `aggregate
 
 data_group `nest_waste_ranges_chart` (98), layout `stacked-bar-chart` on the same read: one
 x position per range (`x_field` and `group_by` `waste_range`, `sort` on `sort_order`), and per position
-two bars as positional `groups`: the area and the waste area of the nests in it, each one `segments[]`
-entry with `field`, `aggregate_fn` sum and `class_names_field`; the tooltip in the `sections` form.
+two bars as positional `groups`: the area of the nests with the waste area stacked on top of it (two
+`segments[]`), and next to it the waste cost (one segment); a segment has `field`, `aggregate_fn` sum and
+`class_names_field`; the tooltip in the `sections` form; `window_class_name` p-8 like the table.
 `y_field`, `stacked` and `template` are not part of the layout and left the chart invisible until 14 Sep
 2026 (`sql/update_nest_waste_chart_groups.sql`); the total row is gone, so there is no filter. The bars
 paint in the neutral fill until the rows carry class names. Between the filter and the table on the page.

@@ -2,8 +2,9 @@
 -- layout draws positional groups (bars per x position, each a stack of
 -- segments {field, aggregate_fn, class_names_field}); y_field, stacked and
 -- template are not part of it, and the tooltip is the sections form. Now: one x
--- position per waste bucket in lookup order, two bars (area, waste area), a
--- tooltip with the bucket's figures. No filter: the 0-100 total row is gone
+-- position per waste bucket in lookup order, two bars: the area with the waste
+-- area stacked on it, and the waste cost; a tooltip with the bucket's figures;
+-- window_class_name p-8 like the table (revised the same day). No filter: the 0-100 total row is gone
 -- from the lookup and the function. Bars paint in the neutral fill until the
 -- rows carry class names.
 -- Content of json/data_group/nest_waste_ranges_chart.json (the file is the source).
@@ -252,33 +253,38 @@ UPDATE site.data_group SET data_group_json = $json$
               "field": "sqm",
               "aggregate_fn": "sum",
               "class_names_field": "class_names"
+            },
+            {
+              "field": "waste_sqm",
+              "aggregate_fn": "sum",
+              "class_names_field": "class_names"
             }
           ]
         },
         {
           "i18n": {
             "de": {
-              "title": "Abfallfläche"
+              "title": "Abfallkosten"
             },
             "en": {
-              "title": "Waste area"
+              "title": "Waste cost"
             },
             "es": {
-              "title": "Superficie de desperdicio"
+              "title": "Coste del desperdicio"
             },
             "fr": {
-              "title": "Surface de déchet"
+              "title": "Coût du déchet"
             },
             "nl": {
-              "title": "Afvaloppervlak"
+              "title": "Afvalkosten"
             },
             "uk": {
-              "title": "Площа відходів"
+              "title": "Вартість відходів"
             }
           },
           "segments": [
             {
-              "field": "waste_sqm",
+              "field": "waste_cost",
               "aggregate_fn": "sum",
               "class_names_field": "class_names"
             }
@@ -330,7 +336,8 @@ UPDATE site.data_group SET data_group_json = $json$
           }
         ]
       }
-    }
+    },
+    "window_class_name": "p-8"
   }
 ]
 $json$::jsonb WHERE data_group = 'nest_waste_ranges_chart';
