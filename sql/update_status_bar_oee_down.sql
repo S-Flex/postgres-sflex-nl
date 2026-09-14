@@ -1,3 +1,16 @@
+-- Rollback of sql/update_status_bar_oee.sql: the group oee out of the lookup,
+-- the oee function gone, mapping.get_status_bar the version before.
+BEGIN;
+
+UPDATE legacy.lookup lk
+SET lookup_json = (SELECT coalesce(jsonb_agg(g.value ORDER BY g.ordinality), '[]'::jsonb)
+                   FROM jsonb_array_elements(lk.lookup_json) WITH ORDINALITY g
+                   WHERE g.value ->> 'code' <> 'oee')
+WHERE lk.lookup = 'status_bar';
+
+DROP FUNCTION IF EXISTS mapping.get_status_bar_oee(text, timestamp with time zone, integer, jsonb);
+
+-- ============ sql/mapping/get_status_bar.sql (before) ============
 create or replace function mapping.get_status_bar(p_model text DEFAULT NULL::text, p_until timestamp with time zone DEFAULT (CURRENT_DATE)::timestamp with time zone, p_production_line_id integer DEFAULT NULL::integer) returns TABLE(status_json jsonb)
 	language plpgsql
 as $$
@@ -36,7 +49,6 @@ BEGIN
                             WHEN 'rework'         THEN mapping.get_status_bar_rework(v_line.line_id)
                             WHEN 'file_inflow'    THEN mapping.get_status_bar_file_inflow(v_line.line_id)
                             WHEN 'nests'          THEN mapping.get_status_bar_nests(v_line.line_id)
-                            WHEN 'oee'            THEN mapping.get_status_bar_oee(p_model, p_until, v_line.line_id, grp->'items')
                         END
                     )
                 )
@@ -50,3 +62,5 @@ $$;
 
 alter function mapping.get_status_bar(text, timestamp with time zone, integer) owner to xfw3;
 
+
+COMMIT;

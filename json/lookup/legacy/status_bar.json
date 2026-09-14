@@ -258,5 +258,63 @@
         "title": "Нести"
       }
     }
+  },
+  {
+    "code": "oee",
+    "src": "oee",
+    "i18n": {
+      "de": {
+        "title": "OEE"
+      },
+      "en": {
+        "title": "OEE"
+      },
+      "es": {
+        "title": "OEE"
+      },
+      "fr": {
+        "title": "OEE"
+      },
+      "nl": {
+        "title": "OEE"
+      },
+      "uk": {
+        "title": "OEE"
+      }
+    },
+    "nav": {
+      "path": "(window:oee-report)",
+      "params": [
+        {
+          "key": "model",
+          "is_query_param": true
+        }
+      ]
+    },
+    "items": [
+      {
+        "code": "producing_oee_planned_percentage",
+        "i18n": {
+          "de": {
+            "title": "OEE geplant"
+          },
+          "en": {
+            "title": "OEE planned"
+          },
+          "es": {
+            "title": "OEE planificado"
+          },
+          "fr": {
+            "title": "OEE planifié"
+          },
+          "nl": {
+            "title": "OEE gepland"
+          },
+          "uk": {
+            "title": "OEE заплановано"
+          }
+        }
+      }
+    ]
   }
 ]

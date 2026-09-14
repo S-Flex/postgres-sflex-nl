@@ -4,7 +4,7 @@
 -- (plan, progress, actual) is the lane_type of its lane. Timing is in
 -- seconds, that is the contract: no unit in the key. The duration is not
 -- stored: the board computes it from the item's own offsets and its work with
--- the duration formula of the view (action.formula 'duration-<view_code>'),
+-- the duration formula of the view (schedule.formula 'duration-<view_code>'),
 -- the way it chains items with the lag formula.
 create table schedule.lane_item
 (
@@ -24,15 +24,23 @@ create table schedule.lane_item
 			check (end_offset >= 0 and end_offset <= 86399),
 	-- seconds per unit of the work
 	production_impact_per_unit numeric,
+	-- setup before and teardown after the work, in seconds, from catalog.item_group_resource
+	-- (the item groups of the work on the machine of the lane)
+	lead_in integer,
+	lead_out integer,
 	-- what is planned (§3.1); null on a step item that inherits it from its
 	-- predecessor (§3.3)
 	data_json jsonb,
+	created_at timestamp with time zone default now() not null,
+	updated_at timestamp with time zone default now() not null,
 	unique (lane_id, sort_order)
 );
 
 comment on table schedule.lane_item is 'The block of work on a lane. data_json says what: material or imposition group, nest moment, batches with nests, selected orderlines, summary. Null data_json = inherited along lane_item_dependency. History and status live in schedule.lane_item_event; the kind (plan, progress, actual) is the lane''s lane_type.';
 comment on column schedule.lane_item.start_offset is 'Seconds since the local midnight of the lane day. Null: no time of its own, the board chains it after its predecessor with the lag formula.';
 comment on column schedule.lane_item.end_offset is 'Seconds since the local midnight of the lane day. Null: the board computes it with the duration formula of the view; set by the planner (event resized) or a split.';
+comment on column schedule.lane_item.lead_in is 'Setup seconds before the work: catalog.item_group_resource.lead_in of the work''s item groups on the machine of the lane.';
+comment on column schedule.lane_item.lead_out is 'Teardown seconds after the work: catalog.item_group_resource.lead_out of the work''s item groups on the machine of the lane.';
 
 alter table schedule.lane_item owner to xfw3;
 

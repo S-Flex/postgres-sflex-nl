@@ -753,5 +753,33 @@
         }
       ]
     }
+  },
+  {
+    "code": "oee-report",
+    "main": {
+      "grid": {
+        "rows": "auto 1fr",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "oee_report_filter"
+        },
+        {
+          "data_group": "oee_report"
+        }
+      ]
+    },
+    "footer": {
+      "grid": {
+        "rows": "auto",
+        "gap": "0.5rem"
+      },
+      "sections": [
+        {
+          "data_group": "status_bar"
+        }
+      ]
+    }
   }
 ]

@@ -73,7 +73,7 @@ begin
         select
             gi.resource_uid,
             sum(gi.duration_seconds) as total_impact_seconds
-        from log.get_resource_plan_impact(
+        from log.get_resource_plan_calibrated(
             null::text[], null::timestamptz, p_until, p_model
         ) gi
         group by gi.resource_uid

@@ -25,7 +25,7 @@ begin
         -- select i.resource_uid, i.state, i.group_state, i.layout_name, i.step, i.name,
         --        i.nest_name, i.filename, i.page_number,
         --        i.batch_id, i.batch_name, i.data, i.start_at, i.offset_seconds, i.duration_seconds
-        -- from log.get_resource_plan_impact(p_resource_uids, p_from, p_until, p_line_type) i
+        -- from log.get_resource_plan_calibrated(p_resource_uids, p_from, p_until, p_line_type) i
     )
     select t.resource_uid,
            -- the state's single class_name becomes a class_names array, as on

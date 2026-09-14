@@ -539,7 +539,7 @@
         "class_name": "plan-batch"
       },
       {
-        "code": "impact",
+        "code": "plan_calibrated",
         "block": {
           "i18n": {
             "de": {

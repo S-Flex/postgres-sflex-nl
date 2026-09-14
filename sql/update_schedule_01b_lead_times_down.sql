@@ -1,3 +1,126 @@
+-- Rollback of sql/update_schedule_01b_lead_times.sql: the five columns of
+-- item_group_resource and the four of lane_item go, both functions back to
+-- the version of step 0 and 1.
+BEGIN;
+
+ALTER TABLE schedule.lane_item
+    DROP COLUMN lead_in, DROP COLUMN lead_out, DROP COLUMN created_at, DROP COLUMN updated_at;
+
+ALTER TABLE catalog.item_group_resource
+    DROP COLUMN tenant_id, DROP COLUMN lead_in, DROP COLUMN lead_out,
+    DROP COLUMN item_group_json, DROP COLUMN updated_at;
+COMMENT ON TABLE catalog.item_group_resource IS 'The machines (or branches of the resource tree) that can do the work of an item group. step is the third label of resource_path. Source of the steps and candidate machines in legacy.nest.manifest_json.';
+
+-- ============ sql/legacy/create_nest_manifest.sql (step 0) ============
+-- The fold of legacy.imposition_unit_manifest into legacy.nest.manifest_json
+-- (docs/plan-planning-schema.md §3): the imposition group of the sheet
+-- (legacy.get_imposition_group over its option codes), its item code paths,
+-- and one entry per production step. The step and the machines of a row come
+-- from catalog.item_group_resource: the item of the xbom row belongs to an
+-- item group, the group names the machines (resource paths) that can do its
+-- work, and the third label of such a path is the step. A row whose item
+-- group names no machine is the sheet itself (or has no capability mapping
+-- yet) and stays out of steps[]. The candidate machines of a step are the
+-- paths of that step under the same site and line as the nest's production
+-- line (site.tenant.abb, relation.production_line.line_type), every path of
+-- the step when the line is unknown.
+--
+-- Reads the manifest rows, writes only legacy.nest. Called at the end of
+-- legacy.create_imposition_unit_manifest, and on its own by
+-- legacy.backfill_nest_manifest (the rows already exist, only the fold is
+-- missing). Every requested nest is written, also one without rows: its
+-- manifest becomes null, so a stale manifest never survives a re-nest.
+drop function if exists legacy.create_nest_manifest(bigint[]);
+
+create function legacy.create_nest_manifest(p_nest_ids bigint[]) returns void
+	language sql
+as $$
+WITH step_order AS (
+    -- the order of the steps, for the order of steps[]
+    SELECT s.value ->> 'step' AS step, (s.value ->> 'order')::integer AS step_order
+    FROM relation.lookup lk
+    CROSS JOIN LATERAL jsonb_array_elements(lk.lookup_json) AS s(value)
+    WHERE lk.lookup = 'lookup_step_category'
+),
+nest_line AS (
+    -- the site and line of the nest: site.tenant.abb of the production
+    -- line's tenant plus the line type, the first two labels of a path
+    SELECT n.nest_id,
+           CASE WHEN t.abb IS NOT NULL AND pl.line_type IS NOT NULL
+                THEN text2ltree(t.abb || '.' || pl.line_type) END AS site_line
+    FROM legacy.nest n
+    LEFT JOIN relation.production_line pl ON pl.line_id = (n.nest_json ->> 'production_line_id')::integer
+    LEFT JOIN site.tenant t ON t.tenant_id = pl.tenant_id
+    WHERE n.nest_id = ANY (p_nest_ids)
+),
+row_step AS (
+    -- the steps of each row: the item of the row belongs to an item group,
+    -- the group names its machines (catalog.item_group_resource), the
+    -- third label of a machine path is the step. Only the machines on the
+    -- nest's site and line count when the line is known. A row can name
+    -- several steps (a group with print and cut machines); a row without
+    -- a mapping names none
+    SELECT m.imposition_id, m.option_code, m.production_impact_per_unit, m.config_json,
+           igr.step, igr.resource_path
+    FROM legacy.imposition_unit_manifest m
+    JOIN nest_line nl ON nl.nest_id = m.imposition_id
+    LEFT JOIN catalog.item i ON i.item_code = m.item_code
+    LEFT JOIN catalog.item_group_resource igr
+           ON igr.item_group_code = i.item_group_code
+          AND (nl.site_line IS NULL OR subpath(igr.resource_path, 0, 2) = nl.site_line)
+    WHERE m.imposition_id = ANY (p_nest_ids)
+),
+step_agg AS (
+    SELECT rs.imposition_id,
+           jsonb_agg(jsonb_build_object(
+               'step',                       rs.step,
+               'option_codes',               rs.option_codes,
+               'production_impact_per_unit', rs.production_impact_per_unit,
+               'config',                     rs.config,
+               'resource_paths',             rs.resource_paths)
+               ORDER BY so.step_order NULLS LAST, rs.step) AS steps
+    FROM (SELECT r.imposition_id, r.step,
+                 (SELECT jsonb_agg(DISTINCT x.option_code) FROM (SELECT r2.option_code FROM row_step r2
+                   WHERE r2.imposition_id = r.imposition_id AND r2.step = r.step) x) AS option_codes,
+                 (SELECT sum(x.production_impact_per_unit) FROM (SELECT DISTINCT r2.option_code, r2.production_impact_per_unit
+                   FROM row_step r2 WHERE r2.imposition_id = r.imposition_id AND r2.step = r.step) x) AS production_impact_per_unit,
+                 -- the settings of the step: every config key of its rows
+                 coalesce((SELECT jsonb_object_agg(c.key, c.value)
+                           FROM (SELECT DISTINCT r2.option_code, r2.config_json FROM row_step r2
+                                 WHERE r2.imposition_id = r.imposition_id AND r2.step = r.step) x
+                           CROSS JOIN LATERAL jsonb_each(x.config_json) AS c(key, value)), '{}'::jsonb) AS config,
+                 -- the machines of the step: the union over the item groups of its rows
+                 jsonb_agg(DISTINCT ltree2text(r.resource_path)) AS resource_paths
+          FROM row_step r
+          WHERE r.step IS NOT NULL
+          GROUP BY r.imposition_id, r.step) rs
+    LEFT JOIN step_order so ON so.step = rs.step
+    GROUP BY rs.imposition_id
+),
+group_of AS (
+    SELECT m.imposition_id,
+           legacy.get_imposition_group(array_agg(DISTINCT m.option_code)) AS imposition_group_id
+    FROM legacy.imposition_unit_manifest m
+    WHERE m.imposition_id = ANY (p_nest_ids)
+    GROUP BY m.imposition_id
+)
+UPDATE legacy.nest n
+SET manifest_json = CASE WHEN g.imposition_id IS NULL THEN NULL
+                         ELSE jsonb_build_object(
+                             'imposition_group_id', g.imposition_group_id,
+                             'item_code_paths',     coalesce((SELECT jsonb_agg(ltree2text(p)) FROM unnest(ig.item_code_paths) AS p), '[]'::jsonb),
+                             'steps',               coalesce(sa.steps, '[]'::jsonb))
+                    END
+FROM nest_line nl
+LEFT JOIN group_of g ON g.imposition_id = nl.nest_id
+LEFT JOIN legacy.imposition_group ig ON ig.imposition_group_id = g.imposition_group_id
+LEFT JOIN step_agg sa ON sa.imposition_id = nl.nest_id
+WHERE n.nest_id = nl.nest_id;
+$$;
+
+alter function legacy.create_nest_manifest(bigint[]) owner to xfw3;
+
+-- ============ sql/schedule/get_schedule_lane_items.sql (without the lead columns, on schedule.get_formula) ============
 -- The items of the schedule boards (docs/plan-planning-schema.md §4): one row
 -- per item on the lanes whose day is in view. The kind of an item (plan,
 -- progress, actual) is the lane_type of its lane; step 1 stores plan lanes
@@ -33,7 +156,7 @@
 drop function if exists schedule.get_schedule_lane_items(date, date, text, integer[], text[], text[], text, integer);
 
 create function schedule.get_schedule_lane_items(p_from date DEFAULT current_date, p_until date DEFAULT current_date, p_line_type text DEFAULT NULL::text, p_tenant_ids integer[] DEFAULT NULL::integer[], p_steps text[] DEFAULT NULL::text[], p_types text[] DEFAULT NULL::text[], p_view_code text DEFAULT 'nest-time-scale'::text, p_domain_id integer DEFAULT 1)
-    returns TABLE(plan_id bigint, lane_id bigint, lane_date date, step text, resource_path ltree, lane_type text, type_json jsonb, lane_item_id bigint, sort_order numeric, start_offset integer, end_offset integer, production_impact_per_unit numeric, lead_in integer, lead_out integer, status text, status_at timestamp with time zone, is_inherited boolean, data_json jsonb, class_names text[], summary jsonb, duration_formula jsonb, lag_formula jsonb)
+    returns TABLE(plan_id bigint, lane_id bigint, lane_date date, step text, resource_path ltree, lane_type text, type_json jsonb, lane_item_id bigint, sort_order numeric, start_offset integer, end_offset integer, production_impact_per_unit numeric, status text, status_at timestamp with time zone, is_inherited boolean, data_json jsonb, class_names text[], summary jsonb, duration_formula jsonb, lag_formula jsonb)
     stable
     language plpgsql
 as $$
@@ -77,7 +200,7 @@ BEGIN
     item AS (
         SELECT ln.plan_id, ln.lane_id, ln.lane_date, ln.step, ln.resource_path, ln.lane_type,
                li.lane_item_id, li.sort_order,
-               li.start_offset, li.end_offset, li.production_impact_per_unit, li.lead_in, li.lead_out,
+               li.start_offset, li.end_offset, li.production_impact_per_unit,
                li.data_json IS NULL AS is_inherited,
                coalesce(li.data_json, schedule.get_lane_item_data(li.lane_item_id)) AS data_json
         FROM schedule.lane_item li
@@ -123,7 +246,7 @@ BEGIN
     )
     SELECT i.plan_id, i.lane_id, i.lane_date, i.step, i.resource_path,
            i.lane_type, tr.type_json,
-           i.lane_item_id, i.sort_order, i.start_offset, i.end_offset, i.production_impact_per_unit, i.lead_in, i.lead_out,
+           i.lane_item_id, i.sort_order, i.start_offset, i.end_offset, i.production_impact_per_unit,
            coalesce(ev.status, 'plan'), ev.moved_at,
            i.is_inherited, i.data_json,
            (SELECT array_agg(c) FROM (
@@ -157,3 +280,5 @@ END;
 $$;
 
 alter function schedule.get_schedule_lane_items(date, date, text, integer[], text[], text[], text, integer) owner to xfw3;
+
+COMMIT;

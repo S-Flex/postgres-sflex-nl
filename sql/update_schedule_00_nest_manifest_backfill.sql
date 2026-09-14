@@ -1,76 +1,14 @@
--- Step 0 of docs/plan-planning-schema.md: the nest manifest.
---   1. catalog.item_group_resource: which machines (resource paths) can do
---      the work of an item group; the third label of a path is the step.
---      Created when missing; when it exists it has to carry item_group_code,
---      resource_path and step, or the script stops. Its rows are data: one
---      row per item group and machine or branch (site.line.step...).
---   2. legacy.nest.manifest_json: the imposition group, item code paths and
---      production steps of a sheet, with the candidate machines per step,
---      from that table.
---   3. legacy.create_nest_manifest folds the rows into it; legacy.create_imposition_unit_manifest calls it after its rows.
---   4. Backfill: legacy.backfill_nest_manifest, the nests nested in the last 30
---      days, 200 per transaction (a long transaction deadlocks with the nest sync). A nest
---      whose item groups have no rows in item_group_resource yet gets an
---      empty steps[]; CALL the procedure again after filling the table.
--- The lag rows in action.formula ('lag-<view_code>') are read in step 1.
--- Rollback: sql/update_schedule_00_nest_manifest_down.sql (keeps the table).
+-- Step 0 of docs/plan-planning-schema.md, second part: the backfill of
+-- legacy.nest.manifest_json, after the first run deadlocked with the nest sync.
+-- The table, the column and the function of update_schedule_00_nest_manifest.sql
+-- are already in (committed before the backfill); this script only
+--   1. moves the fold into its own function legacy.create_nest_manifest, which
+--      writes legacy.nest only; legacy.create_imposition_unit_manifest calls it
+--   2. adds the procedure legacy.backfill_nest_manifest: the fold per 200
+--      nests, a commit per batch, a deadlocked batch retried
+--   3. runs it for the last 30 days, in autocommit mode
+-- Rollback: sql/update_schedule_00_nest_manifest_down.sql (drops both).
 BEGIN;
-
--- ============ sql/catalog/item_group_resource.sql ============
-DO $guard$
-BEGIN
-    IF to_regclass('catalog.item_group_resource') IS NOT NULL THEN
-        IF (SELECT count(*) FROM information_schema.columns
-            WHERE table_schema = 'catalog' AND table_name = 'item_group_resource'
-              AND column_name IN ('item_group_code', 'resource_path', 'step')) < 3 THEN
-            RAISE EXCEPTION 'catalog.item_group_resource exists without item_group_code, resource_path and step; align it with sql/catalog/item_group_resource.sql first';
-        END IF;
-        RAISE NOTICE 'catalog.item_group_resource exists, kept as is';
-    END IF;
-END
-$guard$;
-
--- Which machines can do the work of an item group: one row per item group
--- and resource path. The path is a machine or a branch of the resource tree
--- (docs/resource-path.md, site.line.step.…), so one row can cover every
--- machine of a step on a line. The step is the third label of the path,
--- stored as a generated column so it can be indexed and joined without
--- relation.resource.
---
--- Read by legacy.create_imposition_unit_manifest: the item groups of the xbom
--- rows of a sheet say which steps the sheet goes through and on which
--- machines (legacy.nest.manifest_json steps[]); the planning makes the step
--- items from that (docs/plan-planning-schema.md §3.2).
-create table if not exists catalog.item_group_resource
-(
-	item_group_resource_id bigint generated always as identity
-		primary key,
-	item_group_code text not null
-		references catalog.item_group (item_group_code),
-	-- a machine or a branch: at least site.line.step
-	resource_path ltree not null
-		constraint item_group_resource_path_check
-			check (nlevel(resource_path) >= 3),
-	-- the third label of the path, the step of the work
-	step text generated always as (ltree2text(subpath(resource_path, 2, 1))) stored,
-	created_at timestamp with time zone default now() not null,
-	unique (item_group_code, resource_path)
-);
-
-comment on table catalog.item_group_resource is 'The machines (or branches of the resource tree) that can do the work of an item group. step is the third label of resource_path. Source of the steps and candidate machines in legacy.nest.manifest_json.';
-
-alter table catalog.item_group_resource owner to xfw3;
-
-create index if not exists idx_item_group_resource_step
-	on catalog.item_group_resource (step);
-
-create index if not exists idx_item_group_resource_path
-	on catalog.item_group_resource using gist (resource_path);
-
--- ============ legacy.nest.manifest_json ============
-ALTER TABLE legacy.nest ADD COLUMN IF NOT EXISTS manifest_json jsonb;
-
-COMMENT ON COLUMN legacy.nest.manifest_json IS 'The manifest of the sheet: its imposition group and item code paths, and per production step the option codes, the candidate machines (resource_paths from catalog.item_group_resource, same site and line as the nest) and the seconds per sheet. Written by legacy.create_imposition_unit_manifest; the planning (schedule.crud_lane_item) makes the step items and their dependencies from steps[].';
 
 -- ============ sql/legacy/create_nest_manifest.sql ============
 -- The fold of legacy.imposition_unit_manifest into legacy.nest.manifest_json

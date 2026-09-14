@@ -16,7 +16,7 @@ the cleanup. Every step is additive; the switch is one script with a mirrored ro
 Contract: **every timing is in seconds**, no `_in_seconds` in a key: `start_offset`,
 `end_offset`, `duration`, `lag`. Stored are `start_offset` and `end_offset`; `duration` and
 `lag` are computed on the board with the `duration_formula` and `lag_formula` of the view
-(`action.formula`, codes `duration-<view_code>` and `lag-<view_code>`).
+(`schedule.formula`, codes `duration-<view_code>` and `lag-<view_code>`).
 
 Gone: `action.object` (pv2 planning), `plan.steps`, `plan.plan_date`, `plan_lane`,
 `imposition_group_lane`, `imposition_group_lane_item`, `batch_lane_item` (into `data_json`),
@@ -49,7 +49,10 @@ schedule.lane_item              the block of work on a lane; its kind is the lan
   start_offset                integer                        -- seconds from the start of the lane day
   end_offset                  integer                        -- seconds from the start of the lane day
   production_impact_per_unit  numeric                        -- seconds per unit of the work
+  lead_in                     integer                        -- setup seconds on the machine of the lane (catalog.item_group_resource)
+  lead_out                    integer                        -- teardown seconds, same source
   data_json                   jsonb                          -- null: inherited, see §3.3
+  created_at, updated_at      timestamptz not null default now()
   unique (lane_id, sort_order)
 
 schedule.lane_item_dependency   many-to-many, from = predecessor
@@ -77,8 +80,10 @@ moved, resized, split, copied, selected, placed, status-changed, deleted: what w
 it). Every event carries the status after it; `placed` (nests placed) sets `nested`, the
 release button writes `status-changed` with status `released`.
 
-`action.formula`, `action.lookup`, `action.dates`, `action.non_working_times`,
-`action.cutoff_time`, `action.week_team` stay where they are.
+`action.lookup`, `action.dates`, `action.non_working_times`,
+`action.cutoff_time`, `action.week_team` stay where they are. The duration and lag formulas live in
+`schedule.formula` (step 1c, 13 Sep: `action.formula` moved into the schema, read by `schedule.get_formula`);
+`production.formula` is the production twin of `catalog.formula`, made in the same step, nothing reads it yet.
 
 ## 3. data_json
 
@@ -193,7 +198,7 @@ Both `stable`, `#variable_conflict use_column`.
 | function | replaces | returns |
 |---|---|---|
 | `schedule.get_schedule_lane(p_from, p_until, p_line_type, p_tenant_ids, p_steps, p_types)` | `action.get_plan_lanes_imposition_group`, `action.get_plan_lanes_resource` | one row per lane in `v_dates`: `lane_id`, `lane_date`, `step`, `resource_path`, `lane_type`, `type_json`, `resource_uid`, `resource_name`, `tenant_id`, `sort_order`, `param_json`, `formula` (from `production.resource_setting`) |
-| `schedule.get_schedule_lane_items(p_from, p_until, p_line_type, p_tenant_ids, p_steps, p_types, p_view_code)` | `action.get_resource_plan`, `mock.get_impose_plan` | one row per item on those lanes: the columns of §2 with the lane's `lane_type` and `type_json`, `status`, `data_json` own or inherited, `class_names`, `summary`, `duration_formula` and `lag_formula` (the active `action.formula` rows `duration-<view_code>` and `lag-<view_code>`, yours); progress and actual lanes follow in step 3 |
+| `schedule.get_schedule_lane_items(p_from, p_until, p_line_type, p_tenant_ids, p_steps, p_types, p_view_code)` | `action.get_resource_plan`, `mock.get_impose_plan` | one row per item on those lanes: the columns of §2 with the lane's `lane_type` and `type_json`, `status`, `data_json` own or inherited, `class_names`, `summary`, `duration_formula` and `lag_formula` (the active `production.formula` rows `duration-<view_code>` and `lag-<view_code>`, yours); progress and actual lanes follow in step 3 |
 
 79 (inflow) keeps `mapping.get_production_orderline_manifest` and gets `lane_item_id` from
 `schedule.lane_item` instead of `action.lane_item`: a `src` change, no new function.
@@ -221,6 +226,11 @@ within minutes. Advice:
 If you would rather have one stored `summary` for everything, the daily refresh would have to
 recompute every unreleased item, and the board would still be hours behind on new orders.
 
+Also open (13 Sep): a step item on one machine can carry several item groups (print-method
+and surface-finish on one printer). `lane_item.lead_in` / `lead_out` is then the sum or the max of
+their `catalog.item_group_resource` values; `crud_lane_item` (step 2) needs the rule. Advice: max, the
+machine is set up once.
+
 ## 6. steps
 
 Each step: `sql/update_schedule_<nn>_<name>.sql` and `..._down.sql`, assembled from the
@@ -228,17 +238,18 @@ object files in `sql/schedule/` (one file per table and function, as everywhere 
 Nothing touches `action.*` before step 4. I deliver, you run, I wait.
 
 **Delivered 12 Sep, waiting to be run:** step 0 (`update_schedule_00_nest_manifest.sql`) and
-step 1 (`update_schedule_01_schema.sql`). Step 0 creates `catalog.item_group_resource`
-(`sql/catalog/item_group_resource.sql`: item group → machine or branch path, the step is the
-third label) when it is missing; the steps and machines of a nest come from the item groups
-of its xbom rows through that table, so a nest whose groups have no rows yet gets an empty
-`steps[]`; rerun the backfill block after filling it. Step 1's `get_schedule_lane_items` serves
-the plan rows; progress and actual rows come with step 3. The lag rows go in `action.formula`
+step 1 (`update_schedule_01_schema.sql`). Step 0 created
+`catalog.item_group_resource` (item group -> machine or branch path, the step is the third
+label); step 1b (13 Sep, `update_schedule_01b_lead_times.sql`) makes it the tenant side of the
+global item groups: `tenant_id`, `lead_in` and `lead_out` in seconds, `item_group_json`
+overrides. The steps and machines of a nest come from the item groups of its xbom rows through
+that table, for the tenant of the nest, so a nest whose groups have no rows yet gets an empty `steps[]`; `CALL legacy.backfill_nest_manifest()` again after filling it (a commit per 200 nests; one long transaction deadlocked with the nest sync on 12 Sep). Step 1's `get_schedule_lane_items` serves
+the plan rows; progress and actual rows come with step 3. The lag rows go in `schedule.formula`
 as `formula_code = 'lag-<view_code>'`, `formula_json` the rule list.
 
 | step | what | rollback | done when |
 |---|---|---|---|
-| 0 | `alter table legacy.nest add column manifest_json jsonb`; `legacy.create_imposition_unit_manifest` writes it per scope: `item_code_paths`, `step`, `resource_paths`, `production_impact_per_unit`, `config`; backfill the nest window; your lag rows in `action.formula` per view code | drop the column, redeploy the function | every nest of the window has `step` and `resource_paths` per scope |
+| 0 | `alter table legacy.nest add column manifest_json jsonb`; `legacy.create_imposition_unit_manifest` writes it per scope: `item_code_paths`, `step`, `resource_paths`, `production_impact_per_unit`, `config` (fold in `legacy.create_nest_manifest`); backfill the nest window with `legacy.backfill_nest_manifest`; your lag rows in `production.formula` per view code | drop the column, redeploy the function | every nest of the window has `step` and `resource_paths` per scope |
 | 1 | schema `schedule`, the five tables of §2; lookup `lookup_lane_item_event_type` in `action.lookup` (`json/lookup/action/lookup_lane_item_event_type.json`, i18n titles by Cees); the two reads of §4 and `get_lane_item_data`; `site.data_table` rows | `drop schema schedule cascade`, delete the lookup and the data_table rows | reads run on the empty schema without error |
 | 2 | `generate_day` and `crud_lane_item`; backfill today + 14 days per line type in a DO block; `site.refresh_derived_data` calls `generate_day` **next to** `mock.generate_plan`; `legacy.crud_nest` calls `crud_lane_item` **next to** its `batch_lane_item` block; backfill the nests of the window | remove both calls, drop the functions, truncate the schema | per day, line type and step: the same items as `action`; every `batch_lane_item.nest_ids` of the window is in exactly one `batches[].nest_ids`; step items and edges per manifest step |
 | 3 | new data_groups next to the old ones: `schedule_lane_items` (76 and 81 as one board, steps per page as section `params`), `schedule_lane_items_filter` (82), `schedule_print_schedule` (75), 79 on the new `src`; pages `nest-schedule` and `production-schedule` next to the current pages; handoff §7. Then a week of parallel run with the read-only compare script `sql/schedule/check_parallel.sql` | delete the new data_groups and pages | the new pages show the same labels and items as 76 and 81; differences explained |
@@ -248,13 +259,18 @@ as `formula_code = 'lag-<view_code>'`, `formula_json` the rule list.
 ## 7. decided 12 Sep
 
 1. `legacy.nest.manifest_json` as in step 0.
-2. `lag_formula` from `action.formula`, keyed on `p_view_code`; Cees writes the rows.
+2. `lag_formula` from `schedule.formula`, keyed on `p_view_code`; Cees writes the rows.
    No `_in_seconds` anywhere; seconds are the contract.
 3. One `schedule.plan` per `(line_type, tenant_ids)`; a lane hangs under one plan.
 4. Schema `schedule`; the old tables stay in `action`.
 5. `is_pinned` and `day_offset` are gone; the drop contract loses `is_pinned_field`.
 7. The log side keeps reading `action.object`; the schedule is not logged for now.
 8. Copy and split as in §3.2.
+ 9. (13 Sep) `catalog.item_group` and `catalog.item` are global; `catalog.item_group_resource` is
+   the tenant side: `tenant_id`, `resource_path`, generated `step`, `lead_in`, `lead_out`,
+   `item_group_json` overrides. `lane_item` has `lead_in`, `lead_out`,
+   `created_at`, `updated_at`; `crud_lane_item` fills the leads from the item groups of the work
+   on the machine of the lane.
 
 ## 8. frontend handoff (step 3, compact)
 

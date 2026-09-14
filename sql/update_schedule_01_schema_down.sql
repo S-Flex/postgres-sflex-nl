@@ -11,6 +11,9 @@ DELETE FROM action.lookup WHERE lookup = 'lookup_lane_item_event_type';
 
 DROP FUNCTION IF EXISTS action.get_formula(text[], timestamp with time zone);
 
+-- the formula table moved in from action (step 1c) goes back before the schema falls
+ALTER TABLE IF EXISTS schedule.formula SET SCHEMA action;
+
 DROP SCHEMA IF EXISTS schedule CASCADE;
 
 COMMIT;

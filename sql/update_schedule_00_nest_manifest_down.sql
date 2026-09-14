@@ -1,8 +1,11 @@
 -- Rollback of sql/update_schedule_00_nest_manifest.sql: the column goes, the
--- function is the version before step 0 (repo HEAD of 12 Sep 2026).
+-- backfill procedure and the fold function go, the manifest function is the
+-- version before step 0 (repo HEAD of 12 Sep 2026).
 BEGIN;
 
 ALTER TABLE legacy.nest DROP COLUMN IF EXISTS manifest_json;
+DROP PROCEDURE IF EXISTS legacy.backfill_nest_manifest(integer, integer);
+DROP FUNCTION IF EXISTS legacy.create_nest_manifest(bigint[]);
 
 -- ============ sql/legacy/create_imposition_unit_manifest.sql (before step 0) ============
 -- Rebuild the manifest of the given impositions. Same delete-insert shape as

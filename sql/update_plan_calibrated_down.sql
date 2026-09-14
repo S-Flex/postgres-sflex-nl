@@ -1,9 +1,250 @@
+-- Rollback of sql/update_plan_calibrated.sql: lookup code back to impact in
+-- both lookups, the function back to log.get_resource_plan_impact, the caller
+-- and the aggregator the version before the change (no plan_calibrated row),
+-- the plan_calibrated rows of the aggregate deleted.
+BEGIN;
+
+UPDATE relation.lookup lk
+SET lookup_json = (
+    SELECT jsonb_agg(
+               CASE WHEN g.value ? 'states' THEN
+                   jsonb_set(g.value, '{states}',
+                       (SELECT jsonb_agg(
+                                   CASE WHEN s.value ->> 'code' = 'plan_calibrated'
+                                        THEN s.value || '{"code": "impact"}'::jsonb
+                                        ELSE s.value END
+                                   ORDER BY s.ordinality)
+                        FROM jsonb_array_elements(g.value -> 'states') WITH ORDINALITY AS s))
+               ELSE g.value END
+               ORDER BY g.ordinality)
+    FROM jsonb_array_elements(lk.lookup_json) WITH ORDINALITY AS g)
+WHERE lk.lookup = 'lookup_resource_state';
+
+UPDATE log.lookup lk
+SET lookup_json = (
+    SELECT jsonb_agg(
+               CASE WHEN s.value ->> 'code' = 'plan_calibrated'
+                    THEN s.value || '{"code": "impact"}'::jsonb
+                    ELSE s.value END
+               ORDER BY s.ordinality)
+    FROM jsonb_array_elements(lk.lookup_json) WITH ORDINALITY AS s)
+WHERE lk.lookup = 'lookup_resource_state';
+
+DELETE FROM log.state_shift_agg WHERE state = 'plan_calibrated';
+
+DROP FUNCTION IF EXISTS log.get_resource_plan_calibrated(text[], timestamp with time zone, timestamp with time zone, text);
+DROP FUNCTION IF EXISTS log.get_resource_state_current(timestamp with time zone, text);
+
+-- ============ sql/log/get_resource_plan_impact.sql (before) ============
+create function log.get_resource_plan_impact(p_resource_uids text[] DEFAULT NULL::text[], p_from timestamp with time zone DEFAULT NULL::timestamp with time zone, p_until timestamp with time zone DEFAULT now(), p_line_type text DEFAULT NULL::text) returns TABLE(resource_uid text, state jsonb, group_state jsonb, layout_name text, step text, name text, nest_name text, filename text, page_number integer, batch_id integer, batch_name text, data jsonb, start_at timestamp with time zone, offset_seconds numeric, duration_seconds numeric)
+	stable
+	language sql
+as $$
+    with profile_speed as (
+        select distinct on (vc.resource_uid, vc.width, vc.height, vc.sides, vc.material_id)
+            vc.resource_uid,
+            vc.width,
+            vc.height,
+            vc.sides,
+            vc.material_id,
+            vc.data_json
+        from mapping.v_resource_capacity vc
+        where vc.is_fastest_profile
+        order by vc.resource_uid, vc.width, vc.height, vc.sides, vc.material_id
+    )
+    select
+        grpb.resource_uid,
+        (select s.value
+         from relation.lookup lk,
+              jsonb_array_elements(lk.lookup_json)        as ss(value),
+              jsonb_array_elements(ss.value -> 'states')  as s(value)
+         where lk.lookup = 'lookup_resource_state'
+           and s.value ->> 'code' = 'impact'
+         limit 1)                                          as state,
+        (select gs.value
+         from relation.lookup lk,
+              jsonb_array_elements(lk.lookup_json)        as gs(value)
+         where lk.lookup = 'lookup_resource_group_state'
+           and gs.value ->> 'code' = (
+               select s.value ->> 'group'
+               from relation.lookup lk2,
+                    jsonb_array_elements(lk2.lookup_json)        as ss(value),
+                    jsonb_array_elements(ss.value -> 'states')   as s(value)
+               where lk2.lookup = 'lookup_resource_state'
+                 and s.value ->> 'code' = 'impact'
+               limit 1
+           )
+         limit 1)                                          as group_state,
+        grpb.layout_name,
+        grpb.step,
+        grpb.name,
+        grpb.nest_name,
+        null::text,
+        grpb.page_number,
+        grpb.batch_id,
+        grpb.batch_name,
+        grpb.data,
+        grpb.start_at,
+        grpb.offset_seconds,
+        sum(
+            (ba ->> 'total_amount')::int
+            * (ps.data_json ->> 'duration')::numeric
+            * 60
+        )                                                  as duration_seconds
+    from log.get_resource_plan_batch(p_resource_uids, p_from, p_until, p_line_type) grpb
+    join profile_speed ps
+        on ps.resource_uid = grpb.resource_uid
+       and ps.width = greatest(
+               trunc((grpb.data ->> 'width')::numeric)::integer,
+               trunc((grpb.data ->> 'height')::numeric)::integer
+           )
+       and ps.height = least(
+               trunc((grpb.data ->> 'width')::numeric)::integer,
+               trunc((grpb.data ->> 'height')::numeric)::integer
+           )
+       and ps.material_id = (grpb.data ->> 'material_id')::integer
+    cross join jsonb_array_elements(grpb.data -> 'batched_amounts') as ba
+    where (grpb.data ->> 'material_id')::int is not null
+    group by
+        grpb.resource_uid, grpb.layout_name, grpb.step,
+        grpb.name, grpb.nest_name, grpb.page_number,
+        grpb.batch_id, grpb.batch_name, grpb.data, grpb.start_at,
+        grpb.offset_seconds;
+$$;
+
+alter function log.get_resource_plan_impact(text[], timestamp with time zone, timestamp with time zone, text) owner to xfw3;
+
+
+-- ============ sql/log/get_resource_state_current.sql (before) ============
+create function log.get_resource_state_current(p_until timestamp with time zone DEFAULT now(), p_model text DEFAULT NULL::text) returns TABLE(resource_uid text, state jsonb, layout_name text, type text, resource_name text, nest_name text, job_name text, page_number integer, start_at timestamp with time zone, offset_seconds numeric, duration_seconds numeric, capacity_sqm_per_day numeric, capacity_reserved_sqm numeric, capacity_left numeric, production_line_id integer)
+	stable
+	language plpgsql
+as $$
+#variable_conflict use_column
+declare
+    v_lookup_json jsonb;
+begin
+    select lk.lookup_json
+      into v_lookup_json
+      from relation.lookup lk
+     where lk.lookup = 'lookup_resource_state'
+     limit 1;
+
+    return query
+    with state_map as (
+        select g.value ->> 'code' as state_code, g.value as state_json
+        from   jsonb_array_elements(v_lookup_json) as g(value)
+        where  g.value ->> 'group' = 'actual'
+        union all
+        select s.value ->> 'code', s.value
+        from   jsonb_array_elements(v_lookup_json)       as g(value),
+               jsonb_array_elements(g.value -> 'states') as s(value)
+        where  s.value ->> 'group' = 'actual'
+    ),
+    offline_state as (
+        select state_json
+        from   state_map
+        where  state_code = 'offline'
+        limit  1
+    ),
+    all_resources as (
+        select res.resource_uid,
+               res.resource_json,
+               res.line_id
+        from   relation.resource        res
+        join   relation.production_line pl on pl.line_id = res.line_id
+        where  pl.model = p_model
+    ),
+    -- LATERAL LIMIT 1 leunt op idx_log_state_resource_start (resource_uid, start_at desc)
+    latest_log as (
+        select
+            ar.resource_uid,
+            ll.state,
+            ll.page_number,
+            ll.start_at
+        from all_resources ar
+        left join lateral (
+            select r.state,
+                   r.page_number,
+                   r.start_at
+            from   log.state r
+            where  r.resource_uid = ar.resource_uid
+              and  r.start_at < p_until
+            order by r.start_at desc
+            limit 1
+        ) ll on true
+    ),
+    capacity_per_resource as (
+        select
+            cap.resource_uid,
+            sum(cap.capacity_sqm_per_day) as capacity_sqm_per_day,
+            max(cap.param_hours_per_day)  as param_hours_per_day,
+            max(cap.param_oee)            as param_oee
+        from mapping.get_resource_weighted_capacity(
+            null::text[],
+            (current_date - 30)::date,
+            current_date::date
+        ) cap
+        group by cap.resource_uid
+    ),
+    impact_per_resource as (
+        select
+            gi.resource_uid,
+            sum(gi.duration_seconds) as total_impact_seconds
+        from log.get_resource_plan_impact(
+            null::text[], null::timestamptz, p_until, p_model
+        ) gi
+        group by gi.resource_uid
+    ),
+    reserved as (
+        select
+            cr.resource_uid,
+            cr.capacity_sqm_per_day,
+            round(
+                cr.capacity_sqm_per_day
+                / nullif(cr.param_hours_per_day * cr.param_oee * 3600, 0)
+                * coalesce(ir.total_impact_seconds, 0),
+                4
+            ) as capacity_reserved_sqm
+        from capacity_per_resource cr
+        left join impact_per_resource ir on ir.resource_uid = cr.resource_uid
+    )
+    select
+        ar.resource_uid,
+        coalesce(sm.state_json, os.state_json),
+        ar.resource_json ->> 'layout_name',
+        ar.resource_json ->> 'type',
+        ar.resource_json ->> 'name',
+        null::text,   -- nest_name
+        null::text,   -- job_name
+        ll.page_number,
+        coalesce(ll.start_at, p_until),
+        null::numeric,
+        null::numeric,
+        coalesce(rv.capacity_sqm_per_day, 0),
+        coalesce(rv.capacity_reserved_sqm, 0),
+        coalesce(rv.capacity_sqm_per_day, 0)
+        - coalesce(rv.capacity_reserved_sqm, 0),
+        ar.line_id
+    from        all_resources  ar
+    cross join  offline_state  os
+    left join   latest_log     ll on ll.resource_uid = ar.resource_uid
+    left join   state_map      sm on sm.state_code   = ll.state
+    left join   reserved       rv on rv.resource_uid = ar.resource_uid
+    order by
+        ar.resource_json ->> 'type' desc,
+        ar.resource_json ->> 'name',
+        coalesce(ll.start_at, p_until);
+end;
+$$;
+
+alter function log.get_resource_state_current(timestamp with time zone, text) owner to xfw3;
+
+
+-- ============ sql/log/upsert_state_shift_agg.sql (before, start_offset version) ============
 -- Rebuilds log.state_shift_agg for one date: delete-then-insert, so a state
 -- that no longer applies disappears instead of lingering next to its
 -- replacement.
--- Rows per shift and machine: the logged states, producing and starved.running
--- derived from them, planned (the pv2 items as planned) and plan_calibrated
--- (the same items timed at the machine's fastest profile speed).
 --
 -- p_resource_uids null rebuilds every resource of the date (the daily run in
 -- site.refresh_derived_data). With a list only those resources are rebuilt:
@@ -216,36 +457,6 @@ begin
        and p.end_at   > w.shift_start
       group by w.shift_index, w.shift_start, w.shift_end, p.resource_uid
   ),
-  -- the calibrated plan: the same pv2 items, timed at the fastest profile
-  -- speed of the machine for their nest size and material
-  -- (log.get_resource_plan_calibrated), clipped per window. The batch
-  -- function needs a resource list: null means every machine
-  calibrated_items as (
-      select c.resource_uid,
-             c.start_at,
-             c.start_at + c.duration_seconds * interval '1 second' as end_at
-      from log.get_resource_plan_calibrated(
-               coalesce(p_resource_uids, (select array_agg(r.resource_uid) from relation.resource r)),
-               v_from,
-               -- the batch function runs to the end of the day of p_until
-               v_from + interval '12 hours',
-               null) c
-  ),
-  calibrated_windowed as (
-      select w.shift_index,
-             w.shift_start,
-             w.shift_end,
-             c.resource_uid,
-             sum(extract(epoch from (
-                 least(c.end_at, w.shift_end) - greatest(c.start_at, w.shift_start)
-             )))::numeric as duration_seconds
-      from calibrated_items c
-      join window_res w
-        on w.resource_uid = c.resource_uid
-       and c.start_at < w.shift_end
-       and c.end_at   > w.shift_start
-      group by w.shift_index, w.shift_start, w.shift_end, c.resource_uid
-  ),
   -- the rows of the date. planned_output_sqm sits on the planned row,
   -- actual_output_sqm on the producing row; every other row carries null.
   -- Producing is the produced time inside the logged running state; a
@@ -296,10 +507,6 @@ begin
       select shift_index, shift_start, shift_end, resource_uid, 'planned', duration_seconds,
              planned_output_sqm, null
       from plan_windowed
-      union all
-      select shift_index, shift_start, shift_end, resource_uid, 'plan_calibrated', duration_seconds,
-             null, null
-      from calibrated_windowed
   )
   insert into log.state_shift_agg
       (shift_date, shift_index, resource_uid, state, shift_start, shift_end, duration_seconds,
@@ -326,3 +533,7 @@ $function$
 
 
 alter function log.upsert_state_shift_agg(date, text[]) owner to xfw3;
+
+COMMIT;
+SELECT log.upsert_state_shift_agg(current_date - 1) AS rows_yesterday;
+SELECT log.upsert_state_shift_agg(current_date)     AS rows_today;

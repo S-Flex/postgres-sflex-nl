@@ -88,6 +88,13 @@
         "environments": [
           "development"
         ]
+      },
+      {
+        "path": "/oee-report",
+        "code": "oee-report",
+        "environments": [
+          "development"
+        ]
       }
     ]
   },

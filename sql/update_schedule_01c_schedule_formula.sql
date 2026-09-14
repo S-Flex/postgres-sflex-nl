@@ -1,3 +1,54 @@
+-- Step 1c of docs/plan-planning-schema.md (13 Sep 2026): the formulas of the
+-- schedule boards live with the schedule.
+--   1. action.formula moves to schedule.formula (ALTER TABLE ... SET SCHEMA:
+--      rows, indexes and identity come along; it was empty). Reader
+--      schedule.get_formula (as-of, the rule of catalog.get_formula);
+--      action.get_formula (step 1) is dropped.
+--   2. schedule.get_schedule_lane_items reads schedule.get_formula.
+--   3. production.formula and production.get_formula: the production twin of
+--      catalog.formula, for the production rules; nothing reads it yet.
+-- Run after update_schedule_01b_lead_times.sql. Rollback: sql/update_schedule_01c_schedule_formula_down.sql.
+BEGIN;
+
+-- ============ sql/schedule/formula.sql ============
+ALTER TABLE action.formula SET SCHEMA schedule;
+COMMENT ON TABLE schedule.formula IS 'Versioned formulas of the schedule boards: one row per version of a code (duration-<view_code>, lag-<view_code>). Which version applies at a moment: the newest active or archived row created before it (schedule.get_formula). draft and pending-approval never apply.';
+
+DROP FUNCTION IF EXISTS action.get_formula(text[], timestamp with time zone);
+
+-- ============ sql/schedule/get_formula.sql ============
+-- The version of each schedule.formula code that applies at p_at: the newest
+-- active or archived row created at or before that moment (the rule of
+-- catalog.get_formula, on the schedule twin). Draft and pending-approval never
+-- apply. One row per code, none when no version applied yet. First reader:
+-- schedule.get_schedule_lane_items, for the lag formula of a view code
+-- (formula_code 'lag-<view_code>', docs/plan-planning-schema.md §7.2).
+drop function if exists schedule.get_formula(text[], timestamp with time zone);
+
+create function schedule.get_formula(p_formula_codes text[], p_at timestamp with time zone DEFAULT now())
+    returns TABLE(formula_code text, formula_id integer, version integer, version_status text, created_at timestamp with time zone, formula_json jsonb, formula_level integer)
+    stable
+    language sql
+as $$
+    WITH applying AS (
+        SELECT DISTINCT ON (f.formula_code)
+               f.formula_code, f.formula_id, f.version, f.version_status,
+               f.created_at, f.formula_json, f.formula_level
+        FROM schedule.formula f
+        WHERE f.formula_code = ANY (p_formula_codes)
+          AND f.version_status IN ('active', 'archived')
+          AND f.created_at <= p_at
+        ORDER BY f.formula_code, f.created_at DESC, f.version DESC
+    )
+    SELECT a.formula_code, a.formula_id, a.version, a.version_status,
+           a.created_at, a.formula_json, a.formula_level
+    FROM applying a
+    ORDER BY a.formula_level, a.formula_code;
+$$;
+
+alter function schedule.get_formula(text[], timestamp with time zone) owner to xfw3;
+
+-- ============ sql/schedule/get_schedule_lane_items.sql ============
 -- The items of the schedule boards (docs/plan-planning-schema.md §4): one row
 -- per item on the lanes whose day is in view. The kind of an item (plan,
 -- progress, actual) is the lane_type of its lane; step 1 stores plan lanes
@@ -157,3 +208,87 @@ END;
 $$;
 
 alter function schedule.get_schedule_lane_items(date, date, text, integer[], text[], text[], text, integer) owner to xfw3;
+
+-- ============ sql/production/formula.sql ============
+-- Versioned formulas of the production side, the twin of catalog.formula
+-- (the schedule boards have their own: schedule.formula). Same shape and same versioning as catalog.formula;
+-- which version applies at a moment is production.get_formula.
+create table production.formula
+(
+	formula_id integer generated always as identity
+		primary key,
+	-- the name a formula is known by; every version of it shares the code
+	formula_code text not null,
+	formula_json jsonb not null,
+	formula_level integer default 0 not null,
+	version integer default 1 not null,
+	version_status text default 'active'::text not null
+		constraint formula_version_status_check
+			check (version_status in ('draft', 'pending-approval', 'active', 'archived')),
+	created_at timestamp with time zone default now() not null,
+	unique (formula_code, version)
+);
+
+comment on table production.formula is 'Versioned formulas of production: one row per version of a code. Which version applies at a moment: the newest active or archived row created before it (production.get_formula). draft and pending-approval never apply. ';
+comment on column production.formula.version_status is 'draft -> pending-approval -> active -> archived. At most one active version per code; archived versions stay valid for what was created in their time.';
+comment on column production.formula.created_at is 'The moment this version starts to apply. Set it when the version becomes active, not when the draft is typed.';
+
+alter table production.formula owner to xfw3;
+
+-- one active version per code
+create unique index uq_production_formula_code_active
+	on production.formula (formula_code)
+	where (version_status = 'active');
+
+-- the as-of lookup: newest applying version of a code before a moment
+create index idx_production_formula_code_created
+	on production.formula (formula_code, created_at desc)
+	where (version_status in ('active', 'archived'));
+
+-- ============ sql/production/get_formula.sql ============
+-- The version of each production.formula code that applies at p_at: the newest
+-- active or archived row created at or before that moment (the rule of
+-- catalog.get_formula, on the production twin). Draft and pending-approval never
+-- apply. One row per code, none when no version applied yet.
+drop function if exists production.get_formula(text[], timestamp with time zone);
+
+create function production.get_formula(p_formula_codes text[], p_at timestamp with time zone DEFAULT now())
+    returns TABLE(formula_code text, formula_id integer, version integer, version_status text, created_at timestamp with time zone, formula_json jsonb, formula_level integer)
+    stable
+    language sql
+as $$
+    WITH applying AS (
+        SELECT DISTINCT ON (f.formula_code)
+               f.formula_code, f.formula_id, f.version, f.version_status,
+               f.created_at, f.formula_json, f.formula_level
+        FROM production.formula f
+        WHERE f.formula_code = ANY (p_formula_codes)
+          AND f.version_status IN ('active', 'archived')
+          AND f.created_at <= p_at
+        ORDER BY f.formula_code, f.created_at DESC, f.version DESC
+    )
+    SELECT a.formula_code, a.formula_id, a.version, a.version_status,
+           a.created_at, a.formula_json, a.formula_level
+    FROM applying a
+    ORDER BY a.formula_level, a.formula_code;
+$$;
+
+alter function production.get_formula(text[], timestamp with time zone) owner to xfw3;
+
+COMMIT;
+
+-- ============ check ============
+-- expected: schedule.formula, production.formula; get_formula in schedule and production, not in action
+SELECT n.nspname || '.' || c.relname AS obj FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+WHERE c.relname = 'formula' AND n.nspname IN ('schedule', 'production', 'action')
+UNION ALL
+SELECT n.nspname || '.' || p.proname FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+WHERE p.proname = 'get_formula' AND n.nspname IN ('schedule', 'production', 'action')
+ORDER BY 1;
+
+-- expected: 0 rows, no error
+SELECT count(*) AS lane_items FROM schedule.get_schedule_lane_items(current_date, current_date + 6);
+
+-- then your rows in schedule.formula: duration-<view_code> and lag-<view_code>
+-- (view codes nest-time-scale and print-day-scale), formula_json the rule list
+SELECT * FROM schedule.get_formula(array['duration-nest-time-scale', 'lag-nest-time-scale', 'duration-print-day-scale', 'lag-print-day-scale']);

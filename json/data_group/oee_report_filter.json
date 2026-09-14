@@ -1,0 +1,60 @@
+[
+  {
+    "layout": "filter",
+    "params": [
+      { "key": "dates", "is_optional": true, "is_query_param": true },
+      { "key": "line_type", "is_optional": true, "is_query_param": true },
+      { "key": "tenant_ids", "is_optional": true, "is_query_param": true }
+    ],
+    "children": [],
+    "widget_id": "oee_report_filter",
+    "row_options": { "class_name": "@container grid grid-cols-12 gap-1" },
+    "field_config": {
+      "dates": {
+        "ui": {
+          "i18n": { "de": { "title": "Tage" }, "en": { "title": "Days" }, "es": { "title": "Días" }, "fr": { "title": "Jours" }, "nl": { "title": "Dagen" }, "uk": { "title": "Дні" } },
+          "order": 0,
+          "control": "multi-date-picker",
+          "type": "datemultirange",
+          "class_name": "col-span-12 @2xl:col-span-4"
+        }
+      },
+      "line_type": {
+        "ui": {
+          "i18n": { "de": { "title": "Produktionslinie" }, "en": { "title": "Production line" }, "es": { "title": "Línea de producción" }, "fr": { "title": "Ligne de production" }, "nl": { "title": "Productielijn" }, "uk": { "title": "Виробнича лінія" } },
+          "order": 1,
+          "control": "select",
+          "class_name": "col-span-12 @2xl:col-span-4",
+          "input_data": {
+            "data": [
+              { "value": "sheet", "i18n": { "de": { "title": "Platte" }, "en": { "title": "Sheet" }, "es": { "title": "Plancha" }, "fr": { "title": "Panneau" }, "nl": { "title": "Plaat" }, "uk": { "title": "Лист" } } },
+              { "value": "non-adhesive", "i18n": { "de": { "title": "UV" }, "en": { "title": "UV" }, "es": { "title": "UV" }, "fr": { "title": "UV" }, "nl": { "title": "UV" }, "uk": { "title": "UV" } } },
+              { "value": "foil", "i18n": { "de": { "title": "Folie" }, "en": { "title": "Foil" }, "es": { "title": "Vinilo" }, "fr": { "title": "Film" }, "nl": { "title": "Folie" }, "uk": { "title": "Плівка" } } },
+              { "value": "textile", "i18n": { "de": { "title": "Textil" }, "en": { "title": "Textile" }, "es": { "title": "Textil" }, "fr": { "title": "Textile" }, "nl": { "title": "Textiel" }, "uk": { "title": "Текстиль" } } },
+              { "value": "label", "i18n": { "de": { "title": "Etiketten" }, "en": { "title": "Labels" }, "es": { "title": "Etiquetas" }, "fr": { "title": "Étiquettes" }, "nl": { "title": "Labels" }, "uk": { "title": "Етикетки" } } },
+              { "value": "paper", "i18n": { "de": { "title": "Papier" }, "en": { "title": "Paper" }, "es": { "title": "Papel" }, "fr": { "title": "Papier" }, "nl": { "title": "Papier" }, "uk": { "title": "Папір" } } }
+            ],
+            "title_field": "title",
+            "value_field": "value"
+          }
+        }
+      },
+      "tenant_ids": {
+        "ui": {
+          "i18n": { "de": { "title": "Standorte" }, "en": { "title": "Tenants" }, "es": { "title": "Sedes" }, "fr": { "title": "Sites" }, "nl": { "title": "Vestigingen" }, "uk": { "title": "Підрозділи" } },
+          "order": 2,
+          "control": "multi-select",
+          "class_name": "col-span-12 @2xl:col-span-4",
+          "input_data": {
+            "data": [
+              { "value": 1, "i18n": { "de": { "title": "Dokkum" }, "en": { "title": "Dokkum" }, "es": { "title": "Dokkum" }, "fr": { "title": "Dokkum" }, "nl": { "title": "Dokkum" }, "uk": { "title": "Доккюм" } } },
+              { "value": 2, "i18n": { "de": { "title": "Bad Hersfeld" }, "en": { "title": "Bad Hersfeld" }, "es": { "title": "Bad Hersfeld" }, "fr": { "title": "Bad Hersfeld" }, "nl": { "title": "Bad Hersfeld" }, "uk": { "title": "Бад-Герсфельд" } } }
+            ],
+            "title_field": "title",
+            "value_field": "value"
+          }
+        }
+      }
+    }
+  }
+]

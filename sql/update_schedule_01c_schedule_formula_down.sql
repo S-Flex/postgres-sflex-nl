@@ -1,3 +1,45 @@
+-- Rollback of sql/update_schedule_01c_schedule_formula.sql: the formula table
+-- back to action.formula with action.get_formula (step 1), the read back on it
+-- (step 1b version), the production twin gone with its rows.
+BEGIN;
+
+DROP FUNCTION IF EXISTS schedule.get_formula(text[], timestamp with time zone);
+ALTER TABLE schedule.formula SET SCHEMA action;
+COMMENT ON TABLE action.formula IS 'Versioned formulas. One row per version of a code; the code is what callers refer to. Which version applies at a moment: the newest active or archived row created before it (action.get_formula). draft and pending-approval never apply.';
+
+-- ============ sql/action/get_formula.sql (step 1) ============
+-- The version of each action.formula code that applies at p_at: the newest
+-- active or archived row created at or before that moment (the rule of
+-- catalog.get_formula, on the action twin). Draft and pending-approval never
+-- apply. One row per code, none when no version applied yet. First reader:
+-- schedule.get_schedule_lane_items, for the lag formula of a view code
+-- (formula_code 'lag-<view_code>', docs/plan-planning-schema.md §7.2).
+drop function if exists action.get_formula(text[], timestamp with time zone);
+
+create function action.get_formula(p_formula_codes text[], p_at timestamp with time zone DEFAULT now())
+    returns TABLE(formula_code text, formula_id integer, version integer, version_status text, created_at timestamp with time zone, formula_json jsonb, formula_level integer)
+    stable
+    language sql
+as $$
+    WITH applying AS (
+        SELECT DISTINCT ON (f.formula_code)
+               f.formula_code, f.formula_id, f.version, f.version_status,
+               f.created_at, f.formula_json, f.formula_level
+        FROM action.formula f
+        WHERE f.formula_code = ANY (p_formula_codes)
+          AND f.version_status IN ('active', 'archived')
+          AND f.created_at <= p_at
+        ORDER BY f.formula_code, f.created_at DESC, f.version DESC
+    )
+    SELECT a.formula_code, a.formula_id, a.version, a.version_status,
+           a.created_at, a.formula_json, a.formula_level
+    FROM applying a
+    ORDER BY a.formula_level, a.formula_code;
+$$;
+
+alter function action.get_formula(text[], timestamp with time zone) owner to xfw3;
+
+-- ============ sql/schedule/get_schedule_lane_items.sql (step 1b) ============
 -- The items of the schedule boards (docs/plan-planning-schema.md §4): one row
 -- per item on the lanes whose day is in view. The kind of an item (plan,
 -- progress, actual) is the lane_type of its lane; step 1 stores plan lanes
@@ -20,11 +62,11 @@
 --                    Null for an item without batches and without selection
 --   class_names      the type's classes (lookup_lane_item_type), then the
 --                    item's (data_json.class_names), then the work's
---   duration_formula the active schedule.formula of 'duration-<p_view_code>':
+--   duration_formula the active action.formula of 'duration-<p_view_code>':
 --                    the rules the board computes the duration of an item with
 --                    (from start_offset, end_offset, summary, param_json),
 --                    yielding duration (seconds); [] when no version applies
---   lag_formula      the active schedule.formula of 'lag-<p_view_code>': the
+--   lag_formula      the active action.formula of 'lag-<p_view_code>': the
 --                    rules the board chains items with, yielding lag (seconds)
 --
 -- p_from and p_until are the days in view, both included; inside they are one
@@ -48,10 +90,10 @@ BEGIN
 
     -- the duration and lag rules of this view, the versions that apply now
     SELECT gf.formula_json INTO v_duration
-    FROM schedule.get_formula(array['duration-' || p_view_code]) gf
+    FROM action.get_formula(array['duration-' || p_view_code]) gf
     LIMIT 1;
     SELECT gf.formula_json INTO v_lag
-    FROM schedule.get_formula(array['lag-' || p_view_code]) gf
+    FROM action.get_formula(array['lag-' || p_view_code]) gf
     LIMIT 1;
     v_duration := coalesce(v_duration, '[]'::jsonb);
     v_lag      := coalesce(v_lag, '[]'::jsonb);
@@ -157,3 +199,8 @@ END;
 $$;
 
 alter function schedule.get_schedule_lane_items(date, date, text, integer[], text[], text[], text, integer) owner to xfw3;
+
+DROP FUNCTION IF EXISTS production.get_formula(text[], timestamp with time zone);
+DROP TABLE IF EXISTS production.formula;
+
+COMMIT;
