@@ -45,7 +45,7 @@ Een regel die de nest-status uit de orderregels afleidde is dezelfde dag
 gebouwd, gedraaid (17.526 nests) en weer verwijderd (6 sep, Cees): **de
 nest-status wordt alleen via `log.crud_data_log` bijgewerkt, nooit anders.**
 Wat geen machine logt, blijft staan zoals legacy het achterliet; opruimen van
-oude nests gaat op leeftijd (`sql/delete_old_nests.sql`), niet via
+oude nests gaat op leeftijd (`archive/sql/migrations/delete_old_nests.sql`), niet via
 de status. De opgetilde statussen van die ene run blijven staan, herkenbaar aan
 `nest_log`-regels met `resource_uids = '{}'`.
 
@@ -56,5 +56,5 @@ overal leeg: lijn 5 toont 372 nests van de laatste twee weken en 1.164 van vóó
 juli, niets ertussen. Die oude nests (13.989 op `printed`, plus 149 op calender,
 laminated, coated, applied, nested) hebben een print-log maar nooit een snij-log,
 en komen nooit meer in een machine-event. Ze zijn geen voorraad. Weg ermee, samen
-met de 85.036 nests die nooit gelogd zijn: `sql/delete_old_nests.sql`
+met de 85.036 nests die nooit gelogd zijn: `archive/sql/migrations/delete_old_nests.sql`
 (nests met orderregel-delen blijven staan, 449).

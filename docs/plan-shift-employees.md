@@ -1,6 +1,6 @@
 # Plan: shift employees per shift (sidebar shift)
 
-Date: 2026-09-15. Status: built (sql/update_shift_employees_log.sql), waiting to be run. The answers of Cees are in §5.
+Date: 2026-09-15. Status: built (archive/sql/migrations/update_shift_employees_log.sql), waiting to be run. The answers of Cees are in §5.
 
 ## 1. what is there
 

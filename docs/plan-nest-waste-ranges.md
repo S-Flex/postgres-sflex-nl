@@ -56,7 +56,7 @@ two bars as positional `groups`: the area of the nests with the waste area stack
 waste, `var(--state-starved)` for the cost, each with its `-color` twin for the text), the way
 `lookup_resource_state` carries them; the tooltip in the `sections` form; `window_class_name` p-8 like the table.
 `y_field`, `stacked` and `template` are not part of the layout and left the chart invisible until 14 Sep
-2026 (`sql/update_nest_waste_chart_groups.sql`); the total row is gone, so there is no filter. Between the filter and the table on the page.
+2026 (`archive/sql/migrations/update_nest_waste_chart_groups.sql`); the total row is gone, so there is no filter. Between the filter and the table on the page.
 
 ## the status bar
 
@@ -89,9 +89,9 @@ data_group `nest_waste_ranges_filter` (97), layout `filter`, above the board on 
 
 | step | script | state |
 |---|---|---|
-| lookup, read, material list, data_tables | `sql/update_nest_waste_ranges.sql` | written 11 sep |
-| data_groups 96, 97 and 98 | `sql/update_data_group_partial.sql` | written 11 sep |
-| status bar group | `sql/update_status_bar_nests.sql` | written 11 sep |
+| lookup, read, material list, data_tables | `archive/sql/migrations/update_nest_waste_ranges.sql` | written 11 sep |
+| data_groups 96, 97 and 98 | `archive/sql/migrations/update_data_group_partial.sql` | written 11 sep |
+| status bar group | `archive/sql/migrations/update_status_bar_nests.sql` | written 11 sep |
 | page | `json/data/block/pages.json`, `pages-content.json`, page `nest-waste` | written 11 sep |
 
 ## 14 Sep 2026: the tooltip
@@ -99,7 +99,7 @@ data_group `nest_waste_ranges_filter` (97), layout `filter`, above the board on 
 The chart tooltip showed one row (a material on a day) instead of the totals of the bar: its section
 was the plain `field_config` form without `aggregate_fn`. Now the group form, as `production_board_graph`:
 `trigger group`, `header.group` with `waste_range`, `sections[].group` with `aggregate_fn` per field
-(`sum`, `avg` for the average waste). `sql/update_nest_waste_chart_tooltip.sql`, rollback
+(`sum`, `avg` for the average waste). `archive/sql/migrations/update_nest_waste_chart_tooltip.sql`, rollback
 `_down.sql`; the json file is the live version of that day (the `waste-*` colour variables) plus the tooltip.
 
 Checked live the same day: the data_group carries the group form, but the tooltip still shows no

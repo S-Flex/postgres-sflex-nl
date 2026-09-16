@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./archive/**)",
+      "Edit(./archive/**)",
+      "Write(./archive/**)"
+    ]
+  }
+}

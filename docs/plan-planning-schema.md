@@ -19,8 +19,8 @@ on its first statement (`tenant_id` exists) and rolls back; that is harmless.
 
 | script (ran 14 Sep) | rollback | what |
 |---|---|---|
-| `sql/update_planning_template.sql` | `sql/update_planning_template_down.sql` | step 1d: `legacy.imposition_group` per tenant, `rules_json`, tenant 2 rows, rules from the mock schedule, xbom cleanup, leads off `item_group_resource`, eight old functions with the tenant |
-| `sql/update_nest_waste_total_row.sql` | `sql/update_nest_waste_total_row_down.sql` | nest waste board: tenant columns, summary in the flow-table instead of the lookup total row (`docs/plan-nest-waste-ranges.md`) |
+| `archive/sql/migrations/update_planning_template.sql` | `archive/sql/migrations/update_planning_template_down.sql` | step 1d: `legacy.imposition_group` per tenant, `rules_json`, tenant 2 rows, rules from the mock schedule, xbom cleanup, leads off `item_group_resource`, eight old functions with the tenant |
+| `archive/sql/migrations/update_nest_waste_total_row.sql` | `archive/sql/migrations/update_nest_waste_total_row_down.sql` | nest waste board: tenant columns, summary in the flow-table instead of the lookup total row (`docs/plan-nest-waste-ranges.md`) |
 
 Done by hand 14 Sep: the `0-100` row is out of `legacy.lookup lookup_nest_waste_ranges` (the
 json file `json/lookup/legacy/lookup_nest_waste_ranges.json` still carries it: remove it there
@@ -372,7 +372,7 @@ runs, I wait.
 | 1 | schema `schedule`, the five tables, lookup `lookup_lane_item_event_type`, the two reads and `get_lane_item_data`, `site.data_table` rows | ran 13 Sep |
 | 1b | `catalog.item_group_resource` as tenant side (`tenant_id`, `item_group_json`), `lane_item.lead_in` / `lead_out`, `created_at`, `updated_at` | ran 13 Sep |
 | 1c | `action.formula` into `schedule.formula`, `schedule.get_formula`; `production.formula` twin | ran 13 Sep |
-| 1d | the planning template (§3): `sql/update_planning_template.sql`; then `sql/update_nest_waste_total_row.sql` | delivered 14 Sep, Cees runs |
+| 1d | the planning template (§3): `archive/sql/migrations/update_planning_template.sql`; then `archive/sql/migrations/update_nest_waste_total_row.sql` | delivered 14 Sep, Cees runs |
 | 2 | `generate_day` and `crud_lane_item` (§5); backfill today + 14 days per line type in a DO block; `site.refresh_derived_data` calls `generate_day` **next to** `mock.generate_plan`; `legacy.crud_nest` calls `crud_lane_item` **next to** its `batch_lane_item` block; backfill the nests of the window. Done when per day, line type and step the items match `action`, every `batch_lane_item.nest_ids` of the window is in exactly one `batches[].nest_ids`, step items and edges per manifest step | next |
 | 3 | new data_groups next to the old ones: `schedule_lane_items` (76 and 81 as one board, steps per page as section `params`), `schedule_lane_items_filter` (82), `schedule_print_schedule` (75, sizes from `catalog.item`), 79 on the new `src`; the nest-date function (§7); pages `nest-schedule` and `production-schedule` next to the current pages; handoff §11; a week of parallel run with `sql/schedule/check_parallel.sql` | |
 | 4 | switch: nav and pages to the new data_groups; `crud_nest` drops the `batch_lane_item` block; `refresh_derived_data` drops `mock.generate_plan`; old data_groups to `archive/data_group/` | |

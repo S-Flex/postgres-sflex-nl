@@ -2,7 +2,7 @@
 -- A sheet nest (material_media_type_id 1 on the material's production line,
 -- mapping.material_production_line.line_json) is as large as its sheet: width
 -- and height take material_width and material_height of the payload, not the
--- nested area (15 Sep 2026; sql/update_nest_sheet_size.sql backfilled the table).
+-- nested area (15 Sep 2026; archive/sql/migrations/update_nest_sheet_size.sql backfilled the table).
 drop function if exists legacy.crud_nest(jsonb, boolean);
 
 create function legacy.crud_nest(p_param_json jsonb, p_no_results boolean DEFAULT false) returns TABLE(param_id integer, track_by integer, crud text, domain_id integer, batch_id bigint, nest_id bigint, nest_counter integer, reproduced_counter integer, nest_name text, amount integer, width numeric, height numeric, nest_json jsonb, sort_order integer, status jsonb, possible_states bigint, possible_multiple_states bigint)

@@ -45,7 +45,7 @@ action.lane
   + step text not null                     -- vocabulary lookup_step_category
   + resource_path ltree not null           -- the machine, or site.line.impose.width for a group lane
   + unique (lane_id, step)                 -- backs the composite key below
-action.resource_lane                       -- dropped 11 sep (sql/update_drop_resource_lane.sql): a machine lane is a lane without imposition_group_lane row
+action.resource_lane                       -- dropped 11 sep (archive/sql/migrations/update_drop_resource_lane.sql): a machine lane is a lane without imposition_group_lane row
 action.imposition_group_lane               -- stays: imposition_group_id (material alias) per lane
 
 action.lane_item
@@ -146,16 +146,16 @@ Each step is one script in `sql/`, run in this order.
   set table, which crud_nest no longer writes: new nests show up again after step 3 and 4.
 - Testing phase (decided 9 sep): every impose item without a release is released at the local
   midnight of its lane date, once now and daily in site.refresh_derived_data
-  (sql/update_release_impose_items.sql), until the planner releases from the board.
+  (archive/sql/migrations/update_release_impose_items.sql), until the planner releases from the board.
 
 ## scripts
 
 | step | script | state |
 |---|---|---|
-| 1 schema | `sql/update_batch_lane_item_schema.sql` | run 9 sep |
-| 1a data_table 79 | `sql/update_data_table_orderline_manifest.sql` | written 9 sep: row get_production_orderline_manifest, step 3 swaps the query |
-| 2 writers | `sql/update_batch_lane_item_writers.sql` | written 9 sep: crud_lane_item_event (+ data_table row), crud_nest, sync_pv2_batch_items, crud_object, crud_lane_item, generate_plan, generate_production_plan |
-| 3 readers | `sql/update_batch_lane_item_readers.sql` | written 9 sep: lanes read per instance (+ instance, status), get_impose_plan and get_resource_plan on batch rows, crud_lane_item, get_impose_plan_inflow + data_table, nest items and the old set table dropped |
+| 1 schema | `archive/sql/migrations/update_batch_lane_item_schema.sql` | run 9 sep |
+| 1a data_table 79 | `archive/sql/migrations/update_data_table_orderline_manifest.sql` | written 9 sep: row get_production_orderline_manifest, step 3 swaps the query |
+| 2 writers | `archive/sql/migrations/update_batch_lane_item_writers.sql` | written 9 sep: crud_lane_item_event (+ data_table row), crud_nest, sync_pv2_batch_items, crud_object, crud_lane_item, generate_plan, generate_production_plan |
+| 3 readers | `archive/sql/migrations/update_batch_lane_item_readers.sql` | written 9 sep: lanes read per instance (+ instance, status), get_impose_plan and get_resource_plan on batch rows, crud_lane_item, get_impose_plan_inflow + data_table, nest items and the old set table dropped |
 | 4 backfill | | |
-| 5 pattern | `sql/update_plan_per_nest_moment.sql` | written 10 sep: schedule takes over the pattern (key, impose path, rank), `lane_item.nest_moment_code`, generate_plan per nest moment on interval days, lanes/crud_nest/inflow/crud_lane_item on the schedule row, today migrated in place, later days re-stamped, pattern dropped |
+| 5 pattern | `archive/sql/migrations/update_plan_per_nest_moment.sql` | written 10 sep: schedule takes over the pattern (key, impose path, rank), `lane_item.nest_moment_code`, generate_plan per nest moment on interval days, lanes/crud_nest/inflow/crud_lane_item on the schedule row, today migrated in place, later days re-stamped, pattern dropped |
 | 6 docs | | |

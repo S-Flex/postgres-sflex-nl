@@ -101,7 +101,7 @@ measured speed in the technical availability it did not use.
 
 ## 4. the board: data_group `oee_report`
 
-`json/data_group/oee_report.json` is the source; `sql/update_oee_report_data_group.sql` carries
+`json/data_group/oee_report.json` is the source; `archive/sql/migrations/update_oee_report_data_group.sql` carries
 it into `site.data_group`. One `flow-board` on `src get_oee_report`, params `from`, `until`
 (dates, query params), `line_type` and `tenant_ids` optional.
 
@@ -148,9 +148,9 @@ and the calibrated values stay in the data and the master `field_config`, not in
 
 | step | what | rollback | done when |
 |---|---|---|---|
-| 1 | `sql/update_oee_report.sql`: `has_break_times` in `relation.resource` to 1/0 (its two readers cast with `::boolean`, which takes 1/0), the formula row, `log.get_oee_report`, data_table `get_oee_report`. Needs `production.formula` (step 1c of the schedule plan) and the `plan_calibrated` rows | `sql/update_oee_report_down.sql` | the check at the end shows the printers of `dk.sheet` with availability and percentages for the last 7 days |
-| 2 | data_groups `oee_report_filter` and `oee_report`: `sql/update_oee_report_data_group.sql` (the content of the two json files; sync them into `xfw3_site_data_group.json` with the next rebuild) and the page `oee-report` (`json/data/block/pages.json`, `pages-content.json`, nav view list in `json/data/nav/app-nav.json`, environment development) | `DELETE FROM site.data_group WHERE data_group = 'oee_report'`, delete the page | the board shows one column per day plus the aggregated column, the totals container, one card per resource_path, the table |
-| 3 | OEE in the status bar: `sql/update_status_bar_oee.sql` (lookup group `oee`, `mapping.get_status_bar_oee`, the branch in `mapping.get_status_bar`) | `sql/update_status_bar_oee_down.sql` | the check shows OEE planned per line of the sheet model |
+| 1 | `archive/sql/migrations/update_oee_report.sql`: `has_break_times` in `relation.resource` to 1/0 (its two readers cast with `::boolean`, which takes 1/0), the formula row, `log.get_oee_report`, data_table `get_oee_report`. Needs `production.formula` (step 1c of the schedule plan) and the `plan_calibrated` rows | `archive/sql/migrations/update_oee_report_down.sql` | the check at the end shows the printers of `dk.sheet` with availability and percentages for the last 7 days |
+| 2 | data_groups `oee_report_filter` and `oee_report`: `archive/sql/migrations/update_oee_report_data_group.sql` (the content of the two json files; sync them into `xfw3_site_data_group.json` with the next rebuild) and the page `oee-report` (`json/data/block/pages.json`, `pages-content.json`, nav view list in `json/data/nav/app-nav.json`, environment development) | `DELETE FROM site.data_group WHERE data_group = 'oee_report'`, delete the page | the board shows one column per day plus the aggregated column, the totals container, one card per resource_path, the table |
+| 3 | OEE in the status bar: `archive/sql/migrations/update_status_bar_oee.sql` (lookup group `oee`, `mapping.get_status_bar_oee`, the branch in `mapping.get_status_bar`) | `archive/sql/migrations/update_status_bar_oee_down.sql` | the check shows OEE planned per line of the sheet model |
 
 ## 7. frontend handoff (compact)
 
@@ -279,7 +279,7 @@ operator_cost_per_sqm = actual_gross_output_sqm > 0 ? planned_operator_cost / ac
 
 | step | what | rollback | done when |
 |---|---|---|---|
-| 4 | `sql/update_oee_report.sql` (formula rules, `log.get_oee_report` with `p_date`), `sql/update_status_bar_oee.sql` (`mapping.get_status_bar_oee` on `p_date`, line values with `max`), `sql/update_oee_report_data_group.sql` (`oee_report`, `oee_report_filter`); all three rerunnable | `sql/update_oee_report_down.sql` | the check shows `planned_operators` 8 for Plaat on 14 Sep, the board a summary card per tenant with operators, cost and cost per m² |
+| 4 | `archive/sql/migrations/update_oee_report.sql` (formula rules, `log.get_oee_report` with `p_date`), `archive/sql/migrations/update_status_bar_oee.sql` (`mapping.get_status_bar_oee` on `p_date`, line values with `max`), `archive/sql/migrations/update_oee_report_data_group.sql` (`oee_report`, `oee_report_filter`); all three rerunnable | `archive/sql/migrations/update_oee_report_down.sql` | the check shows `planned_operators` 8 for Plaat on 14 Sep, the board a summary card per tenant with operators, cost and cost per m² |
 
 ## 9. the sheet check (14 Sep, `OEE voorbeeld Probo Hub.xlsx`)
 
@@ -307,7 +307,7 @@ The rules follow the sheet since 14 Sep:
   time, offline and availability as three rows. `offline` is the state of that name in the shift
   aggregate.
 - Every shift has a code: `code` on the shift in `action.dates.shift_json` (the source), day /
-  evening / night, the codes and titles of legacy `lookup_shift`. `sql/update_shift_code.sql`
+  evening / night, the codes and titles of legacy `lookup_shift`. `archive/sql/migrations/update_shift_code.sql`
   sets the codes (rank of the start within the shifts of the same tenants; a start before 06:00 is
   the night that ranks last; a preview query first), adds `shift_code` to `log.state_shift_agg`,
   lets the upsert write it, and rebuilds the aggregate from 7 Sep. The upsert already clips every
@@ -324,7 +324,7 @@ The rules follow the sheet since 14 Sep:
 - Output in two areas (15 Sep): `actual_gross_output_sqm` (was `actual_gross_output_sqm`, also the column
   of the shift aggregate) and `actual_net_output_sqm`, the production area less the nest's waste,
   computed per job in the upsert. The card shows the customer-order area first, the production
-  area under it; the rules use the production area. `sql/update_shift_code.sql` carries the
+  area under it; the rules use the production area. `archive/sql/migrations/update_shift_code.sql` carries the
   columns and the rebuild.
 
 ## 11. from the report into the detail: nest waste per resource, shift employees, planning (15 Sep)
@@ -377,9 +377,9 @@ the teams per line. The status bar's teams nav and the data_group `resource_shif
 
 | step | script | done when |
 |---|---|---|
-| 1 | `sql/update_nest_waste_resource.sql` | the check lists the materials of one printer of yesterday; the two data_groups exist |
-| 2 | `sql/update_oee_report.sql` (rerun: `business_date`, `until`, `production_line_id`, `resource_uids`), then `sql/update_status_bar_oee.sql` | the rows carry the four columns |
-| 3 | `sql/update_shift_employees_line.sql` | the check shows the data_table on the legacy function, the employees of the sheet line, the status bar teams |
-| 4 | `sql/update_oee_report_data_group.sql` | the three navs on the cards, the button on the summary card |
+| 1 | `archive/sql/migrations/update_nest_waste_resource.sql` | the check lists the materials of one printer of yesterday; the two data_groups exist |
+| 2 | `archive/sql/migrations/update_oee_report.sql` (rerun: `business_date`, `until`, `production_line_id`, `resource_uids`), then `archive/sql/migrations/update_status_bar_oee.sql` | the rows carry the four columns |
+| 3 | `archive/sql/migrations/update_shift_employees_line.sql` | the check shows the data_table on the legacy function, the employees of the sheet line, the status bar teams |
+| 4 | `archive/sql/migrations/update_oee_report_data_group.sql` | the three navs on the cards, the button on the summary card |
 
 Rollbacks: `_down.sql` next to each. The page and menu renames live in `json/data` (git).

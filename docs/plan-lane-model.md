@@ -481,7 +481,7 @@ achterhaald.
 **Stand 5 sep: crud_nest-deel gebouwd, wacht op draaien** —
 `archive/sql/migrations/update_nest_batch_items.sql` (crud_nest, get_plan_lanes, crud_lane_item, plus
 de hernoeming `is_fixed_group` → `fixed_group` in kolom, lookup en de drie reads;
-data_groups 75/76/78/81 in `sql/update_data_group_partial.sql`) en
+data_groups 75/76/78/81 in `archive/sql/migrations/update_data_group_partial.sql`) en
 daarna `archive/sql/migrations/backfill_nest_lane_items.sql`, dat de lijn-fout (1.338 nests) en de
 gemengde batches (229 items) in één keer rechtzet: per materiaallane de nests
 van eigen dag, materiaal en lijn, per batch een item, de eerste batch op het
@@ -689,7 +689,7 @@ samenvoeging (baseline-hashes zoals bij stap 3). Een extra step in de lookup met
   `lane_item_id`, `type`), `get_production_plan` vervalt na de omzetting.
 
 **Stand 5 sep: gebouwd, wacht op draaien** — `archive/sql/migrations/update_resource_plan.sql` en daarna
-`sql/update_data_group_partial.sql` (81, 82).
+`archive/sql/migrations/update_data_group_partial.sql` (81, 82).
 - `action.lane_item.type` (text, default `plan`) vervangt `level`; alle 6.950 items zijn
   `plan`. Schrijvers omgezet: `crud_lane_item`, `crud_object`, `sync_pv2_batch_items`,
   `legacy.crud_nest`, `mock.generate_plan`; lezer `get_plan_lanes`. Lookup
