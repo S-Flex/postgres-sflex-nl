@@ -109,7 +109,7 @@
     }
   },
   {
-    "code": "oee",
+    "code": "production-planning-info",
     "main": {
       "sections": [
         {
@@ -183,6 +183,16 @@
       "sections": [
         {
           "data_group": "resource_maintenance_tickets"
+        }
+      ]
+    }
+  },
+  {
+    "code": "error-log",
+    "main": {
+      "sections": [
+        {
+          "data_group": "resource_error_log"
         }
       ]
     }
@@ -740,6 +750,9 @@
   },
   {
     "code": "nest-waste",
+    "grid": {
+      "gap": "1rem"
+    },
     "main": {
       "sections": [
         {
@@ -750,6 +763,22 @@
         },
         {
           "data_group": "nest_waste_ranges"
+        }
+      ]
+    }
+  },
+  {
+    "code": "resource-nest-waste",
+    "grid": {
+      "gap": "1rem"
+    },
+    "main": {
+      "sections": [
+        {
+          "data_group": "resource_nest_waste_ranges_chart"
+        },
+        {
+          "data_group": "resource_nest_waste_ranges"
         }
       ]
     }

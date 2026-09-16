@@ -166,7 +166,9 @@
             }
           },
           "nav": {
-            "path": "https://v2.proboview.nl/orders/edit/{order_id}/sales-orderlines/{sales_orderline_id}/production-orderlines"
+            "on_ctrl_click": {
+              "path": "https://v2.proboview.nl/orders/edit/{order_id}/sales-orderlines/{sales_orderline_id}/production-orderlines"
+            }
           }
         },
         "number": {
@@ -194,7 +196,9 @@
             "hidden": true
           },
           "nav": {
-            "path": "https://v2.proboview.nl/orders/edit/{order_id}"
+            "on_ctrl_click": {
+              "path": "https://v2.proboview.nl/orders/edit/{order_id}"
+            }
           }
         },
         "product_amount": {
@@ -952,7 +956,7 @@
                 "row_options": {
                   "colexp": true,
                   "checkable": true,
-                  "selectable": false 
+                  "selectable": false
                 },
                 "fields_class_name": "@container grid grid-cols-6 gap-1",
                 "field_config": {
@@ -1107,7 +1111,9 @@
                           "class_name": "col-span-2"
                         },
                         "nav": {
-                          "path": "https://v2.proboview.nl/orders/edit/{order_id}/sales-orderlines/{sales_orderline_id}/production-orderlines"
+                          "on_ctrl_click": {
+                            "path": "https://v2.proboview.nl/orders/edit/{order_id}/sales-orderlines/{sales_orderline_id}/production-orderlines"
+                          }
                         }
                       },
                       "product_amount": {

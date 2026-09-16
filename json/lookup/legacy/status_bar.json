@@ -4,11 +4,11 @@
       "path": "(sidebar:shift)",
       "params": [
         {
-          "key": "model",
+          "key": "production_line_id",
           "is_query_param": true
         },
         {
-          "key": "until",
+          "key": "business_date",
           "is_optional": true,
           "is_query_param": true
         }

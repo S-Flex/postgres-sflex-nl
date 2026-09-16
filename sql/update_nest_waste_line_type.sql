@@ -7,6 +7,8 @@
 --   3. the data_groups nest_waste_ranges, nest_waste_ranges_chart and
 --      nest_waste_ranges_filter pass line_type (the filter's material select
 --      too; production_line_ids is gone there)
+--      the material container of the board shows the first and last nest day
+--      of its rows (min and max of nest_date; one date when they are equal)
 --   4. the status bar nav to the nest-waste window passes line_type along with
 --      model (legacy.lookup status_bar, group nests)
 -- The json files under json/data_group and json/lookup/legacy are the source.
@@ -440,18 +442,82 @@ UPDATE site.data_group SET data_group_json = $json$
         "checkable": false,
         "selectable": false
       },
-      "fields_class_name": "@container grid grid-cols-5 gap-1",
+      "fields_class_name": "@container grid grid-cols-7 gap-1",
       "field_config": {
         "material_name": {
           "ui": {
             "order": 0,
-            "no_label": true,
             "class_name": "col-span-1"
+          }
+        },
+        "nest_date_from": {
+          "field": "nest_date",
+          "aggregate_fn": "min",
+          "ui": {
+            "order": 1,
+            "type": "date",
+            "class_name": "col-span-1",
+            "i18n": {
+              "nl": {
+                "title": "Van"
+              },
+              "en": {
+                "title": "From"
+              },
+              "de": {
+                "title": "Von"
+              },
+              "fr": {
+                "title": "Du"
+              },
+              "es": {
+                "title": "Desde"
+              },
+              "uk": {
+                "title": "З"
+              }
+            }
+          }
+        },
+        "nest_date_until": {
+          "field": "nest_date",
+          "aggregate_fn": "max",
+          "ui": {
+            "order": 2,
+            "type": "date",
+            "class_name": "col-span-1",
+            "hidden_when": [
+              {
+                "field": "nest_date_until",
+                "op": "==",
+                "value_field": "nest_date_from"
+              }
+            ],
+            "i18n": {
+              "nl": {
+                "title": "Tot"
+              },
+              "en": {
+                "title": "Until"
+              },
+              "de": {
+                "title": "Bis"
+              },
+              "fr": {
+                "title": "Au"
+              },
+              "es": {
+                "title": "Hasta"
+              },
+              "uk": {
+                "title": "До"
+              }
+            }
           }
         },
         "nest_count": {
           "ui": {
-            "order": 1,
+            "order": 3,
             "class_name": "col-span-1"
           },
           "scale": 0,
@@ -459,29 +525,29 @@ UPDATE site.data_group SET data_group_json = $json$
         },
         "sqm": {
           "ui": {
-            "order": 2,
+            "order": 4,
             "class_name": "col-span-1",
             "suffix": "m²"
           },
-          "scale": 0,
+          "scale": 1,
           "aggregate_fn": "sum"
         },
         "waste_sqm": {
           "ui": {
-            "order": 3,
+            "order": 5,
             "class_name": "col-span-1",
             "suffix": "m²"
           },
-          "scale": 0,
+          "scale": 1,
           "aggregate_fn": "sum"
         },
         "waste_cost": {
           "ui": {
-            "order": 4,
+            "order": 6,
             "class_name": "col-span-1",
             "prefix": "€"
           },
-          "scale": 0,
+          "scale": 2,
           "aggregate_fn": "sum"
         }
       },

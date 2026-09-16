@@ -1,3 +1,6 @@
+-- p_resource_uids keeps to the nests printed on those resources (a print job in
+-- log.data ran there; legacy.nest has no resource). p_nest_date is one day, for the
+-- sidebar per resource; p_dates wins when both are given, neither is today.
 -- The waste of the nests in ranges: per tenant, material, day and range of
 -- waste_percentage (between 70 and 60, 60 and 50, ... 10 and 0, and above the
 -- top bound) the nests, their area, the average waste and what that waste
@@ -33,8 +36,9 @@ drop function if exists legacy.get_nest_waste_percentiles(datemultirange, intege
 drop function if exists legacy.get_nest_waste_ranges(datemultirange, integer[], numeric[]);
 drop function if exists legacy.get_nest_waste_ranges(datemultirange, integer[]);
 drop function if exists legacy.get_nest_waste_ranges(datemultirange, integer[], text);
+drop function if exists legacy.get_nest_waste_ranges(datemultirange, integer[], text, text[], date);
 
-create function legacy.get_nest_waste_ranges(p_dates datemultirange DEFAULT datemultirange(daterange(current_date, current_date, '[]')), p_material_ids integer[] DEFAULT NULL::integer[], p_line_type text DEFAULT NULL::text) returns TABLE(tenant_id integer, tenant_name text, material_id integer, material_name text, nest_date date, range_min numeric, range_max numeric, waste_range text, sort_order integer, class_names text[], nest_count integer, sqm numeric, avg_waste_percentage numeric, waste_sqm numeric, purchase_price_per_sqm numeric, waste_cost numeric)
+create function legacy.get_nest_waste_ranges(p_dates datemultirange DEFAULT NULL::datemultirange, p_material_ids integer[] DEFAULT NULL::integer[], p_line_type text DEFAULT NULL::text, p_resource_uids text[] DEFAULT NULL::text[], p_nest_date date DEFAULT NULL::date) returns TABLE(tenant_id integer, tenant_name text, material_id integer, material_name text, nest_date date, range_min numeric, range_max numeric, waste_range text, sort_order integer, class_names text[], nest_count integer, sqm numeric, avg_waste_percentage numeric, waste_sqm numeric, purchase_price_per_sqm numeric, waste_cost numeric)
 	stable
 	language sql
 as $$
@@ -52,8 +56,14 @@ as $$
         -- the group of the nest's tenant; a nest without a line is Dokkum's (1)
         LEFT JOIN legacy.imposition_group g ON g.imposition_group_id = (n.nest_json ->> 'material_id')::integer
                                            AND g.tenant_id = coalesce(pl.tenant_id, 1)
-        WHERE (n.nested_at AT TIME ZONE 'Europe/Amsterdam')::date <@ p_dates
+        -- the days: p_dates, else p_nest_date, else today
+        WHERE (n.nested_at AT TIME ZONE 'Europe/Amsterdam')::date <@ coalesce(p_dates, datemultirange(daterange(coalesce(p_nest_date, current_date), coalesce(p_nest_date, current_date), '[]')))
           AND n.nest_json ? 'waste_percentage'
+          -- the nests printed on the resources: a print job of the nest ran there
+          AND (p_resource_uids IS NULL
+               OR EXISTS (SELECT 1 FROM log.data dl
+                          WHERE dl.nest_name = n.nest_name
+                            AND dl.resource_uid = ANY (p_resource_uids)))
           AND (p_line_type IS NULL OR pl.line_type = p_line_type)
           AND (p_material_ids IS NULL
                OR coalesce(g.parent_imposition_group_id, (n.nest_json ->> 'material_id')::integer) = ANY (p_material_ids))
@@ -127,4 +137,4 @@ as $$
     ORDER BY m.tenant_id, m.material_id, m.nest_date, r.sort_order;
 $$;
 
-alter function legacy.get_nest_waste_ranges(datemultirange, integer[], text) owner to xfw3;
+alter function legacy.get_nest_waste_ranges(datemultirange, integer[], text, text[], date) owner to xfw3;

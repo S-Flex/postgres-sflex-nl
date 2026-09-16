@@ -9,8 +9,11 @@
 BEGIN;
 
 -- ============ legacy.lookup status_bar: group oee ============
+-- rerunnable: an existing oee group is replaced, not appended a second time
 UPDATE legacy.lookup lk
-SET lookup_json = lk.lookup_json || $json$[
+SET lookup_json = (SELECT coalesce(jsonb_agg(e.value ORDER BY e.ordinality), '[]'::jsonb)
+                   FROM jsonb_array_elements(lk.lookup_json) WITH ORDINALITY AS e(value, ordinality)
+                   WHERE e.value ->> 'code' <> 'oee') || $json$[
 {
   "code": "oee",
   "src": "oee",
@@ -77,8 +80,8 @@ WHERE lk.lookup = 'status_bar'
 DROP FUNCTION IF EXISTS mapping.get_status_bar_oee(text, timestamp with time zone, integer, jsonb);
 -- The OEE items of the status bar for one production line: the report of the
 -- business day of p_until (log.get_oee_report), its params summed over the
--- machines of the line, the rules of production.formula 'oee-report' evaluated
--- on the sums. p_items is the items list of the status_bar lookup group
+-- machines of the line (the line values and the flag taken once, with max),
+-- the rules of production.formula 'oee-report' evaluated on the sums. p_items is the items list of the status_bar lookup group
 -- (code = a key of oee_json, i18n its title); the value is that key, rounded.
 create function mapping.get_status_bar_oee(p_model text, p_until timestamp with time zone, p_line_id integer, p_items jsonb) returns jsonb
     stable
@@ -88,16 +91,23 @@ as $$
         SELECT (coalesce(p_until, now()) AT TIME ZONE 'Europe/Amsterdam')::date AS date
     ),
     params AS (
-        -- the day rows of the machines of the line, every param summed
+        -- the day rows of the machines of the line: the measured params summed,
+        -- the line values, the constants and the flag taken once
         SELECT jsonb_object_agg(kv.key, kv.total) AS param_json
         FROM (
-            SELECT kv.key, sum(kv.value::numeric) AS total
+            SELECT kv.key,
+                   CASE WHEN kv.key IN ('has_break_times', 'planned_print_operator_duration', 'planned_operators',
+                                        'operator_working_time', 'operator_cost_per_second', 'period_output_per_planned_hour')
+                        THEN max(kv.value::numeric)
+                        ELSE sum(kv.value::numeric) END AS total
             FROM day d
-            CROSS JOIN LATERAL log.get_oee_report(d.date, d.date) r
+            CROSS JOIN LATERAL log.get_oee_report(p_date := d.date, p_workdays := 0) r
             JOIN relation.resource res ON res.resource_uid = r.resource_uid
             CROSS JOIN LATERAL jsonb_each_text(r.param_json) AS kv(key, value)
             WHERE res.line_id = p_line_id
-              AND r.report_date IS NOT NULL
+              AND r.business_date IS NOT NULL
+              AND r.set = 'resource'
+              AND jsonb_typeof(r.param_json -> kv.key) = 'number'
             GROUP BY kv.key
         ) kv
     ),
@@ -120,20 +130,19 @@ $$;
 alter function mapping.get_status_bar_oee(text, timestamp with time zone, integer, jsonb) owner to xfw3;
 
 -- ============ sql/mapping/get_status_bar.sql ============
+-- (the version of 15 Sep: the teams per line through mapping.get_status_bar_teams(line_id, date);
+-- sql/update_shift_employees_line.sql carries the same text, so the run order does not matter)
 create or replace function mapping.get_status_bar(p_model text DEFAULT NULL::text, p_until timestamp with time zone DEFAULT (CURRENT_DATE)::timestamp with time zone, p_production_line_id integer DEFAULT NULL::integer) returns TABLE(status_json jsonb)
 	language plpgsql
 as $$
 #variable_conflict use_column
 DECLARE
     v_line       record;
-    v_teams      jsonb;
     v_bar_config jsonb;
 BEGIN
     SELECT rl.lookup_json INTO v_bar_config
     FROM legacy.lookup rl
     WHERE rl.lookup = 'status_bar';
-
-    v_teams := mapping.get_status_bar_teams(p_model, p_until);
 
     FOR v_line IN
         SELECT pl.line_id, pl.line AS line_name
@@ -152,7 +161,7 @@ BEGIN
                         'i18n', grp->'i18n',
                         'nav',  grp->'nav',
                         'data', CASE grp->>'src'
-                            WHEN 'teams'          THEN v_teams
+                            WHEN 'teams'          THEN mapping.get_status_bar_teams(v_line.line_id, (p_until AT TIME ZONE 'Europe/Amsterdam')::date)
                             WHEN 'time_on_status' THEN mapping.get_status_bar_time_on_status(p_model, p_until, v_line.line_id)
                             WHEN 'capacity'       THEN mapping.get_status_bar_capacity(p_model, p_until, v_line.line_id, grp->'steps')
                             WHEN 'rework'         THEN mapping.get_status_bar_rework(v_line.line_id)

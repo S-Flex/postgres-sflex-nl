@@ -93,3 +93,16 @@ data_group `nest_waste_ranges_filter` (97), layout `filter`, above the board on 
 | data_groups 96, 97 and 98 | `sql/update_data_group_partial.sql` | written 11 sep |
 | status bar group | `sql/update_status_bar_nests.sql` | written 11 sep |
 | page | `json/data/block/pages.json`, `pages-content.json`, page `nest-waste` | written 11 sep |
+
+## 14 Sep 2026: the tooltip
+
+The chart tooltip showed one row (a material on a day) instead of the totals of the bar: its section
+was the plain `field_config` form without `aggregate_fn`. Now the group form, as `production_board_graph`:
+`trigger group`, `header.group` with `waste_range`, `sections[].group` with `aggregate_fn` per field
+(`sum`, `avg` for the average waste). `sql/update_nest_waste_chart_tooltip.sql`, rollback
+`_down.sql`; the json file is the live version of that day (the `waste-*` colour variables) plus the tooltip.
+
+Checked live the same day: the data_group carries the group form, but the tooltip still shows no
+totals. The frontend has never had to aggregate a tooltip: `production_board_graph`, the precedent,
+gets one row per bar from its read, this chart gets one row per material and day (115 a day). The
+bars do aggregate (the segments carry `aggregate_fn`), the tooltip path does not yet. Frontend issue.

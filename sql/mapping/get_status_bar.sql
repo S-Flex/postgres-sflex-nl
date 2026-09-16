@@ -4,14 +4,11 @@ as $$
 #variable_conflict use_column
 DECLARE
     v_line       record;
-    v_teams      jsonb;
     v_bar_config jsonb;
 BEGIN
     SELECT rl.lookup_json INTO v_bar_config
     FROM legacy.lookup rl
     WHERE rl.lookup = 'status_bar';
-
-    v_teams := mapping.get_status_bar_teams(p_model, p_until);
 
     FOR v_line IN
         SELECT pl.line_id, pl.line AS line_name
@@ -30,7 +27,7 @@ BEGIN
                         'i18n', grp->'i18n',
                         'nav',  grp->'nav',
                         'data', CASE grp->>'src'
-                            WHEN 'teams'          THEN v_teams
+                            WHEN 'teams'          THEN mapping.get_status_bar_teams(v_line.line_id, (p_until AT TIME ZONE 'Europe/Amsterdam')::date)
                             WHEN 'time_on_status' THEN mapping.get_status_bar_time_on_status(p_model, p_until, v_line.line_id)
                             WHEN 'capacity'       THEN mapping.get_status_bar_capacity(p_model, p_until, v_line.line_id, grp->'steps')
                             WHEN 'rework'         THEN mapping.get_status_bar_rework(v_line.line_id)

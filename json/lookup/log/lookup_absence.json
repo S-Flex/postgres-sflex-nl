@@ -1,0 +1,48 @@
+[
+  {
+    "code": "sick",
+    "i18n": {
+      "nl": {
+        "title": "Ziek"
+      },
+      "en": {
+        "title": "Sick"
+      },
+      "de": {
+        "title": "Krank"
+      },
+      "fr": {
+        "title": "Malade"
+      },
+      "es": {
+        "title": "Enfermo"
+      },
+      "uk": {
+        "title": "Хворий"
+      }
+    }
+  },
+  {
+    "code": "leave",
+    "i18n": {
+      "nl": {
+        "title": "Verlof"
+      },
+      "en": {
+        "title": "Leave"
+      },
+      "de": {
+        "title": "Urlaub"
+      },
+      "fr": {
+        "title": "Congé"
+      },
+      "es": {
+        "title": "Permiso"
+      },
+      "uk": {
+        "title": "Відпустка"
+      }
+    }
+  }
+]

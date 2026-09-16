@@ -1,0 +1,416 @@
+[
+  {
+    "layout": "filter",
+    "params": [
+      {
+        "key": "date",
+        "is_optional": true,
+        "default_value": "now()",
+        "is_query_param": true
+      },
+      {
+        "key": "step",
+        "default_value": "print",
+        "is_optional": true,
+        "is_query_param": true
+      },
+      {
+        "key": "line_type",
+        "is_optional": true,
+        "is_query_param": true
+      },
+      {
+        "key": "tenant_ids",
+        "is_optional": true,
+        "is_query_param": true
+      }
+    ],
+    "children": [],
+    "widget_id": "oee_report_filter",
+    "row_options": {
+      "class_name": "@container grid grid-cols-12 gap-1"
+    },
+    "field_config": {
+      "date": {
+        "ui": {
+          "i18n": {
+            "de": {
+              "title": "Datum"
+            },
+            "en": {
+              "title": "Date"
+            },
+            "es": {
+              "title": "Fecha"
+            },
+            "fr": {
+              "title": "Date"
+            },
+            "nl": {
+              "title": "Datum"
+            },
+            "uk": {
+              "title": "Дата"
+            }
+          },
+          "type": "date",
+          "order": 0,
+          "control": "date-picker",
+          "class_name": "col-span-12 @2xl:col-span-1"
+        }
+      },
+      "step": {
+        "ui": {
+          "i18n": {
+            "nl": {
+              "title": "Stap"
+            },
+            "en": {
+              "title": "Step"
+            },
+            "de": {
+              "title": "Schritt"
+            },
+            "fr": {
+              "title": "Étape"
+            },
+            "es": {
+              "title": "Paso"
+            },
+            "uk": {
+              "title": "Крок"
+            }
+          },
+          "order": 1,
+          "control": "select",
+          "class_name": "col-span-12 @2xl:col-span-1",
+          "input_data": {
+            "data": [
+              {
+                "value": "print",
+                "i18n": {
+                  "nl": {
+                    "title": "Printen"
+                  },
+                  "en": {
+                    "title": "Print"
+                  },
+                  "de": {
+                    "title": "Drucken"
+                  },
+                  "fr": {
+                    "title": "Impression"
+                  },
+                  "es": {
+                    "title": "Impresión"
+                  },
+                  "uk": {
+                    "title": "Друк"
+                  }
+                }
+              },
+              {
+                "value": "coat",
+                "i18n": {
+                  "nl": {
+                    "title": "Coaten"
+                  },
+                  "en": {
+                    "title": "Coat"
+                  },
+                  "de": {
+                    "title": "Beschichten"
+                  },
+                  "fr": {
+                    "title": "Enduction"
+                  },
+                  "es": {
+                    "title": "Recubrimiento"
+                  },
+                  "uk": {
+                    "title": "Покриття"
+                  }
+                }
+              },
+              {
+                "value": "cut",
+                "i18n": {
+                  "nl": {
+                    "title": "Snijden"
+                  },
+                  "en": {
+                    "title": "Cut"
+                  },
+                  "de": {
+                    "title": "Schneiden"
+                  },
+                  "fr": {
+                    "title": "Découpe"
+                  },
+                  "es": {
+                    "title": "Corte"
+                  },
+                  "uk": {
+                    "title": "Різання"
+                  }
+                }
+              }
+            ],
+            "title_field": "title",
+            "value_field": "value"
+          }
+        }
+      },
+      "line_type": {
+        "ui": {
+          "i18n": {
+            "de": {
+              "title": "Produktionslinie"
+            },
+            "en": {
+              "title": "Production line"
+            },
+            "es": {
+              "title": "Línea de producción"
+            },
+            "fr": {
+              "title": "Ligne de production"
+            },
+            "nl": {
+              "title": "Productielijn"
+            },
+            "uk": {
+              "title": "Виробнича лінія"
+            }
+          },
+          "order": 2,
+          "control": "select",
+          "class_name": "col-span-12 @2xl:col-span-2",
+          "input_data": {
+            "data": [
+              {
+                "i18n": {
+                  "de": {
+                    "title": "Platte"
+                  },
+                  "en": {
+                    "title": "Sheet"
+                  },
+                  "es": {
+                    "title": "Plancha"
+                  },
+                  "fr": {
+                    "title": "Panneau"
+                  },
+                  "nl": {
+                    "title": "Plaat"
+                  },
+                  "uk": {
+                    "title": "Лист"
+                  }
+                },
+                "value": "sheet"
+              },
+              {
+                "i18n": {
+                  "de": {
+                    "title": "UV"
+                  },
+                  "en": {
+                    "title": "UV"
+                  },
+                  "es": {
+                    "title": "UV"
+                  },
+                  "fr": {
+                    "title": "UV"
+                  },
+                  "nl": {
+                    "title": "UV"
+                  },
+                  "uk": {
+                    "title": "UV"
+                  }
+                },
+                "value": "non-adhesive"
+              },
+              {
+                "i18n": {
+                  "de": {
+                    "title": "Folie"
+                  },
+                  "en": {
+                    "title": "Foil"
+                  },
+                  "es": {
+                    "title": "Vinilo"
+                  },
+                  "fr": {
+                    "title": "Film"
+                  },
+                  "nl": {
+                    "title": "Folie"
+                  },
+                  "uk": {
+                    "title": "Плівка"
+                  }
+                },
+                "value": "foil"
+              },
+              {
+                "i18n": {
+                  "de": {
+                    "title": "Textil"
+                  },
+                  "en": {
+                    "title": "Textile"
+                  },
+                  "es": {
+                    "title": "Textil"
+                  },
+                  "fr": {
+                    "title": "Textile"
+                  },
+                  "nl": {
+                    "title": "Textiel"
+                  },
+                  "uk": {
+                    "title": "Текстиль"
+                  }
+                },
+                "value": "textile"
+              },
+              {
+                "i18n": {
+                  "de": {
+                    "title": "Etiketten"
+                  },
+                  "en": {
+                    "title": "Labels"
+                  },
+                  "es": {
+                    "title": "Etiquetas"
+                  },
+                  "fr": {
+                    "title": "Étiquettes"
+                  },
+                  "nl": {
+                    "title": "Labels"
+                  },
+                  "uk": {
+                    "title": "Етикетки"
+                  }
+                },
+                "value": "label"
+              },
+              {
+                "i18n": {
+                  "de": {
+                    "title": "Papier"
+                  },
+                  "en": {
+                    "title": "Paper"
+                  },
+                  "es": {
+                    "title": "Papel"
+                  },
+                  "fr": {
+                    "title": "Papier"
+                  },
+                  "nl": {
+                    "title": "Papier"
+                  },
+                  "uk": {
+                    "title": "Папір"
+                  }
+                },
+                "value": "paper"
+              }
+            ],
+            "title_field": "title",
+            "value_field": "value"
+          }
+        }
+      },
+      "tenant_ids": {
+        "ui": {
+          "i18n": {
+            "de": {
+              "title": "Standorte"
+            },
+            "en": {
+              "title": "Tenants"
+            },
+            "es": {
+              "title": "Sedes"
+            },
+            "fr": {
+              "title": "Sites"
+            },
+            "nl": {
+              "title": "Vestigingen"
+            },
+            "uk": {
+              "title": "Підрозділи"
+            }
+          },
+          "order": 3,
+          "control": "multi-select",
+          "class_name": "col-span-12 @2xl:col-span-2",
+          "input_data": {
+            "data": [
+              {
+                "i18n": {
+                  "de": {
+                    "title": "Dokkum"
+                  },
+                  "en": {
+                    "title": "Dokkum"
+                  },
+                  "es": {
+                    "title": "Dokkum"
+                  },
+                  "fr": {
+                    "title": "Dokkum"
+                  },
+                  "nl": {
+                    "title": "Dokkum"
+                  },
+                  "uk": {
+                    "title": "Доккюм"
+                  }
+                },
+                "value": 1
+              },
+              {
+                "i18n": {
+                  "de": {
+                    "title": "Bad Hersfeld"
+                  },
+                  "en": {
+                    "title": "Bad Hersfeld"
+                  },
+                  "es": {
+                    "title": "Bad Hersfeld"
+                  },
+                  "fr": {
+                    "title": "Bad Hersfeld"
+                  },
+                  "nl": {
+                    "title": "Bad Hersfeld"
+                  },
+                  "uk": {
+                    "title": "Бад-Герсфельд"
+                  }
+                },
+                "value": 2
+              }
+            ],
+            "title_field": "title",
+            "value_field": "value"
+          }
+        }
+      }
+    }
+  }
+]

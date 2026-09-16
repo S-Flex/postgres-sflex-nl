@@ -96,7 +96,9 @@ zie `docs/data-group-governance.md` voor de volledige analyse
 - de frontend is een meta-data-driven ui-renderer: er is data en een data_group,
   de data_group heeft per layout een `<layout>_config` (`timeline_config`, ...)
   die zegt welk veld wat is (`offset_field`, `type_field`, ...)
-- een handoff voor de frontend beschrijft alleen wat er in die config en in de
-  velden veranderd is (nieuwe/hernoemde `_field`-keys, nieuwe velden), compact
-  en to-the-point — geen uitleg van het domein, geen voorbeelden die al in de
-  data_group staan
+- een handoff of prompt voor de frontend noemt alleen wat conceptueel nieuw is voor
+  de renderer: een nieuwe config-key of `_field`-key, een nieuw mechanisme, een bug —
+  één regel per punt, zonder render-instructies, verwachte getallen of domeinuitleg
+- niet noemen, want dat is data en werkt al: nieuwe, hernoemde, verplaatste of
+  niet-meer-verborgen velden, titels, params, filters, sortering, class_names;
+  een veld dat zichtbaar wordt verliest gewoon zijn `hidden: true`

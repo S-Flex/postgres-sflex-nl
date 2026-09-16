@@ -74,7 +74,9 @@
             "hidden": true
           },
           "nav": {
-            "path": "https://v2.proboview.nl/orders/edit/{order_id}"
+            "on_ctrl_click": {
+              "path": "https://v2.proboview.nl/orders/edit/{order_id}"
+            }
           }
         },
         "back_width": {
@@ -290,7 +292,9 @@
             "class_name": "col-span-4"
           },
           "nav": {
-            "path": "https://v2.proboview.nl/orders/edit/{order_id}/sales-orderlines/{sales_orderline_id}/production-orderlines"
+            "on_ctrl_click": {
+              "path": "https://v2.proboview.nl/orders/edit/{order_id}/sales-orderlines/{sales_orderline_id}/production-orderlines"
+            }
           }
         }
       },

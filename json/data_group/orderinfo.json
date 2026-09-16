@@ -86,7 +86,9 @@
             "order": 1
           },
           "nav": {
-            "path": "https://v2.proboview.nl/orders/edit/{order_id}"
+            "on_ctrl_click": {
+              "path": "https://v2.proboview.nl/orders/edit/{order_id}"
+            }
           }
         },
         "nest_ids": {
@@ -333,7 +335,9 @@
             "hidden": true
           },
           "nav": {
-            "path": "https://v2.proboview.nl/orders/edit/{order_id}/sales-orderlines/{sales_orderline_id}/production-orderlines"
+            "on_ctrl_click": {
+              "path": "https://v2.proboview.nl/orders/edit/{order_id}/sales-orderlines/{sales_orderline_id}/production-orderlines"
+            }
           }
         },
         "orderline_status_sequence": {
@@ -899,7 +903,9 @@
                           "class_name": "col-span-1"
                         },
                         "nav": {
-                          "path": "https://v2.proboview.nl/orders/edit/{order_id}/sales-orderlines/{sales_orderline_id}/production-orderlines"
+                          "on_ctrl_click": {
+                            "path": "https://v2.proboview.nl/orders/edit/{order_id}/sales-orderlines/{sales_orderline_id}/production-orderlines"
+                          }
                         }
                       },
                       "status_title": {
@@ -1033,7 +1039,9 @@
                       "class_name": "col-span-2"
                     },
                     "nav": {
-                      "path": "https://v2.proboview.nl/orders/edit/{order_id}"
+                      "on_ctrl_click": {
+                        "path": "https://v2.proboview.nl/orders/edit/{order_id}"
+                      }
                     }
                   },
                   "product_amount": {

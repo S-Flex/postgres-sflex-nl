@@ -1,0 +1,71 @@
+[
+  {
+    "code": "day",
+    "i18n": {
+      "nl": {
+        "title": "Dag"
+      },
+      "en": {
+        "title": "Day"
+      },
+      "de": {
+        "title": "Tag"
+      },
+      "fr": {
+        "title": "Jour"
+      },
+      "es": {
+        "title": "Día"
+      },
+      "uk": {
+        "title": "День"
+      }
+    }
+  },
+  {
+    "code": "evening",
+    "i18n": {
+      "nl": {
+        "title": "Avond"
+      },
+      "en": {
+        "title": "Evening"
+      },
+      "de": {
+        "title": "Abend"
+      },
+      "fr": {
+        "title": "Soir"
+      },
+      "es": {
+        "title": "Tarde"
+      },
+      "uk": {
+        "title": "Вечір"
+      }
+    }
+  },
+  {
+    "code": "night",
+    "i18n": {
+      "nl": {
+        "title": "Nacht"
+      },
+      "en": {
+        "title": "Night"
+      },
+      "de": {
+        "title": "Nacht"
+      },
+      "fr": {
+        "title": "Nuit"
+      },
+      "es": {
+        "title": "Noche"
+      },
+      "uk": {
+        "title": "Ніч"
+      }
+    }
+  }
+]

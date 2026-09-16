@@ -1,4 +1,8 @@
 -- same signature, dropped first so the script re-runs
+-- A sheet nest (material_media_type_id 1 on the material's production line,
+-- mapping.material_production_line.line_json) is as large as its sheet: width
+-- and height take material_width and material_height of the payload, not the
+-- nested area (15 Sep 2026; sql/update_nest_sheet_size.sql backfilled the table).
 drop function if exists legacy.crud_nest(jsonb, boolean);
 
 create function legacy.crud_nest(p_param_json jsonb, p_no_results boolean DEFAULT false) returns TABLE(param_id integer, track_by integer, crud text, domain_id integer, batch_id bigint, nest_id bigint, nest_counter integer, reproduced_counter integer, nest_name text, amount integer, width numeric, height numeric, nest_json jsonb, sort_order integer, status jsonb, possible_states bigint, possible_multiple_states bigint)
@@ -22,8 +26,12 @@ BEGIN
         COALESCE(te.reproduced_counter, 0) AS reproduced_counter,
         te.nest_name,
         te.amount,
-        te.width::numeric(10,1)           AS width,
-        te.height::numeric(10,1)          AS height,
+        CASE WHEN mpl.line_json ->> 'material_media_type_id' = '1' AND t.element ->> 'material_width' IS NOT NULL
+             THEN (t.element ->> 'material_width')::numeric
+             ELSE te.width END::numeric(10,1)  AS width,
+        CASE WHEN mpl.line_json ->> 'material_media_type_id' = '1' AND t.element ->> 'material_height' IS NOT NULL
+             THEN (t.element ->> 'material_height')::numeric
+             ELSE te.height END::numeric(10,1) AS height,
         t.element                         AS nest_json,
         te.sort_order,
         te.status,
@@ -50,7 +58,19 @@ BEGIN
         possible_multiple_states bigint,
         nest_date                timestamptz,
         updated_at               timestamptz
-    );
+    )
+    -- the material on the nest's production line: the material itself, else
+    -- the parent of a child imposition group
+    LEFT JOIN legacy.imposition_group g
+           ON g.imposition_group_id = (t.element ->> 'material_id')::integer
+    LEFT JOIN LATERAL (
+        SELECT m.line_json
+        FROM mapping.material_production_line m
+        WHERE m.production_line_id = (t.element ->> 'production_line_id')::integer
+          AND m.material_id IN ((t.element ->> 'material_id')::integer, g.parent_imposition_group_id)
+        ORDER BY (m.material_id = (t.element ->> 'material_id')::integer) DESC
+        LIMIT 1
+    ) mpl ON true;
 
     FOR rec IN
         SELECT * FROM param_table pt ORDER BY pt.updated_at ASC NULLS FIRST

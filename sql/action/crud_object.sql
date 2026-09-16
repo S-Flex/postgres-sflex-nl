@@ -9,9 +9,13 @@ BEGIN
     -- normalize every payload element into one set. resource_uid is
     -- never sent directly by the caller — only the pv2 resource_id is —
     -- so it is resolved here via relation.resource.pv2_id.
+    -- One row per plannable_item_id: a sync can carry the same item twice
+    -- (moved twice, deleted and re-added); the last element of the batch is
+    -- its newest state, and one INSERT ... ON CONFLICT may not touch a row
+    -- twice ("cannot affect row a second time", 15 Sep 2026).
     -- ============================================================
     CREATE TEMP TABLE param_table ON COMMIT DROP AS
-    SELECT
+    SELECT DISTINCT ON ((el ->> 'plannable_item_id')::integer)
         (el ->> 'plannable_item_id')::integer                          AS plannable_item_id,
         el ->> 'crud'                                                   AS crud,
         (el ->> 'domain_id')::integer                                   AS domain_id,
@@ -26,9 +30,10 @@ BEGIN
         (el ->> 'deleted_at') IS NOT NULL                                AS is_delete,
         jsonb_set(el, '{data}', (el ->> 'data')::jsonb, true)            AS action_json,
         (el ->> 'updated_at')::timestamp AT TIME ZONE 'Europe/Amsterdam' AS updated_at
-    FROM jsonb_array_elements(p_param_json) AS el
+    FROM jsonb_array_elements(p_param_json) WITH ORDINALITY AS e(el, ordinality)
     LEFT JOIN relation.resource res
-           ON res.resource_json ->> 'pv2_id' = el ->> 'resource_id';
+           ON res.resource_json ->> 'pv2_id' = el ->> 'resource_id'
+    ORDER BY (el ->> 'plannable_item_id')::integer, e.ordinality DESC;
 
     -- ============================================================
     -- deletes: rows flagged with deleted_at

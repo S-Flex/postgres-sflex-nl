@@ -11,27 +11,27 @@
   },
   {
     "code": "resource.oee",
-    "path": "(sidebar:oee)",
+    "path": "(sidebar:production-planning-info)",
     "block": {
-      "title": "Analytics",
+      "title": "Planning",
       "i18n": {
         "en": {
-          "title": "Analytics"
+          "title": "Planning"
         },
         "nl": {
-          "title": "Analyse"
+          "title": "Planning"
         },
         "de": {
-          "title": "Analytik"
+          "title": "Planung"
         },
         "uk": {
-          "title": "Аналітика"
+          "title": "Планування"
         },
         "es": {
-          "title": "Analítica"
+          "title": "Planificación"
         },
         "fr": {
-          "title": "Analytique"
+          "title": "Planification"
         }
       }
     },
@@ -396,6 +396,50 @@
         },
         "fr": {
           "title": "Maintenance et tickets"
+        }
+      }
+    },
+    "hidden_when": {
+      "key": "type",
+      "op": "not in",
+      "val": [
+        "printer",
+        "cutter",
+        "laser",
+        "coater",
+        "calander",
+        "laminator",
+        "cure-oven",
+        "slitter",
+        "folder",
+        "finish",
+        "grommet-seam"
+      ]
+    }
+  },
+  {
+    "code": "resource.error-log",
+    "path": "(sidebar:error-log)",
+    "block": {
+      "title": "Error log",
+      "i18n": {
+        "en": {
+          "title": "Error log"
+        },
+        "nl": {
+          "title": "Foutenlog"
+        },
+        "de": {
+          "title": "Fehlerprotokoll"
+        },
+        "uk": {
+          "title": "Журнал помилок"
+        },
+        "es": {
+          "title": "Registro de errores"
+        },
+        "fr": {
+          "title": "Journal des erreurs"
         }
       }
     },

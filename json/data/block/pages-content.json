@@ -270,22 +270,25 @@
     }
   },
   {
-    "code": "oee",
+    "code": "production-planning-info",
     "i18n": {
       "en": {
-        "title": "Productivity"
+        "title": "Planning"
       },
       "nl": {
-        "title": "Productiviteit"
+        "title": "Planning"
       },
       "de": {
-        "title": "Produktivität"
+        "title": "Planung"
       },
       "uk": {
-        "title": "Продуктивність"
+        "title": "Планування"
       },
       "es": {
-        "title": "Productividad"
+        "title": "Planificación"
+      },
+      "fr": {
+        "title": "Planification"
       }
     }
   },
@@ -412,6 +415,29 @@
       },
       "es": {
         "title": "Resumen"
+      }
+    }
+  },
+  {
+    "code": "error-log",
+    "i18n": {
+      "en": {
+        "title": "Error log"
+      },
+      "nl": {
+        "title": "Foutenlog"
+      },
+      "de": {
+        "title": "Fehlerprotokoll"
+      },
+      "uk": {
+        "title": "Журнал помилок"
+      },
+      "es": {
+        "title": "Registro de errores"
+      },
+      "fr": {
+        "title": "Journal des erreurs"
       }
     }
   },
@@ -907,6 +933,29 @@
   },
   {
     "code": "nest-waste",
+    "i18n": {
+      "en": {
+        "title": "Nest waste"
+      },
+      "nl": {
+        "title": "Nestafval"
+      },
+      "de": {
+        "title": "Nest-Abfall"
+      },
+      "uk": {
+        "title": "Відходи нестингу"
+      },
+      "es": {
+        "title": "Desperdicio de anidado"
+      },
+      "fr": {
+        "title": "Déchet d'imbrication"
+      }
+    }
+  },
+  {
+    "code": "resource-nest-waste",
     "i18n": {
       "en": {
         "title": "Nest waste"

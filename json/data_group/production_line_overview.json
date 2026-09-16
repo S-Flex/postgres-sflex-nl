@@ -45,7 +45,7 @@
                 }
               },
               "icon": "BarChart01",
-              "path": "(sidebar:oee)",
+              "path": "(sidebar:production-planning-info)",
               "hidden_when": [
                 {
                   "op": "not in",

@@ -1,7 +1,8 @@
 -- Rebuilds log.state_shift_agg for one date: delete-then-insert, so a state
 -- that no longer applies disappears instead of lingering next to its
 -- replacement.
--- Rows per shift and machine: the logged states, producing and starved.running
+-- Rows per shift and machine, each with the code of its shift window
+-- (shift_json code: day, evening, night): the logged states, producing and starved.running
 -- derived from them, planned (the pv2 items as planned) and plan_calibrated
 -- (the same items timed at the machine's fastest profile speed).
 --
@@ -63,6 +64,7 @@ begin
   -- ---------------------------------------------------------------
   window_def as (
       select sh.ordinality::integer as shift_index,
+             sh.value ->> 'code' as shift_code,
              (p_date::timestamp + make_interval(secs => (sh.value ->> 'start_offset')::integer))
                  at time zone 'Europe/Amsterdam' as shift_start,
              (p_date::timestamp + make_interval(secs => (sh.value ->> 'start_offset')::integer
@@ -158,14 +160,17 @@ begin
       group by w.shift_index, dl.resource_uid
   ),
   -- the sheet area produced per shift: every job counts in the shift it
-  -- starts in, amount x the nest size (legacy.nest width x height, cm)
+  -- starts in, amount x the nest size (legacy.nest width x height, cm); the
+  -- customer-order area is that area less the waste of the nest
+  -- (nest_json waste_percentage, 0..100)
   output as (
       select w.shift_index,
              dl.resource_uid,
-             sum(dl.amount * n.width * n.height / 10000)::numeric as actual_output_sqm
+             sum(dl.amount * n.width * n.height / 10000)::numeric as actual_gross_output_sqm,
+             sum(dl.amount * n.width * n.height / 10000 * (1 - coalesce(n.waste_percentage, 0) / 100))::numeric as actual_net_output_sqm
       from log.data dl
-      -- the size of the nest by name; the newest one when a name was reused
-      join lateral (select n0.width, n0.height
+      -- the size and the waste of the nest by name; the newest one when a name was reused
+      join lateral (select n0.width, n0.height, (n0.nest_json ->> 'waste_percentage')::numeric as waste_percentage
                     from legacy.nest n0
                     where n0.nest_name = dl.nest_name
                     order by n0.nest_id desc
@@ -246,20 +251,20 @@ begin
        and c.end_at   > w.shift_start
       group by w.shift_index, w.shift_start, w.shift_end, c.resource_uid
   ),
-  -- the rows of the date. planned_output_sqm sits on the planned row,
-  -- actual_output_sqm on the producing row; every other row carries null.
+  -- the rows of the date. planned_output_sqm sits on the planned row, the
+  -- two output areas on the producing row; every other row carries null.
   -- Producing is the produced time inside the logged running state; a
   -- machine that produced without a running state in the shift still gets
   -- its producing row, with 0 seconds and the area it produced
   all_rows as (
       select shift_index, shift_start, shift_end, resource_uid, state, duration_seconds,
-             null::numeric as planned_output_sqm, null::numeric as actual_output_sqm
+             null::numeric as planned_output_sqm, null::numeric as actual_gross_output_sqm, null::numeric as actual_net_output_sqm
       from logged
       union all
       select l.shift_index, l.shift_start, l.shift_end, l.resource_uid,
              'producing',
              least(coalesce(p.produced_seconds, 0), l.duration_seconds),
-             null, o.actual_output_sqm
+             null, o.actual_gross_output_sqm, o.actual_net_output_sqm
       from logged l
       left join produced p
         on p.shift_index   = l.shift_index
@@ -270,7 +275,7 @@ begin
       where l.state = 'running'
       union all
       select w.shift_index, w.shift_start, w.shift_end, o.resource_uid,
-             'producing', 0, null, o.actual_output_sqm
+             'producing', 0, null, o.actual_gross_output_sqm, o.actual_net_output_sqm
       from output o
       join window_res w
         on w.shift_index = o.shift_index and w.resource_uid = o.resource_uid
@@ -286,7 +291,7 @@ begin
       select l.shift_index, l.shift_start, l.shift_end, l.resource_uid,
              'starved.running',
              greatest(l.duration_seconds - coalesce(p.produced_seconds, 0), 0),
-             null, null
+             null, null, null
       from logged l
       left join produced p
         on p.shift_index   = l.shift_index
@@ -294,30 +299,33 @@ begin
       where l.state = 'running'
       union all
       select shift_index, shift_start, shift_end, resource_uid, 'planned', duration_seconds,
-             planned_output_sqm, null
+             planned_output_sqm, null, null
       from plan_windowed
       union all
       select shift_index, shift_start, shift_end, resource_uid, 'plan_calibrated', duration_seconds,
-             null, null
+             null, null, null
       from calibrated_windowed
   )
   insert into log.state_shift_agg
-      (shift_date, shift_index, resource_uid, state, shift_start, shift_end, duration_seconds,
-       planned_output_sqm, actual_output_sqm)
+      (shift_date, shift_index, shift_code, resource_uid, state, shift_start, shift_end, duration_seconds,
+       planned_output_sqm, actual_gross_output_sqm, actual_net_output_sqm)
   select p_date,
          a.shift_index,
+         wd.shift_code,
          a.resource_uid,
          a.state,
          a.shift_start,
          a.shift_end,
          sum(a.duration_seconds),
          sum(a.planned_output_sqm),
-         sum(a.actual_output_sqm)
+         sum(a.actual_gross_output_sqm),
+         sum(a.actual_net_output_sqm)
   from all_rows a
-  group by a.shift_index, a.resource_uid, a.state, a.shift_start, a.shift_end
+  join window_def wd on wd.shift_index = a.shift_index
+  group by a.shift_index, wd.shift_code, a.resource_uid, a.state, a.shift_start, a.shift_end
   having sum(a.duration_seconds) > 0
       or sum(a.planned_output_sqm) > 0
-      or sum(a.actual_output_sqm) > 0;
+      or sum(a.actual_gross_output_sqm) > 0;
 
   get diagnostics v_count = row_count;
   return v_count;

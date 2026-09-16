@@ -1,0 +1,400 @@
+{
+  "data_group_id": 70,
+  "data_group": "production_board_graph",
+  "data_group_json": [
+    {
+      "src": [
+        "get_production_board_graph"
+      ],
+      "layout": "stacked-bar-chart",
+      "params": [
+        {
+          "key": "from",
+          "is_query_param": true
+        },
+        {
+          "key": "production_line_ids",
+          "is_optional": true,
+          "is_query_param": true
+        },
+        {
+          "key": "customer_id",
+          "is_optional": true,
+          "is_query_param": true
+        },
+        {
+          "key": "domain_id",
+          "default_value": 1
+        },
+        {
+          "key": "internal_status_code",
+          "is_optional": true,
+          "is_query_param": true
+        },
+        {
+          "key": "status_levels",
+          "is_optional": true,
+          "is_query_param": true
+        }
+      ],
+      "widget_id": "production_board_graph",
+      "field_config": {
+        "total_sqm": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "M²"
+              },
+              "en": {
+                "title": "M²"
+              },
+              "nl": {
+                "title": "M²"
+              }
+            },
+            "order": 2,
+            "scale": 1
+          }
+        },
+        "status_title": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Status"
+              },
+              "en": {
+                "title": "Status"
+              },
+              "nl": {
+                "title": "Status"
+              }
+            },
+            "order": 0
+          }
+        },
+        "total_orders": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Aufträge"
+              },
+              "en": {
+                "title": "Orders"
+              },
+              "nl": {
+                "title": "Orders"
+              }
+            },
+            "order": 0
+          }
+        },
+        "production_date": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Produktionsdatum"
+              },
+              "en": {
+                "title": "Production date"
+              },
+              "nl": {
+                "title": "Productiedatum"
+              }
+            },
+            "type": "datetime",
+            "order": 2
+          }
+        },
+        "total_rejected_sqm": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "M² Nacharbeit"
+              },
+              "en": {
+                "title": "M² rework"
+              },
+              "nl": {
+                "title": "M² herstel"
+              }
+            },
+            "order": 3,
+            "scale": 1,
+            "hidden_when": [
+              {
+                "op": "==",
+                "value": 0,
+                "field": "total_combined_rework_count"
+              }
+            ]
+          }
+        },
+        "internal_status_code": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Statuscode"
+              },
+              "en": {
+                "title": "Status code"
+              },
+              "nl": {
+                "title": "Statuscode"
+              }
+            },
+            "order": 1
+          }
+        },
+        "total_product_amount": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Produkte"
+              },
+              "en": {
+                "title": "Products"
+              },
+              "nl": {
+                "title": "Producten"
+              }
+            },
+            "order": 4
+          }
+        },
+        "total_rejected_amount": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Produkte Nacharbeit"
+              },
+              "en": {
+                "title": "Products rework"
+              },
+              "nl": {
+                "title": "Producten herstel"
+              }
+            },
+            "order": 5,
+            "hidden_when": [
+              {
+                "op": "==",
+                "value": 0,
+                "field": "total_combined_rework_count"
+              }
+            ]
+          }
+        },
+        "total_combined_rework_count": {
+          "ui": {
+            "i18n": {
+              "de": {
+                "title": "Nacharbeit"
+              },
+              "en": {
+                "title": "Rework"
+              },
+              "nl": {
+                "title": "Herstel"
+              }
+            },
+            "order": 1,
+            "scale": 1,
+            "hidden_when": [
+              {
+                "op": "==",
+                "value": 0,
+                "field": "total_combined_rework_count"
+              }
+            ]
+          }
+        }
+      },
+      "stacked_bar_chart_config": {
+        "groups": [
+          {
+            "i18n": {
+              "de": {
+                "title": "Aufträge"
+              },
+              "en": {
+                "title": "Orders"
+              },
+              "nl": {
+                "title": "Orders"
+              }
+            },
+            "width": 20,
+            "segments": [
+              {
+                "field": "total_orders",
+                "aggregate_fn": "sum",
+                "class_names_field": "regular_class_names"
+              },
+              {
+                "field": "total_combined_rework_count",
+                "aggregate_fn": "sum",
+                "class_names_field": "rework_class_names"
+              }
+            ]
+          },
+          {
+            "i18n": {
+              "de": {
+                "title": "M²"
+              },
+              "en": {
+                "title": "M²"
+              },
+              "nl": {
+                "title": "M²"
+              }
+            },
+            "width": 50,
+            "segments": [
+              {
+                "field": "total_sqm",
+                "aggregate_fn": "sum",
+                "class_names_field": "regular_class_names"
+              },
+              {
+                "field": "total_rejected_sqm",
+                "aggregate_fn": "sum",
+                "class_names_field": "rework_class_names"
+              }
+            ]
+          },
+          {
+            "i18n": {
+              "de": {
+                "title": "Produktionsauswirkung"
+              },
+              "en": {
+                "title": "Production impact"
+              },
+              "nl": {
+                "title": "Productie-impact"
+              }
+            },
+            "width": 30,
+            "segments": [
+              {
+                "field": "total_product_amount",
+                "aggregate_fn": "sum",
+                "class_names_field": "regular_class_names"
+              },
+              {
+                "field": "total_rejected_amount",
+                "aggregate_fn": "sum",
+                "class_names_field": "rework_class_names"
+              }
+            ]
+          }
+        ],
+        "x_axis": {
+          "title_field": "status_title"
+        },
+        "y_axis": {
+          "no_label": true
+        },
+        "tooltip": {
+          "header": {
+            "group": {
+              "fields_class_name": "grid grid-cols-6 gap-1",
+              "field_config": {
+                "status_title": {
+                  "ui": {
+                    "order": 0,
+                    "class_name": "col-span-3"
+                  }
+                },
+                "production_date": {
+                  "ui": {
+                    "order": 1,
+                    "class_name": "col-span-3"
+                  },
+                  "type": "datetime"
+                }
+              }
+            }
+          },
+          "trigger": "group",
+          "sections": [
+            {
+              "group": {
+                "fields_class_name": "grid grid-cols-6 gap-1",
+                "field_config": {
+                  "total_sqm": {
+                    "ui": {
+                      "order": 1,
+                      "class_name": "col-span-2"
+                    },
+                    "type": "number"
+                  },
+                  "total_orders": {
+                    "ui": {
+                      "order": 0,
+                      "class_name": "col-span-2"
+                    }
+                  },
+                  "total_product_amount": {
+                    "ui": {
+                      "order": 2,
+                      "class_name": "col-span-2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "group": {
+                "fields_class_name": "grid grid-cols-6 gap-1",
+                "field_config": {
+                  "total_rejected_sqm": {
+                    "ui": {
+                      "order": 1,
+                      "class_name": "col-span-2"
+                    },
+                    "type": "number"
+                  },
+                  "total_rejected_amount": {
+                    "ui": {
+                      "order": 2,
+                      "class_name": "col-span-2"
+                    }
+                  },
+                  "total_combined_rework_count": {
+                    "ui": {
+                      "order": 0,
+                      "class_name": "col-span-2"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "set_order_field": "orderline_status_sequence",
+          "sort": {
+            "direction": "desc"
+          }
+        },
+        "x_field": "internal_status_code",
+        "normalize": {
+          "mode": "percentage",
+          "scope": "per_group_global"
+        },
+        "row_options": {
+          "selectable": true,
+          "deselectable": true
+        },
+        "sort": {
+          "field": "orderline_status_sequence"
+        },
+        "group_by": [
+          "internal_status_code"
+        ],
+        "column_min_width": 200,
+        "min_height": 200
+      }
+    }
+  ]
+}
