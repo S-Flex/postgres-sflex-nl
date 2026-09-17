@@ -10,9 +10,9 @@
 -- Read by legacy.create_nest_manifest: the item groups of the xbom rows of a
 -- sheet say which steps the sheet goes through and on which machines of the
 -- nest's tenant (legacy.nest.manifest_json steps[]); the planning makes the
--- step items from that. The setup and teardown seconds of a machine live in
--- legacy.imposition_group.rules_json (schedules[].lead_in / lead_out) since
--- 14 Sep 2026.
+-- step items from that. The setup and teardown seconds of a resource live in
+-- item_group_json (lead_in / lead_out) on the row of that resource_path: every
+-- step has its own, impose, print and cut differ.
 create table catalog.item_group_resource
 (
 	item_group_resource_id bigint generated always as identity
@@ -38,7 +38,7 @@ create table catalog.item_group_resource
 
 comment on table catalog.item_group_resource is 'The machines (or branches of the resource tree) of a tenant that can do the work of an item group, step is the third label of resource_path. Source of the steps and candidate machines in legacy.nest.manifest_json.';
 
-comment on column catalog.item_group_resource.item_group_json is 'The tenant''s overrides of catalog.item_group.item_group_json for this machine; {} when none.';
+comment on column catalog.item_group_resource.item_group_json is 'The tenant''s overrides of catalog.item_group.item_group_json for this resource, and the setup and teardown seconds of the work on it: lead_in / lead_out, per resource_path and so per step. {} when none.';
 
 alter table catalog.item_group_resource owner to xfw3;
 

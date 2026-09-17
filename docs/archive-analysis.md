@@ -304,5 +304,5 @@ plannen die nog open staan (`plan-date-parameters`, `plan-help-mode`,
 `blocks-migration-proposal` — `pages.json` is nog niet gevouwen), de twee
 handoffs waar de frontend nog op moet antwoorden
 (`handoff-resource-plan-frontend`, `handoff-time-scale-frontend`), het levende
-`plan-lane-model.md`, deze analyse, en de twee oogstlijsten (`inventory.md`
+`schedule-base.md`, deze analyse, en de twee oogstlijsten (`inventory.md`
 heeft nog zestien open regels, `chats-to-archive.md` hangt daaraan).

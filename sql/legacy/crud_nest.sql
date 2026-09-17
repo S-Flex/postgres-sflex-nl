@@ -163,7 +163,7 @@ BEGIN
     WHERE n.batch_uid IS NULL
       AND b.batch_id = (n.nest_json ->> 'batch_id')::integer;
 
-    -- ── nest → lane item (docs/plan-batch-lane-item.md) ──────────────────
+    -- ── nest → lane item (docs/schedule-base.md §9) ──────────────────────
     -- The material lane of a nest: the newest material-resource-plan of its
     -- nested_at date and the line type of its production line, the lane of
     -- its material (imposition_group_id is the alias) whose pattern item was
@@ -246,7 +246,7 @@ BEGIN
         LIMIT 1
     ) rel ON true;
 
-    -- ── the batch rows (docs/plan-batch-lane-item.md) ────────────────────
+    -- ── the batch rows (docs/schedule-base.md §9) ────────────────────────
     -- A payload nest leaves every impose row that is not its target row
     -- (another item, another batch, or cancelled), joins the row of its batch
     -- on its item -- the null row for a nest without a batch -- and rows left

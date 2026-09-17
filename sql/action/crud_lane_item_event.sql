@@ -1,4 +1,4 @@
--- The status history of a lane item (docs/plan-batch-lane-item.md): the
+-- The status history of a lane item (docs/schedule-base.md §9): the
 -- planner releases an item to the nesting software, legacy.crud_nest marks
 -- it nested when its first nest lands. Append-only: one row per change, the
 -- latest row is the status; the vocabulary is action.lookup

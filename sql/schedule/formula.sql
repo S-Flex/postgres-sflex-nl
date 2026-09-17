@@ -1,4 +1,4 @@
--- Versioned formulas of the schedule boards (docs/plan-planning-schema.md):
+-- Versioned formulas of the schedule boards (docs/schedule-base.md):
 -- the duration and lag rules per view, formula_code 'duration-<view_code>'
 -- and 'lag-<view_code>', formula_json the rule list the board evaluates.
 -- Same shape and versioning as catalog.formula; which version applies at a

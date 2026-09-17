@@ -332,7 +332,7 @@ BEGIN
 
     -- the batch row and the chain of the items: one row per item with a
     -- batch, the nests pv2 batched on it, edges per batch. One place for that
-    -- rule, shared with the backfill (docs/plan-batch-lane-item.md)
+    -- rule, shared with the backfill (docs/schedule-base.md §9)
     PERFORM action.sync_pv2_batch_items(array(SELECT ip.plannable_item_id FROM item_plan ip));
 
     -- ============================================================

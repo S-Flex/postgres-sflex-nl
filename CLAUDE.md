@@ -129,8 +129,11 @@ as long as it stays identical. Everything after the first change is recomputed.
   through one — an edit invalidates the cache for the rest of that session
 - put stable material at the top (conventions, schema, contracts), the changing work at the bottom
 - read a file once; don't re-read what is already in context
-- fetch targeted data: a `select` on the columns you need, a grep on the function you need,
-  not a full table or a full dump
+- use the built-in Read, Grep and Glob tools instead of `cat`, `grep` and `sed` in bash:
+  no permission prompt inside the working directory, and less output ends up in context
+- locate first, then read: find the line number with a narrow pattern, then read only that part
+- fetch targeted data: named columns with a `limit`, `pg_get_functiondef` for a single function,
+  `jq` with a path for json — never a whole table, file or dump
 - deliver only the changed function or the changed block, not the whole file, unless I ask for the file
 - don't echo long inputs back; refer to them
 - one subject per session — start a new one instead of dragging a long history along

@@ -23,7 +23,7 @@
 --   4. (12 Sep 2026) the rows are folded into legacy.nest.manifest_json by
 --      legacy.create_nest_manifest (sql/legacy/create_nest_manifest.sql). The
 --      planning reads its steps[] to make the step items and their
---      dependencies (docs/plan-planning-schema.md §3.2).
+--      dependencies (docs/schedule-base.md §4.2).
 --
 -- print-method and cutting-method are multi_select in catalog.library_option,
 -- so one imposition can legitimately carry several method lines — each is a

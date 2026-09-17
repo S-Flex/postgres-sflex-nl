@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node *)",
+      "Bash(git restore *)",
+      "Bash(python -c ' *)",
+      "Bash(git show *)",
+      "Bash(git log *)",
+      "Bash(git status *)",
+      "Bash(git ls-tree *)",
+      "Bash(grep -c '\\\\$dg\\\\$' json/data_group/xfw3_site_data_group.json)",
+      "Bash(grep -n \"create or replace function\\\\|rework_json\\\\|ob.sqm,\\\\|ob.first_production_line_id,\\\\|cs.material_id, cs.product_amount, cs.sqm\\\\|jsonb_build_object\\($\" sql/mapping/get_production_orderline_detail.sql)",
+      "Bash(grep -n \"rework_json\\\\|returns TABLE\\\\|drop function\\\\|combined as\\\\|coalesce\\(g.rework_sqm, 0\\)  \\\\|g.seconds_to_logistics_date$\\\\|        g.rework_count,\\\\|round\\(g.rework_sqm, 2\\),\\\\|full join forecast\" sql/mapping/get_production_orderline_aggregate.sql)",
+      "Bash(grep -o \"register\\(\\\\w*\\){[^}]\\\\{0,300\\\\}\" plugin.js)",
+      "Bash(grep -E \"actual time=[0-9]{3,}|Execution Time|JIT|Function Scan|CTE |Nested Loop|loops=[0-9]{3,}\")",
+      "Bash(grep -E 'actual time=[0-9]{3,}\\\\.|Execution Time|JIT|Function Scan|CTE |loops=[0-9]{3,}' C:/Users/cees/AppData/Local/Temp/claude/C--Git-postgres-sflex-nl/e51f36c8-3e42-426f-8f65-00db9eb0704b/scratchpad/agg_plan.txt)",
+      "Bash(grep -n -A12 JIT: C:/Users/cees/AppData/Local/Temp/claude/C--Git-postgres-sflex-nl/e51f36c8-3e42-426f-8f65-00db9eb0704b/scratchpad/agg_plan.txt)",
+      "Bash(grep -E 'actual time=[0-9]{2,}\\\\.[0-9]+\\\\.\\\\.[0-9]{2,}|Execution Time|JIT|Timing:' C:/Users/cees/AppData/Local/Temp/claude/C--Git-postgres-sflex-nl/e51f36c8-3e42-426f-8f65-00db9eb0704b/scratchpad/detail_plan.txt)",
+      "Bash(awk -F'actual time=' '{ split\\($2,a,\"\\\\\\\\.\\\\\\\\.\"\\); split\\(a[2],b,\" \"\\); t=b[1]+0; if \\(t>5\\) print }')",
+      "Bash(grep -E 'Execution Time|JIT|Timing:|Functions:' C:/Users/cees/AppData/Local/Temp/claude/C--Git-postgres-sflex-nl/e51f36c8-3e42-426f-8f65-00db9eb0704b/scratchpad/agg_plan_1mat.txt)",
+      "Bash(git diff *)",
+      "Bash(grep *)"
+    ]
+  }
+}

@@ -5,7 +5,7 @@
 -- One entry in p_scope_json per row a board draws:
 --   [{"lane_item_id": 8842, "nest_ids": [12,13,14], "material_id": 480,
 --     "production_line_id": 5, "resource_path": "dk.sheet.impose.320",
---     "param_json": {"waste_factor": 0.22, "imposition_sqm": 4.58}}]
+--     "param_json": {"waste_percentage": 0.22, "imposition_sqm": 4.58}}]
 -- nest_ids null asks for the open work of that material on that line in the day
 -- window (narrowed to the moment window p_from_at .. p_until_at when the caller
 -- gives one); nest_ids set asks for the work of those nests whatever its status --

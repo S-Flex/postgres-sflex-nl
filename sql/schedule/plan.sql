@@ -1,4 +1,4 @@
--- The board scope of the resource planning (docs/plan-planning-schema.md):
+-- The board scope of the resource planning (docs/schedule-base.md):
 -- one row per line type and the tenants that run it. No date and no steps:
 -- the lanes under it carry the day, the step and the machine.
 create table schedule.plan

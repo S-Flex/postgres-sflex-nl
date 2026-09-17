@@ -1,4 +1,4 @@
--- Which nests sit in a lane item, per batch (docs/plan-batch-lane-item.md).
+-- Which nests sit in a lane item, per batch (docs/schedule-base.md §9).
 -- One row per batch on the item; batch_id null is the row of the nests not
 -- batched yet, and there is one such row per item. nest_ids holds the nests
 -- of the item's own plan date only: a batch across days is one row per day.

@@ -25,7 +25,7 @@ create table nest
 	bucket_name text generated always as (substr((nest_json ->> 'printfile_name'::text), (strpos((nest_json ->> 'printfile_name'::text), '_'::text) + 1))) stored,
 	-- what the sheet is made of and which steps it still has to go through,
 	-- folded from legacy.imposition_unit_manifest by
-	-- legacy.create_imposition_unit_manifest (docs/plan-planning-schema.md §3):
+	-- legacy.create_imposition_unit_manifest (docs/schedule-base.md §4):
 	--   {"imposition_group_id": 12, "item_code_paths": ["dk.roll.banner-510", ...],
 	--    "steps": [{"step": "print", "option_codes": [...], "resource_paths": [...],
 	--               "production_impact_per_unit": 440, "config": {...}}, ...]}

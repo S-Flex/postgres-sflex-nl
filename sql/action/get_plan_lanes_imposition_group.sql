@@ -4,7 +4,7 @@
 -- one per nest moment of a material (lane_item.instance, in moment order),
 -- the schedule row through lane_item.source_ref
 -- (<material_print_schedule_id>:<date>:<instance>). The nests of a row are its own batch
--- rows (action.batch_lane_item, docs/plan-batch-lane-item.md); the instance
+-- rows (action.batch_lane_item, docs/schedule-base.md §9); the instance
 -- and the last status (action.lane_item_event) ride along. No noop
 -- windows any more: the non-working time is the time scale's
 -- (production.get_timeline_view_segments), not a row. imposition_group_id is
@@ -293,7 +293,7 @@ BEGIN
     -- matches the material width of the resource path
     LEFT JOIN LATERAL (
         SELECT jsonb_build_object(
-                   'waste_factor',   (f.value ->> 'waste_factor')::numeric,
+                   'waste_percentage', (f.value ->> 'waste_percentage')::numeric,
                    'imposition_sqm', (f.value ->> 'imposition_sqm')::numeric) AS format_json
         FROM legacy.imposition_group g
         CROSS JOIN LATERAL jsonb_array_elements(coalesce(g.rules_json -> 'waste', '[]'::jsonb)) f

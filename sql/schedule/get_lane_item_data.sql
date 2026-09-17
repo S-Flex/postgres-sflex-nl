@@ -1,4 +1,4 @@
--- The effective data_json of a lane item (docs/plan-planning-schema.md §3.3).
+-- The effective data_json of a lane item (docs/schedule-base.md §5.3).
 -- An item with its own data_json is its own source. An item without one (a
 -- step item made from the nest manifest) walks lane_item_dependency from to
 -- to from, predecessor by predecessor, and stops at the first item on each

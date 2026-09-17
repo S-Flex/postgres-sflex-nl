@@ -1,6 +1,6 @@
 -- Append-only: one row per change of a lane item, written by
 -- schedule.crud_lane_item in the same statement as the change
--- (docs/plan-planning-schema.md §3.4). Two vocabularies, both in action.lookup:
+-- (docs/schedule-base.md §5.4). Two vocabularies, both in action.lookup:
 -- event_type says what was done (lookup_lane_item_event_type: created, moved,
 -- resized, split, copied, selected, placed, status-changed, deleted), status
 -- says where the item is after it (lookup_lane_item_status: plan, released,

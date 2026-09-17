@@ -1,4 +1,4 @@
--- The one item read of the resource board (docs/plan-lane-model.md, stap 7):
+-- The one item read of the resource board (docs/schedule-base.md §9):
 -- one row per lane item on the resource lanes of the day's plans — the
 -- production plans, and the impose plan (material-resource-plan) whose
 -- resource lanes are the impose machines and whose items are the material

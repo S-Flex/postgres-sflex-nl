@@ -2,7 +2,7 @@
 
 Wat hier stond (de append-only `imposition_lane_item`, `get_lane_item_impositions`,
 `crud_imposition_lane_item`) is op 5 sep 2026 uitgerold als stap 2 van
-`docs/plan-lane-model.md`; de bestanden staan nu in `sql/action/`.
+`docs/schedule-base.md` §9; de bestanden staan nu in `sql/action/`.
 
 Wat nog open staat: `imposition_id` is een alias van `legacy.nest.nest_id`
 zonder foreign key. Zodra de verhuizing van `legacy.nest` naar

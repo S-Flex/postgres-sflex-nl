@@ -1,5 +1,5 @@
 -- The fold of legacy.imposition_unit_manifest into legacy.nest.manifest_json
--- (docs/plan-planning-schema.md §3): the imposition group of the sheet
+-- (docs/schedule-base.md §4): the imposition group of the sheet
 -- (legacy.get_imposition_group over its option codes), its item code paths,
 -- and one entry per production step. The step and the machines of a row come
 -- from catalog.item_group_resource: the item of the xbom row belongs to an

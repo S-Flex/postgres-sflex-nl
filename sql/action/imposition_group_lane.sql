@@ -1,4 +1,4 @@
--- The group-day kind of lane (docs/plan-lane-model.md, stap 3): the lane of
+-- The group-day kind of lane (docs/schedule-base.md §9): the lane of
 -- one imposition group on the print schedule (75) and the impose plan (76).
 -- imposition_group_id is for now an alias of material_id (the groups were
 -- seeded 1:1 from the materials); the real groups from the xbom follow later.

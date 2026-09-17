@@ -1,6 +1,9 @@
--- One strip of time: one step on one machine on one day, of one kind
--- (docs/plan-planning-schema.md §2). The material boards group the items of
+-- One strip of time: one step on one machine on one day
+-- (docs/schedule-base.md §3). The material boards group the items of
 -- these lanes by material or imposition group; there is no other lane kind.
+-- The kind of the work -- plan, progress, actual -- is not a property of the
+-- lane but of the work on it: schedule.lane_item.lane_item_type. One lane
+-- carries every kind, so the board can draw them on the same axis.
 create table schedule.lane
 (
 	lane_id bigint generated always as identity
@@ -13,15 +16,11 @@ create table schedule.lane
 	-- the machine, docs/resource-path.md; an impose lane carries the impose
 	-- path of mock.material_print_schedule (site.line.impose.width)
 	resource_path ltree not null,
-	-- plan (what is planned), progress (what is left of it), actual (what the
-	-- machine did): action.lookup lookup_lane_item_type. The kind of every
-	-- item on the lane
-	lane_type text default 'plan' not null,
 	sort_order numeric default 0 not null,
-	unique (plan_id, lane_date, step, resource_path, lane_type)
+	unique (plan_id, lane_date, step, resource_path)
 );
 
-comment on table schedule.lane is 'One step on one resource_path on one day, of one lane_type (plan, progress, actual). Unique per plan, day, step, path and type; the items on it are schedule.lane_item and share its type.';
+comment on table schedule.lane is 'One step on one resource_path on one day. Unique per plan, day, step and path; the items on it are schedule.lane_item, each with its own lane_item_type (plan, progress, actual).';
 
 alter table schedule.lane owner to xfw3;
 

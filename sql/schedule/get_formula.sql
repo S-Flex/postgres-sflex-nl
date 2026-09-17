@@ -3,7 +3,7 @@
 -- catalog.get_formula, on the schedule twin). Draft and pending-approval never
 -- apply. One row per code, none when no version applied yet. First reader:
 -- schedule.get_schedule_lane_items, for the lag formula of a view code
--- (formula_code 'lag-<view_code>', docs/plan-planning-schema.md §7.2).
+-- (formula_code 'lag-<view_code>', docs/schedule-base.md §1).
 drop function if exists schedule.get_formula(text[], timestamp with time zone);
 
 create function schedule.get_formula(p_formula_codes text[], p_at timestamp with time zone DEFAULT now())

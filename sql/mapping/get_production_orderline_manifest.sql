@@ -46,11 +46,11 @@ begin
     where g.parent_imposition_group_id = v_material_id and g.tenant_id = v_tenant_id;
     v_material_ids := coalesce(v_material_ids, array[v_material_id]);
 
-    select round((1 - (f.value ->> 'waste_factor')::numeric) * 100, 0) into v_fill_percentage
+    select round((1 - (f.value ->> 'waste_percentage')::numeric) * 100, 0) into v_fill_percentage
     from legacy.imposition_group g
     cross join lateral jsonb_array_elements(coalesce(g.rules_json -> 'waste', '[]'::jsonb)) f
     where g.imposition_group_id = v_material_id and g.tenant_id = v_tenant_id
-    order by (f.value ->> 'width')::numeric desc, (f.value ->> 'waste_factor')::numeric
+    order by (f.value ->> 'width')::numeric desc, (f.value ->> 'waste_percentage')::numeric
     limit 1;
 
     select min(d.date) into v_next_workday

@@ -1,4 +1,4 @@
--- The batch row of the pv2 items (docs/plan-batch-lane-item.md). A plannable
+-- The batch row of the pv2 items (docs/schedule-base.md §9). A plannable
 -- item of pv2 (action.object, type 'batch') is one lane item: source 'pv2',
 -- source_ref <plannable_item_id>. It carries one row in
 -- action.batch_lane_item: its batch, with the nests pv2 batched on it

@@ -38,7 +38,7 @@ begin
                         and p.type = 'material-resource-plan'
                         and p.line_type = lt.line_type);
 
-    -- testing phase (docs/plan-batch-lane-item.md, decided 9 sep 2026): every
+    -- testing phase (docs/schedule-base.md §9, decided 9 sep 2026): every
     -- impose item without a release is released at the local midnight of its
     -- lane date, so every nest of that day lands on it (a nest goes to the
     -- item released last before it was nested). Written straight into the
